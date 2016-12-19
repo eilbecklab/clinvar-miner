@@ -34,7 +34,7 @@ def conflicts_by_gene(gene = None):
         return render_template(
             'conflicts-by-gene-index.html',
             title='Conflicts by Gene',
-            genes=db.genes()
+            total_conflicts_by_gene=db.total_conflicts_by_gene()
         )
 
     gene = gene.replace('%2F', '/')
@@ -60,7 +60,7 @@ def conflicts_by_submitter(submitter1 = None, submitter2 = None):
         return render_template(
             'conflicts-by-submitter-index.html',
             title='Conflicts by Submitter',
-            submitters=db.submitters(),
+            total_conflicts_by_submitter=db.total_conflicts_by_submitter(),
         )
 
     submitter1 = submitter1.replace('%2F', '/')
@@ -152,7 +152,7 @@ def total_conflicts_by_method():
     return render_template(
         'total-conflicts-by-method.html',
         title='Total Conflicts By Method',
-        conflicts=db.total_conflicts_by_method(),
+        total_conflicts_by_method_over_time=db.total_conflicts_by_method_over_time(),
     )
 
 @app.route('/total-submissions-by-method')
@@ -161,5 +161,5 @@ def total_submissions_by_method():
     return render_template(
         'total-submissions-by-method.html',
         title='Total Submissions by Method',
-        submissions=db.total_submissions_by_method(),
+        total_submissions_by_method_over_time=db.total_submissions_by_method_over_time(),
     )

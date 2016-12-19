@@ -1,9 +1,16 @@
 {% extends 'skin.html' %}
 {% block content %}
     <ul class="list-group">
-        {% for submitter in submitters %}
+        <li class="list-group-item" style="font-weight:bold">
+            <span style="float:right">Conflicts</span>
+            Submitter
+        </li>
+        {% for row in total_conflicts_by_submitter %}
             <li class="list-group-item">
-                <a href="conflicts-by-submitter/{{ submitter|quotepath }}" style="display:block">{{ submitter }}</a>
+                <a href="conflicts-by-submitter/{{ row['submitter']|quotepath }}" style="display:block">
+                    <span style="float:right">{{ row['count'] }}</span>
+                    {{ row['submitter'] }}
+                </a>
             </li>
         {% endfor %}
     </ul>

@@ -85,14 +85,6 @@ class DB():
             )
         ))
 
-    def genes(self):
-        return list(map(
-            lambda row: row[0],
-            self.cursor.execute(
-                'SELECT DISTINCT gene_symbol FROM current_conflicts WHERE gene_symbol!="" ORDER BY gene_symbol'
-            )
-        ))
-
     def methods(self):
         return list(map(
             lambda row: row[0],
@@ -105,24 +97,35 @@ class DB():
             self.cursor.execute('SELECT DISTINCT clin_sig FROM current_conflicts ORDER BY clin_sig')
         ))
 
-    def submitters(self):
+    def total_conflicts_by_gene(self):
         return list(map(
-            lambda row: row[0],
-            self.cursor.execute('SELECT DISTINCT submitter FROM current_conflicts ORDER BY submitter')
+            dict,
+            self.cursor.execute('''
+                SELECT gene_symbol, COUNT(*) AS count FROM current_conflicts
+                WHERE gene_symbol!="" GROUP BY gene_symbol ORDER BY gene_symbol
+            ''')
         ))
 
-    def total_conflicts_by_method(self):
+    def total_conflicts_by_method_over_time(self):
         return list(map(
             dict,
             self.cursor.execute(
-                'SELECT date, method, COUNT(method) AS count FROM conflicts GROUP BY date, method'
+                'SELECT date, method, COUNT(method) AS count FROM conflicts GROUP BY date, method ORDER BY date, method'
             )
         ))
 
-    def total_submissions_by_method(self):
+    def total_conflicts_by_submitter(self):
         return list(map(
             dict,
             self.cursor.execute(
-                'SELECT date, method, SUM(count) AS count FROM submission_counts GROUP BY date, method'
+                'SELECT submitter, COUNT(*) AS count FROM current_conflicts GROUP BY submitter ORDER BY submitter'
+            )
+        ))
+
+    def total_submissions_by_method_over_time(self):
+        return list(map(
+            dict,
+            self.cursor.execute(
+                'SELECT date, method, SUM(count) AS count FROM submission_counts GROUP BY date, method ORDER BY date, method'
             )
         ))

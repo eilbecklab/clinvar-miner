@@ -6,9 +6,9 @@
 {% block content %}
     <svg id="graph"></svg>
     <script type="application/javascript">
-        var conflicts = {{ conflicts|tojson }};
+        var data = {{ total_conflicts_by_method_over_time|tojson }};
         var parseTime = d3.timeParse("%Y-%m");
-        var data = conflicts.map(function(d) {
+        data = data.map(function(d) {
             return {
                 x: parseTime(d.date),
                 y: d.count,
