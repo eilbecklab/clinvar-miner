@@ -1,0 +1,20 @@
+{% extends 'skin.html' %}
+{% block head %}
+    <script src="static/line-graph.js" type="application/javascript"></script>
+    <link href="static/line-graph.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+{% block content %}
+    <svg id="graph"></svg>
+    <script type="application/javascript">
+        var conflicts = {{ conflicts|tojson }};
+        var parseTime = d3.timeParse("%Y-%m");
+        var data = conflicts.map(function(d) {
+            return {
+                x: parseTime(d.date),
+                y: d.count,
+                serie: d.method,
+            }
+        });
+        lineGraph(data, 'Conflicts', [5000, 10000, 15000, 20000]);
+    </script>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'skin.html' %}
+{% block content %}
+    <ul class="list-group">
+        {% for submitter in submitters %}
+            <li class="list-group-item">
+                <a href="conflicts-by-submitter/{{ submitter|quotepath }}" style="display:block">{{ submitter }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

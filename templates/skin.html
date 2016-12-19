@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ClinVar Data Visualization - {{ title }}</title>
+
+        <base href="{{ request.script_root }}/"/>
+
+        <script type="application/javascript" src="static/d3.js"></script>
+        <link href="static/bootstrap.css" rel="stylesheet" type="text/css"/>
+        <style type="text/css">
+            #top-stripe {
+                background: url(static/clingen-stripe.png);
+                background-repeat: no-repeat;
+            }
+
+            #top-stripe > div {
+                font-size: 25px;
+                font-weight: bold;
+                line-height: 40px;
+                opacity: 0.3;
+                padding-right: 10px;
+                text-align: right;
+                vertical-align: middle;
+            }
+
+        </style>
+        {% block head %}{% endblock %}
+    </head>
+    <body>
+        <div id="top-stripe">
+            <div>ClinVar Data Visualization</div>
+        </div>
+        <div style="display:flex">
+            <div>
+                <ul class="nav nav-pills nav-stacked" style="width:250px">
+                    <li><a href="">Home</a></li>
+                    <li><a href="total-conflicts-by-method">Total Conflicts By Method</a></li>
+                    <li><a href="total-submissions-by-method">Total Submissions by Method</a></li>
+                    <li><a href="conflicts-by-submitter">Conflicts by Submitter</a></li>
+                    <li><a href="conflicts-by-significance">Conflicts by Significance</a></li>
+                    <li><a href="conflicts-by-gene">Conflicts by Gene</a></li>
+                </ul>
+            </div>
+            <div class="container">
+                <h1>{{ title }}</h1>
+                <div id="content">{% block content %}{% endblock %}</div>
+            </div>
+        </div>
+    </body>
+</html>

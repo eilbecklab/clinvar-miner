@@ -1,0 +1,13 @@
+.summary a {
+    display: block;
+    text-align: right;
+}
+
+.breakdown td {
+    text-align: center;
+    vertical-align: middle !important;
+}
+
+.breakdown td:hover, .summary td:hover {
+    background-color: lightblue !important;
+}

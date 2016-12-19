@@ -1,0 +1,26 @@
+{% extends 'skin.html' %}
+{% block head %}
+    <link href="static/tables.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+{% block content %}
+    {% with header='Compare all variants to variants with' %}
+        {% include 'variant-filter.html' %}
+    {% endwith %}
+    <h2>Significance breakdown</h2>
+    <table class="breakdown table table-bordered table-condensed table-striped">
+        <tr>
+            <th/>
+            {% for significance2 in breakdown %}
+                <th>{{ significance2 }}</th>
+            {% endfor %}
+        </tr>
+        {% for significance1, row in breakdown.items() %}
+            <tr>
+                <th>{{ significance1 }}</th>
+                {% for significance2, count in row.items() %}
+                    <td style="{{ 'background-color:coral' if count > 0 else '' }}">{{ count }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

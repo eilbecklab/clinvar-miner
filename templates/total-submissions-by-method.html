@@ -1,0 +1,20 @@
+{% extends 'skin.html' %}
+{% block head %}
+    <script src="static/line-graph.js" type="application/javascript"></script>
+    <link href="static/line-graph.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+{% block content %}
+    <svg id="graph"></svg>
+    <script type="application/javascript">
+        var submissions = {{ submissions|tojson }};
+        var parseTime = d3.timeParse("%Y-%m");
+        var data = submissions.map(function(d) {
+            return {
+                x: parseTime(d.date),
+                y: d.count,
+                serie: d.method,
+            }
+        });
+        lineGraph(data, 'Submissions', [10000, 50000, 100000, 150000, 200000, 250000]);
+    </script>
+{% endblock %}

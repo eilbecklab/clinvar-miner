@@ -1,0 +1,51 @@
+{% extends 'skin.html' %}
+{% block head %}
+    <link href="static/tables.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+{% block content %}
+    {% with header = 'Compare variants from ' + submitter1 + ' to variants from ' + submitter2 + ' that have' %}
+        {% include 'variant-filter.html' %}
+    {% endwith %}
+    <h2>Submitter to submitter conflicts</h2>
+    {% if not conflicts %}
+        No conflicts
+    {% else %}
+        <table class="table table-bordered table-condensed table-striped">
+            <tr>
+                <th colspan="2"></th>
+                <th colspan="5">{{ submitter1 }}</th>
+                <th colspan="5">{{ submitter2 }}</th>
+            </tr>
+            <tr>
+                <th>RCV</th>
+                <th>Preferred name</th>
+                <th>SCV</th>
+                <th>Clinical significance</th>
+                <th>Last evaluated</th>
+                <th>Review status</th>
+                <th>Method</th>
+                <th>SCV</th>
+                <th>Clinical significance</th>
+                <th>Last evaluated</th>
+                <th>Review status</th>
+                <th>Method</th>
+            </tr>
+            {% for conflict in conflicts %}
+                <tr>
+                    <td>{{ conflict['rcv']|rcvlink|safe }}</td>
+                    <td>{{ conflict['preferred_name'] }}</td>
+                    <td>{{ conflict['scv1'] }}</td>
+                    <td>{{ conflict['clin_sig1'] }}</td>
+                    <td>{{ conflict['last_eval1'] }}</td>
+                    <td>{{ conflict['review_status1'] }}</td>
+                    <td>{{ conflict['method1'] }}</td>
+                    <td>{{ conflict['scv2'] }}</td>
+                    <td>{{ conflict['clin_sig2'] }}</td>
+                    <td>{{ conflict['last_eval2'] }}</td>
+                    <td>{{ conflict['review_status2'] }}</td>
+                    <td>{{ conflict['method2'] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

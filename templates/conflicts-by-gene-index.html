@@ -1,0 +1,10 @@
+{% extends 'skin.html' %}
+{% block content %}
+    <ul class="list-group">
+        {% for gene in genes %}
+            <li class="list-group-item">
+                <a href="conflicts-by-gene/{{ gene|quotepath }}" style="display:block">{{ gene }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

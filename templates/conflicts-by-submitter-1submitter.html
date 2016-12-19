@@ -1,0 +1,50 @@
+{% extends 'skin.html' %}
+{% block head %}
+    <link href="static/tables.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+{% block content %}
+    {% with header = 'Compare variants from this submitter to variants with' %}
+        {% include 'variant-filter.html' %}
+    {% endwith %}
+    <h2>Submitter to submitter summary</h2>
+    {% if not summary %}
+        No conflicts
+    {% else %}
+        <table class="summary table table-bordered table-condensed table-striped" style="width:auto">
+            <tr>
+                <th></th>
+                <th>{{ submitter }}</th>
+            </tr>
+            {% for submitter2, row in summary.items() %}
+                <tr>
+                    <th>{{ submitter2 }}</th>
+                    <td><a href="conflicts-by-submitter/{{ submitter|quotepath }}/{{ submitter2|quotepath }}">{{ row['total'] }}</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+        <h2>Significance breakdowns</h2>
+        {% for submitter2, breakdown in breakdowns.items() %}
+            <table class="breakdown table table-bordered table-condensed table-striped">
+                <tr>
+                    <th/>
+                    <th colspan="{{ breakdown|length + 1 }}">{{ submitter2 }}</th>
+                </tr>
+                <tr>
+                    <th rowspan="{{ breakdown|length + 1 }}">{{ submitter }}</th>
+                    <th/>
+                    {% for significance2 in breakdown %}
+                        <th>{{ significance2 }}</th>
+                    {% endfor %}
+                </tr>
+                {% for significance1, row in breakdown.items() %}
+                    <tr>
+                        <th>{{ significance1 }}</th>
+                        {% for significance2, count in row.items() %}
+                            <td style="{{ 'background-color:coral' if count > 0 else '' }}">{{ count }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
