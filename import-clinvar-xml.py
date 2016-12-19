@@ -91,10 +91,8 @@ def import_file(filename):
         for assertion_el in assertion_els:
             submission_id_el = assertion_el.find('./ClinVarSubmissionID')
             method_el = assertion_el.find('./ObservedIn/Method/MethodType')
-            if 'submitter' not in submission_id_el.attrib or method_el == None: #missing in old versions
-                continue
-            submitter = submission_id_el.attrib['submitter']
-            method = method_el.text
+            submitter = submission_id_el.attrib.get('submitter', '') if submission_id_el != None else '' #missing in old versions
+            method = method_el.text if method_el != None else 'not provided' #missing in old versions
             if not submitter in submission_counts:
                 submission_counts[submitter] = {}
             if not method in submission_counts[submitter]:
@@ -134,7 +132,7 @@ def import_file(filename):
             last_eval = clin_sig_el.attrib.get('DateLastEvaluated', '') #missing in old versions
             review_status = review_status_el.text if review_status_el != None else '' #missing in old versions
             sub_condition = sub_condition_el.text if sub_condition_el != None else ''
-            method = method_el.text if method_el != None else '' #missing in old versions
+            method = method_el.text if method_el != None else 'not provided' #missing in old versions
             description = comment_el.text if comment_el != None else ''
 
             conflicts.append((
