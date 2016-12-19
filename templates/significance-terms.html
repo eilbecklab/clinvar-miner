@@ -1,0 +1,15 @@
+{% extends 'skin.html' %}
+{% block content %}
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th>Significance term</th>
+            <th>First seen</th>
+        </tr>
+        {% for row in significance_term_info %}
+            <tr>
+                <td>{{ row['clin_sig'] }}</td>
+                <td>{{ row['first_seen'] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

@@ -146,6 +146,15 @@ def index():
         title='Home',
     )
 
+@app.route('/significance-terms')
+def significance_terms():
+    db = DB()
+    return render_template(
+        'significance-terms.html',
+        title='Significance Terms',
+        significance_term_info=db.significance_term_info(),
+    )
+
 @app.route('/total-conflicts-by-method')
 def total_conflicts_by_method():
     db = DB()
