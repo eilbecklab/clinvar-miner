@@ -141,9 +141,11 @@ def conflicts_by_significance():
 
 @app.route('/')
 def index():
+    db = DB()
     return render_template(
         'index.html',
         title='Home',
+        max_date=db.max_date(),
     )
 
 @app.route('/significance-terms')

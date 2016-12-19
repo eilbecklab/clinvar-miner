@@ -85,6 +85,9 @@ class DB():
             )
         ))
 
+    def max_date(self):
+        return list(self.cursor.execute('SELECT MAX(date) FROM conflicts'))[0][0]
+
     def methods(self):
         return list(map(
             lambda row: row[0],
