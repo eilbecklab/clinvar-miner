@@ -9,14 +9,16 @@ function lineGraph(data, yAxisText, yAxisTickValues) {
         totals[d.x] += d.y;
     });
     series = Object.keys(series);
-    Object.keys(totals).forEach(function(x) {
-        data.push({
-            x: Date.parse(x),
-            y: totals[x],
-            serie: 'total',
+    if (series.length > 1) {
+        Object.keys(totals).forEach(function(x) {
+            data.push({
+                x: Date.parse(x),
+                y: totals[x],
+                serie: 'total',
+            });
         });
-    });
-    series.unshift('total');
+        series.unshift('total');
+    }
 
     var svg = d3
         .select('#graph')
@@ -68,18 +70,20 @@ function lineGraph(data, yAxisText, yAxisTickValues) {
         .style('text-anchor', 'end')
         .text(yAxisText);
 
-    var legend = g.append('g')
-        .attr('transform', 'translate(50,0)')
-    series.forEach((serie, i) => {
-        var legendItem = legend.append('g')
-            .attr('transform', 'translate(0,' + (15 * i) + ')')
+    if (series.length > 1) {
+        var legend = g.append('g')
+            .attr('transform', 'translate(50,0)')
+        series.forEach((serie, i) => {
+            var legendItem = legend.append('g')
+                .attr('transform', 'translate(0,' + (15 * i) + ')')
 
-        legendItem.append('path')
-            .attr('class', 'line')
-            .attr('d', 'M0,-4L20,-4')
-            .attr('style', 'stroke-width:5px; stroke:' + d3.schemeCategory10[i]);
-        legendItem.append('text')
-            .attr('transform', 'translate(30,0)')
-            .text(serie);
-    });
+            legendItem.append('path')
+                .attr('class', 'line')
+                .attr('d', 'M0,-4L20,-4')
+                .attr('style', 'stroke-width:5px; stroke:' + d3.schemeCategory10[i]);
+            legendItem.append('text')
+                .attr('transform', 'translate(30,0)')
+                .text(serie);
+        });
+    }
 }

@@ -161,6 +161,7 @@ def significance_terms(term = None):
         return render_template(
             'significance-terms-index.html',
             title='Significance Terms',
+            total_significance_terms_over_time=db.total_significance_terms_over_time(),
             significance_term_info=db.significance_term_info(),
         )
 

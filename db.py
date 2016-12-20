@@ -147,6 +147,12 @@ class DB():
             ''', [term])
         ))
 
+    def total_significance_terms_over_time(self):
+        return list(map(
+            dict,
+            self.cursor.execute('SELECT date, COUNT(DISTINCT clin_sig) AS count FROM submission_counts GROUP BY date')
+        ))
+
     def total_submissions_by_method_over_time(self):
         return list(map(
             dict,
