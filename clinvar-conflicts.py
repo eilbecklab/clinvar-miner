@@ -17,6 +17,10 @@ def create_breakdown_table(significances):
             breakdown_table[significance1][significance2] = 0
     return breakdown_table
 
+@app.template_filter('orspace')
+def string_or_space(path):
+    return path if path else '\u200B'
+
 @app.template_filter('quotepath')
 def quote_path(path):
     return urllib.parse.quote(path).replace('/', '%252F')
@@ -149,12 +153,23 @@ def index():
     )
 
 @app.route('/significance-terms')
-def significance_terms():
+@app.route('/significance-terms/<term>')
+def significance_terms(term = None):
     db = DB()
+
+    if not term:
+        return render_template(
+            'significance-terms-index.html',
+            title='Significance Terms',
+            significance_term_info=db.significance_term_info(),
+        )
+
+    term = term.replace('%2F', '/')
+
     return render_template(
         'significance-terms.html',
-        title='Significance Terms',
-        significance_term_info=db.significance_term_info(),
+        title='Submitters of "' + term + '" Variants',
+        total_significance_terms=db.total_significance_terms(term),
     )
 
 @app.route('/total-conflicts-by-method')

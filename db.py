@@ -137,6 +137,16 @@ class DB():
             )
         ))
 
+    def total_significance_terms(self, term):
+        return list(map(
+            dict,
+            self.cursor.execute('''
+                SELECT submitter, SUM(count) AS count FROM submission_counts
+                WHERE date=(SELECT MAX(date) FROM submission_counts) AND clin_sig=?
+                GROUP BY submitter ORDER BY submitter
+            ''', [term])
+        ))
+
     def total_submissions_by_method_over_time(self):
         return list(map(
             dict,

@@ -1,0 +1,18 @@
+{% extends 'skin.html' %}
+{% block content %}
+    <p>All terms in the following table are from SCVs (not RCVs) in the current ClinVar.</p>
+    <ul class="list-group">
+        <li class="list-group-item" style="font-weight:bold">
+            <span style="float:right">First seen</span>
+            Significance term
+        </li>
+        {% for row in significance_term_info %}
+            <li class="list-group-item">
+                <a href="significance-terms/{{ row['clin_sig']|quotepath }}" style="display:block">
+                    {{ row['clin_sig']|orspace }}
+                    <span style="float:right">{{ row['first_seen'] }}</span>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
