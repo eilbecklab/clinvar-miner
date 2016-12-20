@@ -54,9 +54,10 @@ class DB():
             SELECT c1.rcv AS rcv, c1.gene_symbol AS gene_symbol, c1.ncbi_variation_id AS ncbi_variation_id,
             c1.preferred_name AS preferred_name, c1.variant_type AS variant_type, c1.scv AS scv1,
             c1.clin_sig AS clin_sig1, c1.last_eval AS last_eval1, c1.review_status AS review_status1,
-            c1.sub_condition AS sub_condition1, c1.description AS description1, c2.submitter AS submitter2,
-            c2.scv AS scv2, c2.clin_sig AS clin_sig2, c2.last_eval AS last_eval2, c2.review_status AS review_status2,
-            c2.sub_condition AS sub_condition2, c2.description AS description2
+            c1.sub_condition AS sub_condition1, c2.method AS method1, c1.description AS description1,
+            c2.submitter AS submitter2, c2.scv AS scv2, c2.clin_sig AS clin_sig2, c2.last_eval AS last_eval2,
+            c2.review_status AS review_status2, c2.sub_condition AS sub_condition2, c2.method AS method2,
+            c2.description AS description2
             FROM current_conflicts c1 INNER JOIN current_conflicts c2 ON c1.rcv=c2.rcv
             WHERE c1.clin_sig!=c2.clin_sig
         '''
