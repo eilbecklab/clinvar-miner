@@ -95,6 +95,17 @@ class DB():
             self.cursor.execute('SELECT DISTINCT method FROM current_conflicts ORDER BY method')
         ))
 
+    def old_significance_term_info(self):
+        return list(map(
+            dict,
+            self.cursor.execute('''
+                SELECT * FROM (
+                    SELECT clin_sig, MIN(date) AS first_seen, MAX(date) AS last_seen FROM submission_counts
+                    GROUP BY clin_sig ORDER BY first_seen DESC
+                ) WHERE last_seen!=(SELECT MAX(date) FROM submission_counts)
+            ''')
+        ))
+
     def significance_term_info(self):
         return list(map(
             dict,
