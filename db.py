@@ -100,9 +100,9 @@ class DB():
             dict,
             self.cursor.execute('''
                 SELECT clin_sig, first_seen FROM (
-                    SELECT clin_sig, MIN(date) AS first_seen, MAX(date) AS last_seen FROM conflicts
+                    SELECT clin_sig, MIN(date) AS first_seen, MAX(date) AS last_seen FROM submission_counts
                     GROUP BY clin_sig ORDER BY first_seen DESC
-                ) WHERE last_seen=(SELECT MAX(date) FROM conflicts)
+                ) WHERE last_seen=(SELECT MAX(date) FROM submission_counts)
             ''')
         ))
 

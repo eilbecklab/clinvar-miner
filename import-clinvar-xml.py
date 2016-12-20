@@ -23,8 +23,9 @@ def create_tables():
             date TEXT,
             submitter TEXT,
             method TEXT,
+            clin_sig TEXT,
             count INT,
-            PRIMARY KEY (date, submitter, method)
+            PRIMARY KEY (date, submitter, method, clin_sig)
         )
     ''')
 
@@ -91,19 +92,29 @@ def import_file(filename):
         for assertion_el in assertion_els:
             submission_id_el = assertion_el.find('./ClinVarSubmissionID')
             method_el = assertion_el.find('./ObservedIn/Method/MethodType')
+            clin_sig_el = assertion_el.find('./ClinicalSignificance/Description')
+
             submitter = submission_id_el.attrib.get('submitter', '') if submission_id_el != None else '' #missing in old versions
             method = method_el.text if method_el != None else 'not provided' #missing in old versions
+            clin_sig = clin_sig_el.text.lower() if clin_sig_el != None else ''
+
             if not submitter in submission_counts:
                 submission_counts[submitter] = {}
             if not method in submission_counts[submitter]:
-                submission_counts[submitter][method] = 0
-            submission_counts[submitter][method] += 1
+                submission_counts[submitter][method] = {}
+            if not clin_sig in submission_counts[submitter][method]:
+                submission_counts[submitter][method][clin_sig] = 0
+            submission_counts[submitter][method][clin_sig] += 1
 
         #find conflicts
         conflicting_assertion_els = set()
         for assertion_el1, assertion_el2 in combinations(assertion_els, 2):
-            clin_sig1 = assertion_el1.find('./ClinicalSignificance/Description').text.lower()
-            clin_sig2 = assertion_el2.find('./ClinicalSignificance/Description').text.lower()
+            clin_sig_el1 = assertion_el1.find('./ClinicalSignificance/Description')
+            clin_sig_el2 = assertion_el2.find('./ClinicalSignificance/Description')
+
+            clin_sig1 = clin_sig_el1.text.lower() if clin_sig_el1 != None else ''
+            clin_sig2 = clin_sig_el2.text.lower() if clin_sig_el2 != None else ''
+
             if clin_sig1 != clin_sig2:
                 conflicting_assertion_els.add(assertion_el1)
                 conflicting_assertion_els.add(assertion_el2)
@@ -161,11 +172,12 @@ def import_file(filename):
 
     for submitter in submission_counts:
         for method in submission_counts[submitter]:
-            count = submission_counts[submitter][method]
-            cursor.execute(
-                'INSERT OR IGNORE INTO submission_counts VALUES (?,?,?,?)',
-                (date, submitter, method, count)
-            )
+            for clin_sig in submission_counts[submitter][method]:
+                count = submission_counts[submitter][method][clin_sig]
+                cursor.execute(
+                    'INSERT OR IGNORE INTO submission_counts VALUES (?,?,?,?,?)',
+                    (date, submitter, method, clin_sig, count)
+                )
 
     cursor.executemany('INSERT OR IGNORE INTO conflicts VALUES (' + ','.join('?' * len(conflicts[0])) + ')', conflicts)
 
