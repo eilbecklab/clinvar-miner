@@ -153,11 +153,12 @@ def index():
     )
 
 @app.route('/significance-terms')
+@app.route('/significance-terms/', defaults={'term': ''})
 @app.route('/significance-terms/<term>')
 def significance_terms(term = None):
     db = DB()
 
-    if not term:
+    if term == None:
         return render_template(
             'significance-terms-index.html',
             title='Significance Terms',
