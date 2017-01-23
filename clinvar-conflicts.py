@@ -78,6 +78,7 @@ def conflicts_by_submitter(submitter1 = None, submitter2 = None, significance1 =
         significances = db.significances()
 
         summary = OrderedDict()
+        summary[ALL_OTHER_SUBMITTERS] = {'total': 0}
         breakdowns = OrderedDict()
         breakdowns[ALL_OTHER_SUBMITTERS] = create_breakdown_table(significances)
         for row in conflict_overviews:
@@ -86,6 +87,7 @@ def conflicts_by_submitter(submitter1 = None, submitter2 = None, significance1 =
             clin_sig2 = row['clin_sig2']
             count = row['count']
 
+            summary[ALL_OTHER_SUBMITTERS]['total'] += count
             if not submitter2 in summary:
                 summary[submitter2] = {'total': 0}
             summary[submitter2]['total'] += count
@@ -109,7 +111,7 @@ def conflicts_by_submitter(submitter1 = None, submitter2 = None, significance1 =
     if not significance1:
         conflicts = db.conflicts_by_submitter(
             submitter1=submitter1,
-            submitter2=submitter2,
+            submitter2=submitter2 if submitter2 != ALL_OTHER_SUBMITTERS else None,
             min_stars=min_stars,
             method=method,
         )
