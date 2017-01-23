@@ -40,7 +40,13 @@
                     <tr>
                         <th>{{ significance1 }}</th>
                         {% for significance2, count in row.items() %}
-                            <td style="{{ 'background-color:coral' if count > 0 else '' }}">{{ count }}</td>
+                            {% if count > 0 %}
+                                <td style="{{ 'background-color:coral' if count > 0 else '' }}">
+                                    <a href="conflicts-by-submitter/{{ submitter|quotepath }}/{{ submitter2|quotepath }}/{{ significance1|quotepath }}/{{ significance2|quotepath }}">{{ count }}</a>
+                                </td>
+                            {% else %}
+                                <td>0</td>
+                            {% endif %}
                         {% endfor %}
                     </tr>
                 {% endfor %}

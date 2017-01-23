@@ -49,7 +49,8 @@ class DB():
             self.cursor.execute('SELECT * FROM current_conflicts WHERE gene_symbol=? ORDER BY preferred_name', [gene])
         ))
 
-    def conflicts_by_submitter(self, submitter1 = None, submitter2 = None, min_stars = 0, method = None):
+    def conflicts_by_submitter(self, submitter1 = None, submitter2 = None, significance1 = None, significance2 = None,
+                               min_stars = 0, method = None):
         query = '''
             SELECT c1.rcv AS rcv, c1.gene_symbol AS gene_symbol, c1.ncbi_variation_id AS ncbi_variation_id,
             c1.preferred_name AS preferred_name, c1.variant_type AS variant_type, c1.scv AS scv1,
@@ -68,6 +69,12 @@ class DB():
         if submitter2:
             query += ' AND c2.submitter=:submitter2'
 
+        if significance1:
+            query += ' AND c1.clin_sig=:significance1'
+
+        if significance2:
+            query += ' AND c2.clin_sig=:significance2'
+
         if min_stars > 0:
             query += ' AND (' + ' OR '.join(DB.STAR_MAP[min_stars-1:]) + ')'
 
@@ -81,6 +88,8 @@ class DB():
                 {
                     'submitter1': submitter1,
                     'submitter2': submitter2,
+                    'significance1': significance1,
+                    'significance2': significance2,
                     'method': method,
                 }
             )

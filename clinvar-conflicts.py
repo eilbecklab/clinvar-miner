@@ -9,6 +9,8 @@ from flask import request
 
 app = Flask(__name__)
 
+ALL_OTHER_SUBMITTERS = 'all other submitters'
+
 def create_breakdown_table(significances):
     breakdown_table = OrderedDict()
     for significance1 in significances:
@@ -53,7 +55,8 @@ def conflicts_by_gene(gene = None):
 @app.route('/conflicts-by-submitter')
 @app.route('/conflicts-by-submitter/<submitter1>')
 @app.route('/conflicts-by-submitter/<submitter1>/<submitter2>')
-def conflicts_by_submitter(submitter1 = None, submitter2 = None):
+@app.route('/conflicts-by-submitter/<submitter1>/<submitter2>/<significance1>/<significance2>')
+def conflicts_by_submitter(submitter1 = None, submitter2 = None, significance1 = None, significance2 = None):
     min_stars = request.args.get('min_stars')
     min_stars = int(min_stars) if min_stars else 0
     method = request.args.get('method')
@@ -76,7 +79,7 @@ def conflicts_by_submitter(submitter1 = None, submitter2 = None):
 
         summary = OrderedDict()
         breakdowns = OrderedDict()
-        breakdowns['All other submitters'] = create_breakdown_table(significances)
+        breakdowns[ALL_OTHER_SUBMITTERS] = create_breakdown_table(significances)
         for row in conflict_overviews:
             submitter2 = row['submitter2']
             clin_sig1 = row['clin_sig1']
@@ -87,7 +90,7 @@ def conflicts_by_submitter(submitter1 = None, submitter2 = None):
                 summary[submitter2] = {'total': 0}
             summary[submitter2]['total'] += count
 
-            breakdowns['All other submitters'][clin_sig1][clin_sig2] += count
+            breakdowns[ALL_OTHER_SUBMITTERS][clin_sig1][clin_sig2] += count
             if not submitter2 in breakdowns:
                 breakdowns[submitter2] = create_breakdown_table(significances)
             breakdowns[submitter2][clin_sig1][clin_sig2] = count
@@ -103,13 +106,57 @@ def conflicts_by_submitter(submitter1 = None, submitter2 = None):
             method=method,
         )
 
-    conflicts = db.conflicts_by_submitter(submitter1, submitter2, min_stars, method)
+    if not significance1:
+        conflicts = db.conflicts_by_submitter(
+            submitter1=submitter1,
+            submitter2=submitter2,
+            min_stars=min_stars,
+            method=method,
+        )
+        return render_template(
+            'conflicts-by-submitter-2submitters.html',
+            title='Conflicts between ' + submitter1 + ' and ' + submitter2,
+            submitter1=submitter1,
+            submitter2=submitter2,
+            conflicts=conflicts,
+            method_options=methods,
+            min_stars=min_stars,
+            method=method,
+        )
+
+    if not significance2:
+        conflicts = db.conflicts_by_submitter(
+            submitter1=submitter1,
+            significance1=significance1,
+            min_stars=min_stars,
+            method=method,
+        )
+        return render_template(
+            'conflicts-by-submitter-significance.html',
+            title='Conflicts between ' + submitter1 + ' and ' + submitter2,
+            submitter=submitter1,
+            significance=significance1,
+            conflicts=conflicts,
+            method_options=methods,
+            min_stars=min_stars,
+            method=method,
+        )
+
+    conflicts = db.conflicts_by_submitter(
+        submitter1=submitter1,
+        submitter2=submitter2 if submitter2 != ALL_OTHER_SUBMITTERS else None,
+        significance1=significance1,
+        significance2=significance2,
+        min_stars=min_stars,
+        method=method,
+    )
     return render_template(
-        'conflicts-by-submitter-2submitters.html',
-        title='Conflicts between ' + submitter1 + ' and ' + submitter2,
-        filter_header='Compare variants from ' + submitter1 + ' to variants from ' + submitter2 + ' with',
+        'conflicts-by-submitter-2significances.html',
+        title='Conflicts between ' + significance1 + ' variants from ' + submitter1 + ' and ' + significance2 + ' variants from ' + submitter2,
         submitter1=submitter1,
         submitter2=submitter2,
+        significance1=significance1,
+        significance2=significance2,
         conflicts=conflicts,
         method_options=methods,
         min_stars=min_stars,
