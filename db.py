@@ -132,6 +132,17 @@ class DB():
             self.cursor.execute('SELECT DISTINCT clin_sig FROM current_conflicts ORDER BY clin_sig')
         ))
 
+    def submitter_info(self, submitter):
+        try:
+            return dict(list(self.cursor.execute('SELECT * from submitter_info WHERE name=:name', [submitter]))[0])
+        except IndexError:
+            return None
+
+    def submitter_primary_method(self, submitter):
+        return list(
+            self.cursor.execute('SELECT method FROM submitter_primary_method WHERE submitter=:submitter', [submitter])
+        )[0][0]
+
     def total_conflicts_by_gene(self):
         return list(map(
             dict,

@@ -76,6 +76,8 @@ def conflicts_by_submitter(submitter1 = None, submitter2 = None, significance1 =
     if not submitter2:
         conflict_overviews = db.conflict_overview(submitter=submitter1, min_stars=min_stars, method=method)
         significances = db.significances()
+        submitter_info = db.submitter_info(submitter1)
+        submitter_primary_method = db.submitter_primary_method(submitter1)
 
         summary = OrderedDict()
         summary[ALL_OTHER_SUBMITTERS] = {'total': 0}
@@ -101,6 +103,8 @@ def conflicts_by_submitter(submitter1 = None, submitter2 = None, significance1 =
             'conflicts-by-submitter-1submitter.html',
             title='Conflicts with ' + submitter1,
             submitter=submitter1,
+            submitter_info=submitter_info,
+            submitter_primary_method=submitter_primary_method,
             summary=summary,
             breakdowns=breakdowns,
             method_options=methods,

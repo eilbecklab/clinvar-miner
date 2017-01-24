@@ -2,6 +2,21 @@
 {% block head %}
     <link href="static/tables.css" rel="stylesheet" type="text/css"/>
 {% endblock %}
+{% block title %}
+    {% if submitter_info %}
+        Conflicts with <a href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/{{ submitter_info['id'] }}/">{{ submitter }}</a>
+    {% else %}
+        Conflicts with {{ submitter }}
+    {% endif %}
+    <br/>
+    <small style="font-size:medium">
+        {% if submitter_info %}
+            Primary submission method: {{ submitter_primary_method }} &mdash; Location: {{ submitter_info['country'] }}
+        {% else %}
+            Primary submission method: {{ submitter_primary_method }}
+        {% endif %}
+    </small>
+{% endblock %}
 {% block content %}
     {% with header = 'Compare variants from this submitter to variants with' %}
         {% include 'variant-filter.html' %}
