@@ -130,24 +130,6 @@ def conflicts_by_submitter(submitter1 = None, submitter2 = None, significance1 =
             method=method,
         )
 
-    if not significance2:
-        conflicts = db.conflicts_by_submitter(
-            submitter1=submitter1,
-            significance1=significance1,
-            min_stars=min_stars,
-            method=method,
-        )
-        return render_template(
-            'conflicts-by-submitter-significance.html',
-            title='Conflicts between ' + submitter1 + ' and ' + submitter2,
-            submitter=submitter1,
-            significance=significance1,
-            conflicts=conflicts,
-            method_options=methods,
-            min_stars=min_stars,
-            method=method,
-        )
-
     conflicts = db.conflicts_by_submitter(
         submitter1=submitter1,
         submitter2=submitter2 if submitter2 != ALL_OTHER_SUBMITTERS else None,
