@@ -53,57 +53,58 @@ def conflicts_by_gene(gene = None):
     )
 
 @app.route('/conflicts-by-submitter')
-@app.route('/conflicts-by-submitter/<submitter1>')
-@app.route('/conflicts-by-submitter/<submitter1>/<submitter2>')
-@app.route('/conflicts-by-submitter/<submitter1>/<submitter2>/<significance1>/<significance2>')
-def conflicts_by_submitter(submitter1 = None, submitter2 = None, significance1 = None, significance2 = None):
+@app.route('/conflicts-by-submitter/<submitter1_id>')
+@app.route('/conflicts-by-submitter/<submitter1_id>/<submitter2_id>')
+@app.route('/conflicts-by-submitter/<submitter1_id>/<submitter2_id>/<significance1>/<significance2>')
+def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None):
     min_stars = request.args.get('min_stars')
     min_stars = int(min_stars) if min_stars else 0
     method = request.args.get('method')
 
     db = DB()
 
-    if not submitter1:
+    if not submitter1_id:
         return render_template(
             'conflicts-by-submitter-index.html',
             title='Conflicts by Submitter',
             total_conflicts_by_submitter=db.total_conflicts_by_submitter(),
         )
 
-    submitter1 = submitter1.replace('%2F', '/')
     methods = db.methods()
+    submitter1_info = db.submitter_info(submitter1_id)
+    if not submitter1_info:
+        submitter1_info = {'id': submitter1_id, 'name': submitter1_id}
 
-    if not submitter2:
-        conflict_overviews = db.conflict_overview(submitter=submitter1, min_stars=min_stars, method=method)
+    if not submitter2_id:
+        conflict_overviews = db.conflict_overview(submitter_id=submitter1_id, min_stars=min_stars, method=method)
         significances = db.significances()
-        submitter_info = db.submitter_info(submitter1)
-        submitter_primary_method = db.submitter_primary_method(submitter1)
+        submitter_primary_method = db.submitter_primary_method(submitter1_id)
 
         summary = OrderedDict()
-        summary[ALL_OTHER_SUBMITTERS] = {'total': 0}
+        summary['0'] = {'name': ALL_OTHER_SUBMITTERS, 'total': 0}
         breakdowns = OrderedDict()
-        breakdowns[ALL_OTHER_SUBMITTERS] = create_breakdown_table(significances)
+        breakdowns['0'] = {'name': ALL_OTHER_SUBMITTERS, 'table': create_breakdown_table(significances)}
         for row in conflict_overviews:
-            submitter2 = row['submitter2']
+            submitter2_id = row['submitter2_id']
+            submitter2_name = row['submitter2_name']
             clin_sig1 = row['clin_sig1']
             clin_sig2 = row['clin_sig2']
             count = row['count']
 
-            summary[ALL_OTHER_SUBMITTERS]['total'] += count
-            if not submitter2 in summary:
-                summary[submitter2] = {'total': 0}
-            summary[submitter2]['total'] += count
+            summary['0']['total'] += count
+            if not submitter2_id in summary:
+                summary[submitter2_id] = {'name': submitter2_name, 'total': 0}
+            summary[submitter2_id]['total'] += count
 
-            breakdowns[ALL_OTHER_SUBMITTERS][clin_sig1][clin_sig2] += count
-            if not submitter2 in breakdowns:
-                breakdowns[submitter2] = create_breakdown_table(significances)
-            breakdowns[submitter2][clin_sig1][clin_sig2] = count
+            breakdowns['0']['table'][clin_sig1][clin_sig2] += count
+            if not submitter2_id in breakdowns:
+                breakdowns[submitter2_id] = {'name': submitter2_name, 'table': create_breakdown_table(significances)}
+            breakdowns[submitter2_id]['table'][clin_sig1][clin_sig2] = count
 
         return render_template(
             'conflicts-by-submitter-1submitter.html',
-            title='Conflicts with ' + submitter1,
-            submitter=submitter1,
-            submitter_info=submitter_info,
+            title='Conflicts with ' + submitter1_info['name'],
+            submitter_info=submitter1_info,
             submitter_primary_method=submitter_primary_method,
             summary=summary,
             breakdowns=breakdowns,
@@ -112,18 +113,25 @@ def conflicts_by_submitter(submitter1 = None, submitter2 = None, significance1 =
             method=method,
         )
 
+    if submitter2_id == '0':
+        submitter2_info = {'id': '0', 'name': ALL_OTHER_SUBMITTERS}
+    else:
+        submitter2_info = db.submitter_info(submitter2_id)
+        if not submitter2_info:
+            submitter2_info = {'id': submitter2_id, 'name': submitter2_id}
+
     if not significance1:
         conflicts = db.conflicts_by_submitter(
-            submitter1=submitter1,
-            submitter2=submitter2 if submitter2 != ALL_OTHER_SUBMITTERS else None,
+            submitter1_id=submitter1_id,
+            submitter2_id=submitter2_id if submitter2_id != '0' else None,
             min_stars=min_stars,
             method=method,
         )
         return render_template(
             'conflicts-by-submitter-2submitters.html',
-            title='Conflicts between ' + submitter1 + ' and ' + submitter2,
-            submitter1=submitter1,
-            submitter2=submitter2,
+            title='Conflicts between ' + submitter1_info['name'] + ' and ' + submitter2_info['name'],
+            submitter1_info=submitter1_info,
+            submitter2_info=submitter2_info,
             conflicts=conflicts,
             method_options=methods,
             min_stars=min_stars,
@@ -131,8 +139,8 @@ def conflicts_by_submitter(submitter1 = None, submitter2 = None, significance1 =
         )
 
     conflicts = db.conflicts_by_submitter(
-        submitter1=submitter1,
-        submitter2=submitter2 if submitter2 != ALL_OTHER_SUBMITTERS else None,
+        submitter1_id=submitter1_id,
+        submitter2_id=submitter2_id if submitter2_id != '0' else None,
         significance1=significance1,
         significance2=significance2,
         min_stars=min_stars,
@@ -140,9 +148,9 @@ def conflicts_by_submitter(submitter1 = None, submitter2 = None, significance1 =
     )
     return render_template(
         'conflicts-by-submitter-2significances.html',
-        title='Conflicts between ' + significance1 + ' variants from ' + submitter1 + ' and ' + significance2 + ' variants from ' + submitter2,
-        submitter1=submitter1,
-        submitter2=submitter2,
+        title='Conflicts between ' + significance1 + ' variants from ' + submitter1_info['name'] + ' and ' + significance2 + ' variants from ' + submitter2_info['name'],
+        submitter1_info=submitter1_info,
+        submitter2_info=submitter2_info,
         significance1=significance1,
         significance2=significance2,
         conflicts=conflicts,

@@ -21,11 +21,12 @@ def create_tables():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS submission_counts (
             date TEXT,
-            submitter TEXT,
+            submitter_id TEXT,
+            submitter_name TEXT,
             method TEXT,
             clin_sig TEXT,
             count INT,
-            PRIMARY KEY (date, submitter, method, clin_sig)
+            PRIMARY KEY (date, submitter_id, method, clin_sig)
         )
     ''')
 
@@ -37,7 +38,8 @@ def create_tables():
             ncbi_variation_id INT,
             preferred_name TEXT,
             variant_type TEXT,
-            submitter TEXT,
+            submitter_id TEXT,
+            submitter_name TEXT,
             scv TEXT,
             clin_sig TEXT,
             last_eval TEXT,
@@ -51,7 +53,7 @@ def create_tables():
 
     cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON conflicts (date)')
     cursor.execute('CREATE INDEX IF NOT EXISTS rcv_index ON conflicts (rcv)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS submitter_index ON conflicts (submitter)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submitter_id_index ON conflicts (submitter_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS scv_index ON conflicts (scv)')
 
     cursor.execute('''
@@ -63,10 +65,10 @@ def create_tables():
 
     cursor.execute('''
         CREATE VIEW IF NOT EXISTS submitter_primary_method AS
-        SELECT submitter, method FROM submission_counts t WHERE date=(
+        SELECT submitter_id, method FROM submission_counts t WHERE date=(
             SELECT MAX(date) max_date FROM submission_counts
         ) AND count=(
-            SELECT MAX(count) FROM submission_counts WHERE submitter=t.submitter AND date=t.date
+            SELECT MAX(count) FROM submission_counts WHERE submitter_id=t.submitter_id AND date=t.date
         )
     ''')
 
@@ -94,17 +96,18 @@ def import_file(filename):
             method_el = assertion_el.find('./ObservedIn/Method/MethodType')
             clin_sig_el = assertion_el.find('./ClinicalSignificance/Description')
 
-            submitter = submission_id_el.attrib.get('submitter', '') if submission_id_el != None else '' #missing in old versions
+            submitter_id = assertion_el.find('./ClinVarAccession[@Type="SCV"]').attrib.get('OrgID', '') #missing in old versions
+            submitter_name = submission_id_el.attrib.get('submitter', '') if submission_id_el != None else '' #missing in old versions
             method = method_el.text if method_el != None else 'not provided' #missing in old versions
             clin_sig = clin_sig_el.text.lower() if clin_sig_el != None else ''
 
-            if not submitter in submission_counts:
-                submission_counts[submitter] = {}
-            if not method in submission_counts[submitter]:
-                submission_counts[submitter][method] = {}
-            if not clin_sig in submission_counts[submitter][method]:
-                submission_counts[submitter][method][clin_sig] = 0
-            submission_counts[submitter][method][clin_sig] += 1
+            if not submitter_id in submission_counts:
+                submission_counts[submitter_id] = {'name': submitter_name, 'counts': {}}
+            if not method in submission_counts[submitter_id]['counts']:
+                submission_counts[submitter_id]['counts'][method] = {}
+            if not clin_sig in submission_counts[submitter_id]['counts'][method]:
+                submission_counts[submitter_id]['counts'][method][clin_sig] = 0
+            submission_counts[submitter_id]['counts'][method][clin_sig] += 1
 
         #find conflicts
         conflicting_assertion_els = set()
@@ -126,6 +129,8 @@ def import_file(filename):
             gene_symbol_el = measure_el.find('./MeasureRelationship/Symbol/ElementValue[@Type="Preferred"]')
             preferred_name_el = measure_set_el.find('./Name/ElementValue[@Type="Preferred"]')
 
+            submission_id_el = assertion_el.find('./ClinVarSubmissionID')
+            scv_el = assertion_el.find('./ClinVarAccession[@Type="SCV"]')
             clin_sig_el = assertion_el.find('./ClinicalSignificance')
             review_status_el = clin_sig_el.find('./ReviewStatus')
             sub_condition_el = assertion_el.find('./TraitSet[@Type="PhenotypeInstruction"]/Trait[@Type="PhenotypeInstruction"]/Name/ElementValue[@Type="Preferred"]')
@@ -137,8 +142,9 @@ def import_file(filename):
             ncbi_variation_id = measure_set_el.attrib['ID']
             preferred_name = preferred_name_el.text if preferred_name_el != None else '' #missing in old versions
             variant_type = measure_el.attrib['Type']
-            submitter = assertion_el.find('./ClinVarSubmissionID').attrib['submitter']
-            scv = assertion_el.find('./ClinVarAccession[@Type="SCV"]').attrib['Acc']
+            submitter_id = scv_el.attrib.get('OrgID', '') #missing in old versions
+            submitter_name = submission_id_el.get('submitter', '') if submission_id_el != None else '' #missing in old versions
+            scv = scv_el.attrib['Acc']
             clin_sig = clin_sig_el.find('./Description').text.lower()
             last_eval = clin_sig_el.attrib.get('DateLastEvaluated', '') #missing in old versions
             review_status = review_status_el.text if review_status_el != None else '' #missing in old versions
@@ -153,7 +159,8 @@ def import_file(filename):
                 ncbi_variation_id,
                 preferred_name,
                 variant_type,
-                submitter,
+                submitter_id,
+                submitter_name,
                 scv,
                 clin_sig,
                 last_eval,
@@ -170,13 +177,14 @@ def import_file(filename):
     db = connect()
     cursor = db.cursor()
 
-    for submitter in submission_counts:
-        for method in submission_counts[submitter]:
-            for clin_sig in submission_counts[submitter][method]:
-                count = submission_counts[submitter][method][clin_sig]
+    for submitter_id in submission_counts:
+        submitter_name = submission_counts[submitter_id]['name']
+        for method in submission_counts[submitter_id]['counts']:
+            for clin_sig in submission_counts[submitter_id]['counts'][method]:
+                count = submission_counts[submitter_id]['counts'][method][clin_sig]
                 cursor.execute(
-                    'INSERT OR IGNORE INTO submission_counts VALUES (?,?,?,?,?)',
-                    (date, submitter, method, clin_sig, count)
+                    'INSERT OR IGNORE INTO submission_counts VALUES (?,?,?,?,?,?)',
+                    (date, submitter_id, submitter_name, method, clin_sig, count)
                 )
 
     cursor.executemany('INSERT OR IGNORE INTO conflicts VALUES (' + ','.join('?' * len(conflicts[0])) + ')', conflicts)

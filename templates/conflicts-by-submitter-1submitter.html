@@ -4,16 +4,15 @@
 {% endblock %}
 {% block title %}
     {% if submitter_info %}
-        Conflicts with <a href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/{{ submitter_info['id'] }}/">{{ submitter }}</a>
+        Conflicts with <a href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/{{ submitter_info['id'] }}/">{{ submitter_info['name'] }}</a>
     {% else %}
-        Conflicts with {{ submitter }}
+        Conflicts with {{ submitter_info['name'] }}
     {% endif %}
     <br/>
     <small style="font-size:medium">
-        {% if submitter_info %}
-            Primary submission method: {{ submitter_primary_method }} &mdash; Location: {{ submitter_info['country'] }}
-        {% else %}
-            Primary submission method: {{ submitter_primary_method }}
+        Primary submission method: {{ submitter_primary_method }}
+        {% if 'country' in submitter_info %}
+            &mdash; Location: {{ submitter_info['country'] }}
         {% endif %}
     </small>
 {% endblock %}
@@ -22,42 +21,42 @@
         {% include 'variant-filter.html' %}
     {% endwith %}
     <h2>Submitter to submitter summary</h2>
-    {% if not summary %}
+    {% if summary['0']['total'] == 0 %}
         No conflicts
     {% else %}
         <table class="summary table table-bordered table-striped" style="width:auto">
             <tr>
                 <th></th>
-                <th>{{ submitter }}</th>
+                <th>{{ submitter_info['name'] }}</th>
             </tr>
-            {% for submitter2, row in summary.items() %}
+            {% for submitter2_id, row in summary.items() %}
                 <tr>
-                    <th>{{ submitter2 }}</th>
-                    <td><a href="conflicts-by-submitter/{{ submitter|quotepath }}/{{ submitter2|quotepath }}">{{ row['total'] }}</a></td>
+                    <th>{{ row['name'] }}</th>
+                    <td><a href="conflicts-by-submitter/{{ submitter_info['id'] }}/{{ submitter2_id }}">{{ row['total'] }}</a></td>
                 </tr>
             {% endfor %}
         </table>
         <h2>Significance breakdowns</h2>
-        {% for submitter2, breakdown in breakdowns.items() %}
+        {% for submitter2_id, breakdown in breakdowns.items() %}
             <table class="breakdown table table-bordered table-condensed table-striped">
                 <tr>
                     <th/>
-                    <th colspan="{{ breakdown|length + 1 }}">{{ submitter2 }}</th>
+                    <th colspan="{{ breakdown['table']|length + 1 }}">{{ breakdown['name'] }}</th>
                 </tr>
                 <tr>
-                    <th rowspan="{{ breakdown|length + 1 }}">{{ submitter }}</th>
+                    <th rowspan="{{ breakdown['table']|length + 1 }}">{{ submitter_info['name'] }}</th>
                     <th/>
-                    {% for significance2 in breakdown %}
+                    {% for significance2 in breakdown['table'] %}
                         <th>{{ significance2 }}</th>
                     {% endfor %}
                 </tr>
-                {% for significance1, row in breakdown.items() %}
+                {% for significance1, row in breakdown['table'].items() %}
                     <tr>
                         <th>{{ significance1 }}</th>
                         {% for significance2, count in row.items() %}
                             {% if count > 0 %}
                                 <td style="{{ 'background-color:coral' if count > 0 else '' }}">
-                                    <a href="conflicts-by-submitter/{{ submitter|quotepath }}/{{ submitter2|quotepath }}/{{ significance1|quotepath }}/{{ significance2|quotepath }}">{{ count }}</a>
+                                    <a href="conflicts-by-submitter/{{ submitter_info['id'] }}/{{ submitter2_id }}/{{ significance1|quotepath }}/{{ significance2|quotepath }}">{{ count }}</a>
                                 </td>
                             {% else %}
                                 <td>0</td>

@@ -7,9 +7,9 @@
         </li>
         {% for row in total_conflicts_by_submitter %}
             <li class="list-group-item">
-                <a href="conflicts-by-submitter/{{ row['submitter']|quotepath }}" style="display:block">
+                <a href="conflicts-by-submitter/{{ row['submitter_id'] }}" style="display:block">
                     <span style="float:right">{{ row['count'] }}</span>
-                    {{ row['submitter'] }}
+                    {{ row['submitter_name'] }}
                 </a>
             </li>
         {% endfor %}

@@ -8,14 +8,10 @@ from urllib.request import urlopen
 
 ns = {'html': 'http://www.w3.org/1999/xhtml'}
 
-submitter_urls = {}
-with urlopen('https://www.ncbi.nlm.nih.gov/clinvar/docs/submitter_list/') as f:
-    root = html5lib.parse(f, transport_encoding=f.info().get_content_charset())
-    for el in root.findall('.//html:table[@id="all_sub_linkify"]/html:tbody/html:tr/html:td/html:a', ns):
-        submitter_urls[el.text] = el.attrib['href']
-
 db = sqlite3.connect('clinvar-conflicts.db', timeout=600)
 cursor = db.cursor()
+
+submitter_ids = list(map(lambda row: row[0], cursor.execute('SELECT DISTINCT submitter_id FROM submission_counts')))
 
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS submitter_info (
@@ -30,13 +26,16 @@ cursor.execute('''
 ''')
 
 count = 0
-stdout.write('Importing ' + str(len(submitter_urls)) + ' addresses...\n')
+stdout.write('Importing information on ' + str(len(submitter_ids)) + ' submitters...\n')
 
-for name, url in submitter_urls.items():
-    with urlopen('https://www.ncbi.nlm.nih.gov' + url) as f:
-        submitter_id = re.match('/clinvar/submitters/(.+)/', url).group(1)
+for submitter_id in submitter_ids:
+    with urlopen('https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + submitter_id + '/') as f:
+        count += 1
+        stdout.write('\r\033[K' + str(count) + '\tSubmitter ' + submitter_id)
         root = html5lib.parse(f, transport_encoding=f.info().get_content_charset())
-        contact_info_el = root.find('.//html:div[@id="maincontent"]//html:div[@class="submitter_main indented"]//html:div[@class="indented"]/html:div[@class="indented"]', ns)
+        submitter_el = root.find('.//html:div[@id="maincontent"]//html:div[@class="submitter_main indented"]', ns)
+        name = submitter_el.find('./html:h2', ns).text
+        contact_info_el = submitter_el.find('.//html:div[@class="indented"]/html:div[@class="indented"]', ns)
         if contact_info_el: #the "ClinVar" submitter has no contact information
             contact_info = list(contact_info_el.itertext())[1:]
             contact_info = list(filter(lambda info: not re.match('http://|https://|Organization ID:', info), contact_info))
@@ -57,8 +56,6 @@ for name, url in submitter_urls.items():
         cursor.execute(
             'INSERT INTO submitter_info VALUES (?,?,?,?,?,?)', (submitter_id, name, city, state, zip_code, country)
         )
-        count += 1
-        stdout.write('\r\033[K' + str(count) + '\t' + name)
 
 stdout.write('\r\033[K')
 db.commit()
