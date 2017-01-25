@@ -2,6 +2,11 @@
 {% block head %}
     <link href="static/tables.css" rel="stylesheet" type="text/css"/>
 {% endblock %}
+{% block title %}
+    Conflicts between {{ significance1 }} variants from
+    {{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }} and {{ significance2 }} variants from
+    {{ submitter_link(submitter2_info['id'], submitter2_info['name'])|safe }}
+{% endblock %}
 {% block content %}
     {% with header = 'Compare ' + significance1 + ' variants from ' + submitter1_info['name'] + ' to ' + significance2 + ' variants from ' + submitter2_info['name'] + ' that have' %}
         {% include 'variant-filter.html' %}
@@ -31,13 +36,13 @@
                 <tr>
                     <td>{{ conflict['rcv']|rcvlink|safe }}</td>
                     <td>{{ conflict['preferred_name'] }}</td>
-                    <td>{{ submitter1_info['name'] }}</td>
+                    <td>{{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }}</td>
                     <td>{{ conflict['scv1'] }}</td>
                     <td>{{ conflict['clin_sig1'] }}</td>
                     <td>{{ conflict['last_eval1'] }}</td>
                     <td>{{ conflict['review_status1'] }}</td>
                     <td>{{ conflict['method1'] }}</td>
-                    <td>{{ conflict['submitter2_name'] }}</td>
+                    <td>{{ submitter_link(conflict['submitter2_id'], conflict['submitter2_name'])|safe }}</td>
                     <td>{{ conflict['scv2'] }}</td>
                     <td>{{ conflict['clin_sig2'] }}</td>
                     <td>{{ conflict['last_eval2'] }}</td>

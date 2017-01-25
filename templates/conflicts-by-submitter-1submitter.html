@@ -3,11 +3,7 @@
     <link href="static/tables.css" rel="stylesheet" type="text/css"/>
 {% endblock %}
 {% block title %}
-    {% if submitter_info %}
-        Conflicts with <a href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/{{ submitter_info['id'] }}/">{{ submitter_info['name'] }}</a>
-    {% else %}
-        Conflicts with {{ submitter_info['name'] }}
-    {% endif %}
+    Conflicts with {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
     <br/>
     <small style="font-size:medium">
         Primary submission method: {{ submitter_primary_method }}
@@ -41,10 +37,10 @@
             <table class="breakdown table table-bordered table-condensed table-striped">
                 <tr>
                     <th/>
-                    <th colspan="{{ breakdown['table']|length + 1 }}">{{ breakdown['name'] }}</th>
+                    <th colspan="{{ breakdown['table']|length + 1 }}">{{ submitter_link(submitter2_id, breakdown['name'])|safe }}</th>
                 </tr>
                 <tr>
-                    <th rowspan="{{ breakdown['table']|length + 1 }}">{{ submitter_info['name'] }}</th>
+                    <th rowspan="{{ breakdown['table']|length + 1 }}">{{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}</th>
                     <th/>
                     {% for significance2 in breakdown['table'] %}
                         <th>{{ significance2 }}</th>

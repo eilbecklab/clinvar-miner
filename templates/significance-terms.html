@@ -7,7 +7,7 @@
         </tr>
         {% for row in total_significance_terms %}
             <tr>
-                <td>{{ row['submitter_name'] }}</td>
+                <td>{{ submitter_link(row['submitter_id'], row['submitter_name'])|safe }}</td>
                 <td>{{ row['count'] }}</td>
             </tr>
         {% endfor %}

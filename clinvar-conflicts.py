@@ -31,6 +31,14 @@ def quote_path(path):
 def rcv_link(rcv):
     return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/' + rcv + '/">' + rcv + '</a>'
 
+@app.context_processor
+def template_functions():
+    def submitter_link(submitter_id, submitter_name):
+        if submitter_id == '0':
+            return submitter_name
+        return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + submitter_id + '/">' + submitter_name + '</a>'
+    return {'submitter_link': submitter_link}
+
 @app.route('/conflicts-by-gene')
 @app.route('/conflicts-by-gene/<gene>')
 def conflicts_by_gene(gene = None):
