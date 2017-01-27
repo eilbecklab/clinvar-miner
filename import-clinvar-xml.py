@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from collections import OrderedDict
 from itertools import combinations
 from os.path import basename
 from sys import argv
@@ -33,13 +34,13 @@ def create_tables():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS conflicts (
             date TEXT,
-            rcv TEXT,
-            gene_symbol TEXT,
-            ncbi_variation_id INT,
+            ncbi_variation_id TEXT,
             preferred_name TEXT,
             variant_type TEXT,
+            gene_symbol TEXT,
             submitter_id TEXT,
             submitter_name TEXT,
+            rcv TEXT,
             scv TEXT,
             clin_sig TEXT,
             last_eval TEXT,
@@ -52,9 +53,9 @@ def create_tables():
     ''')
 
     cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON conflicts (date)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS rcv_index ON conflicts (rcv)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS ncbi_variation_id_index ON conflicts (ncbi_variation_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_id_index ON conflicts (submitter_id)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS scv_index ON conflicts (scv)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS clin_sig_index ON conflicts (clin_sig)')
 
     cursor.execute('''
         CREATE VIEW IF NOT EXISTS current_conflicts AS
@@ -81,6 +82,9 @@ def import_file(filename):
         return
 
     date = matches.group(1)
+    assertions = OrderedDict()
+    conflicting_scvs = set()
+
     submission_counts = {}
     conflicts = []
 
@@ -88,18 +92,22 @@ def import_file(filename):
         if set_el.tag != 'ClinVarSet':
             continue
 
-        assertion_els = list(set_el.findall('./ClinVarAssertion'))
+        ncbi_variation_id = set_el.find('./ReferenceClinVarAssertion/MeasureSet').attrib['ID']
+        if ncbi_variation_id not in assertions:
+            assertions[ncbi_variation_id] = []
 
-        #find out how often each submitter uses each method
-        for assertion_el in assertion_els:
+        for assertion_el in set_el.findall('./ClinVarAssertion'):
+            #find out how often each submitter uses each method
+            scv_el = assertion_el.find('./ClinVarAccession[@Type="SCV"]')
             submission_id_el = assertion_el.find('./ClinVarSubmissionID')
             method_el = assertion_el.find('./ObservedIn/Method/MethodType')
-            clin_sig_el = assertion_el.find('./ClinicalSignificance/Description')
+            clin_sig_description_el = assertion_el.find('./ClinicalSignificance/Description')
 
-            submitter_id = assertion_el.find('./ClinVarAccession[@Type="SCV"]').attrib.get('OrgID', '') #missing in old versions
+            scv = scv_el.attrib['Acc']
+            submitter_id = scv_el.attrib.get('OrgID', '') #missing in old versions
             submitter_name = submission_id_el.attrib.get('submitter', '') if submission_id_el != None else '' #missing in old versions
             method = method_el.text if method_el != None else 'not provided' #missing in old versions
-            clin_sig = clin_sig_el.text.lower() if clin_sig_el != None else ''
+            clin_sig = clin_sig_description_el.text.lower() if clin_sig_description_el != None else 'not provided'
 
             if not submitter_id in submission_counts:
                 submission_counts[submitter_id] = {'name': submitter_name, 'counts': {}}
@@ -109,43 +117,51 @@ def import_file(filename):
                 submission_counts[submitter_id]['counts'][method][clin_sig] = 0
             submission_counts[submitter_id]['counts'][method][clin_sig] += 1
 
-        #find conflicts
-        conflicting_assertion_els = set()
-        for assertion_el1, assertion_el2 in combinations(assertion_els, 2):
-            clin_sig_el1 = assertion_el1.find('./ClinicalSignificance/Description')
-            clin_sig_el2 = assertion_el2.find('./ClinicalSignificance/Description')
+            #group by variant ID, not RCV (one variant can have multiple RCVs for different conditions)
+            assertions[ncbi_variation_id].append([scv, clin_sig])
 
-            clin_sig1 = clin_sig_el1.text.lower() if clin_sig_el1 != None else ''
-            clin_sig2 = clin_sig_el2.text.lower() if clin_sig_el2 != None else ''
+        set_el.clear() #conserve memory
 
-            if clin_sig1 != clin_sig2:
-                conflicting_assertion_els.add(assertion_el1)
-                conflicting_assertion_els.add(assertion_el2)
+    #find conflicts
+    for ncbi_variation_id, assertions in assertions.items():
+        for assertion1, assertion2 in combinations(assertions, 2):
+            if assertion1[1] != assertion2[1]: #if the clinical significances don't match
+                conflicting_scvs.add(assertion1[0])
+                conflicting_scvs.add(assertion2[0])
 
-        for assertion_el in conflicting_assertion_els:
-            reference_assertion_el = set_el.find('./ReferenceClinVarAssertion')
-            measure_set_el = reference_assertion_el.find('./MeasureSet')
-            measure_el = measure_set_el.find('./Measure')
-            gene_symbol_el = measure_el.find('./MeasureRelationship/Symbol/ElementValue[@Type="Preferred"]')
-            preferred_name_el = measure_set_el.find('./Name/ElementValue[@Type="Preferred"]')
+    #extract conflict information
+    for event, set_el in ElementTree.iterparse(filename):
+        if set_el.tag != 'ClinVarSet':
+            continue
+
+        reference_assertion_el = set_el.find('./ReferenceClinVarAssertion')
+        measure_set_el = reference_assertion_el.find('./MeasureSet')
+        preferred_name_el = measure_set_el.find('./Name/ElementValue[@Type="Preferred"]')
+        measure_el = measure_set_el.find('./Measure')
+        gene_symbol_el = measure_el.find('./MeasureRelationship/Symbol/ElementValue[@Type="Preferred"]')
+
+        for assertion_el in set_el.findall('./ClinVarAssertion'):
+            scv_el = assertion_el.find('./ClinVarAccession[@Type="SCV"]')
+            scv = scv_el.attrib['Acc']
+            if scv not in conflicting_scvs:
+                continue
 
             submission_id_el = assertion_el.find('./ClinVarSubmissionID')
-            scv_el = assertion_el.find('./ClinVarAccession[@Type="SCV"]')
             clin_sig_el = assertion_el.find('./ClinicalSignificance')
+            clin_sig_description_el = clin_sig_el.find('./Description')
             review_status_el = clin_sig_el.find('./ReviewStatus')
             sub_condition_el = assertion_el.find('./TraitSet[@Type="PhenotypeInstruction"]/Trait[@Type="PhenotypeInstruction"]/Name/ElementValue[@Type="Preferred"]')
             method_el = assertion_el.find('./ObservedIn/Method/MethodType')
             comment_el = clin_sig_el.find('./Comment')
 
-            rcv = reference_assertion_el.find('./ClinVarAccession[@Type="RCV"]').attrib['Acc']
-            gene_symbol = gene_symbol_el.text if gene_symbol_el != None else ''
             ncbi_variation_id = measure_set_el.attrib['ID']
             preferred_name = preferred_name_el.text if preferred_name_el != None else '' #missing in old versions
             variant_type = measure_el.attrib['Type']
+            gene_symbol = gene_symbol_el.text if gene_symbol_el != None else ''
             submitter_id = scv_el.attrib.get('OrgID', '') #missing in old versions
             submitter_name = submission_id_el.get('submitter', '') if submission_id_el != None else '' #missing in old versions
-            scv = scv_el.attrib['Acc']
-            clin_sig = clin_sig_el.find('./Description').text.lower()
+            rcv = reference_assertion_el.find('./ClinVarAccession[@Type="RCV"]').attrib['Acc']
+            clin_sig = clin_sig_description_el.text.lower() if clin_sig_description_el != None else 'not provided'
             last_eval = clin_sig_el.attrib.get('DateLastEvaluated', '') #missing in old versions
             review_status = review_status_el.text if review_status_el != None else '' #missing in old versions
             sub_condition = sub_condition_el.text if sub_condition_el != None else ''
@@ -154,13 +170,13 @@ def import_file(filename):
 
             conflicts.append((
                 date,
-                rcv,
-                gene_symbol,
                 ncbi_variation_id,
                 preferred_name,
                 variant_type,
+                gene_symbol,
                 submitter_id,
                 submitter_name,
+                rcv,
                 scv,
                 clin_sig,
                 last_eval,

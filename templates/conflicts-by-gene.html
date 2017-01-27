@@ -5,9 +5,9 @@
 {% block content %}
     <table class="table table-bordered table-condensed table-striped">
         <tr>
-            <th>RCV</th>
             <th>Preferred name</th>
             <th>Submitter</th>
+            <th>RCV</th>
             <th>SCV</th>
             <th>Clinical significance</th>
             <th>Last evaluated</th>
@@ -16,9 +16,9 @@
         </tr>
         {% for conflict in conflicts %}
             <tr>
-                <td>{{ conflict['rcv']|rcvlink|safe }}</td>
-                <td>{{ conflict['preferred_name'] }}</td>
+                <td>{{ variant_link(conflict['ncbi_variation_id'], conflict['preferred_name'])|safe }}</td>
                 <td>{{ submitter_link(conflict['submitter_id'], conflict['submitter_name'])|safe }}</td>
+                <td>{{ conflict['rcv']|rcvlink|safe }}</td>
                 <td>{{ conflict['scv'] }}</td>
                 <td>{{ conflict['clin_sig'] }}</td>
                 <td>{{ conflict['last_eval'] }}</td>

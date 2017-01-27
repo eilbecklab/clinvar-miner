@@ -18,7 +18,7 @@ class DB():
         query = '''
             SELECT c1.clin_sig AS clin_sig1, c2.submitter_id AS submitter2_id, c2.submitter_name AS submitter2_name,
             c2.clin_sig AS clin_sig2, COUNT(c2.clin_sig) AS count
-            FROM current_conflicts c1 INNER JOIN current_conflicts c2 ON c1.rcv=c2.rcv
+            FROM current_conflicts c1 INNER JOIN current_conflicts c2 ON c1.ncbi_variation_id=c2.ncbi_variation_id
             WHERE c1.clin_sig!=c2.clin_sig
         '''
 
@@ -53,14 +53,14 @@ class DB():
     def conflicts_by_submitter(self, submitter1_id = None, submitter2_id = None, significance1 = None,
                                significance2 = None, min_stars = 0, method = None):
         query = '''
-            SELECT c1.rcv AS rcv, c1.gene_symbol AS gene_symbol, c1.ncbi_variation_id AS ncbi_variation_id,
-            c1.preferred_name AS preferred_name, c1.variant_type AS variant_type, c1.scv AS scv1,
+            SELECT c1.ncbi_variation_id AS ncbi_variation_id, c1.preferred_name AS preferred_name,
+            c1.variant_type AS variant_type, c1.gene_symbol AS gene_symbol, c1.rcv AS rcv1, c1.scv AS scv1,
             c1.clin_sig AS clin_sig1, c1.last_eval AS last_eval1, c1.review_status AS review_status1,
             c1.sub_condition AS sub_condition1, c2.method AS method1, c1.description AS description1,
-            c2.submitter_id AS submitter2_id, c2.submitter_name AS submitter2_name, c2.scv AS scv2,
+            c2.submitter_id AS submitter2_id, c2.submitter_name AS submitter2_name, c2.rcv AS rcv2, c2.scv AS scv2,
             c2.clin_sig AS clin_sig2, c2.last_eval AS last_eval2, c2.review_status AS review_status2,
             c2.sub_condition AS sub_condition2, c2.method AS method2, c2.description AS description2
-            FROM current_conflicts c1 INNER JOIN current_conflicts c2 ON c1.rcv=c2.rcv
+            FROM current_conflicts c1 INNER JOIN current_conflicts c2 ON c1.ncbi_variation_id=c2.ncbi_variation_id
             WHERE c1.clin_sig!=c2.clin_sig
         '''
 

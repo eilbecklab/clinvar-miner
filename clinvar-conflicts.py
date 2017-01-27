@@ -37,7 +37,14 @@ def template_functions():
         if submitter_id == '0':
             return submitter_name
         return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + submitter_id + '/">' + submitter_name + '</a>'
-    return {'submitter_link': submitter_link}
+
+    def variant_link(ncbi_variation_id, preferred_name):
+        return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + ncbi_variation_id + '/">' + preferred_name + '</a>'
+
+    return {
+        'submitter_link': submitter_link,
+        'variant_link': variant_link,
+    }
 
 @app.route('/conflicts-by-gene')
 @app.route('/conflicts-by-gene/<gene>')

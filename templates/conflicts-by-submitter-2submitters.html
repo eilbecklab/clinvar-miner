@@ -16,15 +16,16 @@
     {% else %}
         <table class="table table-bordered table-condensed table-striped">
             <tr>
-                <th>RCV</th>
                 <th>Preferred name</th>
                 <th>Submitter 1</th>
+                <th>RCV</th>
                 <th>SCV</th>
                 <th>Clinical significance</th>
                 <th>Last evaluated</th>
                 <th>Review status</th>
                 <th>Method</th>
                 <th>Submitter 2</th>
+                <th>RCV</th>
                 <th>SCV</th>
                 <th>Clinical significance</th>
                 <th>Last evaluated</th>
@@ -33,15 +34,16 @@
             </tr>
             {% for conflict in conflicts %}
                 <tr>
-                    <td>{{ conflict['rcv']|rcvlink|safe }}</td>
-                    <td>{{ conflict['preferred_name'] }}</td>
+                    <td>{{ variant_link(conflict['ncbi_variation_id'], conflict['preferred_name'])|safe }}</td>
                     <td>{{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }}</td>
+                    <td>{{ conflict['rcv1']|rcvlink|safe }}</td>
                     <td>{{ conflict['scv1'] }}</td>
                     <td>{{ conflict['clin_sig1'] }}</td>
                     <td>{{ conflict['last_eval1'] }}</td>
                     <td>{{ conflict['review_status1'] }}</td>
                     <td>{{ conflict['method1'] }}</td>
                     <td>{{ submitter_link(conflict['submitter2_id'], conflict['submitter2_name'])|safe }}</td>
+                    <td>{{ conflict['rcv2']|rcvlink|safe }}</td>
                     <td>{{ conflict['scv2'] }}</td>
                     <td>{{ conflict['clin_sig2'] }}</td>
                     <td>{{ conflict['last_eval2'] }}</td>
