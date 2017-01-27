@@ -2,12 +2,12 @@
 {% block content %}
     <ul class="list-group">
         <li class="list-group-item" style="font-weight:bold">
-            <span style="float:right">Conflicts</span>
+            <span style="float:right">Conflicting submissions</span>
             Gene
         </li>
         {% for row in total_conflicts_by_gene %}
             <li class="list-group-item">
-                <a href="conflicts-by-gene/{{ row['gene_symbol']|quotepath }}" style="display:block">
+                <a href="conflicting-submissions-by-gene/{{ row['gene_symbol']|quotepath }}" style="display:block">
                     <span style="float:right">{{ row['count'] }}</span>
                     {{ row['gene_symbol'] }}
                 </a>

@@ -46,14 +46,14 @@ def template_functions():
         'variant_link': variant_link,
     }
 
-@app.route('/conflicts-by-gene')
-@app.route('/conflicts-by-gene/<gene>')
+@app.route('/conflicting-submissions-by-gene')
+@app.route('/conflicting-submissions-by-gene/<gene>')
 def conflicts_by_gene(gene = None):
     db = DB()
 
     if not gene:
         return render_template(
-            'conflicts-by-gene-index.html',
+            'conflicting-submissions-by-gene-index.html',
             title='Conflicts by Gene',
             total_conflicts_by_gene=db.total_conflicts_by_gene()
         )
@@ -62,8 +62,8 @@ def conflicts_by_gene(gene = None):
     conflicts = db.conflicts_by_gene(gene)
 
     return render_template(
-        'conflicts-by-gene.html',
-        title='Conflicts for gene ' + gene,
+        'conflicting-submissions-by-gene.html',
+        title='Conflicting submissions for gene ' + gene,
         conflicts=conflicts,
     )
 
@@ -213,7 +213,7 @@ def conflicts_by_significance(significance1 = None, significance2 = None):
 
     return render_template(
         'conflicts-by-significance-2significances.html',
-        title='Conflicting ' + significance1 + ' and ' + significance2 + ' submissions',
+        title='Conflicts between ' + significance1 + ' and ' + significance2 + ' submissions',
         significance1=significance1,
         significance2=significance2,
         conflicts=conflicts,
@@ -254,12 +254,12 @@ def significance_terms(term = None):
         total_significance_terms=db.total_significance_terms(term),
     )
 
-@app.route('/total-conflicts-by-method')
+@app.route('/total-conflicting-submissions-by-method')
 def total_conflicts_by_method():
     db = DB()
     return render_template(
-        'total-conflicts-by-method.html',
-        title='Total Conflicts By Method',
+        'total-conflicting-submissions-by-method.html',
+        title='Total Conflicting Submissions By Method',
         total_conflicts_by_method_over_time=db.total_conflicts_by_method_over_time(),
     )
 
