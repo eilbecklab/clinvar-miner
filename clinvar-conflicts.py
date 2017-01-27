@@ -136,7 +136,7 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
             submitter2_info = {'id': submitter2_id, 'name': submitter2_id}
 
     if not significance1:
-        conflicts = db.conflicts_by_submitter(
+        conflicts = db.conflicts(
             submitter1_id=submitter1_id,
             submitter2_id=submitter2_id if submitter2_id != '0' else None,
             min_stars=min_stars,
@@ -153,7 +153,7 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
             method=method,
         )
 
-    conflicts = db.conflicts_by_submitter(
+    conflicts = db.conflicts(
         submitter1_id=submitter1_id,
         submitter2_id=submitter2_id if submitter2_id != '0' else None,
         significance1=significance1,
@@ -175,27 +175,48 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
     )
 
 @app.route('/conflicts-by-significance')
-def conflicts_by_significance():
+@app.route('/conflicts-by-significance/<significance1>/<significance2>')
+def conflicts_by_significance(significance1 = None, significance2 = None):
     min_stars = request.args.get('min_stars')
     min_stars = int(min_stars) if min_stars else 0
     method = request.args.get('method')
 
     db = DB()
-    conflict_overview = db.conflict_overview(min_stars=min_stars, method=method)
-    significances = db.significances()
     methods = db.methods()
 
-    breakdown = create_breakdown_table(significances)
-    for row in conflict_overview:
-        clin_sig1 = row['clin_sig1']
-        clin_sig2 = row['clin_sig2']
-        count = row['count']
-        breakdown[clin_sig1][clin_sig2] = count
+    if not significance2:
+        conflict_overview = db.conflict_overview(min_stars=min_stars, method=method)
+        significances = db.significances()
+
+        breakdown = create_breakdown_table(significances)
+        for row in conflict_overview:
+            clin_sig1 = row['clin_sig1']
+            clin_sig2 = row['clin_sig2']
+            count = row['count']
+            breakdown[clin_sig1][clin_sig2] = count
+
+        return render_template(
+            'conflicts-by-significance.html',
+            title='Conflicts by Significance',
+            breakdown=breakdown,
+            method_options=methods,
+            min_stars=min_stars,
+            method=method,
+        )
+
+    conflicts = db.conflicts(
+        significance1=significance1,
+        significance2=significance2,
+        min_stars=min_stars,
+        method=method,
+    )
 
     return render_template(
-        'conflicts-by-significance.html',
-        title='Conflicts by Significance',
-        breakdown=breakdown,
+        'conflicts-by-significance-2significances.html',
+        title='Conflicting ' + significance1 + ' and ' + significance2 + ' submissions',
+        significance1=significance1,
+        significance2=significance2,
+        conflicts=conflicts,
         method_options=methods,
         min_stars=min_stars,
         method=method,

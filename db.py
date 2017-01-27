@@ -50,8 +50,8 @@ class DB():
             self.cursor.execute('SELECT * FROM current_conflicts WHERE gene_symbol=? ORDER BY preferred_name', [gene])
         ))
 
-    def conflicts_by_submitter(self, submitter1_id = None, submitter2_id = None, significance1 = None,
-                               significance2 = None, min_stars = 0, method = None):
+    def conflicts(self, submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None,
+                  min_stars = 0, method = None):
         query = '''
             SELECT c1.ncbi_variation_id AS ncbi_variation_id, c1.preferred_name AS preferred_name,
             c1.variant_type AS variant_type, c1.gene_symbol AS gene_symbol, c1.submitter_id AS submitter1_id,
