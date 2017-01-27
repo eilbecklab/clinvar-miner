@@ -83,6 +83,8 @@ class DB():
         if method:
             query += ' AND c2.method=:method'
 
+        query += ' ORDER BY c1.preferred_name'
+
         return list(map(
             dict,
             self.cursor.execute(
