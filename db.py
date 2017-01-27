@@ -44,7 +44,7 @@ class DB():
             )
         ))
 
-    def conflicts_by_gene(self, gene = None):
+    def conflicts_by_gene(self, gene):
         return list(map(
             dict,
             self.cursor.execute('SELECT * FROM current_conflicts WHERE gene_symbol=? ORDER BY preferred_name', [gene])
