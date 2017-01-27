@@ -31,7 +31,7 @@ class DB():
         if method:
             query += ' AND c2.method=:method'
 
-        query += ' GROUP BY c2.submitter_id, c2.clin_sig'
+        query += ' GROUP BY c2.submitter_id, c2.clin_sig ORDER BY c2.submitter_name'
 
         return list(map(
             dict,
