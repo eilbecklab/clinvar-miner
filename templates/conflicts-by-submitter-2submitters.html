@@ -35,7 +35,7 @@
             {% for conflict in conflicts %}
                 <tr>
                     <td>{{ variant_link(conflict['ncbi_variation_id'], conflict['preferred_name'])|safe }}</td>
-                    <td>{{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }}</td>
+                    <td>{{ submitter_link(conflict['submitter1_id'], conflict['submitter1_name'])|safe }}</td>
                     <td>{{ conflict['rcv1']|rcvlink|safe }}</td>
                     <td>{{ conflict['scv1'] }}</td>
                     <td>{{ conflict['clin_sig1'] }}</td>
