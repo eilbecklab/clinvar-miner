@@ -31,6 +31,11 @@ def create_tables():
         )
     ''')
 
+    cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON submission_counts (date)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submitter_id_index ON submission_counts (submitter_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submitter_name_index ON submission_counts (submitter_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS clin_sig_index ON submission_counts (clin_sig)')
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS conflicts (
             date TEXT,
@@ -54,8 +59,12 @@ def create_tables():
 
     cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON conflicts (date)')
     cursor.execute('CREATE INDEX IF NOT EXISTS ncbi_variation_id_index ON conflicts (ncbi_variation_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS preferred_name_index ON conflicts (preferred_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS gene_symbol_index ON conflicts (gene_symbol)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_id_index ON conflicts (submitter_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submitter_name_index ON conflicts (submitter_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS clin_sig_index ON conflicts (clin_sig)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS method_index ON conflicts (method)')
 
     cursor.execute('''
         CREATE VIEW IF NOT EXISTS current_conflicts AS
