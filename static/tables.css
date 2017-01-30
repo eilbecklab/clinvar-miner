@@ -11,3 +11,15 @@
 .breakdown td:hover, .summary td:hover {
     background-color: lightblue !important;
 }
+
+.sortable th {
+    cursor: pointer;
+}
+
+.sortable th.headerSortUp::after {
+    content: ' ▼';
+}
+
+.sortable th.headerSortDown::after {
+    content: ' ▲';
+}

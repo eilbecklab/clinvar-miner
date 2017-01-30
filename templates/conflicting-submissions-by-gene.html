@@ -1,30 +1,39 @@
 {% extends 'skin.html' %}
 {% block head %}
     <link href="static/tables.css" rel="stylesheet" type="text/css"/>
+    <script src="static/jquery-3.1.1.js" type="application/javascript"></script>
+    <script src="static/jquery.tablesorter.js" type="application/javascript"></script>
 {% endblock %}
 {% block content %}
-    <table class="table table-bordered table-condensed table-striped">
-        <tr>
-            <th>Preferred name</th>
-            <th>Submitter</th>
-            <th>RCV</th>
-            <th>SCV</th>
-            <th>Clinical significance</th>
-            <th>Last evaluated</th>
-            <th>Review status</th>
-            <th>Method</th>
-        </tr>
-        {% for conflict in conflicts %}
+    <table class="sortable table table-bordered table-condensed table-striped">
+        <thead>
             <tr>
-                <td>{{ variant_link(conflict['ncbi_variation_id'], conflict['preferred_name'])|safe }}</td>
-                <td>{{ submitter_link(conflict['submitter_id'], conflict['submitter_name'])|safe }}</td>
-                <td>{{ conflict['rcv']|rcvlink|safe }}</td>
-                <td>{{ conflict['scv'] }}</td>
-                <td>{{ conflict['clin_sig'] }}</td>
-                <td>{{ conflict['last_eval'] }}</td>
-                <td>{{ conflict['review_status'] }}</td>
-                <td>{{ conflict['method'] }}</td>
+                <th>Preferred name</th>
+                <th>Submitter</th>
+                <th>RCV</th>
+                <th>SCV</th>
+                <th>Clinical significance</th>
+                <th>Last evaluated</th>
+                <th>Review status</th>
+                <th>Method</th>
             </tr>
-        {% endfor %}
+        </thead>
+        <tbody>
+            {% for conflict in conflicts %}
+                <tr>
+                    <td>{{ variant_link(conflict['ncbi_variation_id'], conflict['preferred_name'])|safe }}</td>
+                    <td>{{ submitter_link(conflict['submitter_id'], conflict['submitter_name'])|safe }}</td>
+                    <td>{{ conflict['rcv']|rcvlink|safe }}</td>
+                    <td>{{ conflict['scv'] }}</td>
+                    <td>{{ conflict['clin_sig'] }}</td>
+                    <td>{{ conflict['last_eval'] }}</td>
+                    <td>{{ conflict['review_status'] }}</td>
+                    <td>{{ conflict['method'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
     </table>
+    <script>
+        $('.sortable').tablesorter({sortList: [[0, 0]]});
+    </script>
 {% endblock %}
