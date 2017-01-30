@@ -38,12 +38,12 @@
         {% for submitter2_id, breakdown in breakdowns.items() %}
             <table class="breakdown table table-bordered table-condensed table-striped">
                 <tr>
-                    <th/>
+                    <th></th>
                     <th colspan="{{ breakdown['table']|length + 1 }}">{{ submitter_link(submitter2_id, breakdown['name'])|safe }}</th>
                 </tr>
                 <tr>
                     <th rowspan="{{ breakdown['table']|length + 1 }}">{{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}</th>
-                    <th/>
+                    <th></th>
                     {% for significance2 in breakdown['table'] %}
                         <th>{{ significance2 }}</th>
                     {% endfor %}
