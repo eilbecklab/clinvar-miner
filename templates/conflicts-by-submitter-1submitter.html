@@ -28,7 +28,9 @@
             {% for submitter2_id, row in summary.items() %}
                 <tr>
                     <th>{{ row['name'] }}</th>
-                    <td><a href="conflicts-by-submitter/{{ submitter_info['id'] }}/{{ submitter2_id }}">{{ row['total'] }}</a></td>
+                    <td>
+                        <a href="conflicts-by-submitter/{{ submitter_info['id'] }}/{{ submitter2_id }}{{ request|querysuffix }}">{{ row['total'] }}</a>
+                    </td>
                 </tr>
             {% endfor %}
         </table>
@@ -51,8 +53,8 @@
                         <th>{{ significance1 }}</th>
                         {% for significance2, count in row.items() %}
                             {% if count > 0 %}
-                                <td style="{{ 'background-color:coral' if count > 0 else '' }}">
-                                    <a href="conflicts-by-submitter/{{ submitter_info['id'] }}/{{ submitter2_id }}/{{ significance1|quotepath }}/{{ significance2|quotepath }}">{{ count }}</a>
+                                <td style="background-color:coral">
+                                    <a href="conflicts-by-submitter/{{ submitter_info['id'] }}/{{ submitter2_id }}/{{ significance1|quotepath }}/{{ significance2|quotepath }}{{ request|querysuffix }}">{{ count }}</a>
                                 </td>
                             {% else %}
                                 <td>0</td>

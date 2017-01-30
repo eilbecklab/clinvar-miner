@@ -23,6 +23,10 @@ def create_breakdown_table(significances):
 def string_or_space(path):
     return path if path else '\u200B'
 
+@app.template_filter('querysuffix')
+def query_suffix(request):
+    return '?' + request.query_string.decode('utf-8') if request.query_string else ''
+
 @app.template_filter('quotepath')
 def quote_path(path):
     return urllib.parse.quote(path).replace('/', '%252F')
