@@ -3,8 +3,8 @@ from sqlite3 import OperationalError
 
 class DB():
     STAR_MAP = [
-        'c2.review_status="criteria provided, multiple submitter_ids, no conflicts" OR c2.review_status="criteria provided, single submitter_id"',
-        'c2.review_status="criteria provided, multiple submitter_ids, no conflicts"',
+        'c2.review_status="criteria provided, single submitter" OR c2.review_status="criteria provided, conflicting interpretations"',
+        'c2.review_status="criteria provided, multiple submitters, no conflicts"',
         'c2.review_status="reviewed by expert panel"',
         'c2.review_status="practice guideline"',
     ]
