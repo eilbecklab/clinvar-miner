@@ -1,17 +1,23 @@
 {% extends 'skin.html' %}
 {% block content %}
-    <ul class="list-group">
-        <li class="list-group-item" style="font-weight:bold">
-            <span style="float:right">Conflicting submissions</span>
-            Gene
-        </li>
-        {% for row in total_conflicts_by_gene %}
-            <li class="list-group-item">
-                <a href="conflicting-submissions-by-gene/{{ row['gene_symbol']|quotepath }}" style="display:block">
-                    <span style="float:right">{{ row['count'] }}</span>
-                    {{ row['gene_symbol'] }}
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
+    <table class="sortable table" style="width:auto">
+        <thead>
+            <tr>
+                <th>Gene</th>
+                <th style="text-align:right">Conflicting submissions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in total_conflicts_by_gene  %}
+                <tr>
+                    <td>
+                        <a href="conflicting-submissions-by-gene/{{ row['gene_symbol']|quotepath }}" style="display:block">
+                            {{ row['gene_symbol'] }}
+                        </a>
+                    </td>
+                    <td style="text-align:right">{{ row['count'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
