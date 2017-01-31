@@ -2,7 +2,7 @@
 
 import urllib
 from collections import OrderedDict
-from dateutil.parser import parse as parsedate
+from datetime import datetime
 from db import DB
 from flask import Flask
 from flask import render_template
@@ -33,7 +33,7 @@ def break_punctuation(text):
 
 @app.template_filter('date')
 def prettify_date(iso_date):
-    return parsedate(iso_date).strftime('%d %b %Y') if iso_date else ''
+    return datetime.strptime(iso_date[:10], '%Y-%m-%d').strftime('%d %b %Y') if iso_date else ''
 
 @app.template_filter('orspace')
 def string_or_space(path):
