@@ -2,6 +2,7 @@
 
 import urllib
 from collections import OrderedDict
+from dateutil.parser import parse as parsedate
 from db import DB
 from flask import Flask
 from flask import render_template
@@ -18,6 +19,21 @@ def create_breakdown_table(significances):
         for significance2 in significances:
             breakdown_table[significance1][significance2] = 0
     return breakdown_table
+
+def break_punctuation(text):
+    #provide additional line breaking opportunities
+    return (text
+        .replace('(', '<wbr/>(')
+        .replace(')', ')<wbr/>')
+        .replace(',', ',<wbr/>')
+        .replace('.', '.<wbr/>')
+        .replace(':', '<wbr/>:<wbr/>')
+        .replace('-', '-<wbr/>')
+    )
+
+@app.template_filter('date')
+def prettify_date(iso_date):
+    return parsedate(iso_date).strftime('%d %b %Y') if iso_date else ''
 
 @app.template_filter('orspace')
 def string_or_space(path):
@@ -40,10 +56,10 @@ def template_functions():
     def submitter_link(submitter_id, submitter_name):
         if submitter_id == '0':
             return submitter_name
-        return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + submitter_id + '/">' + submitter_name + '</a>'
+        return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + submitter_id + '/">' + break_punctuation(submitter_name) + '</a>'
 
     def variant_link(ncbi_variation_id, preferred_name):
-        return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + ncbi_variation_id + '/">' + preferred_name + '</a>'
+        return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + ncbi_variation_id + '/">' + break_punctuation(preferred_name) + '</a>'
 
     return {
         'submitter_link': submitter_link,

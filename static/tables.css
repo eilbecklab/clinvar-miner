@@ -8,7 +8,7 @@
     vertical-align: middle !important;
 }
 
-.breakdown td:hover, .summary td:hover {
+.breakdown td:hover, .summary td:hover, .sortable td:hover {
     background-color: lightblue !important;
 }
 
