@@ -1,6 +1,27 @@
 {% extends 'skin.html' %}
+{% block head %}
+    <style type="text/css">
+        .navlinks {
+            width: 400px;
+        }
+
+        .navlinks a {
+            display: block;
+            padding: 10px 0;
+        }
+    </style>
+{% endblock %}
 {% block content %}
     <p>Welcome to the ClinVar Data Visualization website!</p>
 
     <p>The content on this site is current as of {{ max_date }}.</p>
+
+    <div class="navlinks">
+        <a href="total-submissions-by-method">Total Submissions by Method</a>
+        <a href="total-conflicting-submissions-by-method">Total Conflicting Submissions by Method</a>
+        <a href="conflicts-by-submitter">Conflicts by Submitter</a>
+        <a href="conflicts-by-significance">Conflicts by Significance</a>
+        <a href="conflicting-submissions-by-gene">Conflicting Submissions by Gene</a>
+        <a href="significance-terms">Significance Terms</a>
+    </div>
 {% endblock %}

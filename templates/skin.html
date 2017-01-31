@@ -10,14 +10,14 @@
         <style type="text/css">
             #top-stripe {
                 background: url(static/clingen-stripe.png);
-                background-repeat: x;
+                background-repeat: repeat-x;
             }
 
             #top-stripe > div {
                 font-size: 25px;
                 font-weight: bold;
                 line-height: 40px;
-                opacity: 0.3;
+                opacity: 0.5;
                 padding-right: 10px;
                 text-align: right;
                 vertical-align: middle;
@@ -28,20 +28,9 @@
     </head>
     <body>
         <div id="top-stripe">
-            <div>ClinVar Data Visualization</div>
+            <div><a href="">ClinVar Data Visualization</a></div>
         </div>
         <div style="display:flex">
-            <div>
-                <ul class="nav nav-pills nav-stacked" style="width:250px">
-                    <li><a href="">Home</a></li>
-                    <li><a href="total-submissions-by-method">Total Submissions by Method</a></li>
-                    <li><a href="total-conflicting-submissions-by-method">Total Conflicting Submissions by Method</a></li>
-                    <li><a href="conflicts-by-submitter">Conflicts by Submitter</a></li>
-                    <li><a href="conflicts-by-significance">Conflicts by Significance</a></li>
-                    <li><a href="conflicting-submissions-by-gene">Conflicting Submissions by Gene</a></li>
-                    <li><a href="significance-terms">Significance Terms</a></li>
-                </ul>
-            </div>
             <div class="container">
                 <h1>{% block title %}{{ title }}{% endblock %}</h1>
                 <div id="content">{% block content %}{% endblock %}</div>
