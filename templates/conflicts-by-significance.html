@@ -20,7 +20,7 @@
                 {% for significance2, count in row.items() %}
                     {% if count > 0 %}
                         <td style="background-color:coral">
-                            <a href="conflicts-by-significance/{{ significance1 }}/{{ significance2 }}{{ request|querysuffix }}">{{ count }}</a>
+                            <a href="conflicts-by-significance/{{ significance1|quotepath }}/{{ significance2|quotepath }}{{ request|querysuffix }}">{{ count }}</a>
                         </td>
                     {% else %}
                         <td>{{ count }}</td>

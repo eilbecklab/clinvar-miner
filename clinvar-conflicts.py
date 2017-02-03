@@ -173,6 +173,9 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
             method=method,
         )
 
+    significance1 = significance1.replace('%2F', '/')
+    significance2 = significance2.replace('%2F', '/')
+
     conflicts = db.conflicts(
         submitter1_id=submitter1_id,
         submitter2_id=submitter2_id if submitter2_id != '0' else None,
@@ -223,6 +226,9 @@ def conflicts_by_significance(significance1 = None, significance2 = None):
             min_stars=min_stars,
             method=method,
         )
+
+    significance1 = significance1.replace('%2F', '/')
+    significance2 = significance2.replace('%2F', '/')
 
     conflicts = db.conflicts(
         significance1=significance1,
