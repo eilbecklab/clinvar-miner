@@ -82,6 +82,19 @@ def create_tables():
         )
     ''')
 
+def parse_clin_sig(clin_sig_el):
+    comment_el = clin_sig_el.find('./Comment')
+    if comment_el != None:
+        converted_clin_sig_comment = re.search(r'Converted during submission to (.+)\.', comment_el.text)
+        if converted_clin_sig_comment:
+            return converted_clin_sig_comment.group(1).lower()
+
+    description_el = clin_sig_el.find('./Description')
+    if description_el != None:
+        return description_el.text.lower()
+
+    return 'not provided'
+
 def import_file(filename):
     matches = re.fullmatch(r'ClinVarFullRelease_(\d\d\d\d-\d\d).xml', basename(filename))
     if matches:
@@ -110,13 +123,13 @@ def import_file(filename):
             scv_el = assertion_el.find('./ClinVarAccession[@Type="SCV"]')
             submission_id_el = assertion_el.find('./ClinVarSubmissionID')
             method_el = assertion_el.find('./ObservedIn/Method/MethodType')
-            clin_sig_description_el = assertion_el.find('./ClinicalSignificance/Description')
+            clin_sig_el = assertion_el.find('./ClinicalSignificance')
 
             scv = scv_el.attrib['Acc']
             submitter_id = scv_el.attrib.get('OrgID', '') #missing in old versions
             submitter_name = submission_id_el.attrib.get('submitter', '') if submission_id_el != None else '' #missing in old versions
             method = method_el.text if method_el != None else 'not provided' #missing in old versions
-            clin_sig = clin_sig_description_el.text.lower() if clin_sig_description_el != None else 'not provided'
+            clin_sig = parse_clin_sig(clin_sig_el)
 
             if not submitter_id in submission_counts:
                 submission_counts[submitter_id] = {'name': submitter_name, 'counts': {}}
@@ -157,7 +170,6 @@ def import_file(filename):
 
             submission_id_el = assertion_el.find('./ClinVarSubmissionID')
             clin_sig_el = assertion_el.find('./ClinicalSignificance')
-            clin_sig_description_el = clin_sig_el.find('./Description')
             review_status_el = clin_sig_el.find('./ReviewStatus')
             sub_condition_el = assertion_el.find('./TraitSet[@Type="PhenotypeInstruction"]/Trait[@Type="PhenotypeInstruction"]/Name/ElementValue[@Type="Preferred"]')
             method_el = assertion_el.find('./ObservedIn/Method/MethodType')
@@ -170,7 +182,7 @@ def import_file(filename):
             submitter_id = scv_el.attrib.get('OrgID', '') #missing in old versions
             submitter_name = submission_id_el.get('submitter', '') if submission_id_el != None else '' #missing in old versions
             rcv = reference_assertion_el.find('./ClinVarAccession[@Type="RCV"]').attrib['Acc']
-            clin_sig = clin_sig_description_el.text.lower() if clin_sig_description_el != None else 'not provided'
+            clin_sig = parse_clin_sig(clin_sig_el)
             last_eval = clin_sig_el.attrib.get('DateLastEvaluated', '') #missing in old versions
             review_status = review_status_el.text if review_status_el != None else '' #missing in old versions
             sub_condition = sub_condition_el.text if sub_condition_el != None else ''
