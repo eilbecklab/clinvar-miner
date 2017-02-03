@@ -213,7 +213,7 @@ def conflicts_by_significance(significance1 = None, significance2 = None):
             clin_sig1 = row['clin_sig1']
             clin_sig2 = row['clin_sig2']
             count = row['count']
-            breakdown[clin_sig1][clin_sig2] = count
+            breakdown[clin_sig1][clin_sig2] += count
 
         return render_template(
             'conflicts-by-significance.html',

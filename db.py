@@ -17,7 +17,7 @@ class DB():
     def conflict_overview(self, submitter_id = None, min_stars = 0, method = None):
         query = '''
             SELECT c1.clin_sig AS clin_sig1, c2.submitter_id AS submitter2_id, c2.submitter_name AS submitter2_name,
-            c2.clin_sig AS clin_sig2, COUNT(c2.clin_sig) AS count
+            c2.clin_sig AS clin_sig2, COUNT(*) AS count
             FROM current_conflicts c1 INNER JOIN current_conflicts c2 ON c1.ncbi_variation_id=c2.ncbi_variation_id
             WHERE c1.clin_sig!=c2.clin_sig
         '''
@@ -31,7 +31,7 @@ class DB():
         if method:
             query += ' AND c2.method=:method'
 
-        query += ' GROUP BY c2.submitter_id, c2.clin_sig ORDER BY c2.submitter_name'
+        query += ' GROUP BY c2.submitter_id, c1.clin_sig, c2.clin_sig ORDER BY c2.submitter_name'
 
         return list(map(
             dict,
