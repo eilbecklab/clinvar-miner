@@ -144,7 +144,10 @@ class DB():
 
     def submitter_primary_method(self, submitter_id):
         return list(
-            self.cursor.execute('SELECT method FROM submitter_primary_method WHERE submitter_id=:submitter_id', [submitter_id])
+            self.cursor.execute(
+                'SELECT method FROM submitter_primary_method WHERE submitter_id=:submitter_id',
+                [submitter_id]
+            )
         )[0][0]
 
     def total_conflicts_by_gene(self):
@@ -205,7 +208,8 @@ class DB():
     def total_submissions_by_method_over_time(self):
         return list(map(
             dict,
-            self.cursor.execute(
-                'SELECT date, method, SUM(count) AS count FROM submission_counts GROUP BY date, method ORDER BY date, method'
-            )
+            self.cursor.execute('''
+                SELECT date, method, SUM(count) AS count FROM submission_counts
+                GROUP BY date, method ORDER BY date, method
+            ''')
         ))
