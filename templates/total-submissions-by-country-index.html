@@ -1,0 +1,19 @@
+{% extends 'skin.html' %}
+{% block content %}
+    <table class="sortable table" style="width:auto">
+        <thead>
+            <tr>
+                <th>Country</th>
+                <th>Submissions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in total_submissions_by_country %}
+                <tr>
+                    <td>{{ row['country'] }}</td>
+                    <td>{{ row['count'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

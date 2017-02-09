@@ -297,3 +297,12 @@ def total_submissions_by_method():
         title='Total Submissions by Method',
         total_submissions_by_method_over_time=db.total_submissions_by_method_over_time(),
     )
+
+@app.route('/total-submissions-by-country')
+def total_submissions_by_country():
+    db = DB()
+    return render_template(
+        'total-submissions-by-country-index.html',
+        title='Total Submissions by Country',
+        total_submissions_by_country=db.total_submissions_by_country(),
+    )

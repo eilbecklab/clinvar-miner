@@ -191,6 +191,17 @@ class DB():
             self.cursor.execute('SELECT date, COUNT(DISTINCT clin_sig) AS count FROM submission_counts GROUP BY date')
         ))
 
+    def total_submissions_by_country(self):
+        return list(map(
+            dict,
+            self.cursor.execute('''
+                SELECT country, SUM(count) AS count FROM submission_counts
+                LEFT JOIN submitter_info ON submission_counts.submitter_id=submitter_info.id
+                WHERE date=(SELECT MAX(date) FROM submission_counts)
+                GROUP BY country ORDER BY country
+            ''')
+        ))
+
     def total_submissions_by_method_over_time(self):
         return list(map(
             dict,
