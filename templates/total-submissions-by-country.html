@@ -3,16 +3,14 @@
     <table class="sortable table" style="width:auto">
         <thead>
             <tr>
-                <th>Country</th>
+                <th>Submitter</th>
                 <th>Submissions</th>
             </tr>
         </thead>
         <tbody>
-            {% for row in total_submissions_by_country %}
+            {% for row in total_submissions_by_submitter %}
                 <tr>
-                    <td>
-                        <a href="total-submissions-by-country/{{ row['country']|quotepath }}" style="display:block">{{ row['country']|orspace }}</a>
-                    </td>
+                    <td>{{ submitter_link(row['submitter_id'], row['submitter_name'])|safe }}</td>
                     <td>{{ row['count'] }}</td>
                 </tr>
             {% endfor %}

@@ -213,3 +213,14 @@ class DB():
                 GROUP BY date, method ORDER BY date, method
             ''')
         ))
+
+    def total_submissions_by_submitter(self, country):
+        return list(map(
+            dict,
+            self.cursor.execute('''
+                SELECT submitter_id, submitter_name, SUM(count) AS count FROM submission_counts
+                LEFT JOIN submitter_info ON submission_counts.submitter_id=submitter_info.id
+                WHERE date=(SELECT MAX(date) FROM submission_counts) AND country=:country
+                GROUP BY submitter_id ORDER BY submitter_name
+            ''', [country])
+        ))

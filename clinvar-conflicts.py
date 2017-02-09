@@ -299,10 +299,22 @@ def total_submissions_by_method():
     )
 
 @app.route('/total-submissions-by-country')
-def total_submissions_by_country():
+@app.route('/total-submissions-by-country/', defaults={'country': ''})
+@app.route('/total-submissions-by-country/<country>')
+def total_submissions_by_country(country = None):
     db = DB()
+
+    if country == None:
+        return render_template(
+            'total-submissions-by-country-index.html',
+            title='Total Submissions by Country',
+            total_submissions_by_country=db.total_submissions_by_country(),
+        )
+
+    country = country.replace('%2F', '/')
+
     return render_template(
-        'total-submissions-by-country-index.html',
-        title='Total Submissions by Country',
-        total_submissions_by_country=db.total_submissions_by_country(),
+        'total-submissions-by-country.html',
+        title='Total Submissions from "' + country + '"',
+        total_submissions_by_submitter=db.total_submissions_by_submitter(country=country),
     )
