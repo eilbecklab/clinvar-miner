@@ -11,7 +11,7 @@
             {% for row in total_conflicts_by_gene  %}
                 <tr>
                     <td>
-                        <a href="conflicting-submissions-by-gene/{{ row['gene_symbol']|quotepath }}" style="display:block">
+                        <a href="conflicting-submissions-by-gene/{{ row['gene_symbol']|quotepath }}">
                             {{ row['gene_symbol'] }}
                         </a>
                     </td>

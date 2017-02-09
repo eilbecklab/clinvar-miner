@@ -11,9 +11,7 @@
             {% for row in total_conflicts_by_submitter %}
                 <tr>
                     <td>
-                        <a href="conflicts-by-submitter/{{ row['submitter_id'] }}" style="display:block">
-                            {{ row['submitter_name'] }}
-                        </a>
+                        <a href="conflicts-by-submitter/{{ row['submitter_id'] }}">{{ row['submitter_name'] }}</a>
                     </td>
                     <td style="text-align:right">{{ row['count'] }}</td>
                 </tr>

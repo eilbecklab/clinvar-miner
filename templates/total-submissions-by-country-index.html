@@ -11,7 +11,9 @@
             {% for row in total_submissions_by_country %}
                 <tr>
                     <td>
-                        <a href="total-submissions-by-country/{{ row['country']|quotepath }}" style="display:block">{{ row['country']|orspace }}</a>
+                        <a href="total-submissions-by-country/{{ row['country']|quotepath }}">
+                            {{ row['country']|orspace }}
+                        </a>
                     </td>
                     <td>{{ row['count'] }}</td>
                 </tr>

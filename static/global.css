@@ -7,6 +7,10 @@
     background-color: lightblue !important;
 }
 
+.breakdown a, .summary a, .sortable a {
+    display: block;
+}
+
 .sortable th {
     cursor: pointer;
 }
