@@ -1,4 +1,5 @@
 import sqlite3
+from pycountry import countries
 from sqlite3 import OperationalError
 
 class DB():
@@ -195,7 +196,7 @@ class DB():
         ))
 
     def total_submissions_by_country(self):
-        return list(map(
+        ret = list(map(
             dict,
             self.cursor.execute('''
                 SELECT country, SUM(count) AS count FROM submission_counts
@@ -204,6 +205,12 @@ class DB():
                 GROUP BY country ORDER BY country
             ''')
         ))
+        for row in ret:
+            try:
+                row['country_code'] = countries.lookup(row['country']).alpha_3
+            except LookupError:
+                pass
+        return ret
 
     def total_submissions_by_method_over_time(self):
         return list(map(
