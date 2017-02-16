@@ -111,7 +111,7 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
 
     if not submitter2_id:
         conflict_overviews = db.conflict_overview(submitter_id=submitter1_id, min_stars=min_stars, method=method)
-        significances = db.significances()
+        significances = db.corrected_significances()
         submitter_primary_method = db.submitter_primary_method(submitter1_id)
 
         summary = OrderedDict()
@@ -121,8 +121,8 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
         for row in conflict_overviews:
             submitter2_id = row['submitter2_id']
             submitter2_name = row['submitter2_name']
-            clin_sig1 = row['clin_sig1']
-            clin_sig2 = row['clin_sig2']
+            clin_sig1 = row['corrected_clin_sig1']
+            clin_sig2 = row['corrected_clin_sig2']
             count = row['count']
 
             summary['0']['total'] += count
@@ -208,12 +208,12 @@ def conflicts_by_significance(significance1 = None, significance2 = None):
 
     if not significance2:
         conflict_overview = db.conflict_overview(min_stars=min_stars, method=method)
-        significances = db.significances()
+        significances = db.corrected_significances()
 
         breakdown = create_breakdown_table(significances)
         for row in conflict_overview:
-            clin_sig1 = row['clin_sig1']
-            clin_sig2 = row['clin_sig2']
+            clin_sig1 = row['corrected_clin_sig1']
+            clin_sig2 = row['corrected_clin_sig2']
             count = row['count']
             breakdown[clin_sig1][clin_sig2] += count
 

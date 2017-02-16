@@ -17,7 +17,7 @@ class DB():
 
     def conflict_overview(self, submitter_id = None, min_stars = 0, method = None):
         query = '''
-            SELECT clin_sig1, submitter2_id, submitter2_name, clin_sig2, COUNT(*) AS count
+            SELECT corrected_clin_sig1, submitter2_id, submitter2_name, corrected_clin_sig2, COUNT(*) AS count
             FROM current_conflicts WHERE 1
         '''
 
@@ -30,7 +30,7 @@ class DB():
         if method:
             query += ' AND method2=:method'
 
-        query += ' GROUP BY submitter2_id, clin_sig1, clin_sig2 ORDER BY submitter2_name'
+        query += ' GROUP BY submitter2_id, corrected_clin_sig1, corrected_clin_sig2 ORDER BY submitter2_name'
 
         return list(map(
             dict,
@@ -87,6 +87,14 @@ class DB():
             )
         ))
 
+    def corrected_significances(self):
+        return list(map(
+            lambda row: row[0],
+            self.cursor.execute('''
+                SELECT DISTINCT corrected_clin_sig FROM current_submissions ORDER BY corrected_clin_sig
+            ''')
+        ))
+
     def max_date(self):
         return list(self.cursor.execute('SELECT MAX(date) FROM submissions'))[0][0]
 
@@ -114,12 +122,6 @@ class DB():
                 SELECT clin_sig, MIN(date) AS first_seen FROM current_submissions
                 GROUP BY clin_sig ORDER BY first_seen DESC
             ''')
-        ))
-
-    def significances(self):
-        return list(map(
-            lambda row: row[0],
-            self.cursor.execute('SELECT DISTINCT clin_sig FROM current_submissions ORDER BY clin_sig')
         ))
 
     def submitter_info(self, submitter_id):
