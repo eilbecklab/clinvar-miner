@@ -14,12 +14,12 @@ cursor = db.cursor()
 
 submitter_ids = list(map(
     lambda row: row[0],
-    cursor.execute('SELECT DISTINCT submitter_id FROM submissions WHERE submitter_id != ""')
+    cursor.execute('SELECT DISTINCT submitter_id FROM submissions WHERE submitter_id != 0')
 ))
 
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS submitter_info (
-        id TEXT,
+        id INTEGER,
         name TEXT,
         city TEXT,
         state TEXT,
@@ -34,9 +34,9 @@ stdout.write('Importing information on ' + str(len(submitter_ids)) + ' submitter
 
 for submitter_id in submitter_ids:
     try:
-        with urlopen('https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + submitter_id + '/') as f:
+        with urlopen('https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + str(submitter_id) + '/') as f:
             count += 1
-            stdout.write('\r\033[K' + str(count) + '\tSubmitter ' + submitter_id)
+            stdout.write('\r\033[K' + str(count) + '\tSubmitter ' + str(submitter_id))
             root = html5lib.parse(f, transport_encoding=f.info().get_content_charset())
             submitter_el = root.find('.//html:div[@id="maincontent"]//html:div[@class="submitter_main indented"]', ns)
             name = submitter_el.find('./html:h2', ns).text
@@ -60,11 +60,11 @@ for submitter_id in submitter_ids:
                 country = ''
             cursor.execute(
                 'INSERT OR REPLACE INTO submitter_info VALUES (?,?,?,?,?,?)',
-                (submitter_id, name, city, state, zip_code, country)
+                (int(submitter_id), name, city, state, zip_code, country)
             )
     except HTTPError as err:
         if err.code == 404:
-            print('\r\033[KNo information for submitter ' + submitter_id)
+            print('\r\033[KNo information for submitter ' + str(submitter_id))
             continue
         raise err
 

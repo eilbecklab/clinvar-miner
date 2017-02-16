@@ -54,12 +54,12 @@ def rcv_link(rcv):
 @app.context_processor
 def template_functions():
     def submitter_link(submitter_id, submitter_name):
-        if submitter_id == '0':
+        if submitter_id == 0:
             return submitter_name
-        return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + submitter_id + '/">' + break_punctuation(submitter_name) + '</a>'
+        return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + str(submitter_id) + '/">' + break_punctuation(submitter_name) + '</a>'
 
     def variant_link(ncbi_variation_id, preferred_name):
-        return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + ncbi_variation_id + '/">' + break_punctuation(preferred_name) + '</a>'
+        return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + str(ncbi_variation_id) + '/">' + break_punctuation(preferred_name) + '</a>'
 
     return {
         'submitter_link': submitter_link,
@@ -97,19 +97,24 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
 
     db = DB()
 
-    if not submitter1_id:
+    if submitter1_id == None:
         return render_template(
             'conflicts-by-submitter-index.html',
             title='Conflicts by Submitter',
             total_conflicting_submissions_by_submitter=db.total_conflicting_submissions_by_submitter(),
         )
 
+    try:
+        submitter1_id = int(submitter1_id)
+    except ValueError:
+        return '', 404
+
     methods = db.methods()
     submitter1_info = db.submitter_info(submitter1_id)
     if not submitter1_info:
-        submitter1_info = {'id': submitter1_id, 'name': submitter1_id}
+        submitter1_info = {'id': submitter1_id, 'name': str(submitter1_id)}
 
-    if not submitter2_id:
+    if submitter2_id == None:
         conflict_overviews = db.conflict_overview(submitter_id=submitter1_id, min_stars=min_stars, method=method)
         significances = db.corrected_significances()
         submitter_primary_method = db.submitter_primary_method(submitter1_id)
@@ -147,17 +152,22 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
             method=method,
         )
 
-    if submitter2_id == '0':
+    try:
+        submitter2_id = int(submitter2_id)
+    except ValueError:
+        return '', 404
+
+    if submitter2_id == 0:
         submitter2_info = {'id': '0', 'name': ALL_OTHER_SUBMITTERS}
     else:
         submitter2_info = db.submitter_info(submitter2_id)
         if not submitter2_info:
-            submitter2_info = {'id': submitter2_id, 'name': submitter2_id}
+            submitter2_info = {'id': submitter2_id, 'name': str(submitter2_id)}
 
     if not significance1:
         conflicts = db.conflicts(
             submitter1_id=submitter1_id,
-            submitter2_id=submitter2_id if submitter2_id != '0' else None,
+            submitter2_id=submitter2_id,
             min_stars=min_stars,
             method=method,
         )
@@ -177,7 +187,7 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
 
     conflicts = db.conflicts(
         submitter1_id=submitter1_id,
-        submitter2_id=submitter2_id if submitter2_id != '0' else None,
+        submitter2_id=submitter2_id,
         significance1=significance1,
         significance2=significance2,
         min_stars=min_stars,

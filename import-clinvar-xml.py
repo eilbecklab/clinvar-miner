@@ -27,11 +27,11 @@ def create_tables():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS submissions (
             date TEXT,
-            ncbi_variation_id TEXT,
+            ncbi_variation_id INTEGER,
             preferred_name TEXT,
             variant_type TEXT,
             gene_symbol TEXT,
-            submitter_id TEXT,
+            submitter_id INTEGER,
             submitter_name TEXT,
             rcv TEXT,
             scv TEXT,
@@ -141,11 +141,11 @@ def import_file(filename):
             method_el = assertion_el.find('./ObservedIn/Method/MethodType')
             comment_el = clin_sig_el.find('./Comment')
 
-            ncbi_variation_id = measure_set_el.attrib['ID']
+            ncbi_variation_id = int(measure_set_el.attrib['ID'])
             preferred_name = preferred_name_el.text if preferred_name_el != None else '' #missing in old versions
             variant_type = measure_el.attrib['Type']
             gene_symbol = gene_symbol_el.text if gene_symbol_el != None else ''
-            submitter_id = scv_el.attrib.get('OrgID', '') #missing in old versions
+            submitter_id = int(scv_el.attrib['OrgID']) if scv_el.attrib.get('OrgID') else 0 #missing in old versions
             submitter_name = submission_id_el.get('submitter', '') if submission_id_el != None else '' #missing in old versions
             rcv = reference_assertion_el.find('./ClinVarAccession[@Type="RCV"]').attrib['Acc']
             clin_sig = description_el.text.lower() if description_el != None else 'not provided'
