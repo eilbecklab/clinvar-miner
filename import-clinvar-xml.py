@@ -13,31 +13,14 @@ if len(argv) < 2:
     exit()
 
 def connect():
-    return sqlite3.connect('clinvar-conflicts.db', timeout=600)
+    return sqlite3.connect('clinvar.db', timeout=600)
 
 def create_tables():
     db = connect()
     cursor = db.cursor()
 
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS submission_counts (
-            date TEXT,
-            submitter_id TEXT,
-            submitter_name TEXT,
-            method TEXT,
-            clin_sig TEXT,
-            count INT,
-            PRIMARY KEY (date, submitter_id, method, clin_sig)
-        )
-    ''')
-
-    cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON submission_counts (date)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS submitter_id_index ON submission_counts (submitter_id)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS submitter_name_index ON submission_counts (submitter_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS clin_sig_index ON submission_counts (clin_sig)')
-
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS conflicts (
+        CREATE TABLE IF NOT EXISTS submissions (
             date TEXT,
             ncbi_variation_id TEXT,
             preferred_name TEXT,
@@ -57,30 +40,64 @@ def create_tables():
         )
     ''')
 
-    cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON conflicts (date)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS ncbi_variation_id_index ON conflicts (ncbi_variation_id)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS preferred_name_index ON conflicts (preferred_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS gene_symbol_index ON conflicts (gene_symbol)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS submitter_id_index ON conflicts (submitter_id)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS submitter_name_index ON conflicts (submitter_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS clin_sig_index ON conflicts (clin_sig)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS method_index ON conflicts (method)')
+    cursor.execute('''
+        CREATE VIEW IF NOT EXISTS conflicting_submissions AS
+        SELECT DISTINCT t1.date AS date, t1.ncbi_variation_id AS ncbi_variation_id, t1.preferred_name as preferred_name,
+        t1.variant_type AS variant_type, t1.gene_symbol AS gene_symbol, t1.submitter_id AS submitter_id,
+        t1.submitter_name AS submitter_name, t1.rcv AS rcv, t1.scv AS scv, t1.clin_sig AS clin_sig,
+        t1.last_eval AS last_eval, t1.review_status AS review_status, t1.sub_condition AS sub_condition,
+        t1.method AS method, t1.description AS description
+        FROM submissions t1 INNER JOIN submissions t2
+        ON t1.date=t2.date AND t1.ncbi_variation_id=t2.ncbi_variation_id
+        WHERE t1.clin_sig!=t2.clin_sig
+    ''')
+
+    cursor.execute('''
+        CREATE VIEW IF NOT EXISTS conflicts AS
+        SELECT t1.date AS date, t1.ncbi_variation_id AS ncbi_variation_id, t1.preferred_name AS preferred_name,
+        t1.variant_type AS variant_type, t1.gene_symbol AS gene_symbol, t1.submitter_id AS submitter1_id,
+        t1.submitter_name AS submitter1_name, t1.rcv AS rcv1, t1.scv AS scv1, t1.clin_sig AS clin_sig1,
+        t1.last_eval AS last_eval1, t1.review_status AS review_status1, t1.sub_condition AS sub_condition1,
+        t2.method AS method1, t1.description AS description1, t2.submitter_id AS submitter2_id,
+        t2.submitter_name AS submitter2_name, t2.rcv AS rcv2, t2.scv AS scv2, t2.clin_sig AS clin_sig2,
+        t2.last_eval AS last_eval2, t2.review_status AS review_status2, t2.sub_condition AS sub_condition2,
+        t2.method AS method2, t2.description AS description2
+        FROM submissions t1 INNER JOIN submissions t2
+        ON t1.date=t2.date AND t1.ncbi_variation_id=t2.ncbi_variation_id
+        WHERE t1.clin_sig!=t2.clin_sig
+    ''')
+
+    cursor.execute('''
+        CREATE VIEW IF NOT EXISTS current_submissions AS
+        SELECT * FROM submissions WHERE date=(
+            SELECT MAX(date) FROM submissions
+        )
+    ''')
+
+    cursor.execute('''
+        CREATE VIEW IF NOT EXISTS current_conflicting_submissions AS
+        SELECT * FROM conflicting_submissions WHERE date=(
+            SELECT MAX(date) FROM submissions
+        )
+    ''')
 
     cursor.execute('''
         CREATE VIEW IF NOT EXISTS current_conflicts AS
         SELECT * FROM conflicts WHERE date=(
-            SELECT MAX(date) FROM conflicts
+            SELECT MAX(date) FROM submissions
         )
     ''')
 
-    cursor.execute('''
-        CREATE VIEW IF NOT EXISTS submitter_primary_method AS
-        SELECT submitter_id, method FROM submission_counts t WHERE date=(
-            SELECT MAX(date) max_date FROM submission_counts
-        ) AND count=(
-            SELECT MAX(count) FROM submission_counts WHERE submitter_id=t.submitter_id AND date=t.date
-        )
-    ''')
+    cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON submissions (date)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS ncbi_variation_id_index ON submissions (ncbi_variation_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS preferred_name_index ON submissions (preferred_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS gene_symbol_index ON submissions (gene_symbol)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submitter_id_index ON submissions (submitter_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submitter_name_index ON submissions (submitter_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS clin_sig_index ON submissions (clin_sig)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS method_index ON submissions (method)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS date_ncbi_variation_id_index ON submissions (date, ncbi_variation_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS date_method_index ON submissions (date, method)')
 
 def parse_clin_sig(clin_sig_el):
     comment_el = clin_sig_el.find('./Comment')
@@ -104,54 +121,9 @@ def import_file(filename):
         return
 
     date = matches.group(1)
-    assertions = OrderedDict()
-    conflicting_scvs = set()
+    submissions = []
 
-    submission_counts = {}
-    conflicts = []
-
-    for event, set_el in ElementTree.iterparse(filename):
-        if set_el.tag != 'ClinVarSet':
-            continue
-
-        ncbi_variation_id = set_el.find('./ReferenceClinVarAssertion/MeasureSet').attrib['ID']
-        if ncbi_variation_id not in assertions:
-            assertions[ncbi_variation_id] = []
-
-        for assertion_el in set_el.findall('./ClinVarAssertion'):
-            #find out how often each submitter uses each method
-            scv_el = assertion_el.find('./ClinVarAccession[@Type="SCV"]')
-            submission_id_el = assertion_el.find('./ClinVarSubmissionID')
-            method_el = assertion_el.find('./ObservedIn/Method/MethodType')
-            clin_sig_el = assertion_el.find('./ClinicalSignificance')
-
-            scv = scv_el.attrib['Acc']
-            submitter_id = scv_el.attrib.get('OrgID', '') #missing in old versions
-            submitter_name = submission_id_el.attrib.get('submitter', '') if submission_id_el != None else '' #missing in old versions
-            method = method_el.text if method_el != None else 'not provided' #missing in old versions
-            clin_sig = parse_clin_sig(clin_sig_el)
-
-            if not submitter_id in submission_counts:
-                submission_counts[submitter_id] = {'name': submitter_name, 'counts': {}}
-            if not method in submission_counts[submitter_id]['counts']:
-                submission_counts[submitter_id]['counts'][method] = {}
-            if not clin_sig in submission_counts[submitter_id]['counts'][method]:
-                submission_counts[submitter_id]['counts'][method][clin_sig] = 0
-            submission_counts[submitter_id]['counts'][method][clin_sig] += 1
-
-            #group by variant ID, not RCV (one variant can have multiple RCVs for different conditions)
-            assertions[ncbi_variation_id].append([scv, clin_sig])
-
-        set_el.clear() #conserve memory
-
-    #find conflicts
-    for ncbi_variation_id, assertions in assertions.items():
-        for assertion1, assertion2 in combinations(assertions, 2):
-            if assertion1[1] != assertion2[1]: #if the clinical significances don't match
-                conflicting_scvs.add(assertion1[0])
-                conflicting_scvs.add(assertion2[0])
-
-    #extract conflict information
+    #extract submission information
     for event, set_el in ElementTree.iterparse(filename):
         if set_el.tag != 'ClinVarSet':
             continue
@@ -165,8 +137,6 @@ def import_file(filename):
         for assertion_el in set_el.findall('./ClinVarAssertion'):
             scv_el = assertion_el.find('./ClinVarAccession[@Type="SCV"]')
             scv = scv_el.attrib['Acc']
-            if scv not in conflicting_scvs:
-                continue
 
             submission_id_el = assertion_el.find('./ClinVarSubmissionID')
             clin_sig_el = assertion_el.find('./ClinicalSignificance')
@@ -189,7 +159,7 @@ def import_file(filename):
             method = method_el.text if method_el != None else 'not provided' #missing in old versions
             description = comment_el.text if comment_el != None else ''
 
-            conflicts.append((
+            submissions.append((
                 date,
                 ncbi_variation_id,
                 preferred_name,
@@ -214,17 +184,9 @@ def import_file(filename):
     db = connect()
     cursor = db.cursor()
 
-    for submitter_id in submission_counts:
-        submitter_name = submission_counts[submitter_id]['name']
-        for method in submission_counts[submitter_id]['counts']:
-            for clin_sig in submission_counts[submitter_id]['counts'][method]:
-                count = submission_counts[submitter_id]['counts'][method][clin_sig]
-                cursor.execute(
-                    'INSERT OR IGNORE INTO submission_counts VALUES (?,?,?,?,?,?)',
-                    (date, submitter_id, submitter_name, method, clin_sig, count)
-                )
-
-    cursor.executemany('INSERT OR IGNORE INTO conflicts VALUES (' + ','.join('?' * len(conflicts[0])) + ')', conflicts)
+    cursor.executemany(
+        'INSERT OR IGNORE INTO submissions VALUES (' + ','.join('?' * len(submissions[0])) + ')', submissions
+    )
 
     db.commit()
     db.close()

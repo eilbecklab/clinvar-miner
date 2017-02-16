@@ -19,16 +19,16 @@
             </tr>
         </thead>
         <tbody>
-            {% for conflict in conflicts %}
+            {% for submission in conflicting_submissions %}
                 <tr>
-                    <td>{{ variant_link(conflict['ncbi_variation_id'], conflict['preferred_name'])|safe }}</td>
-                    <td>{{ submitter_link(conflict['submitter_id'], conflict['submitter_name'])|safe }}</td>
-                    <td>{{ conflict['rcv']|rcvlink|safe }}</td>
-                    <td>{{ conflict['scv'] }}</td>
-                    <td>{{ conflict['clin_sig'] }}</td>
-                    <td>{{ conflict['last_eval']|date }}</td>
-                    <td>{{ conflict['review_status'] }}</td>
-                    <td>{{ conflict['method'] }}</td>
+                    <td>{{ variant_link(submission['ncbi_variation_id'], submission['preferred_name'])|safe }}</td>
+                    <td>{{ submitter_link(submission['submitter_id'], submission['submitter_name'])|safe }}</td>
+                    <td>{{ submission['rcv']|rcvlink|safe }}</td>
+                    <td>{{ submission['scv'] }}</td>
+                    <td>{{ submission['clin_sig'] }}</td>
+                    <td>{{ submission['last_eval']|date }}</td>
+                    <td>{{ submission['review_status'] }}</td>
+                    <td>{{ submission['method'] }}</td>
                 </tr>
             {% endfor %}
         </tbody>

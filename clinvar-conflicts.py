@@ -75,16 +75,15 @@ def conflicts_by_gene(gene = None):
         return render_template(
             'conflicting-submissions-by-gene-index.html',
             title='Conflicts by Gene',
-            total_conflicts_by_gene=db.total_conflicts_by_gene()
+            total_conflicting_submissions_by_gene=db.total_conflicting_submissions_by_gene(),
         )
 
     gene = gene.replace('%2F', '/')
-    conflicts = db.conflicts_by_gene(gene)
 
     return render_template(
         'conflicting-submissions-by-gene.html',
         title='Conflicting submissions for gene ' + gene,
-        conflicts=conflicts,
+        conflicting_submissions=db.conflicting_submissions_by_gene(gene),
     )
 
 @app.route('/conflicts-by-submitter')
@@ -102,7 +101,7 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
         return render_template(
             'conflicts-by-submitter-index.html',
             title='Conflicts by Submitter',
-            total_conflicts_by_submitter=db.total_conflicts_by_submitter(),
+            total_conflicting_submissions_by_submitter=db.total_conflicting_submissions_by_submitter(),
         )
 
     methods = db.methods()
@@ -281,12 +280,12 @@ def significance_terms(term = None):
     )
 
 @app.route('/total-conflicting-submissions-by-method')
-def total_conflicts_by_method():
+def total_conflicting_submissions_by_method():
     db = DB()
     return render_template(
         'total-conflicting-submissions-by-method.html',
         title='Total Conflicting Submissions By Method',
-        total_conflicts_by_method_over_time=db.total_conflicts_by_method_over_time(),
+        total_conflicting_submissions_by_method_over_time=db.total_conflicting_submissions_by_method_over_time(),
     )
 
 @app.route('/total-submissions-by-method')

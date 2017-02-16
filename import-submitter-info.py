@@ -9,12 +9,12 @@ from urllib.request import urlopen
 
 ns = {'html': 'http://www.w3.org/1999/xhtml'}
 
-db = sqlite3.connect('clinvar-conflicts.db', timeout=600)
+db = sqlite3.connect('clinvar.db', timeout=600)
 cursor = db.cursor()
 
 submitter_ids = list(map(
     lambda row: row[0],
-    cursor.execute('SELECT DISTINCT submitter_id FROM submission_counts WHERE submitter_id != ""')
+    cursor.execute('SELECT DISTINCT submitter_id FROM submissions WHERE submitter_id != ""')
 ))
 
 cursor.execute('''

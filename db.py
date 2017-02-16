@@ -4,35 +4,33 @@ from sqlite3 import OperationalError
 
 class DB():
     STAR_MAP = [
-        'c2.review_status="criteria provided, single submitter" OR c2.review_status="criteria provided, conflicting interpretations"',
-        'c2.review_status="criteria provided, multiple submitters, no conflicts"',
-        'c2.review_status="reviewed by expert panel"',
-        'c2.review_status="practice guideline"',
+        'review_status2="criteria provided, single submitter" OR review_status2="criteria provided, conflicting interpretations"',
+        'review_status2="criteria provided, multiple submitters, no conflicts"',
+        'review_status2="reviewed by expert panel"',
+        'review_status2="practice guideline"',
     ]
 
     def __init__(self):
-        self.db = sqlite3.connect('clinvar-conflicts.db', timeout=20)
+        self.db = sqlite3.connect('clinvar.db', timeout=20)
         self.db.row_factory = sqlite3.Row
         self.cursor = self.db.cursor()
 
     def conflict_overview(self, submitter_id = None, min_stars = 0, method = None):
         query = '''
-            SELECT c1.clin_sig AS clin_sig1, c2.submitter_id AS submitter2_id, c2.submitter_name AS submitter2_name,
-            c2.clin_sig AS clin_sig2, COUNT(*) AS count
-            FROM current_conflicts c1 INNER JOIN current_conflicts c2 ON c1.ncbi_variation_id=c2.ncbi_variation_id
-            WHERE c1.clin_sig!=c2.clin_sig
+            SELECT clin_sig1, submitter2_id, submitter2_name, clin_sig2, COUNT(*) AS count
+            FROM current_conflicts WHERE 1
         '''
 
         if submitter_id:
-            query += ' AND c1.submitter_id=:submitter_id'
+            query += ' AND submitter1_id=:submitter_id'
 
         if min_stars > 0:
             query += ' AND (' + ' OR '.join(DB.STAR_MAP[min_stars-1:]) + ')'
 
         if method:
-            query += ' AND c2.method=:method'
+            query += ' AND method2=:method'
 
-        query += ' GROUP BY c2.submitter_id, c1.clin_sig, c2.clin_sig ORDER BY c2.submitter_name'
+        query += ' GROUP BY submitter2_id, clin_sig1, clin_sig2 ORDER BY submitter2_name'
 
         return list(map(
             dict,
@@ -45,46 +43,35 @@ class DB():
             )
         ))
 
-    def conflicts_by_gene(self, gene):
+    def conflicting_submissions_by_gene(self, gene):
         return list(map(
             dict,
-            self.cursor.execute('SELECT * FROM current_conflicts WHERE gene_symbol=? ORDER BY preferred_name', [gene])
+            self.cursor.execute('SELECT * FROM current_conflicting_submissions WHERE gene_symbol=?', [gene])
         ))
 
     def conflicts(self, submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None,
                   min_stars = 0, method = None):
-        query = '''
-            SELECT c1.ncbi_variation_id AS ncbi_variation_id, c1.preferred_name AS preferred_name,
-            c1.variant_type AS variant_type, c1.gene_symbol AS gene_symbol, c1.submitter_id AS submitter1_id,
-            c1.submitter_name AS submitter1_name, c1.rcv AS rcv1, c1.scv AS scv1, c1.clin_sig AS clin_sig1,
-            c1.last_eval AS last_eval1, c1.review_status AS review_status1, c1.sub_condition AS sub_condition1,
-            c2.method AS method1, c1.description AS description1, c2.submitter_id AS submitter2_id,
-            c2.submitter_name AS submitter2_name, c2.rcv AS rcv2, c2.scv AS scv2, c2.clin_sig AS clin_sig2,
-            c2.last_eval AS last_eval2, c2.review_status AS review_status2, c2.sub_condition AS sub_condition2,
-            c2.method AS method2, c2.description AS description2
-            FROM current_conflicts c1 INNER JOIN current_conflicts c2 ON c1.ncbi_variation_id=c2.ncbi_variation_id
-            WHERE c1.clin_sig!=c2.clin_sig
-        '''
+        query = 'SELECT * FROM current_conflicts WHERE 1'
 
         if submitter1_id:
-            query += ' AND c1.submitter_id=:submitter1_id'
+            query += ' AND submitter1_id=:submitter1_id'
 
         if submitter2_id:
-            query += ' AND c2.submitter_id=:submitter2_id'
+            query += ' AND submitter2_id=:submitter2_id'
 
         if significance1:
-            query += ' AND c1.clin_sig=:significance1'
+            query += ' AND clin_sig1=:significance1'
 
         if significance2:
-            query += ' AND c2.clin_sig=:significance2'
+            query += ' AND clin_sig2=:significance2'
 
         if min_stars > 0:
             query += ' AND (' + ' OR '.join(DB.STAR_MAP[min_stars-1:]) + ')'
 
         if method:
-            query += ' AND c2.method=:method'
+            query += ' AND method2=:method'
 
-        query += ' ORDER BY c1.preferred_name'
+        query += ' ORDER BY preferred_name'
 
         return list(map(
             dict,
@@ -101,12 +88,12 @@ class DB():
         ))
 
     def max_date(self):
-        return list(self.cursor.execute('SELECT MAX(date) FROM submission_counts'))[0][0]
+        return list(self.cursor.execute('SELECT MAX(date) FROM submissions'))[0][0]
 
     def methods(self):
         return list(map(
             lambda row: row[0],
-            self.cursor.execute('SELECT DISTINCT method FROM current_conflicts ORDER BY method')
+            self.cursor.execute('SELECT DISTINCT method FROM current_submissions ORDER BY method')
         ))
 
     def old_significance_term_info(self):
@@ -114,9 +101,9 @@ class DB():
             dict,
             self.cursor.execute('''
                 SELECT * FROM (
-                    SELECT clin_sig, MIN(date) AS first_seen, MAX(date) AS last_seen FROM submission_counts
+                    SELECT clin_sig, MIN(date) AS first_seen, MAX(date) AS last_seen FROM submissions
                     GROUP BY clin_sig ORDER BY first_seen DESC
-                ) WHERE last_seen!=(SELECT MAX(date) FROM submission_counts)
+                ) WHERE last_seen!=(SELECT MAX(date) FROM submissions)
             ''')
         ))
 
@@ -124,17 +111,15 @@ class DB():
         return list(map(
             dict,
             self.cursor.execute('''
-                SELECT clin_sig, first_seen FROM (
-                    SELECT clin_sig, MIN(date) AS first_seen, MAX(date) AS last_seen FROM submission_counts
-                    GROUP BY clin_sig ORDER BY first_seen DESC
-                ) WHERE last_seen=(SELECT MAX(date) FROM submission_counts)
+                SELECT clin_sig, MIN(date) AS first_seen FROM current_submissions
+                GROUP BY clin_sig ORDER BY first_seen DESC
             ''')
         ))
 
     def significances(self):
         return list(map(
             lambda row: row[0],
-            self.cursor.execute('SELECT DISTINCT clin_sig FROM current_conflicts ORDER BY clin_sig')
+            self.cursor.execute('SELECT DISTINCT clin_sig FROM current_submissions ORDER BY clin_sig')
         ))
 
     def submitter_info(self, submitter_id):
@@ -145,13 +130,13 @@ class DB():
 
     def submitter_primary_method(self, submitter_id):
         return list(
-            self.cursor.execute(
-                'SELECT method FROM submitter_primary_method WHERE submitter_id=:submitter_id',
-                [submitter_id]
-            )
+            self.cursor.execute('''
+                SELECT method FROM current_submissions WHERE submitter_id=?
+                GROUP BY method ORDER BY COUNT(*) DESC LIMIT 1
+            ''', [submitter_id])
         )[0][0]
 
-    def total_conflicts_by_gene(self):
+    def total_conflicting_submissions_by_gene(self):
         return list(map(
             dict,
             self.cursor.execute('''
@@ -160,22 +145,21 @@ class DB():
             ''')
         ))
 
-    def total_conflicts_by_method_over_time(self):
-        return list(map(
-            dict,
-            self.cursor.execute(
-                'SELECT date, method, COUNT(method) AS count FROM conflicts GROUP BY date, method ORDER BY date, method'
-            )
-        ))
-
-    def total_conflicts_by_submitter(self):
+    def total_conflicting_submissions_by_method_over_time(self):
         return list(map(
             dict,
             self.cursor.execute('''
-                SELECT submitter_id, submitter_name, COUNT(*) AS count
-                FROM current_conflicts
-                GROUP BY submitter_id
-                ORDER BY submitter_name
+                SELECT date, method, COUNT(method) AS count FROM conflicting_submissions
+                GROUP BY date, method ORDER BY date, method
+            ''')
+        ))
+
+    def total_conflicting_submissions_by_submitter(self):
+        return list(map(
+            dict,
+            self.cursor.execute('''
+                SELECT submitter_id, submitter_name, COUNT(*) AS count FROM current_conflicting_submissions
+                GROUP BY submitter_id ORDER BY submitter_name
             ''')
         ))
 
@@ -183,8 +167,7 @@ class DB():
         return list(map(
             dict,
             self.cursor.execute('''
-                SELECT submitter_id, submitter_name, SUM(count) AS count FROM submission_counts
-                WHERE date=(SELECT MAX(date) FROM submission_counts) AND clin_sig=?
+                SELECT submitter_id, submitter_name, COUNT(*) AS count FROM current_submissions WHERE clin_sig=?
                 GROUP BY submitter_id ORDER BY submitter_name
             ''', [term])
         ))
@@ -192,16 +175,15 @@ class DB():
     def total_significance_terms_over_time(self):
         return list(map(
             dict,
-            self.cursor.execute('SELECT date, COUNT(DISTINCT clin_sig) AS count FROM submission_counts GROUP BY date')
+            self.cursor.execute('SELECT date, COUNT(DISTINCT clin_sig) AS count FROM submissions GROUP BY date')
         ))
 
     def total_submissions_by_country(self):
         ret = list(map(
             dict,
             self.cursor.execute('''
-                SELECT country, SUM(count) AS count FROM submission_counts
-                LEFT JOIN submitter_info ON submission_counts.submitter_id=submitter_info.id
-                WHERE date=(SELECT MAX(date) FROM submission_counts)
+                SELECT country, COUNT(*) AS count FROM current_submissions
+                LEFT JOIN submitter_info ON current_submissions.submitter_id=submitter_info.id
                 GROUP BY country ORDER BY country
             ''')
         ))
@@ -216,7 +198,7 @@ class DB():
         return list(map(
             dict,
             self.cursor.execute('''
-                SELECT date, method, SUM(count) AS count FROM submission_counts
+                SELECT date, method, COUNT(*) AS count FROM submissions
                 GROUP BY date, method ORDER BY date, method
             ''')
         ))
@@ -225,9 +207,9 @@ class DB():
         return list(map(
             dict,
             self.cursor.execute('''
-                SELECT submitter_id, submitter_name, SUM(count) AS count FROM submission_counts
-                LEFT JOIN submitter_info ON submission_counts.submitter_id=submitter_info.id
-                WHERE date=(SELECT MAX(date) FROM submission_counts) AND country=:country
+                SELECT submitter_id, submitter_name, COUNT(*) AS count FROM current_submissions
+                LEFT JOIN submitter_info ON current_submissions.submitter_id=submitter_info.id
+                WHERE country=:country
                 GROUP BY submitter_id ORDER BY submitter_name
             ''', [country])
         ))

@@ -8,7 +8,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for row in total_conflicts_by_gene  %}
+            {% for row in total_conflicting_submissions_by_gene  %}
                 <tr>
                     <td>
                         <a href="conflicting-submissions-by-gene/{{ row['gene_symbol']|quotepath }}">
