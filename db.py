@@ -151,7 +151,7 @@ class DB():
         return list(map(
             dict,
             self.cursor.execute('''
-                SELECT date, method, COUNT(method) AS count FROM conflicting_submissions
+                SELECT date, method, COUNT(*) AS count FROM conflicting_submissions
                 GROUP BY date, method ORDER BY date, method
             ''')
         ))
