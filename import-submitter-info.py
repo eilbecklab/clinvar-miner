@@ -29,6 +29,8 @@ cursor.execute('''
     )
 ''')
 
+cursor.execute('CREATE INDEX IF NOT EXISTS country_index ON submitter_info (country)')
+
 count = 0
 stdout.write('Importing information on ' + str(len(submitter_ids)) + ' submitters...\n')
 
