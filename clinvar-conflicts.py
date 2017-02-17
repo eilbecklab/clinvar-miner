@@ -5,6 +5,7 @@ from collections import OrderedDict
 from datetime import datetime
 from db import DB
 from flask import Flask
+from flask import abort
 from flask import render_template
 from flask import request
 
@@ -107,7 +108,7 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
     try:
         submitter1_id = int(submitter1_id)
     except ValueError:
-        return '', 404
+        return abort(404)
 
     methods = db.methods()
     submitter1_info = db.submitter_info(submitter1_id)
@@ -155,7 +156,7 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
     try:
         submitter2_id = int(submitter2_id)
     except ValueError:
-        return '', 404
+        abort(404)
 
     if submitter2_id == 0:
         submitter2_info = {'id': '0', 'name': ALL_OTHER_SUBMITTERS}
