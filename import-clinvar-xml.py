@@ -42,20 +42,14 @@ def create_tables():
             sub_condition TEXT,
             method TEXT,
             description TEXT,
+            conflicting INTEGER,
             PRIMARY KEY (date, scv)
         )
     ''')
 
     cursor.execute('''
         CREATE VIEW IF NOT EXISTS conflicting_submissions AS
-        SELECT DISTINCT t1.date AS date, t1.ncbi_variation_id AS ncbi_variation_id, t1.preferred_name as preferred_name,
-        t1.variant_type AS variant_type, t1.gene_symbol AS gene_symbol, t1.submitter_id AS submitter_id,
-        t1.submitter_name AS submitter_name, t1.rcv AS rcv, t1.scv AS scv, t1.clin_sig AS clin_sig,
-        t1.corrected_clin_sig AS corrected_clin_sig, t1.last_eval AS last_eval, t1.review_status AS review_status,
-        t1.sub_condition AS sub_condition, t1.method AS method, t1.description AS description
-        FROM submissions t1 INNER JOIN submissions t2
-        ON t1.date=t2.date AND t1.ncbi_variation_id=t2.ncbi_variation_id
-        WHERE t1.corrected_clin_sig!=t2.corrected_clin_sig
+        SELECT * FROM submissions WHERE conflicting=1
     ''')
 
     cursor.execute('''
@@ -69,7 +63,7 @@ def create_tables():
         t2.clin_sig AS clin_sig2, t2.corrected_clin_sig AS corrected_clin_sig2, t2.last_eval AS last_eval2,
         t2.review_status AS review_status2, t2.sub_condition AS sub_condition2, t2.method AS method2,
         t2.description AS description2
-        FROM submissions t1 INNER JOIN submissions t2
+        FROM conflicting_submissions t1 INNER JOIN conflicting_submissions t2
         ON t1.date=t2.date AND t1.ncbi_variation_id=t2.ncbi_variation_id
         WHERE t1.corrected_clin_sig!=t2.corrected_clin_sig
     ''')
@@ -104,6 +98,7 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS clin_sig_index ON submissions (clin_sig)')
     cursor.execute('CREATE INDEX IF NOT EXISTS corrected_clin_sig_index ON submissions (corrected_clin_sig)')
     cursor.execute('CREATE INDEX IF NOT EXISTS method_index ON submissions (method)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS conflicting_index ON submissions (conflicting)')
     cursor.execute('CREATE INDEX IF NOT EXISTS date_ncbi_variation_id_index ON submissions (date, ncbi_variation_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS date_method_index ON submissions (date, method)')
 
@@ -183,8 +178,16 @@ def import_file(filename):
     cursor = db.cursor()
 
     cursor.executemany(
-        'INSERT OR IGNORE INTO submissions VALUES (' + ','.join('?' * len(submissions[0])) + ')', submissions
+        'INSERT OR IGNORE INTO submissions VALUES (' + ','.join('?' * len(submissions[0])) + ',0)', submissions
     )
+
+    cursor.execute('''
+        UPDATE submissions SET conflicting=1 WHERE scv IN (
+            SELECT t1.scv FROM submissions t1 INNER JOIN submissions t2
+            ON t1.date=t2.date AND t1.ncbi_variation_id=t2.ncbi_variation_id
+            WHERE t1.date=? AND t1.corrected_clin_sig!=t2.corrected_clin_sig
+        ) AND date=?
+    ''', [date, date])
 
     db.commit()
     db.close()
