@@ -32,6 +32,10 @@ def break_punctuation(text):
         .replace('-', '-<wbr/>')
     )
 
+def min_stars(request):
+    min_stars = request.args.get('min_stars')
+    return int(min_stars) if min_stars else 0
+
 @app.template_filter('date')
 def prettify_date(iso_date):
     return datetime.strptime(iso_date[:10], '%Y-%m-%d').strftime('%d %b %Y') if iso_date else ''
@@ -92,10 +96,6 @@ def conflicts_by_gene(gene = None):
 @app.route('/conflicts-by-submitter/<submitter1_id>/<submitter2_id>')
 @app.route('/conflicts-by-submitter/<submitter1_id>/<submitter2_id>/<significance1>/<significance2>')
 def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None):
-    min_stars = request.args.get('min_stars')
-    min_stars = int(min_stars) if min_stars else 0
-    method = request.args.get('method')
-
     db = DB()
 
     if submitter1_id == None:
@@ -110,13 +110,16 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
     except ValueError:
         return abort(404)
 
-    methods = db.methods()
     submitter1_info = db.submitter_info(submitter1_id)
     if not submitter1_info:
         submitter1_info = {'id': submitter1_id, 'name': str(submitter1_id)}
 
     if submitter2_id == None:
-        conflict_overviews = db.conflict_overview(submitter_id=submitter1_id, min_stars=min_stars, method=method)
+        conflict_overviews = db.conflict_overview(
+            submitter_id=submitter1_id,
+            min_stars=min_stars(request),
+            method=request.args.get('method'),
+        )
         significances = db.corrected_significances()
         submitter_primary_method = db.submitter_primary_method(submitter1_id)
 
@@ -148,9 +151,7 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
             submitter_primary_method=submitter_primary_method,
             summary=summary,
             breakdowns=breakdowns,
-            method_options=methods,
-            min_stars=min_stars,
-            method=method,
+            method_options=db.methods(),
         )
 
     try:
@@ -169,8 +170,8 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
         conflicts = db.conflicts(
             submitter1_id=submitter1_id,
             submitter2_id=submitter2_id,
-            min_stars=min_stars,
-            method=method,
+            min_stars=min_stars(request),
+            method=request.args.get('method'),
         )
         return render_template(
             'conflicts-by-submitter-2submitters.html',
@@ -178,9 +179,7 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
             submitter1_info=submitter1_info,
             submitter2_info=submitter2_info,
             conflicts=conflicts,
-            method_options=methods,
-            min_stars=min_stars,
-            method=method,
+            method_options=db.methods(),
         )
 
     significance1 = significance1.replace('%2F', '/')
@@ -191,8 +190,8 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
         submitter2_id=submitter2_id,
         significance1=significance1,
         significance2=significance2,
-        min_stars=min_stars,
-        method=method,
+        min_stars=min_stars(request),
+        method=request.args.get('method'),
     )
     return render_template(
         'conflicts-by-submitter-2significances.html',
@@ -202,23 +201,16 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
         significance1=significance1,
         significance2=significance2,
         conflicts=conflicts,
-        method_options=methods,
-        min_stars=min_stars,
-        method=method,
+        method_options=db.methods(),
     )
 
 @app.route('/conflicts-by-significance')
 @app.route('/conflicts-by-significance/<significance1>/<significance2>')
 def conflicts_by_significance(significance1 = None, significance2 = None):
-    min_stars = request.args.get('min_stars')
-    min_stars = int(min_stars) if min_stars else 0
-    method = request.args.get('method')
-
     db = DB()
-    methods = db.methods()
 
     if not significance2:
-        conflict_overview = db.conflict_overview(min_stars=min_stars, method=method)
+        conflict_overview = db.conflict_overview(min_stars=min_stars(request), method=request.args.get('method'))
         significances = db.corrected_significances()
 
         breakdown = create_breakdown_table(significances)
@@ -232,9 +224,7 @@ def conflicts_by_significance(significance1 = None, significance2 = None):
             'conflicts-by-significance.html',
             title='Conflicts by Significance',
             breakdown=breakdown,
-            method_options=methods,
-            min_stars=min_stars,
-            method=method,
+            method_options=db.methods(),
         )
 
     significance1 = significance1.replace('%2F', '/')
@@ -243,8 +233,8 @@ def conflicts_by_significance(significance1 = None, significance2 = None):
     conflicts = db.conflicts(
         significance1=significance1,
         significance2=significance2,
-        min_stars=min_stars,
-        method=method,
+        min_stars=min_stars(request),
+        method=request.args.get('method'),
     )
 
     return render_template(
@@ -253,9 +243,7 @@ def conflicts_by_significance(significance1 = None, significance2 = None):
         significance1=significance1,
         significance2=significance2,
         conflicts=conflicts,
-        method_options=methods,
-        min_stars=min_stars,
-        method=method,
+        method_options=db.methods(),
     )
 
 @app.route('/')

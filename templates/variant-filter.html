@@ -8,10 +8,18 @@
             <td>
                 <select name="min_stars">
                     <option></option>
-                    <option {% if min_stars == 1 %}selected="selected"{% endif %} value="1">★☆☆☆ criteria provided</option>
-                    <option {% if min_stars == 2 %}selected="selected"{% endif %} value="2">★★☆☆  criteria provided, multiple submitters, no conflicts</option>
-                    <option {% if min_stars == 3 %}selected="selected"{% endif %} value="3">★★★☆ reviewed by expert panel</option>
-                    <option {% if min_stars == 4 %}selected="selected"{% endif %} value="4">★★★★ practice guideline</option>
+                    <option {% if request.args.get('min_stars') == '1' %}selected="selected"{% endif %} value="1">
+                        ★☆☆☆ criteria provided
+                    </option>
+                    <option {% if request.args.get('min_stars') == '2' %}selected="selected"{% endif %} value="2">
+                        ★★☆☆  criteria provided, multiple submitters, no conflicts<
+                    </option>
+                    <option {% if request.args.get('min_stars') == '3' %}selected="selected"{% endif %} value="3">
+                        ★★★☆ reviewed by expert panel
+                    </option>
+                    <option {% if request.args.get('min_stars') == '4' %}selected="selected"{% endif %} value="4">
+                        ★★★★ practice guideline
+                    </option>
                 </select>
             </td>
         <tr>
@@ -20,7 +28,9 @@
                 <select name="method">
                     <option></option>
                     {% for method_option in method_options %}
-                    <option {% if method == method_option %}selected="selected"{% endif %}>{{ method_option }}</option>
+                        <option {% if request.args.get('method') == method_option %}selected="selected"{% endif %}>
+                            {{ method_option }}
+                        </option>
                     {% endfor %}
                 </select>
             </td>
