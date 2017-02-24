@@ -1,0 +1,44 @@
+{% extends 'skin.html' %}
+{% block head %}
+    <link href="static/tables.css" rel="stylesheet" type="text/css"/>
+    <script src="static/jquery-3.1.1.js" type="application/javascript"></script>
+    <script src="static/jquery.tablesorter.js" type="application/javascript"></script>
+{% endblock %}
+{% block title %}
+    Submissions for variant {{ variant_link(variant_id, variant_name)|safe }}
+{% endblock %}
+{% block content %}
+    {% with header='Show submissions that have' %}
+        {% include 'submission-filter.html' %}
+    {% endwith %}
+    {% if not submissions %}
+        No matching submissions
+    {% else %}
+        <table class="sortable table table-bordered table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th>Submitter</th>
+                    <th>RCV</th>
+                    <th>SCV</th>
+                    <th>Clinical significance</th>
+                    <th>Last evaluated</th>
+                    <th>Review status</th>
+                    <th>Method</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for submission in submissions %}
+                    <tr>
+                        <td>{{ submitter_link(submission['submitter_id'], submission['submitter_name'])|safe }}</td>
+                        <td>{{ submission['rcv']|rcvlink|safe }}</td>
+                        <td>{{ submission['scv'] }}</td>
+                        <td>{{ submission['clin_sig'] }}</td>
+                        <td>{{ submission['last_eval']|date }}</td>
+                        <td>{{ submission['review_status'] }}</td>
+                        <td>{{ submission['method'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

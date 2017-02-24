@@ -71,24 +71,55 @@ def template_functions():
         'variant_link': variant_link,
     }
 
-@app.route('/conflicting-submissions-by-gene')
-@app.route('/conflicting-submissions-by-gene/<gene>')
-def conflicts_by_gene(gene = None):
+@app.route('/submissions-by-gene')
+@app.route('/submissions-by-gene/<gene>')
+@app.route('/submissions-by-gene/<gene>/<variant_id>')
+def submissions_by_gene(gene = None, variant_id = None):
     db = DB()
 
     if not gene:
+        total_submissions_by_gene=db.total_submissions_by_gene(
+            min_stars=min_stars(request),
+            method=request.args.get('method'),
+            conflicting=request.args.get('conflicting'),
+        )
         return render_template(
-            'conflicting-submissions-by-gene-index.html',
-            title='Conflicts by Gene',
-            total_conflicting_submissions_by_gene=db.total_conflicting_submissions_by_gene(),
+            'submissions-by-gene-index.html',
+            title='Submissions by Gene',
+            total_submissions_by_gene=total_submissions_by_gene,
+            method_options=db.methods(),
         )
 
-    gene = gene.replace('%2F', '/')
+    if not variant_id:
+        gene = gene.replace('%2F', '/')
+        total_submissions_by_variant=db.total_submissions_by_variant(
+            gene,
+            min_stars=min_stars(request),
+            method=request.args.get('method'),
+            conflicting=request.args.get('conflicting'),
+        )
+        return render_template(
+            'variants-by-gene.html',
+            title='Variants in gene ' + gene,
+            gene=gene,
+            total_submissions_by_variant=total_submissions_by_variant,
+            method_options=db.methods(),
+        )
 
+    submissions=db.submissions(
+        variant_id=variant_id,
+        min_stars=min_stars(request),
+        method=request.args.get('method'),
+        conflicting=request.args.get('conflicting'),
+    )
+    variant_name=db.variant_name(variant_id)
     return render_template(
-        'conflicting-submissions-by-gene.html',
-        title='Conflicting submissions for gene ' + gene,
-        conflicting_submissions=db.conflicting_submissions_by_gene(gene),
+        'submissions-by-variant.html',
+        title='Submissions for variant ' + variant_name,
+        variant_name=variant_name,
+        variant_id=variant_id,
+        submissions=submissions,
+        method_options=db.methods(),
     )
 
 @app.route('/conflicts-by-submitter')

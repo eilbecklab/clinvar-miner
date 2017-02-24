@@ -1,0 +1,11 @@
+{% extends 'conflicting-submission-filter.html' %}
+{% block other_filters %}
+    <tr>
+        <td colspan="2">
+            <label>
+                <input {% if request.args.get('conflicting') %}checked="checked"{% endif %} name="conflicting" type="checkbox" value="1"/>
+                Conflicting submissions only
+            </label>
+        </td>
+    </tr>
+{% endblock %}

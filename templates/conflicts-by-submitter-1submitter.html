@@ -14,7 +14,7 @@
 {% endblock %}
 {% block content %}
     {% with header = 'Compare variants from this submitter to variants with' %}
-        {% include 'variant-filter.html' %}
+        {% include 'conflicting-submission-filter.html' %}
     {% endwith %}
     <h2>Submitter to submitter summary</h2>
     {% if summary['0']['total'] == 0 %}

@@ -4,11 +4,20 @@ from sqlite3 import OperationalError
 
 class DB():
     STAR_MAP = [
-        'review_status2="criteria provided, single submitter" OR review_status2="criteria provided, conflicting interpretations"',
-        'review_status2="criteria provided, multiple submitters, no conflicts"',
-        'review_status2="reviewed by expert panel"',
-        'review_status2="practice guideline"',
+        ['criteria provided, single submitter', 'criteria provided, conflicting interpretations'],
+        ['criteria provided, multiple submitters, no conflicts'],
+        ['reviewed by expert panel'],
+        ['practice guideline'],
     ]
+
+    def min_star_restriction(review_status_col, min_stars):
+        return ' AND (' + ' OR '.join(map(
+            lambda phrases: ' OR '.join(map(
+                lambda phrase: review_status_col + '="' + phrase + '"',
+                phrases
+            )),
+            DB.STAR_MAP[min_stars-1:]
+        )) + ')'
 
     def __init__(self):
         self.db = sqlite3.connect('clinvar.db', timeout=20)
@@ -25,7 +34,7 @@ class DB():
             query += ' AND submitter1_id=:submitter_id'
 
         if min_stars > 0:
-            query += ' AND (' + ' OR '.join(DB.STAR_MAP[min_stars-1:]) + ')'
+            query += DB.min_star_restriction('review_status2', min_stars)
 
         if method:
             query += ' AND method2=:method'
@@ -41,12 +50,6 @@ class DB():
                     'method': method
                 }
             )
-        ))
-
-    def conflicting_submissions_by_gene(self, gene):
-        return list(map(
-            dict,
-            self.cursor.execute('SELECT * FROM current_conflicting_submissions WHERE gene_symbol=?', [gene])
         ))
 
     def conflicts(self, submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None,
@@ -66,7 +69,7 @@ class DB():
             query += ' AND clin_sig2=:significance2'
 
         if min_stars > 0:
-            query += ' AND (' + ' OR '.join(DB.STAR_MAP[min_stars-1:]) + ')'
+            query += DB.min_star_restriction('review_status', min_stars)
 
         if method:
             query += ' AND method2=:method'
@@ -124,6 +127,31 @@ class DB():
             ''')
         ))
 
+    def submissions(self, conflicting = False, gene = None, variant_id = None, min_stars = 0, method = None):
+        query = 'SELECT * FROM current_submissions WHERE 1'
+
+        if conflicting:
+            query += ' AND conflicting=1'
+
+        if gene:
+            query += ' AND gene_symbol=:gene'
+
+        if variant_id:
+            query += ' AND ncbi_variation_id=:variant_id'
+
+        if min_stars > 0:
+            query += DB.min_star_restriction('review_status', min_stars)
+
+        if method:
+            query += ' AND method=:method'
+
+        query += ' ORDER BY submitter_name'
+
+        return list(map(
+            dict,
+            self.cursor.execute(query, {'gene': gene, 'variant_id': variant_id, 'method': method})
+        ))
+
     def submitter_info(self, submitter_id):
         try:
             return dict(list(self.cursor.execute('SELECT * from submitter_info WHERE id=:id', [submitter_id]))[0])
@@ -137,15 +165,6 @@ class DB():
                 GROUP BY method ORDER BY COUNT(*) DESC LIMIT 1
             ''', [submitter_id])
         )[0][0]
-
-    def total_conflicting_submissions_by_gene(self):
-        return list(map(
-            dict,
-            self.cursor.execute('''
-                SELECT gene_symbol, COUNT(*) AS count FROM current_conflicts
-                WHERE gene_symbol!="" GROUP BY gene_symbol ORDER BY gene_symbol
-            ''')
-        ))
 
     def total_conflicting_submissions_by_method_over_time(self):
         return list(map(
@@ -196,6 +215,28 @@ class DB():
                 pass
         return ret
 
+    def total_submissions_by_gene(self, conflicting = False, submitter_id = None, min_stars = 0, method = None):
+        query = 'SELECT gene_symbol, COUNT(*) AS count FROM current_submissions WHERE 1'
+
+        if conflicting:
+            query += ' AND conflicting=1'
+
+        if submitter_id:
+            query += ' AND submitter_id=:submitter_id'
+
+        if min_stars > 0:
+            query += DB.min_star_restriction('review_status', min_stars)
+
+        if method:
+            query += ' AND method=:method'
+
+        query += ' GROUP BY gene_symbol ORDER BY gene_symbol'
+
+        return list(map(
+            dict,
+            self.cursor.execute(query, {'submitter_id': submitter_id, 'method': method})
+        ))
+
     def total_submissions_by_method_over_time(self):
         return list(map(
             dict,
@@ -215,3 +256,33 @@ class DB():
                 GROUP BY submitter_id ORDER BY submitter_name
             ''', [country])
         ))
+
+    def total_submissions_by_variant(self, gene, conflicting = False, submitter_id = None, min_stars = 0, method = None):
+        query = '''
+            SELECT ncbi_variation_id, preferred_name, COUNT(*) AS count FROM current_submissions
+            WHERE gene_symbol=:gene
+        '''
+
+        if conflicting:
+            query += ' AND conflicting=1'
+
+        if submitter_id:
+            query += ' AND submitter_id=:submitter_id'
+
+        if min_stars > 0:
+            query += DB.min_star_restriction('review_status', min_stars)
+
+        if method:
+            query += ' AND method=:method'
+
+        query += ' GROUP BY ncbi_variation_id ORDER BY preferred_name'
+
+        return list(map(
+            dict,
+            self.cursor.execute(query, {'gene': gene, 'submitter_id': submitter_id, 'method': method})
+        ))
+
+    def variant_name(self, variant_id):
+        return list(self.cursor.execute(
+            'SELECT preferred_name FROM current_submissions WHERE ncbi_variation_id=?', [variant_id]
+        ))[0][0]

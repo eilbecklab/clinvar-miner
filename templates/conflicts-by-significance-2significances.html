@@ -4,7 +4,7 @@
 {% endblock %}
 {% block content %}
     {% with header = 'Compare variants annotated ' + significance1 + ' to variants annotated ' + significance2 + ' that have' %}
-        {% include 'variant-filter.html' %}
+        {% include 'conflicting-submission-filter.html' %}
     {% endwith %}
     <h2>Significance to significance conflicts</h2>
     {% include 'conflicts.html' %}

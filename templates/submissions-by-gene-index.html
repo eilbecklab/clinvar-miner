@@ -1,17 +1,20 @@
 {% extends 'skin.html' %}
 {% block content %}
+    {% with header='Include submissions that have' %}
+        {% include 'submission-filter.html' %}
+    {% endwith %}
     <table class="sortable table" style="width:auto">
         <thead>
             <tr>
                 <th>Gene</th>
-                <th style="text-align:right">Conflicting submissions</th>
+                <th style="text-align:right">Submissions</th>
             </tr>
         </thead>
         <tbody>
-            {% for row in total_conflicting_submissions_by_gene  %}
+            {% for row in total_submissions_by_gene  %}
                 <tr>
                     <td>
-                        <a href="conflicting-submissions-by-gene/{{ row['gene_symbol']|quotepath }}">
+                        <a href="submissions-by-gene/{{ row['gene_symbol']|quotepath }}{{ request|querysuffix }}">
                             {{ row['gene_symbol'] }}
                         </a>
                     </td>
