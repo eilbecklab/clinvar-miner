@@ -20,19 +20,23 @@
     {% if not summary %}
         No conflicts
     {% else %}
-        <table class="summary table table-bordered table-striped" style="width:auto">
-            <tr>
-                <th></th>
-                <th>{{ submitter1_info['name'] }}</th>
-            </tr>
-            {% for submitter2_id, row in summary.items() %}
+        <table class="sortable summary table table-bordered table-striped" style="width:auto">
+            <thead>
                 <tr>
-                    <th>{{ row['name'] }}</th>
-                    <td>
-                        <a href="conflicts-by-submitter/{{ submitter1_info['id'] }}/{{ submitter2_id }}{{ request|querysuffix }}">{{ row['total'] }}</a>
-                    </td>
+                    <th>Submitter</th>
+                    <th>Conflicts</th>
                 </tr>
-            {% endfor %}
+            </thead>
+            <tbody>
+                {% for submitter2_id, row in summary.items() %}
+                    <tr>
+                        <th>{{ row['name'] }}</th>
+                        <td>
+                            <a href="conflicts-by-submitter/{{ submitter1_info['id'] }}/{{ submitter2_id }}{{ request|querysuffix }}">{{ row['total'] }}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
         </table>
         {% include 'breakdown.html' %}
     {% endif %}
