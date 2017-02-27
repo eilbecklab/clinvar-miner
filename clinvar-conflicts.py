@@ -30,6 +30,7 @@ def overview_to_breakdown(conflict_overview):
     breakdown = {}
     submitter1_significances = set()
     submitter2_significances = set()
+    total = 0
 
     for row in conflict_overview:
         clin_sig1 = row['clin_sig1']
@@ -43,10 +44,12 @@ def overview_to_breakdown(conflict_overview):
         submitter1_significances.add(clin_sig1)
         submitter2_significances.add(clin_sig2)
 
+        total += count
+
     submitter1_significances = sorted(submitter1_significances)
     submitter2_significances = sorted(submitter2_significances)
 
-    return breakdown, submitter1_significances, submitter2_significances
+    return breakdown, submitter1_significances, submitter2_significances, total
 
 @app.template_filter('date')
 def prettify_date(iso_date):
@@ -175,7 +178,7 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
                 summary[submitter2_id] = {'name': submitter2_name, 'total': 0}
             summary[submitter2_id]['total'] += count
 
-        breakdown, submitter1_significances, submitter2_significances = overview_to_breakdown(conflict_overview)
+        breakdown, submitter1_significances, submitter2_significances, total = overview_to_breakdown(conflict_overview)
 
         return render_template(
             'conflicts-by-submitter-1submitter.html',
@@ -187,6 +190,7 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
             breakdown=breakdown,
             submitter1_significances=submitter1_significances,
             submitter2_significances=submitter2_significances,
+            total=total,
             method_options=db.methods(),
         )
 
@@ -211,7 +215,7 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
             corrected_terms=request.args.get('corrected_terms'),
         )
 
-        breakdown, submitter1_significances, submitter2_significances = overview_to_breakdown(conflict_overview)
+        breakdown, submitter1_significances, submitter2_significances, total = overview_to_breakdown(conflict_overview)
 
         return render_template(
             'conflicts-by-submitter-2submitters.html',
@@ -221,6 +225,7 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
             breakdown=breakdown,
             submitter1_significances=submitter1_significances,
             submitter2_significances=submitter2_significances,
+            total=total,
             method_options=db.methods(),
         )
 
@@ -258,7 +263,7 @@ def conflicts_by_significance(significance1 = None, significance2 = None):
             corrected_terms=request.args.get('corrected_terms'),
         )
 
-        breakdown, submitter1_significances, submitter2_significances = overview_to_breakdown(conflict_overview)
+        breakdown, submitter1_significances, submitter2_significances, total = overview_to_breakdown(conflict_overview)
 
         return render_template(
             'conflicts-by-significance.html',
@@ -266,6 +271,7 @@ def conflicts_by_significance(significance1 = None, significance2 = None):
             breakdown=breakdown,
             submitter1_significances=submitter1_significances,
             submitter2_significances=submitter2_significances,
+            total=total,
             method_options=db.methods(),
         )
 
