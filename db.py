@@ -102,14 +102,6 @@ class DB():
             )
         ))
 
-    def corrected_significances(self):
-        return list(map(
-            lambda row: row[0],
-            self.cursor.execute('''
-                SELECT DISTINCT corrected_clin_sig FROM current_submissions ORDER BY corrected_clin_sig
-            ''')
-        ))
-
     def max_date(self):
         return list(self.cursor.execute('SELECT MAX(date) FROM submissions'))[0][0]
 
@@ -136,14 +128,6 @@ class DB():
             self.cursor.execute('''
                 SELECT clin_sig, MIN(date) AS first_seen FROM current_submissions
                 GROUP BY clin_sig ORDER BY first_seen DESC
-            ''')
-        ))
-
-    def significances(self):
-        return list(map(
-            lambda row: row[0],
-            self.cursor.execute('''
-                SELECT DISTINCT clin_sig FROM current_submissions ORDER BY clin_sig
             ''')
         ))
 

@@ -11,14 +11,6 @@ from flask import request
 
 app = Flask(__name__)
 
-def create_breakdown_table(significances):
-    breakdown_table = OrderedDict()
-    for significance1 in significances:
-        breakdown_table[significance1] = OrderedDict()
-        for significance2 in significances:
-            breakdown_table[significance1][significance2] = 0
-    return breakdown_table
-
 def break_punctuation(text):
     #provide additional line breaking opportunities
     return (text
@@ -33,6 +25,28 @@ def break_punctuation(text):
 def min_stars(request):
     min_stars = request.args.get('min_stars')
     return int(min_stars) if min_stars else 0
+
+def overview_to_breakdown(conflict_overview):
+    breakdown = {}
+    submitter1_significances = set()
+    submitter2_significances = set()
+
+    for row in conflict_overview:
+        clin_sig1 = row['clin_sig1']
+        clin_sig2 = row['clin_sig2']
+        count = row['count']
+
+        if not clin_sig1 in breakdown:
+            breakdown[clin_sig1] = {}
+        breakdown[clin_sig1][clin_sig2] = count
+
+        submitter1_significances.add(clin_sig1)
+        submitter2_significances.add(clin_sig2)
+
+    submitter1_significances = sorted(submitter1_significances)
+    submitter2_significances = sorted(submitter2_significances)
+
+    return breakdown, submitter1_significances, submitter2_significances
 
 @app.template_filter('date')
 def prettify_date(iso_date):
@@ -150,23 +164,18 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
             method=request.args.get('method'),
             corrected_terms=request.args.get('corrected_terms'),
         )
-        significances = db.corrected_significances() if request.args.get('corrected_terms') else db.significances()
         submitter_primary_method = db.submitter_primary_method(submitter1_id)
 
         summary = OrderedDict()
-        breakdown = create_breakdown_table(significances)
         for row in conflict_overview:
             submitter2_id = row['submitter2_id']
             submitter2_name = row['submitter2_name']
-            clin_sig1 = row['clin_sig1']
-            clin_sig2 = row['clin_sig2']
             count = row['count']
-
             if not submitter2_id in summary:
                 summary[submitter2_id] = {'name': submitter2_name, 'total': 0}
             summary[submitter2_id]['total'] += count
 
-            breakdown[clin_sig1][clin_sig2] += count
+        breakdown, submitter1_significances, submitter2_significances = overview_to_breakdown(conflict_overview)
 
         return render_template(
             'conflicts-by-submitter-1submitter.html',
@@ -176,6 +185,8 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
             submitter_primary_method=submitter_primary_method,
             summary=summary,
             breakdown=breakdown,
+            submitter1_significances=submitter1_significances,
+            submitter2_significances=submitter2_significances,
             method_options=db.methods(),
         )
 
@@ -199,15 +210,8 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
             method=request.args.get('method'),
             corrected_terms=request.args.get('corrected_terms'),
         )
-        significances = db.corrected_significances() if request.args.get('corrected_terms') else db.significances()
 
-        breakdown = create_breakdown_table(significances)
-        for row in conflict_overview:
-            clin_sig1 = row['clin_sig1']
-            clin_sig2 = row['clin_sig2']
-            count = row['count']
-
-            breakdown[clin_sig1][clin_sig2] = count
+        breakdown, submitter1_significances, submitter2_significances = overview_to_breakdown(conflict_overview)
 
         return render_template(
             'conflicts-by-submitter-2submitters.html',
@@ -215,6 +219,8 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
             submitter1_info=submitter1_info,
             submitter2_info=submitter2_info,
             breakdown=breakdown,
+            submitter1_significances=submitter1_significances,
+            submitter2_significances=submitter2_significances,
             method_options=db.methods(),
         )
 
@@ -251,19 +257,15 @@ def conflicts_by_significance(significance1 = None, significance2 = None):
             method=request.args.get('method'),
             corrected_terms=request.args.get('corrected_terms'),
         )
-        significances = db.corrected_significances() if request.args.get('corrected_terms') else db.significances()
 
-        breakdown = create_breakdown_table(significances)
-        for row in conflict_overview:
-            clin_sig1 = row['clin_sig1']
-            clin_sig2 = row['clin_sig2']
-            count = row['count']
-            breakdown[clin_sig1][clin_sig2] += count
+        breakdown, submitter1_significances, submitter2_significances = overview_to_breakdown(conflict_overview)
 
         return render_template(
             'conflicts-by-significance.html',
             title='Conflicts by Significance',
             breakdown=breakdown,
+            submitter1_significances=submitter1_significances,
+            submitter2_significances=submitter2_significances,
             method_options=db.methods(),
         )
 

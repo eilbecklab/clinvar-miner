@@ -10,20 +10,22 @@
     <table class="breakdown table table-bordered table-condensed table-striped">
         <tr>
             <th></th>
-            {% for significance2 in breakdown %}
+            {% for significance2 in submitter2_significances %}
                 <th>{{ significance2 }}</th>
             {% endfor %}
         </tr>
-        {% for significance1, row in breakdown.items() %}
+        {% for significance1 in submitter1_significances %}
             <tr>
                 <th>{{ significance1 }}</th>
-                {% for significance2, count in row.items() %}
-                    {% if count > 0 %}
+                {% for significance2 in submitter2_significances %}
+                    {% if breakdown[significance1].get(significance2, 0) > 0 %}
                         <td style="background-color:coral">
-                            <a href="conflicts-by-significance/{{ significance1|quotepath }}/{{ significance2|quotepath }}{{ request|querysuffix }}">{{ count }}</a>
+                            <a href="conflicts-by-significance/{{ significance1|quotepath }}/{{ significance2|quotepath }}{{ request|querysuffix }}">
+                                {{ breakdown[significance1][significance2] }}
+                            </a>
                         </td>
                     {% else %}
-                        <td>{{ count }}</td>
+                        <td>0</td>
                     {% endif %}
                 {% endfor %}
             </tr>
