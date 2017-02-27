@@ -24,15 +24,20 @@ class DB():
         self.db.row_factory = sqlite3.Row
         self.cursor = self.db.cursor()
 
-    def conflict_overview(self, submitter_id = None, min_stars = 0, method = None):
-        query = '''
-            SELECT clin_sig1, corrected_clin_sig1, submitter2_id, submitter2_name, clin_sig2, corrected_clin_sig2,
-            COUNT(*) AS count
-            FROM current_conflicts WHERE 1
-        '''
+    def conflict_overview(self, submitter1_id = None, submitter2_id = None, min_stars = 0, method = None,
+                          corrected_terms = False):
+        if corrected_terms:
+            query = 'SELECT corrected_clin_sig1 AS clin_sig1, corrected_clin_sig2 AS clin_sig2'
+        else:
+            query = 'SELECT clin_sig1, clin_sig2'
 
-        if submitter_id:
-            query += ' AND submitter1_id=:submitter_id'
+        query += ', submitter2_id, submitter2_name, COUNT(*) AS count FROM current_conflicts WHERE 1'
+
+        if submitter1_id:
+            query += ' AND submitter1_id=:submitter1_id'
+
+        if submitter2_id:
+            query += ' AND submitter2_id=:submitter2_id'
 
         if min_stars > 0:
             query += DB.min_star_restriction('review_status2', min_stars)
@@ -40,15 +45,21 @@ class DB():
         if method:
             query += ' AND method2=:method'
 
-        query += ' GROUP BY submitter2_id, corrected_clin_sig1, corrected_clin_sig2 ORDER BY submitter2_name'
+        if corrected_terms:
+            query += ' GROUP BY corrected_clin_sig1, corrected_clin_sig2'
+        else:
+            query += ' GROUP BY clin_sig1, clin_sig2'
+
+        query += ' ORDER BY submitter2_name'
 
         return list(map(
             dict,
             self.cursor.execute(
                 query,
                 {
-                    'submitter_id': submitter_id,
-                    'method': method
+                    'submitter1_id': submitter1_id,
+                    'submitter2_id': submitter2_id,
+                    'method': method,
                 }
             )
         ))

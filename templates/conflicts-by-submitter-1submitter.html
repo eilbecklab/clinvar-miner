@@ -3,12 +3,12 @@
     <link href="static/tables.css" rel="stylesheet" type="text/css"/>
 {% endblock %}
 {% block title %}
-    Conflicts with {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+    Conflicts with {{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }}
     <br/>
     <small style="font-size:medium">
         Primary submission method: {{ submitter_primary_method }}
-        {% if 'country' in submitter_info %}
-            &mdash; Location: {{ submitter_info['country'] }}
+        {% if 'country' in submitter1_info %}
+            &mdash; Location: {{ submitter1_info['country'] }}
         {% endif %}
     </small>
 {% endblock %}
@@ -17,52 +17,23 @@
         {% include 'breakdown-filter.html' %}
     {% endwith %}
     <h2>Submitter to submitter summary</h2>
-    {% if summary['0']['total'] == 0 %}
+    {% if not summary %}
         No conflicts
     {% else %}
         <table class="summary table table-bordered table-striped" style="width:auto">
             <tr>
                 <th></th>
-                <th>{{ submitter_info['name'] }}</th>
+                <th>{{ submitter1_info['name'] }}</th>
             </tr>
             {% for submitter2_id, row in summary.items() %}
                 <tr>
                     <th>{{ row['name'] }}</th>
                     <td>
-                        <a href="conflicts-by-submitter/{{ submitter_info['id'] }}/{{ submitter2_id }}{{ request|querysuffix }}">{{ row['total'] }}</a>
+                        <a href="conflicts-by-submitter/{{ submitter1_info['id'] }}/{{ submitter2_id }}{{ request|querysuffix }}">{{ row['total'] }}</a>
                     </td>
                 </tr>
             {% endfor %}
         </table>
-        <h2>Significance breakdowns</h2>
-        {% for submitter2_id, breakdown in breakdowns.items() %}
-            <table class="breakdown table table-bordered table-condensed table-striped">
-                <tr>
-                    <th></th>
-                    <th colspan="{{ breakdown['table']|length + 1 }}">{{ submitter_link(submitter2_id, breakdown['name'])|safe }}</th>
-                </tr>
-                <tr>
-                    <th rowspan="{{ breakdown['table']|length + 1 }}">{{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}</th>
-                    <th></th>
-                    {% for significance2 in breakdown['table'] %}
-                        <th>{{ significance2 }}</th>
-                    {% endfor %}
-                </tr>
-                {% for significance1, row in breakdown['table'].items() %}
-                    <tr>
-                        <th>{{ significance1 }}</th>
-                        {% for significance2, count in row.items() %}
-                            {% if count > 0 %}
-                                <td style="background-color:coral">
-                                    <a href="conflicts-by-submitter/{{ submitter_info['id'] }}/{{ submitter2_id }}/{{ significance1|quotepath }}/{{ significance2|quotepath }}{{ request|querysuffix }}">{{ count }}</a>
-                                </td>
-                            {% else %}
-                                <td>0</td>
-                            {% endif %}
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            </table>
-        {% endfor %}
+        {% include 'breakdown.html' %}
     {% endif %}
 {% endblock %}

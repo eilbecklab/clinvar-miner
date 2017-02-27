@@ -1,0 +1,38 @@
+<h2>Significance breakdown</h2>
+{% if not breakdown %}
+    No conflicts
+{% else %}
+    <table class="breakdown table table-bordered table-condensed table-striped">
+        <tr>
+            <th></th>
+            <th colspan="{{ breakdown|length + 1 }}">
+                {{ submitter_link(submitter2_info['id'], submitter2_info['name'])|safe }}
+            </th>
+        </tr>
+        <tr>
+            <th rowspan="{{ breakdown|length + 1 }}">
+                {{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }}
+            </th>
+            <th></th>
+            {% for significance2 in breakdown %}
+                <th>{{ significance2 }}</th>
+            {% endfor %}
+        </tr>
+        {% for significance1, row in breakdown.items() %}
+            <tr>
+                <th>{{ significance1 }}</th>
+                {% for significance2, count in row.items() %}
+                    {% if count > 0 %}
+                        <td style="background-color:coral">
+                            <a href="conflicts-by-submitter/{{ submitter1_info['id'] }}/{{ submitter2_info['id'] }}/{{ significance1|quotepath }}/{{ significance2|quotepath }}{{ request|querysuffix }}">
+                                {{ count }}
+                            </a>
+                        </td>
+                    {% else %}
+                        <td>0</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
