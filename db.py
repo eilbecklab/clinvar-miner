@@ -81,7 +81,7 @@ class DB():
             query += ' AND clin_sig2=:significance2'
 
         if min_stars > 0:
-            query += DB.min_star_restriction('review_status', min_stars)
+            query += DB.min_star_restriction('review_status2', min_stars)
 
         if method:
             query += ' AND method2=:method'
