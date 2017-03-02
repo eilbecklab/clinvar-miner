@@ -1,5 +1,4 @@
 import sqlite3
-from pycountry import countries
 from sqlite3 import OperationalError
 
 class DB():
@@ -205,20 +204,14 @@ class DB():
         ))
 
     def total_submissions_by_country(self):
-        ret = list(map(
+        return list(map(
             dict,
             self.cursor.execute('''
-                SELECT country, COUNT(*) AS count FROM current_submissions
+                SELECT country, country_code, COUNT(*) AS count FROM current_submissions
                 LEFT JOIN submitter_info ON current_submissions.submitter_id=submitter_info.id
                 GROUP BY country ORDER BY country
             ''')
         ))
-        for row in ret:
-            try:
-                row['country_code'] = countries.lookup(row['country']).alpha_3
-            except LookupError:
-                pass
-        return ret
 
     def total_submissions_by_gene(self, submitter_id = None, min_stars = 0, method = None, min_conflict_level = 0):
         query = '''

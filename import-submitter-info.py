@@ -3,6 +3,7 @@
 import html5lib
 import re
 import sqlite3
+from pycountry import countries
 from sys import stdout
 from urllib.error import HTTPError
 from urllib.request import urlopen
@@ -25,6 +26,7 @@ cursor.execute('''
         state TEXT,
         zip_code TEXT,
         country TEXT,
+        country_code TEXT,
         PRIMARY KEY (id)
     )
 ''')
@@ -43,6 +45,11 @@ for submitter_id in submitter_ids:
             submitter_el = root.find('.//html:div[@id="maincontent"]//html:div[@class="submitter_main indented"]', ns)
             name = submitter_el.find('./html:h2', ns).text
             contact_info_el = submitter_el.find('.//html:div[@class="indented"]/html:div[@class="indented"]', ns)
+            city = ''
+            state = ''
+            zip_code = ''
+            country = ''
+            country_code = ''
             if contact_info_el: #the "ClinVar" submitter has no contact information
                 contact_info = list(contact_info_el.itertext())[1:]
                 contact_info = list(filter(lambda info: not re.match('http://|https://|Organization ID:', info), contact_info))
@@ -52,17 +59,13 @@ for submitter_id in submitter_ids:
                     country_and_zip = re.match('(.+) - (.+)', contact_info[-1])
                     zip_code = country_and_zip.group(2) if country_and_zip else ''
                     country = country_and_zip.group(1) if country_and_zip else contact_info[-1]
-                else:
-                    zip_code = ''
-                    country = ''
-            else:
-                city = ''
-                state = ''
-                zip_code = ''
-                country = ''
+                    try:
+                        country_code = countries.lookup(country).alpha_3
+                    except LookupError:
+                        pass
             cursor.execute(
-                'INSERT OR REPLACE INTO submitter_info VALUES (?,?,?,?,?,?)',
-                (int(submitter_id), name, city, state, zip_code, country)
+                'INSERT OR REPLACE INTO submitter_info VALUES (?,?,?,?,?,?,?)',
+                (int(submitter_id), name, city, state, zip_code, country, country_code)
             )
     except HTTPError as err:
         if err.code == 404:
