@@ -3,22 +3,6 @@ from pycountry import countries
 from sqlite3 import OperationalError
 
 class DB():
-    STAR_MAP = [
-        ['criteria provided, single submitter', 'criteria provided, conflicting interpretations'],
-        ['criteria provided, multiple submitters, no conflicts'],
-        ['reviewed by expert panel'],
-        ['practice guideline'],
-    ]
-
-    def min_star_restriction(review_status_col, min_stars):
-        return ' AND (' + ' OR '.join(map(
-            lambda phrases: ' OR '.join(map(
-                lambda phrase: review_status_col + '="' + phrase + '"',
-                phrases
-            )),
-            DB.STAR_MAP[min_stars-1:]
-        )) + ')'
-
     def __init__(self):
         self.db = sqlite3.connect('clinvar.db', timeout=20)
         self.db.row_factory = sqlite3.Row
@@ -33,16 +17,13 @@ class DB():
 
         query += ', submitter2_id, submitter2_name, COUNT(*) AS count FROM current_comparisons'
 
-        query += ' WHERE conflict_level>=:min_conflict_level'
+        query += ' WHERE star_level2>=:min_stars AND conflict_level>=:min_conflict_level'
 
         if submitter1_id:
             query += ' AND submitter1_id=:submitter1_id'
 
         if submitter2_id:
             query += ' AND submitter2_id=:submitter2_id'
-
-        if min_stars > 0:
-            query += DB.min_star_restriction('review_status2', min_stars)
 
         if method:
             query += ' AND method2=:method'
@@ -61,6 +42,7 @@ class DB():
                 {
                     'submitter1_id': submitter1_id,
                     'submitter2_id': submitter2_id,
+                    'min_stars': min_stars,
                     'method': method,
                     'min_conflict_level': min_conflict_level,
                 }
@@ -69,7 +51,10 @@ class DB():
 
     def conflicts(self, submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None,
                   min_stars = 0, method = None, min_conflict_level = 1):
-        query = 'SELECT * FROM current_comparisons WHERE conflict_level>=:min_conflict_level'
+        query = '''
+            SELECT * FROM current_comparisons
+            WHERE star_level2>=:min_stars AND conflict_level>=:min_conflict_level
+        '''
 
         if submitter1_id:
             query += ' AND submitter1_id=:submitter1_id'
@@ -82,9 +67,6 @@ class DB():
 
         if significance2:
             query += ' AND clin_sig2=:significance2'
-
-        if min_stars > 0:
-            query += DB.min_star_restriction('review_status2', min_stars)
 
         if method:
             query += ' AND method2=:method'
@@ -100,6 +82,7 @@ class DB():
                     'submitter2_id': submitter2_id,
                     'significance1': significance1,
                     'significance2': significance2,
+                    'min_stars': min_stars,
                     'method': method,
                     'min_conflict_level': min_conflict_level,
                 }
@@ -142,7 +125,7 @@ class DB():
             corrected_clin_sig1 AS corrected_clin_sig1, last_eval1 AS last_eval, review_status1 AS review_status,
             sub_condition1 AS sub_condition, method1 AS method, description1 AS description
             FROM current_comparisons
-            WHERE conflict_level>=:min_conflict_level
+            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
 
         if gene:
@@ -150,10 +133,6 @@ class DB():
 
         if variant_id:
             query += ' AND ncbi_variation_id=:variant_id'
-
-        if min_stars > 0:
-            query += DB.min_star_restriction('review_status1', min_stars)
-            query += DB.min_star_restriction('review_status2', min_stars)
 
         if method:
             query += ' AND method1=:method AND method2=:method'
@@ -167,6 +146,7 @@ class DB():
                 {
                     'gene': gene,
                     'variant_id': variant_id,
+                    'min_stars': min_stars,
                     'method': method,
                     'min_conflict_level': min_conflict_level,
                 }
@@ -231,14 +211,11 @@ class DB():
     def total_submissions_by_gene(self, submitter_id = None, min_stars = 0, method = None, min_conflict_level = 0):
         query = '''
             SELECT gene_symbol, COUNT(DISTINCT scv1) AS count FROM current_comparisons
-            WHERE conflict_level>=:min_conflict_level
+            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
 
         if submitter_id:
             query += ' AND submitter_id=:submitter_id'
-
-        if min_stars > 0:
-            query += DB.min_star_restriction('review_status', min_stars)
 
         if method:
             query += ' AND method1=:method AND method2=:method'
@@ -251,6 +228,7 @@ class DB():
                 query,
                 {
                     'submitter_id': submitter_id,
+                    'min_stars': min_stars,
                     'method': method,
                     'min_conflict_level': min_conflict_level
                 }
@@ -291,14 +269,15 @@ class DB():
                                      min_conflict_level = 0):
         query = '''
             SELECT ncbi_variation_id, preferred_name, COUNT(DISTINCT scv1) AS count FROM current_comparisons
-            WHERE gene_symbol=:gene AND conflict_level>=:min_conflict_level
+            WHERE
+                gene_symbol=:gene AND
+                star_level1>=:min_stars AND
+                star_level2>=:min_stars AND
+                conflict_level>=:min_conflict_level
         '''
 
         if submitter_id:
             query += ' AND submitter_id=:submitter_id'
-
-        if min_stars > 0:
-            query += DB.min_star_restriction('review_status', min_stars)
 
         if method:
             query += ' AND method1=:method AND method2=:method'
@@ -312,6 +291,7 @@ class DB():
                 {
                     'gene': gene,
                     'submitter_id': submitter_id,
+                    'min_stars': min_stars,
                     'method': method,
                     'min_conflict_level': min_conflict_level,
                 }

@@ -39,6 +39,7 @@ def create_tables():
             corrected_clin_sig TEXT,
             last_eval TEXT,
             review_status TEXT,
+            star_level INTEGER,
             sub_condition TEXT,
             method TEXT,
             description TEXT,
@@ -61,6 +62,7 @@ def create_tables():
             corrected_clin_sig1 TEXT,
             last_eval1 TEXT,
             review_status1 TEXT,
+            star_level1 INTEGER,
             sub_condition1 TEXT,
             method1 TEXT,
             description1 TEXT,
@@ -72,6 +74,7 @@ def create_tables():
             corrected_clin_sig2 TEXT,
             last_eval2 TEXT,
             review_status2 TEXT,
+            star_level2 INTEGER,
             sub_condition2 TEXT,
             method2 TEXT,
             description2 TEXT,
@@ -112,8 +115,8 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS clin_sig2_index ON comparisons (clin_sig2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS corrected_clin_sig1_index ON comparisons (corrected_clin_sig1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS corrected_clin_sig2_index ON comparisons (corrected_clin_sig2)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS review_status1_index ON comparisons (review_status1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS review_status2_index ON comparisons (review_status2)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS star_level1_index ON comparisons (star_level1)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS star_level2_index ON comparisons (star_level2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS method1_index ON comparisons (method1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS method2_index ON comparisons (method2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS conflict_level_index ON comparisons (conflict_level)')
@@ -167,6 +170,17 @@ def import_file(filename):
             method = method_el.text if method_el != None else 'not provided' #missing in old versions
             description = comment_el.text if comment_el != None else ''
 
+            if review_status in ['criteria provided, single submitter', 'criteria provided, conflicting interpretations']:
+                star_level = 1
+            elif review_status in ['criteria provided, multiple submitters, no conflicts']:
+                star_level = 2
+            elif review_status == 'reviewed by expert panel':
+                star_level = 3
+            elif review_status == 'practice guideline':
+                star_level = 4
+            else:
+                star_level = 0
+
             submissions.append((
                 date,
                 ncbi_variation_id,
@@ -181,6 +195,7 @@ def import_file(filename):
                 corrected_clin_sig,
                 last_eval,
                 review_status,
+                star_level,
                 sub_condition,
                 method,
                 description,
@@ -209,11 +224,11 @@ def import_file(filename):
         t1.variant_type AS variant_type, t1.gene_symbol AS gene_symbol, t1.submitter_id AS submitter1_id,
         t1.submitter_name AS submitter1_name, t1.rcv AS rcv1, t1.scv AS scv1, t1.clin_sig AS clin_sig1,
         t1.corrected_clin_sig AS corrected_clin_sig1, t1.last_eval AS last_eval1, t1.review_status AS review_status1,
-        t1.sub_condition AS sub_condition1, t1.method AS method1, t1.description AS description1,
-        t2.submitter_id AS submitter2_id, t2.submitter_name AS submitter2_name, t2.rcv AS rcv2, t2.scv AS scv2,
-        t2.clin_sig AS clin_sig2, t2.corrected_clin_sig AS corrected_clin_sig2, t2.last_eval AS last_eval2,
-        t2.review_status AS review_status2, t2.sub_condition AS sub_condition2, t2.method AS method2,
-        t2.description AS description2, (CASE
+        t1.star_level AS star_level1, t1.sub_condition AS sub_condition1, t1.method AS method1
+        t1.description AS description1, t2.submitter_id AS submitter2_id, t2.submitter_name AS submitter2_name,
+        t2.rcv AS rcv2, t2.scv AS scv2, t2.clin_sig AS clin_sig2, t2.corrected_clin_sig AS corrected_clin_sig2,
+        t2.last_eval AS last_eval2, t2.review_status AS review_status2, t2.star_level AS star_level2,
+        t2.sub_condition AS sub_condition2, t2.method AS method2, t2.description AS description2, (CASE
             WHEN t1.corrected_clin_sig=t2.corrected_clin_sig AND t1.clin_sig!=t2.clin_sig THEN 1
             WHEN t1.corrected_clin_sig="benign" AND t2.corrected_clin_sig="likely benign" THEN 2
             WHEN t1.corrected_clin_sig="likely benign" AND t2.corrected_clin_sig="benign" THEN 2
