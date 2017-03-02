@@ -86,59 +86,46 @@ def template_functions():
         'variant_link': variant_link,
     }
 
-@app.route('/submissions-by-gene')
-@app.route('/submissions-by-gene/<gene>')
-@app.route('/submissions-by-gene/<gene>/<variant_id>')
-def submissions_by_gene(gene = None, variant_id = None):
-    try:
-        min_conflict_level = int(request.args.get('conflicting', 0))
-    except ValueError:
-        abort(400)
-
+@app.route('/conflicts-by-significance')
+@app.route('/conflicts-by-significance/<significance1>/<significance2>')
+def conflicts_by_significance(significance1 = None, significance2 = None):
     db = DB()
 
-    if not gene:
-        total_submissions_by_gene=db.total_submissions_by_gene(
+    if not significance2:
+        conflict_overview = db.conflict_overview(
             min_stars=min_stars(request),
             method=request.args.get('method'),
-            min_conflict_level=min_conflict_level,
+            corrected_terms=request.args.get('corrected_terms'),
         )
+
+        breakdown, submitter1_significances, submitter2_significances, total = overview_to_breakdown(conflict_overview)
+
         return render_template(
-            'submissions-by-gene-index.html',
-            title='Submissions by Gene',
-            total_submissions_by_gene=total_submissions_by_gene,
+            'conflicts-by-significance.html',
+            title='Conflicts by Significance',
+            breakdown=breakdown,
+            submitter1_significances=submitter1_significances,
+            submitter2_significances=submitter2_significances,
+            total=total,
             method_options=db.methods(),
         )
 
-    if not variant_id:
-        gene = gene.replace('%2F', '/')
-        total_submissions_by_variant=db.total_submissions_by_variant(
-            gene,
-            min_stars=min_stars(request),
-            method=request.args.get('method'),
-            min_conflict_level=min_conflict_level,
-        )
-        return render_template(
-            'variants-by-gene.html',
-            title='Variants in gene ' + gene,
-            gene=gene,
-            total_submissions_by_variant=total_submissions_by_variant,
-            method_options=db.methods(),
-        )
+    significance1 = significance1.replace('%2F', '/')
+    significance2 = significance2.replace('%2F', '/')
 
-    submissions=db.submissions(
-        variant_id=variant_id,
+    conflicts = db.conflicts(
+        significance1=significance1,
+        significance2=significance2,
         min_stars=min_stars(request),
         method=request.args.get('method'),
-        min_conflict_level=min_conflict_level,
     )
-    variant_name=db.variant_name(variant_id)
+
     return render_template(
-        'submissions-by-variant.html',
-        title='Submissions for variant ' + variant_name,
-        variant_name=variant_name,
-        variant_id=variant_id,
-        submissions=submissions,
+        'conflicts-by-significance-2significances.html',
+        title='Conflicts between ' + significance1 + ' and ' + significance2 + ' submissions',
+        significance1=significance1,
+        significance2=significance2,
+        conflicts=conflicts,
         method_options=db.methods(),
     )
 
@@ -256,49 +243,6 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
         method_options=db.methods(),
     )
 
-@app.route('/conflicts-by-significance')
-@app.route('/conflicts-by-significance/<significance1>/<significance2>')
-def conflicts_by_significance(significance1 = None, significance2 = None):
-    db = DB()
-
-    if not significance2:
-        conflict_overview = db.conflict_overview(
-            min_stars=min_stars(request),
-            method=request.args.get('method'),
-            corrected_terms=request.args.get('corrected_terms'),
-        )
-
-        breakdown, submitter1_significances, submitter2_significances, total = overview_to_breakdown(conflict_overview)
-
-        return render_template(
-            'conflicts-by-significance.html',
-            title='Conflicts by Significance',
-            breakdown=breakdown,
-            submitter1_significances=submitter1_significances,
-            submitter2_significances=submitter2_significances,
-            total=total,
-            method_options=db.methods(),
-        )
-
-    significance1 = significance1.replace('%2F', '/')
-    significance2 = significance2.replace('%2F', '/')
-
-    conflicts = db.conflicts(
-        significance1=significance1,
-        significance2=significance2,
-        min_stars=min_stars(request),
-        method=request.args.get('method'),
-    )
-
-    return render_template(
-        'conflicts-by-significance-2significances.html',
-        title='Conflicts between ' + significance1 + ' and ' + significance2 + ' submissions',
-        significance1=significance1,
-        significance2=significance2,
-        conflicts=conflicts,
-        method_options=db.methods(),
-    )
-
 @app.route('/')
 def index():
     db = DB()
@@ -329,6 +273,62 @@ def significance_terms(term = None):
         'significance-terms.html',
         title='Submitters of "' + term + '" Variants',
         total_significance_terms=db.total_significance_terms(term),
+    )
+
+@app.route('/submissions-by-gene')
+@app.route('/submissions-by-gene/<gene>')
+@app.route('/submissions-by-gene/<gene>/<variant_id>')
+def submissions_by_gene(gene = None, variant_id = None):
+    try:
+        min_conflict_level = int(request.args.get('conflicting', 0))
+    except ValueError:
+        abort(400)
+
+    db = DB()
+
+    if not gene:
+        total_submissions_by_gene=db.total_submissions_by_gene(
+            min_stars=min_stars(request),
+            method=request.args.get('method'),
+            min_conflict_level=min_conflict_level,
+        )
+        return render_template(
+            'submissions-by-gene-index.html',
+            title='Submissions by Gene',
+            total_submissions_by_gene=total_submissions_by_gene,
+            method_options=db.methods(),
+        )
+
+    if not variant_id:
+        gene = gene.replace('%2F', '/')
+        total_submissions_by_variant=db.total_submissions_by_variant(
+            gene,
+            min_stars=min_stars(request),
+            method=request.args.get('method'),
+            min_conflict_level=min_conflict_level,
+        )
+        return render_template(
+            'variants-by-gene.html',
+            title='Variants in gene ' + gene,
+            gene=gene,
+            total_submissions_by_variant=total_submissions_by_variant,
+            method_options=db.methods(),
+        )
+
+    submissions=db.submissions(
+        variant_id=variant_id,
+        min_stars=min_stars(request),
+        method=request.args.get('method'),
+        min_conflict_level=min_conflict_level,
+    )
+    variant_name=db.variant_name(variant_id)
+    return render_template(
+        'submissions-by-variant.html',
+        title='Submissions for variant ' + variant_name,
+        variant_name=variant_name,
+        variant_id=variant_id,
+        submissions=submissions,
+        method_options=db.methods(),
     )
 
 @app.route('/total-conflicting-submissions-by-method')
