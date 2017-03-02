@@ -39,7 +39,9 @@ def overview_to_breakdown(conflict_overview):
 
         if not clin_sig1 in breakdown:
             breakdown[clin_sig1] = {}
-        breakdown[clin_sig1][clin_sig2] = count
+        if not clin_sig2 in breakdown[clin_sig1]:
+            breakdown[clin_sig1][clin_sig2] = 0
+        breakdown[clin_sig1][clin_sig2] += count
 
         submitter1_significances.add(clin_sig1)
         submitter2_significances.add(clin_sig2)
