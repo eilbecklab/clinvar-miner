@@ -220,25 +220,47 @@ def import_file(filename):
     # 4 - clinically significance difference (e.g. benign/pathogenic)
     cursor.execute('''
         INSERT INTO comparisons
-        SELECT t1.date AS date, t1.ncbi_variation_id AS ncbi_variation_id, t1.preferred_name AS preferred_name,
-        t1.variant_type AS variant_type, t1.gene_symbol AS gene_symbol, t1.submitter_id AS submitter1_id,
-        t1.submitter_name AS submitter1_name, t1.rcv AS rcv1, t1.scv AS scv1, t1.clin_sig AS clin_sig1,
-        t1.corrected_clin_sig AS corrected_clin_sig1, t1.last_eval AS last_eval1, t1.review_status AS review_status1,
-        t1.star_level AS star_level1, t1.sub_condition AS sub_condition1, t1.method AS method1
-        t1.description AS description1, t2.submitter_id AS submitter2_id, t2.submitter_name AS submitter2_name,
-        t2.rcv AS rcv2, t2.scv AS scv2, t2.clin_sig AS clin_sig2, t2.corrected_clin_sig AS corrected_clin_sig2,
-        t2.last_eval AS last_eval2, t2.review_status AS review_status2, t2.star_level AS star_level2,
-        t2.sub_condition AS sub_condition2, t2.method AS method2, t2.description AS description2, (CASE
-            WHEN t1.corrected_clin_sig=t2.corrected_clin_sig AND t1.clin_sig!=t2.clin_sig THEN 1
-            WHEN t1.corrected_clin_sig="benign" AND t2.corrected_clin_sig="likely benign" THEN 2
-            WHEN t1.corrected_clin_sig="likely benign" AND t2.corrected_clin_sig="benign" THEN 2
-            WHEN t1.corrected_clin_sig="pathogenic" AND t2.corrected_clin_sig="likely pathogenic" THEN 2
-            WHEN t1.corrected_clin_sig="likely pathogenic" AND t2.corrected_clin_sig="pathogenic" THEN 2
-            WHEN t1.corrected_clin_sig IN ("benign", "likely benign") AND t2.corrected_clin_sig IN ("pathogenic", "likely pathogenic") THEN 4
-            WHEN t1.corrected_clin_sig IN ("pathogenic", "likely pathogenic") AND t2.corrected_clin_sig IN ("benign", "likely benign") THEN 4
-            WHEN t1.corrected_clin_sig!=t2.corrected_clin_sig THEN 3
-            ELSE 0
-        END) AS conflict_level
+        SELECT
+            t1.date AS date,
+            t1.ncbi_variation_id AS ncbi_variation_id,
+            t1.preferred_name AS preferred_name,
+            t1.variant_type AS variant_type,
+            t1.gene_symbol AS gene_symbol,
+            t1.submitter_id AS submitter1_id,
+            t1.submitter_name AS submitter1_name,
+            t1.rcv AS rcv1,
+            t1.scv AS scv1,
+            t1.clin_sig AS clin_sig1,
+            t1.corrected_clin_sig AS corrected_clin_sig1,
+            t1.last_eval AS last_eval1,
+            t1.review_status AS review_status1,
+            t1.star_level AS star_level1,
+            t1.sub_condition AS sub_condition1,
+            t1.method AS method1,
+            t1.description AS description1,
+            t2.submitter_id AS submitter2_id,
+            t2.submitter_name AS submitter2_name,
+            t2.rcv AS rcv2,
+            t2.scv AS scv2,
+            t2.clin_sig AS clin_sig2,
+            t2.corrected_clin_sig AS corrected_clin_sig2,
+            t2.last_eval AS last_eval2,
+            t2.review_status AS review_status2,
+            t2.star_level AS star_level2,
+            t2.sub_condition AS sub_condition2,
+            t2.method AS method2,
+            t2.description AS description2,
+            CASE
+                WHEN t1.corrected_clin_sig=t2.corrected_clin_sig AND t1.clin_sig!=t2.clin_sig THEN 1
+                WHEN t1.corrected_clin_sig="benign" AND t2.corrected_clin_sig="likely benign" THEN 2
+                WHEN t1.corrected_clin_sig="likely benign" AND t2.corrected_clin_sig="benign" THEN 2
+                WHEN t1.corrected_clin_sig="pathogenic" AND t2.corrected_clin_sig="likely pathogenic" THEN 2
+                WHEN t1.corrected_clin_sig="likely pathogenic" AND t2.corrected_clin_sig="pathogenic" THEN 2
+                WHEN t1.corrected_clin_sig IN ("benign", "likely benign") AND t2.corrected_clin_sig IN ("pathogenic", "likely pathogenic") THEN 4
+                WHEN t1.corrected_clin_sig IN ("pathogenic", "likely pathogenic") AND t2.corrected_clin_sig IN ("benign", "likely benign") THEN 4
+                WHEN t1.corrected_clin_sig!=t2.corrected_clin_sig THEN 3
+                ELSE 0
+            END AS conflict_level
         FROM submissions t1 INNER JOIN submissions t2
         ON t1.date=? AND t1.date=t2.date AND t1.ncbi_variation_id=t2.ncbi_variation_id
     ''', [date])

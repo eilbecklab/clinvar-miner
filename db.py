@@ -120,10 +120,22 @@ class DB():
 
     def submissions(self, gene = None, variant_id = None, min_stars = 0, method = None, min_conflict_level = 0):
         query = '''
-            SELECT DISTINCT ncbi_variation_id, preferred_name, variant_type, gene_symbol, submitter1_id AS submitter_id,
-            submitter1_name AS submitter_name, rcv1 AS rcv, scv1 AS scv, clin_sig1 AS clin_sig,
-            corrected_clin_sig1 AS corrected_clin_sig1, last_eval1 AS last_eval, review_status1 AS review_status,
-            sub_condition1 AS sub_condition, method1 AS method, description1 AS description
+            SELECT DISTINCT
+                ncbi_variation_id,
+                preferred_name,
+                variant_type,
+                gene_symbol,
+                submitter1_id AS submitter_id,
+                submitter1_name AS submitter_name,
+                rcv1 AS rcv,
+                scv1 AS scv,
+                clin_sig1 AS clin_sig,
+                corrected_clin_sig1 AS corrected_clin_sig1,
+                last_eval1 AS last_eval,
+                review_status1 AS review_status,
+                sub_condition1 AS sub_condition,
+                method1 AS method,
+                description1 AS description
             FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
