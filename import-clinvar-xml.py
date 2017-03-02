@@ -42,30 +42,42 @@ def create_tables():
             sub_condition TEXT,
             method TEXT,
             description TEXT,
-            conflicting INTEGER,
             PRIMARY KEY (date, scv)
         )
     ''')
 
     cursor.execute('''
-        CREATE VIEW IF NOT EXISTS conflicting_submissions AS
-        SELECT * FROM submissions WHERE conflicting=1
-    ''')
-
-    cursor.execute('''
-        CREATE VIEW IF NOT EXISTS conflicts AS
-        SELECT t1.date AS date, t1.ncbi_variation_id AS ncbi_variation_id, t1.preferred_name AS preferred_name,
-        t1.variant_type AS variant_type, t1.gene_symbol AS gene_symbol, t1.submitter_id AS submitter1_id,
-        t1.submitter_name AS submitter1_name, t1.rcv AS rcv1, t1.scv AS scv1, t1.clin_sig AS clin_sig1,
-        t1.corrected_clin_sig AS corrected_clin_sig1, t1.last_eval AS last_eval1, t1.review_status AS review_status1,
-        t1.sub_condition AS sub_condition1, t2.method AS method1, t1.description AS description1,
-        t2.submitter_id AS submitter2_id, t2.submitter_name AS submitter2_name, t2.rcv AS rcv2, t2.scv AS scv2,
-        t2.clin_sig AS clin_sig2, t2.corrected_clin_sig AS corrected_clin_sig2, t2.last_eval AS last_eval2,
-        t2.review_status AS review_status2, t2.sub_condition AS sub_condition2, t2.method AS method2,
-        t2.description AS description2
-        FROM conflicting_submissions t1 INNER JOIN conflicting_submissions t2
-        ON t1.date=t2.date AND t1.ncbi_variation_id=t2.ncbi_variation_id
-        WHERE t1.corrected_clin_sig!=t2.corrected_clin_sig
+        CREATE TABLE IF NOT EXISTS comparisons (
+            date TEXT,
+            ncbi_variation_id TEXT,
+            preferred_name TEXT,
+            variant_type TEXT,
+            gene_symbol TEXT,
+            submitter1_id INTEGER,
+            submitter1_name TEXT,
+            rcv1 TEXT,
+            scv1 TEXT,
+            clin_sig1 TEXT,
+            corrected_clin_sig1 TEXT,
+            last_eval1 TEXT,
+            review_status1 TEXT,
+            sub_condition1 TEXT,
+            method1 TEXT,
+            description1 TEXT,
+            submitter2_id INTEGER,
+            submitter2_name TEXT,
+            rcv2 TEXT,
+            scv2 TEXT,
+            clin_sig2 TEXT,
+            corrected_clin_sig2 TEXT,
+            last_eval2 TEXT,
+            review_status2 TEXT,
+            sub_condition2 TEXT,
+            method2 TEXT,
+            description2 TEXT,
+            conflict_level INTEGER,
+            PRIMARY KEY (date, scv1, scv2)
+        )
     ''')
 
     cursor.execute('''
@@ -76,31 +88,35 @@ def create_tables():
     ''')
 
     cursor.execute('''
-        CREATE VIEW IF NOT EXISTS current_conflicting_submissions AS
-        SELECT * FROM conflicting_submissions WHERE date=(
-            SELECT MAX(date) FROM submissions
-        )
-    ''')
-
-    cursor.execute('''
-        CREATE VIEW IF NOT EXISTS current_conflicts AS
-        SELECT * FROM conflicts WHERE date=(
+        CREATE VIEW IF NOT EXISTS current_comparisons AS
+        SELECT * FROM comparisons WHERE date=(
             SELECT MAX(date) FROM submissions
         )
     ''')
 
     cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON submissions (date)')
     cursor.execute('CREATE INDEX IF NOT EXISTS ncbi_variation_id_index ON submissions (ncbi_variation_id)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS preferred_name_index ON submissions (preferred_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS gene_symbol_index ON submissions (gene_symbol)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_id_index ON submissions (submitter_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_name_index ON submissions (submitter_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS clin_sig_index ON submissions (clin_sig)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS corrected_clin_sig_index ON submissions (corrected_clin_sig)')
     cursor.execute('CREATE INDEX IF NOT EXISTS method_index ON submissions (method)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS conflicting_index ON submissions (conflicting)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS date_ncbi_variation_id_index ON submissions (date, ncbi_variation_id)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS date_method_index ON submissions (date, method)')
+
+    cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON comparisons (date)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS ncbi_variation_id_index ON comparisons (ncbi_variation_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS preferred_name_index ON comparisons (preferred_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS gene_symbol_index ON comparisons (gene_symbol)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submitter1_id_index ON comparisons (submitter1_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submitter2_id_index ON comparisons (submitter2_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submitter2_name_index ON comparisons (submitter2_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS clin_sig1_index ON comparisons (clin_sig1)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS clin_sig2_index ON comparisons (clin_sig2)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS corrected_clin_sig1_index ON comparisons (corrected_clin_sig1)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS corrected_clin_sig2_index ON comparisons (corrected_clin_sig2)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS review_status1_index ON comparisons (review_status1)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS review_status2_index ON comparisons (review_status2)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS method1_index ON comparisons (method1)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS method2_index ON comparisons (method2)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS conflict_level_index ON comparisons (conflict_level)')
 
 def import_file(filename):
     matches = re.fullmatch(r'ClinVarFullRelease_(\d\d\d\d-\d\d).xml', basename(filename))
@@ -178,16 +194,39 @@ def import_file(filename):
     cursor = db.cursor()
 
     cursor.executemany(
-        'INSERT OR IGNORE INTO submissions VALUES (' + ','.join('?' * len(submissions[0])) + ',0)', submissions
+        'INSERT OR IGNORE INTO submissions VALUES (' + ','.join('?' * len(submissions[0])) + ')', submissions
     )
 
+    # conflict levels:
+    # 0 - not in conflict
+    # 1 - synonymous terms (e.g. benign/non-pathogenic)
+    # 2 - confidence difference (e.g. benign/likely benign)
+    # 3 - category difference (e.g. benign/affects)
+    # 4 - clinically significance difference (e.g. benign/pathogenic)
     cursor.execute('''
-        UPDATE submissions SET conflicting=1 WHERE scv IN (
-            SELECT t1.scv FROM submissions t1 INNER JOIN submissions t2
-            ON t1.date=t2.date AND t1.ncbi_variation_id=t2.ncbi_variation_id
-            WHERE t1.date=? AND t1.corrected_clin_sig!=t2.corrected_clin_sig
-        ) AND date=?
-    ''', [date, date])
+        INSERT INTO comparisons
+        SELECT t1.date AS date, t1.ncbi_variation_id AS ncbi_variation_id, t1.preferred_name AS preferred_name,
+        t1.variant_type AS variant_type, t1.gene_symbol AS gene_symbol, t1.submitter_id AS submitter1_id,
+        t1.submitter_name AS submitter1_name, t1.rcv AS rcv1, t1.scv AS scv1, t1.clin_sig AS clin_sig1,
+        t1.corrected_clin_sig AS corrected_clin_sig1, t1.last_eval AS last_eval1, t1.review_status AS review_status1,
+        t1.sub_condition AS sub_condition1, t1.method AS method1, t1.description AS description1,
+        t2.submitter_id AS submitter2_id, t2.submitter_name AS submitter2_name, t2.rcv AS rcv2, t2.scv AS scv2,
+        t2.clin_sig AS clin_sig2, t2.corrected_clin_sig AS corrected_clin_sig2, t2.last_eval AS last_eval2,
+        t2.review_status AS review_status2, t2.sub_condition AS sub_condition2, t2.method AS method2,
+        t2.description AS description2, (CASE
+            WHEN t1.corrected_clin_sig=t2.corrected_clin_sig AND t1.clin_sig!=t2.clin_sig THEN 1
+            WHEN t1.corrected_clin_sig="benign" AND t2.corrected_clin_sig="likely benign" THEN 2
+            WHEN t1.corrected_clin_sig="likely benign" AND t2.corrected_clin_sig="benign" THEN 2
+            WHEN t1.corrected_clin_sig="pathogenic" AND t2.corrected_clin_sig="likely pathogenic" THEN 2
+            WHEN t1.corrected_clin_sig="likely pathogenic" AND t2.corrected_clin_sig="pathogenic" THEN 2
+            WHEN t1.corrected_clin_sig IN ("benign", "likely benign") AND t2.corrected_clin_sig IN ("pathogenic", "likely pathogenic") THEN 4
+            WHEN t1.corrected_clin_sig IN ("pathogenic", "likely pathogenic") AND t2.corrected_clin_sig IN ("benign", "likely benign") THEN 4
+            WHEN t1.corrected_clin_sig!=t2.corrected_clin_sig THEN 3
+            ELSE 0
+        END) AS conflict_level
+        FROM submissions t1 INNER JOIN submissions t2
+        ON t1.date=? AND t1.date=t2.date AND t1.ncbi_variation_id=t2.ncbi_variation_id
+    ''', [date])
 
     db.commit()
     db.close()

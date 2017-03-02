@@ -90,13 +90,18 @@ def template_functions():
 @app.route('/submissions-by-gene/<gene>')
 @app.route('/submissions-by-gene/<gene>/<variant_id>')
 def submissions_by_gene(gene = None, variant_id = None):
+    try:
+        min_conflict_level = int(request.args.get('conflicting', 0))
+    except ValueError:
+        abort(400)
+
     db = DB()
 
     if not gene:
         total_submissions_by_gene=db.total_submissions_by_gene(
             min_stars=min_stars(request),
             method=request.args.get('method'),
-            conflicting=request.args.get('conflicting'),
+            min_conflict_level=min_conflict_level,
         )
         return render_template(
             'submissions-by-gene-index.html',
@@ -111,7 +116,7 @@ def submissions_by_gene(gene = None, variant_id = None):
             gene,
             min_stars=min_stars(request),
             method=request.args.get('method'),
-            conflicting=request.args.get('conflicting'),
+            min_conflict_level=min_conflict_level,
         )
         return render_template(
             'variants-by-gene.html',
@@ -125,7 +130,7 @@ def submissions_by_gene(gene = None, variant_id = None):
         variant_id=variant_id,
         min_stars=min_stars(request),
         method=request.args.get('method'),
-        conflicting=request.args.get('conflicting'),
+        min_conflict_level=min_conflict_level,
     )
     variant_name=db.variant_name(variant_id)
     return render_template(
@@ -148,7 +153,7 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
         return render_template(
             'conflicts-by-submitter-index.html',
             title='Conflicts by Submitter',
-            total_conflicting_submissions_by_submitter=db.total_conflicting_submissions_by_submitter(),
+            total_conflicting_submissions_by_submitter=db.total_submissions_by_submitter(min_conflict_level=1),
         )
 
     try:

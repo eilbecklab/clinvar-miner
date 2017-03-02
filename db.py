@@ -25,13 +25,15 @@ class DB():
         self.cursor = self.db.cursor()
 
     def conflict_overview(self, submitter1_id = None, submitter2_id = None, min_stars = 0, method = None,
-                          corrected_terms = False):
+                          corrected_terms = False, min_conflict_level = 1):
         if corrected_terms:
             query = 'SELECT corrected_clin_sig1 AS clin_sig1, corrected_clin_sig2 AS clin_sig2'
         else:
             query = 'SELECT clin_sig1, clin_sig2'
 
-        query += ', submitter2_id, submitter2_name, COUNT(*) AS count FROM current_conflicts WHERE 1'
+        query += ', submitter2_id, submitter2_name, COUNT(*) AS count FROM current_comparisons'
+
+        query += ' WHERE conflict_level>=:min_conflict_level'
 
         if submitter1_id:
             query += ' AND submitter1_id=:submitter1_id'
@@ -50,7 +52,7 @@ class DB():
         else:
             query += ' GROUP BY clin_sig1, clin_sig2'
 
-        query += ' ORDER BY submitter2_name'
+        query += ', submitter2_id ORDER BY submitter2_name'
 
         return list(map(
             dict,
@@ -60,13 +62,14 @@ class DB():
                     'submitter1_id': submitter1_id,
                     'submitter2_id': submitter2_id,
                     'method': method,
+                    'min_conflict_level': min_conflict_level,
                 }
             )
         ))
 
     def conflicts(self, submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None,
-                  min_stars = 0, method = None):
-        query = 'SELECT * FROM current_conflicts WHERE 1'
+                  min_stars = 0, method = None, min_conflict_level = 1):
+        query = 'SELECT * FROM current_comparisons WHERE conflict_level>=:min_conflict_level'
 
         if submitter1_id:
             query += ' AND submitter1_id=:submitter1_id'
@@ -98,6 +101,7 @@ class DB():
                     'significance1': significance1,
                     'significance2': significance2,
                     'method': method,
+                    'min_conflict_level': min_conflict_level,
                 }
             )
         ))
@@ -131,11 +135,15 @@ class DB():
             ''')
         ))
 
-    def submissions(self, conflicting = False, gene = None, variant_id = None, min_stars = 0, method = None):
-        query = 'SELECT * FROM current_submissions WHERE 1'
-
-        if conflicting:
-            query += ' AND conflicting=1'
+    def submissions(self, gene = None, variant_id = None, min_stars = 0, method = None, min_conflict_level = 0):
+        query = '''
+            SELECT DISTINCT ncbi_variation_id, preferred_name, variant_type, gene_symbol, submitter1_id AS submitter_id,
+            submitter1_name AS submitter_name, rcv1 AS rcv, scv1 AS scv, clin_sig1 AS clin_sig,
+            corrected_clin_sig1 AS corrected_clin_sig1, last_eval1 AS last_eval, review_status1 AS review_status,
+            sub_condition1 AS sub_condition, method1 AS method, description1 AS description
+            FROM current_comparisons
+            WHERE conflict_level>=:min_conflict_level
+        '''
 
         if gene:
             query += ' AND gene_symbol=:gene'
@@ -144,16 +152,25 @@ class DB():
             query += ' AND ncbi_variation_id=:variant_id'
 
         if min_stars > 0:
-            query += DB.min_star_restriction('review_status', min_stars)
+            query += DB.min_star_restriction('review_status1', min_stars)
+            query += DB.min_star_restriction('review_status2', min_stars)
 
         if method:
-            query += ' AND method=:method'
+            query += ' AND method1=:method AND method2=:method'
 
         query += ' ORDER BY submitter_name'
 
         return list(map(
             dict,
-            self.cursor.execute(query, {'gene': gene, 'variant_id': variant_id, 'method': method})
+            self.cursor.execute(
+                query,
+                {
+                    'gene': gene,
+                    'variant_id': variant_id,
+                    'method': method,
+                    'min_conflict_level': min_conflict_level,
+                }
+            )
         ))
 
     def submitter_info(self, submitter_id):
@@ -174,17 +191,9 @@ class DB():
         return list(map(
             dict,
             self.cursor.execute('''
-                SELECT date, method, COUNT(*) AS count FROM conflicting_submissions
+                SELECT date, method1 AS method, COUNT(DISTINCT scv1) AS count FROM comparisons
+                WHERE conflict_level>=1
                 GROUP BY date, method ORDER BY date, method
-            ''')
-        ))
-
-    def total_conflicting_submissions_by_submitter(self):
-        return list(map(
-            dict,
-            self.cursor.execute('''
-                SELECT submitter_id, submitter_name, COUNT(*) AS count FROM current_conflicting_submissions
-                GROUP BY submitter_id ORDER BY submitter_name
             ''')
         ))
 
@@ -219,11 +228,11 @@ class DB():
                 pass
         return ret
 
-    def total_submissions_by_gene(self, conflicting = False, submitter_id = None, min_stars = 0, method = None):
-        query = 'SELECT gene_symbol, COUNT(*) AS count FROM current_submissions WHERE 1'
-
-        if conflicting:
-            query += ' AND conflicting=1'
+    def total_submissions_by_gene(self, submitter_id = None, min_stars = 0, method = None, min_conflict_level = 0):
+        query = '''
+            SELECT gene_symbol, COUNT(DISTINCT scv1) AS count FROM current_comparisons
+            WHERE conflict_level>=:min_conflict_level
+        '''
 
         if submitter_id:
             query += ' AND submitter_id=:submitter_id'
@@ -232,13 +241,20 @@ class DB():
             query += DB.min_star_restriction('review_status', min_stars)
 
         if method:
-            query += ' AND method=:method'
+            query += ' AND method1=:method AND method2=:method'
 
         query += ' GROUP BY gene_symbol ORDER BY gene_symbol'
 
         return list(map(
             dict,
-            self.cursor.execute(query, {'submitter_id': submitter_id, 'method': method})
+            self.cursor.execute(
+                query,
+                {
+                    'submitter_id': submitter_id,
+                    'method': method,
+                    'min_conflict_level': min_conflict_level
+                }
+            )
         ))
 
     def total_submissions_by_method_over_time(self):
@@ -250,25 +266,33 @@ class DB():
             ''')
         ))
 
-    def total_submissions_by_submitter(self, country):
-        return list(map(
-            dict,
-            self.cursor.execute('''
-                SELECT submitter_id, submitter_name, COUNT(*) AS count FROM current_submissions
-                LEFT JOIN submitter_info ON current_submissions.submitter_id=submitter_info.id
-                WHERE country=:country
-                GROUP BY submitter_id ORDER BY submitter_name
-            ''', [country])
-        ))
-
-    def total_submissions_by_variant(self, gene, conflicting = False, submitter_id = None, min_stars = 0, method = None):
+    def total_submissions_by_submitter(self, country = None, min_conflict_level = 0):
         query = '''
-            SELECT ncbi_variation_id, preferred_name, COUNT(*) AS count FROM current_submissions
-            WHERE gene_symbol=:gene
+            SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name, COUNT(DISTINCT scv1) AS count
+            FROM current_comparisons
         '''
 
-        if conflicting:
-            query += ' AND conflicting=1'
+        if country:
+            query += ' LEFT JOIN submitter_info ON current_comparisons.submitter1_id=submitter_info.id'
+
+        query += ' WHERE conflict_level>=:min_conflict_level'
+
+        if country:
+            query += ' AND country=:country'
+
+        query += ' GROUP BY submitter1_id ORDER BY submitter1_name'
+
+        return list(map(
+            dict,
+            self.cursor.execute(query, {'country': country, 'min_conflict_level': min_conflict_level})
+        ))
+
+    def total_submissions_by_variant(self, gene, submitter_id = None, min_stars = 0, method = None,
+                                     min_conflict_level = 0):
+        query = '''
+            SELECT ncbi_variation_id, preferred_name, COUNT(DISTINCT scv1) AS count FROM current_comparisons
+            WHERE gene_symbol=:gene AND conflict_level>=:min_conflict_level
+        '''
 
         if submitter_id:
             query += ' AND submitter_id=:submitter_id'
@@ -277,13 +301,21 @@ class DB():
             query += DB.min_star_restriction('review_status', min_stars)
 
         if method:
-            query += ' AND method=:method'
+            query += ' AND method1=:method AND method2=:method'
 
         query += ' GROUP BY ncbi_variation_id ORDER BY preferred_name'
 
         return list(map(
             dict,
-            self.cursor.execute(query, {'gene': gene, 'submitter_id': submitter_id, 'method': method})
+            self.cursor.execute(
+                query,
+                {
+                    'gene': gene,
+                    'submitter_id': submitter_id,
+                    'method': method,
+                    'min_conflict_level': min_conflict_level,
+                }
+            )
         ))
 
     def variant_name(self, variant_id):
