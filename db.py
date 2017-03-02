@@ -49,7 +49,7 @@ class DB():
         ))
 
     def conflicts(self, submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None,
-                  min_stars = 0, method = None, min_conflict_level = 1):
+                  min_stars = 0, method = None, min_conflict_level = 1, corrected_terms = False):
         query = '''
             SELECT * FROM current_comparisons
             WHERE star_level2>=:min_stars AND conflict_level>=:min_conflict_level
@@ -61,11 +61,16 @@ class DB():
         if submitter2_id:
             query += ' AND submitter2_id=:submitter2_id'
 
-        if significance1:
-            query += ' AND clin_sig1=:significance1'
-
-        if significance2:
-            query += ' AND clin_sig2=:significance2'
+        if corrected_terms:
+            if significance1:
+                query += ' AND corrected_clin_sig1=:significance1'
+            if significance2:
+                query += ' AND corrected_clin_sig2=:significance2'
+        else:
+            if significance1:
+                query += ' AND clin_sig1=:significance1'
+            if significance2:
+                query += ' AND clin_sig2=:significance2'
 
         if method:
             query += ' AND method2=:method'

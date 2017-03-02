@@ -118,6 +118,7 @@ def conflicts_by_significance(significance1 = None, significance2 = None):
         significance2=significance2,
         min_stars=min_stars(request),
         method=request.args.get('method'),
+        corrected_terms=request.args.get('corrected_terms'),
     )
 
     return render_template(
