@@ -22,9 +22,12 @@ def break_punctuation(text):
         .replace('-', '-<wbr/>')
     )
 
-def min_stars(request):
-    min_stars = request.args.get('min_stars')
-    return int(min_stars) if min_stars else 0
+def int_arg(name, default = 0):
+    arg = request.args.get(name)
+    try:
+        return int(arg) if arg else default
+    except ValueError:
+        abort(400)
 
 def overview_to_breakdown(conflict_overview):
     breakdown = {}
@@ -95,8 +98,9 @@ def conflicts_by_significance(significance1 = None, significance2 = None):
 
     if not significance2:
         conflict_overview = db.conflict_overview(
-            min_stars=min_stars(request),
+            min_stars=int_arg('min_stars'),
             method=request.args.get('method'),
+            min_conflict_level=int_arg('min_conflict_level', 1),
             corrected_terms=request.args.get('corrected_terms'),
         )
 
@@ -118,8 +122,9 @@ def conflicts_by_significance(significance1 = None, significance2 = None):
     conflicts = db.conflicts(
         significance1=significance1,
         significance2=significance2,
-        min_stars=min_stars(request),
+        min_stars=int_arg('min_stars'),
         method=request.args.get('method'),
+        min_conflict_level=int_arg('min_conflict_level', 1),
         corrected_terms=request.args.get('corrected_terms'),
     )
 
@@ -158,8 +163,9 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
     if submitter2_id == None:
         conflict_overview = db.conflict_overview(
             submitter1_id=submitter1_id,
-            min_stars=min_stars(request),
+            min_stars=int_arg('min_stars'),
             method=request.args.get('method'),
+            min_conflict_level=int_arg('min_conflict_level', 1),
             corrected_terms=request.args.get('corrected_terms'),
         )
         submitter_primary_method = db.submitter_primary_method(submitter1_id)
@@ -205,8 +211,9 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
         conflict_overview = db.conflict_overview(
             submitter1_id=submitter1_id,
             submitter2_id=submitter2_id,
-            min_stars=min_stars(request),
+            min_stars=int_arg('min_stars'),
             method=request.args.get('method'),
+            min_conflict_level=int_arg('min_conflict_level', 1),
             corrected_terms=request.args.get('corrected_terms'),
         )
 
@@ -232,8 +239,9 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
         submitter2_id=submitter2_id,
         significance1=significance1,
         significance2=significance2,
-        min_stars=min_stars(request),
+        min_stars=int_arg('min_stars'),
         method=request.args.get('method'),
+        min_conflict_level=int_arg('min_conflict_level', 1),
     )
     return render_template(
         'conflicts-by-submitter-2significances.html',
@@ -282,18 +290,13 @@ def significance_terms(term = None):
 @app.route('/submissions-by-gene/<gene>')
 @app.route('/submissions-by-gene/<gene>/<variant_id>')
 def submissions_by_gene(gene = None, variant_id = None):
-    try:
-        min_conflict_level = int(request.args.get('conflicting', 0))
-    except ValueError:
-        abort(400)
-
     db = DB()
 
     if not gene:
         total_submissions_by_gene=db.total_submissions_by_gene(
-            min_stars=min_stars(request),
+            min_stars=int_arg('min_stars'),
             method=request.args.get('method'),
-            min_conflict_level=min_conflict_level,
+            min_conflict_level=int_arg('min_conflict_level'),
         )
         return render_template(
             'submissions-by-gene-index.html',
@@ -306,9 +309,9 @@ def submissions_by_gene(gene = None, variant_id = None):
         gene = gene.replace('%2F', '/')
         total_submissions_by_variant=db.total_submissions_by_variant(
             gene,
-            min_stars=min_stars(request),
+            min_stars=int_arg('min_stars'),
             method=request.args.get('method'),
-            min_conflict_level=min_conflict_level,
+            min_conflict_level=int_arg('min_conflict_level'),
         )
         return render_template(
             'variants-by-gene.html',
@@ -320,9 +323,9 @@ def submissions_by_gene(gene = None, variant_id = None):
 
     submissions=db.submissions(
         variant_id=variant_id,
-        min_stars=min_stars(request),
+        min_stars=int_arg('min_stars'),
         method=request.args.get('method'),
-        min_conflict_level=min_conflict_level,
+        min_conflict_level=int_arg('min_conflict_level'),
     )
     variant_name=db.variant_name(variant_id)
     return render_template(

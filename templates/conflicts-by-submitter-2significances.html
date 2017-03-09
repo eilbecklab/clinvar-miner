@@ -8,8 +8,10 @@
     {{ submitter_link(submitter2_info['id'], submitter2_info['name'])|safe }}
 {% endblock %}
 {% block content %}
-    {% with header = 'Compare ' + significance1 + ' variants from ' + submitter1_info['name'] + ' to ' + significance2 + ' variants from ' + submitter2_info['name'] + ' that have' %}
-        {% include 'conflicting-submission-filter.html' %}
+    {% with %}
+        {% set header = 'Compare ' + significance1 + ' variants from ' + submitter1_info['name'] + ' to ' + significance2 + ' variants from ' + submitter2_info['name'] + ' that have' %}
+        {% set conflicts_only = True %}
+        {% include 'submission-filter.html' %}
     {% endwith %}
     <h2>Submitter to submitter conflicts</h2>
     {% include 'conflicts.html' %}
