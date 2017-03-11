@@ -108,7 +108,6 @@ def conflicts_by_significance(significance1 = None, significance2 = None):
 
         return render_template(
             'conflicts-by-significance.html',
-            title='Conflicts by Significance',
             breakdown=breakdown,
             submitter1_significances=submitter1_significances,
             submitter2_significances=submitter2_significances,
@@ -130,7 +129,6 @@ def conflicts_by_significance(significance1 = None, significance2 = None):
 
     return render_template(
         'conflicts-by-significance-2significances.html',
-        title='Conflicts between ' + significance1 + ' and ' + significance2 + ' submissions',
         significance1=significance1,
         significance2=significance2,
         conflicts=conflicts,
@@ -147,7 +145,6 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
     if submitter1_id == None:
         return render_template(
             'conflicts-by-submitter-index.html',
-            title='Conflicts by Submitter',
             total_conflicting_submissions_by_submitter=db.total_submissions_by_submitter(min_conflict_level=1),
         )
 
@@ -183,7 +180,6 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
 
         return render_template(
             'conflicts-by-submitter-1submitter.html',
-            title='Conflicts with ' + submitter1_info['name'],
             submitter1_info=submitter1_info,
             submitter2_info={'id': 0, 'name': 'All other submitters'},
             submitter_primary_method=submitter_primary_method,
@@ -221,7 +217,6 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
 
         return render_template(
             'conflicts-by-submitter-2submitters.html',
-            title='Conflicts between ' + submitter1_info['name'] + ' and ' + submitter2_info['name'],
             submitter1_info=submitter1_info,
             submitter2_info=submitter2_info,
             breakdown=breakdown,
@@ -245,7 +240,6 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
     )
     return render_template(
         'conflicts-by-submitter-2significances.html',
-        title='Conflicts between ' + significance1 + ' variants from ' + submitter1_info['name'] + ' and ' + significance2 + ' variants from ' + submitter2_info['name'],
         submitter1_info=submitter1_info,
         submitter2_info=submitter2_info,
         significance1=significance1,
@@ -259,7 +253,6 @@ def index():
     db = DB()
     return render_template(
         'index.html',
-        title='Home',
         max_date=db.max_date(),
     )
 
@@ -272,7 +265,6 @@ def significance_terms(term = None):
     if term == None:
         return render_template(
             'significance-terms-index.html',
-            title='Significance Terms',
             total_significance_terms_over_time=db.total_significance_terms_over_time(),
             significance_term_info=db.significance_term_info(),
             old_significance_term_info=db.old_significance_term_info(),
@@ -282,7 +274,7 @@ def significance_terms(term = None):
 
     return render_template(
         'significance-terms.html',
-        title='Submitters of "' + term + '" Variants',
+        term=term,
         total_significance_terms=db.total_significance_terms(term),
     )
 
@@ -300,7 +292,6 @@ def submissions_by_gene(gene = None, variant_id = None):
         )
         return render_template(
             'submissions-by-gene-index.html',
-            title='Submissions by Gene',
             total_submissions_by_gene=total_submissions_by_gene,
             method_options=db.methods(),
         )
@@ -315,7 +306,6 @@ def submissions_by_gene(gene = None, variant_id = None):
         )
         return render_template(
             'variants-by-gene.html',
-            title='Variants in gene ' + gene,
             gene=gene,
             total_submissions_by_variant=total_submissions_by_variant,
             method_options=db.methods(),
@@ -330,7 +320,6 @@ def submissions_by_gene(gene = None, variant_id = None):
     variant_name=db.variant_name(variant_id)
     return render_template(
         'submissions-by-variant.html',
-        title='Submissions for variant ' + variant_name,
         variant_name=variant_name,
         variant_id=variant_id,
         submissions=submissions,
@@ -342,7 +331,6 @@ def total_conflicting_submissions_by_method():
     db = DB()
     return render_template(
         'total-conflicting-submissions-by-method.html',
-        title='Total Conflicting Submissions By Method',
         total_conflicting_submissions_by_method_over_time=db.total_conflicting_submissions_by_method_over_time(),
     )
 
@@ -351,7 +339,6 @@ def total_submissions_by_method():
     db = DB()
     return render_template(
         'total-submissions-by-method.html',
-        title='Total Submissions by Method',
         total_submissions_by_method_over_time=db.total_submissions_by_method_over_time(),
     )
 
@@ -364,7 +351,6 @@ def total_submissions_by_country(country = None):
     if country == None:
         return render_template(
             'total-submissions-by-country-index.html',
-            title='Total Submissions by Country',
             total_submissions_by_country=db.total_submissions_by_country(),
         )
 
@@ -372,6 +358,6 @@ def total_submissions_by_country(country = None):
 
     return render_template(
         'total-submissions-by-country.html',
-        title='Total Submissions from "' + country + '"',
+        country=country,
         total_submissions_by_submitter=db.total_submissions_by_submitter(country=country),
     )
