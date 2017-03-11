@@ -1,8 +1,5 @@
 {% extends 'skin.html' %}
 {% set title = 'Conflicts between ' + submitter1_info['name'] + ' and ' + submitter2_info['name'] %}
-{% block head %}
-    <link href="static/tables.css" rel="stylesheet" type="text/css"/>
-{% endblock %}
 {% block title %}
     Conflicts between {{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }} and
     {{ submitter_link(submitter2_info['id'], submitter2_info['name'])|safe }}

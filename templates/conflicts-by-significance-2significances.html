@@ -1,8 +1,5 @@
 {% extends 'skin.html' %}
 {% set title = 'Conflicts between ' + significance1 + ' and ' + significance2 + ' submissions' %}
-{% block head %}
-    <link href="static/tables.css" rel="stylesheet" type="text/css"/>
-{% endblock %}
 {% block content %}
     {% with %}
         {% set header = 'Compare variants annotated ' + significance1 + ' to variants annotated ' + significance2 + ' that have' %}

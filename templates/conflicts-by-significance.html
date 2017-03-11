@@ -1,8 +1,5 @@
 {% extends 'skin.html' %}
 {% set title = 'Conflicts by significance' %}
-{% block head %}
-    <link href="static/tables.css" rel="stylesheet" type="text/css"/>
-{% endblock %}
 {% block content %}
     {% with header='Compare all variants to variants with' %}
         {% include 'breakdown-filter.html' %}

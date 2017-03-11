@@ -1,8 +1,5 @@
 {% extends 'skin.html' %}
 {% set title = 'Conflicts between ' + significance1 + ' variants from ' + submitter1_info['name'] + ' and ' + significance2 + ' variants from ' + submitter2_info['name'] %}
-{% block head %}
-    <link href="static/tables.css" rel="stylesheet" type="text/css"/>
-{% endblock %}
 {% block title %}
     Conflicts between {{ significance1 }} variants from
     {{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }} and {{ significance2 }} variants from
