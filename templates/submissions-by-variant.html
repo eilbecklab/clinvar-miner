@@ -11,9 +11,8 @@
     {% with header='Show submissions that have' %}
         {% include 'submission-filter.html' %}
     {% endwith %}
-    {% if not submissions %}
-        No matching submissions
-    {% else %}
+    <p>Total submissions: {{ submissions|length }}</p>
+    {% if submissions %}
         <table class="sortable table table-bordered table-condensed table-striped">
             <thead>
                 <tr>
