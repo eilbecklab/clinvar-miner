@@ -1,9 +1,9 @@
 {% extends 'skin.html' %}
-{% set title = 'Variants in gene ' + gene %}
 {% block content %}
     {% with header='Include submissions that have' %}
         {% include 'submission-filter.html' %}
     {% endwith %}
+    <p>Total variants: {{ total_submissions_by_variant|length }}</p>
     <table class="sortable table" style="width:auto">
         <thead>
             <tr>
@@ -12,7 +12,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for row in total_submissions_by_variant  %}
+            {% for row in total_submissions_by_variant %}
                 <tr>
                     <td>
                         <a href="submissions-by-variant/{{ row['ncbi_variation_id'] }}{{ request|querysuffix }}">

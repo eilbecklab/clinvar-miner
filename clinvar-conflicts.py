@@ -91,9 +91,9 @@ def template_functions():
         'variant_link': variant_link,
     }
 
-@app.route('/conflicts-by-significance')
-@app.route('/conflicts-by-significance/<significance1>/<significance2>')
-def conflicts_by_significance(significance1 = None, significance2 = None):
+@app.route('/conflicting-variants-by-significance')
+@app.route('/conflicting-variants-by-significance/<significance1>/<significance2>')
+def conflicting_variants_by_significance(significance1 = None, significance2 = None):
     db = DB()
 
     if not significance2:
@@ -107,7 +107,7 @@ def conflicts_by_significance(significance1 = None, significance2 = None):
         breakdown, submitter1_significances, submitter2_significances, total = overview_to_breakdown(conflict_overview)
 
         return render_template(
-            'conflicts-by-significance.html',
+            'conflicting-variants-by-significance.html',
             breakdown=breakdown,
             submitter1_significances=submitter1_significances,
             submitter2_significances=submitter2_significances,
@@ -118,7 +118,7 @@ def conflicts_by_significance(significance1 = None, significance2 = None):
     significance1 = significance1.replace('%2F', '/')
     significance2 = significance2.replace('%2F', '/')
 
-    conflicts = db.conflicts(
+    variants = db.variants(
         significance1=significance1,
         significance2=significance2,
         min_stars=int_arg('min_stars'),
@@ -128,24 +128,25 @@ def conflicts_by_significance(significance1 = None, significance2 = None):
     )
 
     return render_template(
-        'conflicts-by-significance-2significances.html',
+        'conflicting-variants-by-significance-2significances.html',
+        title='Variants reported as ' + significance1 + ' and ' + significance2,
         significance1=significance1,
         significance2=significance2,
-        conflicts=conflicts,
+        variants=variants,
         method_options=db.methods(),
     )
 
-@app.route('/conflicts-by-submitter')
-@app.route('/conflicts-by-submitter/<submitter1_id>')
-@app.route('/conflicts-by-submitter/<submitter1_id>/<submitter2_id>')
-@app.route('/conflicts-by-submitter/<submitter1_id>/<submitter2_id>/<significance1>/<significance2>')
-def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None):
+@app.route('/conflicting-variants-by-submitter')
+@app.route('/conflicting-variants-by-submitter/<submitter1_id>')
+@app.route('/conflicting-variants-by-submitter/<submitter1_id>/<submitter2_id>')
+@app.route('/conflicting-variants-by-submitter/<submitter1_id>/<submitter2_id>/<significance1>/<significance2>')
+def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None):
     db = DB()
 
     if submitter1_id == None:
         return render_template(
-            'conflicts-by-submitter-index.html',
-            total_conflicting_submissions_by_submitter=db.total_submissions_by_submitter(min_conflict_level=1),
+            'conflicting-variants-by-submitter-index.html',
+            total_conflicting_variants_by_submitter=db.total_variants_by_submitter(min_conflict_level=1),
         )
 
     try:
@@ -179,7 +180,7 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
         breakdown, submitter1_significances, submitter2_significances, total = overview_to_breakdown(conflict_overview)
 
         return render_template(
-            'conflicts-by-submitter-1submitter.html',
+            'conflicting-variants-by-submitter-1submitter.html',
             submitter1_info=submitter1_info,
             submitter2_info={'id': 0, 'name': 'All other submitters'},
             submitter_primary_method=submitter_primary_method,
@@ -199,7 +200,7 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
     submitter2_info = db.submitter_info(submitter2_id)
     if not submitter2_info:
         if submitter2_id == 0:
-            submitter2_info = {'id': 0, 'name': 'all other submitters'}
+            submitter2_info = {'id': 0, 'name': 'any other submitter'}
         else:
             submitter2_info = {'id': submitter2_id, 'name': str(submitter2_id)}
 
@@ -216,7 +217,7 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
         breakdown, submitter1_significances, submitter2_significances, total = overview_to_breakdown(conflict_overview)
 
         return render_template(
-            'conflicts-by-submitter-2submitters.html',
+            'conflicting-variants-by-submitter-2submitters.html',
             submitter1_info=submitter1_info,
             submitter2_info=submitter2_info,
             breakdown=breakdown,
@@ -229,7 +230,7 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
     significance1 = significance1.replace('%2F', '/')
     significance2 = significance2.replace('%2F', '/')
 
-    conflicts = db.conflicts(
+    variants = db.variants(
         submitter1_id=submitter1_id,
         submitter2_id=submitter2_id,
         significance1=significance1,
@@ -239,12 +240,12 @@ def conflicts_by_submitter(submitter1_id = None, submitter2_id = None, significa
         min_conflict_level=int_arg('min_conflict_level', 1),
     )
     return render_template(
-        'conflicts-by-submitter-2significances.html',
+        'conflicting-variants-by-submitter-2significances.html',
         submitter1_info=submitter1_info,
         submitter2_info=submitter2_info,
         significance1=significance1,
         significance2=significance2,
-        conflicts=conflicts,
+        variants=variants,
         method_options=db.methods(),
     )
 
@@ -304,7 +305,7 @@ def submissions_by_gene(gene = None, variant_id = None):
     )
     return render_template(
         'variants-by-gene.html',
-        gene=gene,
+        title='Variants in ' + gene,
         total_submissions_by_variant=total_submissions_by_variant,
         method_options=db.methods(),
     )

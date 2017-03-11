@@ -1,0 +1,27 @@
+{% extends 'skin.html' %}
+{% block content %}
+    {% with header='Include submissions that have' %}
+        {% include 'submission-filter.html' %}
+    {% endwith %}
+    <p>Total variants: {{ variants|length }}</p>
+    {% if variants %}
+        <table class="sortable table" style="width:auto">
+            <thead>
+                <tr>
+                    <th>Variant</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in variants %}
+                    <tr>
+                        <td>
+                            <a href="submissions-by-variant/{{ row['ncbi_variation_id'] }}{{ request|querysuffix }}">
+                                {{ row['preferred_name'] }}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

@@ -1,7 +1,7 @@
 {% extends 'skin.html' %}
-{% set title = 'Conflicts with ' + submitter1_info['name'] %}
+{% set title = 'Conflicting variants with ' + submitter1_info['name'] %}
 {% block title %}
-    Conflicts with {{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }}
+    Conflicting variants with {{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }}
     <br/>
     <small style="font-size:medium">
         Primary submission method: {{ submitter_primary_method }}
@@ -22,7 +22,7 @@
             <thead>
                 <tr>
                     <th>Submitter</th>
-                    <th>Conflicts</th>
+                    <th>Conflicting variants</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,7 +30,9 @@
                     <tr>
                         <th>{{ row['name'] }}</th>
                         <td>
-                            <a href="conflicts-by-submitter/{{ submitter1_info['id'] }}/{{ submitter2_id }}{{ request|querysuffix }}">{{ row['total'] }}</a>
+                            <a href="conflicting-variants-by-submitter/{{ submitter1_info['id'] }}/{{ submitter2_id }}{{ request|querysuffix }}">
+                                {{ row['total'] }}
+                            </a>
                         </td>
                     </tr>
                 {% endfor %}

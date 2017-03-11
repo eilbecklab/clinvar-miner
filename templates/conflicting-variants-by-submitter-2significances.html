@@ -1,0 +1,7 @@
+{% extends 'variants.html' %}
+{% set title = 'Variants reported as ' + significance1 + ' by ' + submitter1_info['name'] + ' and ' + significance2 + ' by ' + submitter2_info['name'] %}
+{% block title %}
+    Variants reported as {{ significance1 }} by
+    {{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }} and {{ significance2 }} by
+    {{ submitter_link(submitter2_info['id'], submitter2_info['name'])|safe }}
+{% endblock %}

@@ -5,7 +5,7 @@
         {% include 'breakdown-filter.html' %}
     {% endwith %}
     <h2>Significance breakdown</h2>
-    <p>Total conflicts: {{ total }}</p>
+    <p>Total conflicting variants: {{ total }}</p>
     <table class="breakdown table table-bordered table-condensed table-striped">
         <tr>
             <th></th>
@@ -19,7 +19,7 @@
                 {% for significance2 in submitter2_significances %}
                     {% if breakdown[significance1].get(significance2, 0) > 0 %}
                         <td style="background-color:coral">
-                            <a href="conflicts-by-significance/{{ significance1|quotepath }}/{{ significance2|quotepath }}{{ request|querysuffix }}">
+                            <a href="conflicting-variants-by-significance/{{ significance1|quotepath }}/{{ significance2|quotepath }}{{ request|querysuffix }}">
                                 {{ breakdown[significance1][significance2] }}
                             </a>
                         </td>

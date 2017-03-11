@@ -1,18 +1,20 @@
 {% extends 'skin.html' %}
-{% set title = 'Conflicts by submitter' %}
+{% set title = 'Conflicting variants by submitter' %}
 {% block content %}
     <table class="sortable table" style="width:auto">
         <thead>
             <tr>
                 <th>Submitter</th>
-                <th style="text-align:right">Conflicting submissions</th>
+                <th style="text-align:right">Conflicting variants</th>
             </tr>
         </thead>
         <tbody>
-            {% for row in total_conflicting_submissions_by_submitter %}
+            {% for row in total_conflicting_variants_by_submitter %}
                 <tr>
                     <td>
-                        <a href="conflicts-by-submitter/{{ row['submitter_id'] }}">{{ row['submitter_name'] }}</a>
+                        <a href="conflicting-variants-by-submitter/{{ row['submitter_id'] }}">
+                            {{ row['submitter_name'] }}
+                        </a>
                     </td>
                     <td style="text-align:right">{{ row['count'] }}</td>
                 </tr>
