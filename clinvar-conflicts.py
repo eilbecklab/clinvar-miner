@@ -280,7 +280,6 @@ def significance_terms(term = None):
 
 @app.route('/submissions-by-gene')
 @app.route('/submissions-by-gene/<gene>')
-@app.route('/submissions-by-gene/<gene>/<variant_id>')
 def submissions_by_gene(gene = None, variant_id = None):
     db = DB()
 
@@ -296,20 +295,23 @@ def submissions_by_gene(gene = None, variant_id = None):
             method_options=db.methods(),
         )
 
-    if not variant_id:
-        gene = gene.replace('%2F', '/')
-        total_submissions_by_variant=db.total_submissions_by_variant(
-            gene,
-            min_stars=int_arg('min_stars'),
-            method=request.args.get('method'),
-            min_conflict_level=int_arg('min_conflict_level'),
-        )
-        return render_template(
-            'variants-by-gene.html',
-            gene=gene,
-            total_submissions_by_variant=total_submissions_by_variant,
-            method_options=db.methods(),
-        )
+    gene = gene.replace('%2F', '/')
+    total_submissions_by_variant=db.total_submissions_by_variant(
+        gene,
+        min_stars=int_arg('min_stars'),
+        method=request.args.get('method'),
+        min_conflict_level=int_arg('min_conflict_level'),
+    )
+    return render_template(
+        'variants-by-gene.html',
+        gene=gene,
+        total_submissions_by_variant=total_submissions_by_variant,
+        method_options=db.methods(),
+    )
+
+@app.route('/submissions-by-variant/<variant_id>')
+def submissions_by_variant(variant_id):
+    db = DB()
 
     submissions=db.submissions(
         variant_id=variant_id,

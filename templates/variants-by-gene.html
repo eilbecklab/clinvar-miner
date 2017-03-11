@@ -15,7 +15,7 @@
             {% for row in total_submissions_by_variant  %}
                 <tr>
                     <td>
-                        <a href="submissions-by-gene/{{ gene|quotepath }}/{{ row['ncbi_variation_id'] }}{{ request|querysuffix }}">
+                        <a href="submissions-by-variant/{{ row['ncbi_variation_id'] }}{{ request|querysuffix }}">
                             {{ row['preferred_name'] }}
                         </a>
                     </td>
