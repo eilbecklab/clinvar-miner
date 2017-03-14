@@ -11,6 +11,10 @@
     display: block;
 }
 
+.conflict {
+    background-color: #FFEEAA;
+}
+
 .sortable th {
     cursor: pointer;
 }

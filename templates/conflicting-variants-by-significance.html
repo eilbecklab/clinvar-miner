@@ -18,7 +18,7 @@
                 <th>{{ significance1 }}</th>
                 {% for significance2 in submitter2_significances %}
                     {% if breakdown[significance1].get(significance2, 0) > 0 %}
-                        <td style="background-color:coral">
+                        <td class="conflict">
                             <a href="conflicting-variants-by-significance/{{ significance1|quotepath }}/{{ significance2|quotepath }}{{ request|querysuffix }}">
                                 {{ breakdown[significance1][significance2] }}
                             </a>
