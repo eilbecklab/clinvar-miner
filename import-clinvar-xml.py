@@ -212,12 +212,6 @@ def import_file(filename):
         'INSERT OR IGNORE INTO submissions VALUES (' + ','.join('?' * len(submissions[0])) + ')', submissions
     )
 
-    # conflict levels:
-    # 0 - not in conflict
-    # 1 - synonymous terms (e.g. benign/non-pathogenic)
-    # 2 - confidence difference (e.g. benign/likely benign)
-    # 3 - category difference (e.g. benign/affects)
-    # 4 - clinically significance difference (e.g. benign/pathogenic)
     cursor.execute('''
         INSERT INTO comparisons
         SELECT
@@ -236,13 +230,20 @@ def import_file(filename):
             t2.description,
             CASE
                 WHEN t1.corrected_clin_sig=t2.corrected_clin_sig AND t1.clin_sig!=t2.clin_sig THEN 1
+
                 WHEN t1.corrected_clin_sig="benign" AND t2.corrected_clin_sig="likely benign" THEN 2
                 WHEN t1.corrected_clin_sig="likely benign" AND t2.corrected_clin_sig="benign" THEN 2
                 WHEN t1.corrected_clin_sig="pathogenic" AND t2.corrected_clin_sig="likely pathogenic" THEN 2
                 WHEN t1.corrected_clin_sig="likely pathogenic" AND t2.corrected_clin_sig="pathogenic" THEN 2
-                WHEN t1.corrected_clin_sig IN ("benign", "likely benign") AND t2.corrected_clin_sig IN ("pathogenic", "likely pathogenic") THEN 4
-                WHEN t1.corrected_clin_sig IN ("pathogenic", "likely pathogenic") AND t2.corrected_clin_sig IN ("benign", "likely benign") THEN 4
-                WHEN t1.corrected_clin_sig!=t2.corrected_clin_sig THEN 3
+
+                WHEN t1.corrected_clin_sig IN ("benign", "likely benign") AND t2.corrected_clin_sig="uncertain significance" THEN 3
+                WHEN t1.corrected_clin_sig="uncertain significance" AND t2.corrected_clin_sig IN ("benign", "likely benign") THEN 3
+
+                WHEN t1.corrected_clin_sig IN ("benign", "likely benign", "uncertain significance") AND t2.corrected_clin_sig IN ("pathogenic", "likely pathogenic") THEN 5
+                WHEN t1.corrected_clin_sig IN ("pathogenic", "likely pathogenic") AND t2.corrected_clin_sig IN ("benign", "likely benign", "uncertain significance") THEN 5
+
+                WHEN t1.corrected_clin_sig!=t2.corrected_clin_sig THEN 4
+
                 ELSE 0
             END AS conflict_level
         FROM submissions t1 INNER JOIN submissions t2

@@ -41,16 +41,19 @@
                 <select name="min_conflict_level">
                     {% if not conflicts_only %}<option></option>{% endif %}
                     <option {% if request.args.get('min_conflict_level') == '1' %}selected="selected"{% endif %} value="1">
-                        synonymous terms (e.g. benign/non-pathogenic)
+                        synonymous terms (e.g. benign vs non-pathogenic)
                     </option>
                     <option {% if request.args.get('min_conflict_level') == '2' %}selected="selected"{% endif %} value="2">
-                        confidence difference (e.g. benign/likely benign)
+                        confidence difference (e.g. benign vs likely benign)
                     </option>
                     <option {% if request.args.get('min_conflict_level') == '3' %}selected="selected"{% endif %} value="3">
-                        category difference (e.g. benign/affects)
+                        benign or likely benign vs uncertain significance
                     </option>
                     <option {% if request.args.get('min_conflict_level') == '4' %}selected="selected"{% endif %} value="4">
-                        clinically significant difference (e.g. benign/pathogenic)
+                        category difference (e.g. benign vs affects)
+                    </option>
+                    <option {% if request.args.get('min_conflict_level') == '5' %}selected="selected"{% endif %} value="5">
+                        clinically significant difference (e.g. benign vs pathogenic)
                     </option>
                 </select>
             </td>
