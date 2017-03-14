@@ -51,10 +51,36 @@ def overview_to_breakdown(conflict_overview):
 
         total += count
 
+    #sort alphabetically to be consistent if there are two or more unranked significance terms
     submitter1_significances = sorted(submitter1_significances)
     submitter2_significances = sorted(submitter2_significances)
 
+    #sort by rank
+    submitter1_significances = sorted(submitter1_significances, key=significance_rank)
+    submitter2_significances = sorted(submitter2_significances, key=significance_rank)
+
     return breakdown, submitter1_significances, submitter2_significances, total
+
+def significance_rank(significance):
+    significance_ranks = [
+        'pathogenic',
+        'likely pathogenic',
+        'uncertain significance',
+        'likely benign',
+        'benign',
+        'risk allele',
+        'assocation',
+        'protective allele',
+        'drug response',
+        'confers sensitivity',
+        'other',
+        'not provided',
+    ]
+    try:
+        rank = significance_ranks.index(significance)
+    except ValueError:
+        rank = len(significance_ranks) - 2.5 #insert after everything but "other" and "not provided"
+    return rank
 
 @app.template_filter('date')
 def prettify_date(iso_date):
