@@ -8,15 +8,16 @@ class DB():
         self.cursor = self.db.cursor()
 
     def conflict_overview(self, submitter1_id = None, submitter2_id = None, min_stars = 0, method = None,
-                          corrected_terms = False, min_conflict_level = 1):
+                          corrected_terms = False):
         if corrected_terms:
             query = 'SELECT corrected_clin_sig1 AS clin_sig1, corrected_clin_sig2 AS clin_sig2'
         else:
             query = 'SELECT clin_sig1, clin_sig2'
 
-        query += ', submitter2_id, submitter2_name, COUNT(DISTINCT ncbi_variation_id) AS count FROM current_comparisons'
+        query += ', submitter2_id, submitter2_name, conflict_level, COUNT(DISTINCT ncbi_variation_id) AS count'
+        query += ' FROM current_comparisons'
 
-        query += ' WHERE star_level2>=:min_stars AND conflict_level>=:min_conflict_level'
+        query += ' WHERE star_level2>=:min_stars AND conflict_level>=1'
 
         if submitter1_id:
             query += ' AND submitter1_id=:submitter1_id'
@@ -28,9 +29,9 @@ class DB():
             query += ' AND method2=:method'
 
         if corrected_terms:
-            query += ' GROUP BY corrected_clin_sig1, corrected_clin_sig2'
+            query += ' GROUP BY corrected_clin_sig1, corrected_clin_sig2, conflict_level'
         else:
-            query += ' GROUP BY clin_sig1, clin_sig2'
+            query += ' GROUP BY clin_sig1, clin_sig2, conflict_level'
 
         query += ', submitter2_id ORDER BY submitter2_name'
 
@@ -43,7 +44,6 @@ class DB():
                     'submitter2_id': submitter2_id,
                     'min_stars': min_stars,
                     'method': method,
-                    'min_conflict_level': min_conflict_level,
                 }
             )
         ))

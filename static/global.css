@@ -27,8 +27,7 @@
     content: ' ▼';
 }
 
-.summary td a {
-    display: block;
+.summary td {
     text-align: right;
 }
 

@@ -1,66 +1,26 @@
-<form action="" autocomplete="off" method="get">
-    <table class="table" style="width:auto">
-        <tr>
-            <th colspan="2">{{ header }}</th>
-        </tr>
-        <tr>
-            <td>Minimum review status:</td>
-            <td>
-                <select name="min_stars">
-                    <option></option>
-                    <option {% if request.args.get('min_stars') == '1' %}selected="selected"{% endif %} value="1">
-                        ★☆☆☆ criteria provided
-                    </option>
-                    <option {% if request.args.get('min_stars') == '2' %}selected="selected"{% endif %} value="2">
-                        ★★☆☆  criteria provided, multiple submitters, no conflicts<
-                    </option>
-                    <option {% if request.args.get('min_stars') == '3' %}selected="selected"{% endif %} value="3">
-                        ★★★☆ reviewed by expert panel
-                    </option>
-                    <option {% if request.args.get('min_stars') == '4' %}selected="selected"{% endif %} value="4">
-                        ★★★★ practice guideline
-                    </option>
-                </select>
-            </td>
-        <tr>
-            <td>Method:</td>
-            <td>
-                <select name="method">
-                    <option></option>
-                    {% for method_option in method_options %}
-                        <option {% if request.args.get('method') == method_option %}selected="selected"{% endif %}>
-                            {{ method_option }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Minimum conflict level:</td>
-            <td>
-                <select name="min_conflict_level">
-                    {% if not conflicts_only %}<option></option>{% endif %}
-                    <option {% if request.args.get('min_conflict_level') == '1' %}selected="selected"{% endif %} value="1">
-                        synonymous terms (e.g. benign vs non-pathogenic)
-                    </option>
-                    <option {% if request.args.get('min_conflict_level') == '2' %}selected="selected"{% endif %} value="2">
-                        confidence difference (e.g. benign vs likely benign)
-                    </option>
-                    <option {% if request.args.get('min_conflict_level') == '3' %}selected="selected"{% endif %} value="3">
-                        benign or likely benign vs uncertain significance
-                    </option>
-                    <option {% if request.args.get('min_conflict_level') == '4' %}selected="selected"{% endif %} value="4">
-                        category difference (e.g. benign vs affects)
-                    </option>
-                    <option {% if request.args.get('min_conflict_level') == '5' %}selected="selected"{% endif %} value="5">
-                        clinically significant difference (e.g. benign vs pathogenic)
-                    </option>
-                </select>
-            </td>
-        </tr>
-        {% block other_filters %}{% endblock %}
-        <tr>
-            <td colspan="2"><input type="submit" value="Apply filters"/></td>
-        </tr>
-    </table>
-</form>
+{% extends 'filter.html' %}
+{% block other_filters %}
+    <tr>
+        <td>Minimum conflict level:</td>
+        <td>
+            <select name="min_conflict_level">
+                {% if not conflicts_only %}<option></option>{% endif %}
+                <option {% if request.args.get('min_conflict_level') == '1' %}selected="selected"{% endif %} value="1">
+                    synonymous terms (e.g. benign vs non-pathogenic)
+                </option>
+                <option {% if request.args.get('min_conflict_level') == '2' %}selected="selected"{% endif %} value="2">
+                    confidence difference (e.g. benign vs likely benign)
+                </option>
+                <option {% if request.args.get('min_conflict_level') == '3' %}selected="selected"{% endif %} value="3">
+                    benign or likely benign vs uncertain significance
+                </option>
+                <option {% if request.args.get('min_conflict_level') == '4' %}selected="selected"{% endif %} value="4">
+                    category difference (e.g. benign vs affects)
+                </option>
+                <option {% if request.args.get('min_conflict_level') == '5' %}selected="selected"{% endif %} value="5">
+                    clinically significant difference (e.g. benign vs pathogenic)
+                </option>
+            </select>
+        </td>
+    </tr>
+{% endblock %}

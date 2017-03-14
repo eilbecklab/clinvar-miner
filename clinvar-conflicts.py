@@ -126,7 +126,6 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
         conflict_overview = db.conflict_overview(
             min_stars=int_arg('min_stars'),
             method=request.args.get('method'),
-            min_conflict_level=int_arg('min_conflict_level', 1),
             corrected_terms=request.args.get('corrected_terms'),
         )
 
@@ -189,7 +188,6 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             submitter1_id=submitter1_id,
             min_stars=int_arg('min_stars'),
             method=request.args.get('method'),
-            min_conflict_level=int_arg('min_conflict_level', 1),
             corrected_terms=request.args.get('corrected_terms'),
         )
         submitter_primary_method = db.submitter_primary_method(submitter1_id)
@@ -198,9 +196,19 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
         for row in conflict_overview:
             submitter2_id = row['submitter2_id']
             submitter2_name = row['submitter2_name']
+            conflict_level = row['conflict_level']
             count = row['count']
             if not submitter2_id in summary:
-                summary[submitter2_id] = {'name': submitter2_name, 'total': 0}
+                summary[submitter2_id] = {
+                    'name': submitter2_name,
+                    1: 0,
+                    2: 0,
+                    3: 0,
+                    4: 0,
+                    5: 0,
+                    'total': 0,
+                }
+            summary[submitter2_id][conflict_level] += count
             summary[submitter2_id]['total'] += count
 
         breakdown, submitter1_significances, submitter2_significances, total = overview_to_breakdown(conflict_overview)
@@ -236,7 +244,6 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             submitter2_id=submitter2_id,
             min_stars=int_arg('min_stars'),
             method=request.args.get('method'),
-            min_conflict_level=int_arg('min_conflict_level', 1),
             corrected_terms=request.args.get('corrected_terms'),
         )
 
