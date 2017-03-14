@@ -368,6 +368,7 @@ def total_conflicting_submissions_by_method():
     return render_template(
         'total-conflicting-submissions-by-method.html',
         total_conflicting_submissions_by_method_over_time=db.total_conflicting_submissions_by_method_over_time(),
+        max_date=db.max_date(),
     )
 
 @app.route('/total-submissions-by-method')
@@ -376,6 +377,7 @@ def total_submissions_by_method():
     return render_template(
         'total-submissions-by-method.html',
         total_submissions_by_method_over_time=db.total_submissions_by_method_over_time(),
+        max_date=db.max_date(),
     )
 
 @app.route('/total-submissions-by-country')

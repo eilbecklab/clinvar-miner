@@ -18,4 +18,9 @@
         });
         lineGraph(data, 'Conflicts', [10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000]);
     </script>
+    {% with %}
+        {% set thing = 'conflicting submissions' %}
+        {% set total_things_by_method_over_time = total_conflicting_submissions_by_method_over_time %}
+        {% include 'submissions-by-method.html' %}
+    {% endwith %}
 {% endblock %}

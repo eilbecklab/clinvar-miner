@@ -18,4 +18,9 @@
         });
         lineGraph(data, 'Submissions', [50000, 100000, 150000, 200000, 250000, 300000, 350000, 400000, 450000, 500000]);
     </script>
+    {% with %}
+        {% set thing = 'submissions' %}
+        {% set total_things_by_method_over_time = total_submissions_by_method_over_time %}
+        {% include 'submissions-by-method.html' %}
+    {% endwith %}
 {% endblock %}

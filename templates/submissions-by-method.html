@@ -1,0 +1,19 @@
+<h2>Current {{ thing }}</h2>
+<table class="sortable table" style="width:auto">
+    <thead>
+        <tr>
+            <th>Method</th>
+            <th>{{ thing|capitalize }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in total_things_by_method_over_time %}
+            {% if row['date'] == max_date %}
+                <tr>
+                    <td>{{ row['method'] }}</td>
+                    <td>{{ row['count'] }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
