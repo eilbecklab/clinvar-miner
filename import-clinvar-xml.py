@@ -213,7 +213,7 @@ def import_file(filename):
     )
 
     cursor.execute('''
-        INSERT INTO comparisons
+        INSERT OR IGNORE INTO comparisons
         SELECT
             t1.*,
             t2.submitter_id,
