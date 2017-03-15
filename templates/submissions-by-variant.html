@@ -8,8 +8,10 @@
     Submissions for variant {{ variant_link(variant_id, variant_name)|safe }}
 {% endblock %}
 {% block content %}
-    {% with header='Show submissions that have' %}
-        {% include 'submission-filter.html' %}
+    {% with %}
+        {% set header = 'Show submissions that have' %}
+        {% set min_conflict_level_filter = True %}
+        {% include 'filter.html' %}
     {% endwith %}
     <p>Total submissions: {{ submissions|length }}</p>
     {% if submissions %}

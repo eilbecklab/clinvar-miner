@@ -5,8 +5,10 @@
     {{ submitter_link(submitter2_info['id'], submitter2_info['name'])|safe }}
 {% endblock %}
 {% block content %}
-    {% with header = 'Compare variants from ' + submitter1_info['name'] + ' to variants from ' + submitter2_info['name'] + ' that have' %}
-        {% include 'breakdown-filter.html' %}
+    {% with %}
+        {% set header = 'Compare variants from ' + submitter1_info['name'] + ' to variants from ' + submitter2_info['name'] + ' that have' %}
+        {% set corrected_terms_filter = True %}
+        {% include 'filter.html' %}
     {% endwith %}
     {% include 'breakdown.html' %}
 {% endblock %}

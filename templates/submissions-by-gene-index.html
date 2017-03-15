@@ -1,8 +1,10 @@
 {% extends 'skin.html' %}
 {% set title = 'Submissions by gene' %}
 {% block content %}
-    {% with header='Include submissions that have' %}
-        {% include 'submission-filter.html' %}
+    {% with %}
+        {% set header = 'Include submissions that have' %}
+        {% set min_conflict_level_filter = True %}
+        {% include 'filter.html' %}
     {% endwith %}
     <table class="sortable table" style="width:auto">
         <thead>

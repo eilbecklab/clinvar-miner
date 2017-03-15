@@ -1,7 +1,9 @@
 {% extends 'skin.html' %}
 {% block content %}
-    {% with header='Include submissions that have' %}
-        {% include 'submission-filter.html' %}
+    {% with %}
+        {% set header = 'Include submissions that have' %}
+        {% set min_conflict_level_filter = True %}
+        {% include 'filter.html' %}
     {% endwith %}
     <p>Total variants: {{ total_submissions_by_variant|length }}</p>
     <table class="sortable table" style="width:auto">

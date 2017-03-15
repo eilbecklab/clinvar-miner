@@ -1,7 +1,10 @@
 {% extends 'skin.html' %}
 {% block content %}
-    {% with header='Include submissions that have' %}
-        {% include 'submission-filter.html' %}
+    {% with %}
+        {% set header = 'Include submissions that have' %}
+        {% set corrected_terms_filter = True %}
+        {% set corrected_terms_disabled = True %}
+        {% include 'filter.html' %}
     {% endwith %}
     <p>Total variants: {{ variants|length }}</p>
     {% if variants %}

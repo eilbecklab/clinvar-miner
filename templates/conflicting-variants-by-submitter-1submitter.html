@@ -11,8 +11,10 @@
     </small>
 {% endblock %}
 {% block content %}
-    {% with header = 'Compare variants from this submitter to variants with' %}
-        {% include 'breakdown-filter.html' %}
+    {% with %}
+        {% set header = 'Compare variants from this submitter to variants with' %}
+        {% set corrected_terms_filter = True %}
+        {% include 'filter.html' %}
     {% endwith %}
     <h2>Submitter to submitter summary</h2>
     {% if not summary %}

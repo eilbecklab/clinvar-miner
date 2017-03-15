@@ -22,6 +22,7 @@
                     </option>
                 </select>
             </td>
+        </tr>
         <tr>
             <td>Method:</td>
             <td>
@@ -35,7 +36,47 @@
                 </select>
             </td>
         </tr>
-        {% block other_filters %}{% endblock %}
+        {% if min_conflict_level_filter %}
+            <tr>
+                <td>Minimum conflict level:</td>
+                <td>
+                    <select name="min_conflict_level">
+                        <option></option>
+                        <option {% if request.args.get('min_conflict_level') == '1' %}selected="selected"{% endif %} value="1">
+                            synonymous terms (e.g. benign vs non-pathogenic)
+                        </option>
+                        <option {% if request.args.get('min_conflict_level') == '2' %}selected="selected"{% endif %} value="2">
+                            confidence difference (e.g. benign vs likely benign)
+                        </option>
+                        <option {% if request.args.get('min_conflict_level') == '3' %}selected="selected"{% endif %} value="3">
+                            benign or likely benign vs uncertain significance
+                        </option>
+                        <option {% if request.args.get('min_conflict_level') == '4' %}selected="selected"{% endif %} value="4">
+                            category difference (e.g. benign vs affects)
+                        </option>
+                        <option {% if request.args.get('min_conflict_level') == '5' %}selected="selected"{% endif %} value="5">
+                            clinically significant difference (e.g. benign vs pathogenic)
+                        </option>
+                    </select>
+                </td>
+            </tr>
+        {% endif %}
+        {% if corrected_terms_filter %}
+            <tr>
+                <td colspan="2">
+                    <label>
+                        <input
+                            {% if request.args.get('corrected_terms') %} checked="checked" {% endif %}
+                            {% if corrected_terms_disabled %} disabled="disabled" {% endif %}
+                            name="corrected_terms"
+                            type="checkbox"
+                            value="1"
+                        />
+                        Use standardized significance terms
+                    </label>
+                </td>
+            </tr>
+        {% endif %}
         <tr>
             <td colspan="2"><input type="submit" value="Apply filters"/></td>
         </tr>

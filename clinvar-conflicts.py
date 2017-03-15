@@ -148,7 +148,6 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
         significance2=significance2,
         min_stars=int_arg('min_stars'),
         method=request.args.get('method'),
-        min_conflict_level=int_arg('min_conflict_level', 1),
         corrected_terms=request.args.get('corrected_terms'),
     )
 
@@ -270,7 +269,6 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
         significance2=significance2,
         min_stars=int_arg('min_stars'),
         method=request.args.get('method'),
-        min_conflict_level=int_arg('min_conflict_level', 1),
     )
     return render_template(
         'conflicting-variants-by-submitter-2significances.html',

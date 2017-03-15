@@ -1,8 +1,10 @@
 {% extends 'skin.html' %}
 {% set title = 'Conflicts by significance' %}
 {% block content %}
-    {% with header='Compare all variants to variants with' %}
-        {% include 'breakdown-filter.html' %}
+    {% with %}
+        {% set header = 'Compare all variants to variants with' %}
+        {% set corrected_terms_filter = True %}
+        {% include 'filter.html' %}
     {% endwith %}
     <h2>Significance breakdown</h2>
     <p>Total conflicting variants: {{ total }}</p>
