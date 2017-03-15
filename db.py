@@ -28,12 +28,7 @@ class DB():
         if method:
             query += ' AND method2=:method'
 
-        if corrected_terms:
-            query += ' GROUP BY corrected_clin_sig1, corrected_clin_sig2, conflict_level'
-        else:
-            query += ' GROUP BY clin_sig1, clin_sig2, conflict_level'
-
-        query += ', submitter2_id ORDER BY submitter2_name'
+        query += ' GROUP BY clin_sig1, clin_sig2, conflict_level, submitter2_id ORDER BY submitter2_name'
 
         return list(map(
             dict,
