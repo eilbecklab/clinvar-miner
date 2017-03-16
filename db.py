@@ -10,11 +10,11 @@ class DB():
     def conflict_overview(self, submitter1_id = None, submitter2_id = None, min_stars = 0, method = None,
                           corrected_terms = False):
         if corrected_terms:
-            query = 'SELECT corrected_clin_sig1 AS clin_sig1, corrected_clin_sig2 AS clin_sig2'
+            query = 'SELECT standardized_clin_sig1 AS clin_sig1, standardized_clin_sig2 AS clin_sig2'
         else:
             query = 'SELECT clin_sig1, clin_sig2'
 
-        query += ', submitter2_id, submitter2_name, conflict_level, COUNT(DISTINCT ncbi_variation_id) AS count'
+        query += ', submitter2_id, submitter2_name, conflict_level, COUNT(DISTINCT variant_id) AS count'
         query += ' FROM current_comparisons'
 
         query += ' WHERE star_level2>=:min_stars AND conflict_level>=1'
@@ -75,19 +75,19 @@ class DB():
     def submissions(self, gene = None, variant_id = None, min_stars = 0, method = None, min_conflict_level = 0):
         query = '''
             SELECT DISTINCT
-                ncbi_variation_id,
-                preferred_name,
+                variant_id,
+                variant_name,
                 variant_type,
-                gene_symbol,
+                gene,
                 submitter1_id AS submitter_id,
                 submitter1_name AS submitter_name,
                 rcv1 AS rcv,
                 scv1 AS scv,
                 clin_sig1 AS clin_sig,
-                corrected_clin_sig1 AS corrected_clin_sig1,
+                standardized_clin_sig1 AS standardized_clin_sig1,
                 last_eval1 AS last_eval,
                 review_status1 AS review_status,
-                sub_condition1 AS sub_condition,
+                trait1_name AS trait_name,
                 method1 AS method,
                 description1 AS description
             FROM current_comparisons
@@ -95,10 +95,10 @@ class DB():
         '''
 
         if gene:
-            query += ' AND gene_symbol=:gene'
+            query += ' AND gene=:gene'
 
         if variant_id:
-            query += ' AND ncbi_variation_id=:variant_id'
+            query += ' AND variant_id=:variant_id'
 
         if method:
             query += ' AND method1=:method AND method2=:method'
@@ -170,7 +170,7 @@ class DB():
 
     def total_submissions_by_gene(self, submitter_id = None, min_stars = 0, method = None, min_conflict_level = 0):
         query = '''
-            SELECT gene_symbol, COUNT(DISTINCT scv1) AS count FROM current_comparisons
+            SELECT gene, COUNT(DISTINCT scv1) AS count FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
 
@@ -180,7 +180,7 @@ class DB():
         if method:
             query += ' AND method1=:method AND method2=:method'
 
-        query += ' GROUP BY gene_symbol ORDER BY gene_symbol'
+        query += ' GROUP BY gene ORDER BY gene'
 
         return list(map(
             dict,
@@ -227,9 +227,9 @@ class DB():
 
     def total_submissions_by_variant(self, gene, min_stars = 0, method = None, min_conflict_level = 0):
         query = '''
-            SELECT ncbi_variation_id, preferred_name, COUNT(DISTINCT scv1) AS count FROM current_comparisons
+            SELECT variant_id, variant_name, COUNT(DISTINCT scv1) AS count FROM current_comparisons
             WHERE
-                gene_symbol=:gene AND
+                gene=:gene AND
                 star_level1>=:min_stars AND
                 star_level2>=:min_stars AND
                 conflict_level>=:min_conflict_level
@@ -238,7 +238,7 @@ class DB():
         if method:
             query += ' AND method1=:method AND method2=:method'
 
-        query += ' GROUP BY ncbi_variation_id ORDER BY preferred_name'
+        query += ' GROUP BY variant_id ORDER BY variant_name'
 
         return list(map(
             dict,
@@ -261,7 +261,7 @@ class DB():
                     SELECT
                         submitter1_id AS submitter_id,
                         submitter1_name AS submitter_name,
-                        COUNT(DISTINCT ncbi_variation_id) AS count
+                        COUNT(DISTINCT variant_id) AS count
                     FROM current_comparisons
                     WHERE conflict_level>=:min_conflict_level
                     GROUP BY submitter1_id ORDER BY submitter1_name
@@ -274,13 +274,13 @@ class DB():
 
     def variant_name(self, variant_id):
         return list(self.cursor.execute(
-            'SELECT preferred_name FROM current_submissions WHERE ncbi_variation_id=?', [variant_id]
+            'SELECT variant_name FROM current_submissions WHERE variant_id=?', [variant_id]
         ))[0][0]
 
     def variants(self, submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None,
                  min_stars = 0, method = None, min_conflict_level = 1, corrected_terms = False):
         query = '''
-            SELECT DISTINCT ncbi_variation_id, preferred_name FROM current_comparisons
+            SELECT DISTINCT variant_id, variant_name FROM current_comparisons
             WHERE star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
 
@@ -292,9 +292,9 @@ class DB():
 
         if corrected_terms:
             if significance1:
-                query += ' AND corrected_clin_sig1=:significance1'
+                query += ' AND standardized_clin_sig1=:significance1'
             if significance2:
-                query += ' AND corrected_clin_sig2=:significance2'
+                query += ' AND standardized_clin_sig2=:significance2'
         else:
             if significance1:
                 query += ' AND clin_sig1=:significance1'
@@ -304,7 +304,7 @@ class DB():
         if method:
             query += ' AND method2=:method'
 
-        query += ' ORDER BY preferred_name'
+        query += ' ORDER BY variant_name'
 
         return list(map(
             dict,

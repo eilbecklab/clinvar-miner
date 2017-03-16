@@ -18,8 +18,8 @@
                 {% for row in variants %}
                     <tr>
                         <td>
-                            <a href="submissions-by-variant/{{ row['ncbi_variation_id'] }}{{ request|querysuffix }}">
-                                {{ row['preferred_name'] }}
+                            <a href="submissions-by-variant/{{ row['variant_id'] }}{{ request|querysuffix }}">
+                                {{ row['variant_name'] }}
                             </a>
                         </td>
                     </tr>

@@ -27,20 +27,20 @@ def create_tables():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS submissions (
             date TEXT,
-            ncbi_variation_id INTEGER,
-            preferred_name TEXT,
+            variant_id INTEGER,
+            variant_name TEXT,
             variant_type TEXT,
-            gene_symbol TEXT,
+            gene TEXT,
             submitter_id INTEGER,
             submitter_name TEXT,
             rcv TEXT,
             scv TEXT,
             clin_sig TEXT,
-            corrected_clin_sig TEXT,
+            standardized_clin_sig TEXT,
             last_eval TEXT,
             review_status TEXT,
             star_level INTEGER,
-            sub_condition TEXT,
+            trait_name TEXT,
             method TEXT,
             description TEXT,
             PRIMARY KEY (date, scv)
@@ -50,20 +50,20 @@ def create_tables():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS comparisons (
             date TEXT,
-            ncbi_variation_id TEXT,
-            preferred_name TEXT,
+            variant_id TEXT,
+            variant_name TEXT,
             variant_type TEXT,
-            gene_symbol TEXT,
+            gene TEXT,
             submitter1_id INTEGER,
             submitter1_name TEXT,
             rcv1 TEXT,
             scv1 TEXT,
             clin_sig1 TEXT,
-            corrected_clin_sig1 TEXT,
+            standardized_clin_sig1 TEXT,
             last_eval1 TEXT,
             review_status1 TEXT,
             star_level1 INTEGER,
-            sub_condition1 TEXT,
+            trait1_name TEXT,
             method1 TEXT,
             description1 TEXT,
             submitter2_id INTEGER,
@@ -71,11 +71,11 @@ def create_tables():
             rcv2 TEXT,
             scv2 TEXT,
             clin_sig2 TEXT,
-            corrected_clin_sig2 TEXT,
+            standardized_clin_sig2 TEXT,
             last_eval2 TEXT,
             review_status2 TEXT,
             star_level2 INTEGER,
-            sub_condition2 TEXT,
+            trait2_name TEXT,
             method2 TEXT,
             description2 TEXT,
             conflict_level INTEGER,
@@ -98,23 +98,23 @@ def create_tables():
     ''')
 
     cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON submissions (date)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS ncbi_variation_id_index ON submissions (ncbi_variation_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS variant_id_index ON submissions (variant_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_id_index ON submissions (submitter_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_name_index ON submissions (submitter_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS clin_sig_index ON submissions (clin_sig)')
     cursor.execute('CREATE INDEX IF NOT EXISTS method_index ON submissions (method)')
 
     cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON comparisons (date)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS ncbi_variation_id_index ON comparisons (ncbi_variation_id)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS preferred_name_index ON comparisons (preferred_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS gene_symbol_index ON comparisons (gene_symbol)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS variant_id_index ON comparisons (variant_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS variant_name_index ON comparisons (variant_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS gene_index ON comparisons (gene)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter1_id_index ON comparisons (submitter1_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter2_id_index ON comparisons (submitter2_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter2_name_index ON comparisons (submitter2_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS clin_sig1_index ON comparisons (clin_sig1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS clin_sig2_index ON comparisons (clin_sig2)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS corrected_clin_sig1_index ON comparisons (corrected_clin_sig1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS corrected_clin_sig2_index ON comparisons (corrected_clin_sig2)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS standardized_clin_sig1_index ON comparisons (standardized_clin_sig1)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS standardized_clin_sig2_index ON comparisons (standardized_clin_sig2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS star_level1_index ON comparisons (star_level1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS star_level2_index ON comparisons (star_level2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS method1_index ON comparisons (method1)')
@@ -139,9 +139,9 @@ def import_file(filename):
 
         reference_assertion_el = set_el.find('./ReferenceClinVarAssertion')
         measure_set_el = reference_assertion_el.find('./MeasureSet')
-        preferred_name_el = measure_set_el.find('./Name/ElementValue[@Type="Preferred"]')
+        variant_name_el = measure_set_el.find('./Name/ElementValue[@Type="Preferred"]')
         measure_el = measure_set_el.find('./Measure')
-        gene_symbol_el = measure_el.find('./MeasureRelationship/Symbol/ElementValue[@Type="Preferred"]')
+        gene_el = measure_el.find('./MeasureRelationship/Symbol/ElementValue[@Type="Preferred"]')
 
         for assertion_el in set_el.findall('./ClinVarAssertion'):
             scv_el = assertion_el.find('./ClinVarAccession[@Type="SCV"]')
@@ -151,22 +151,22 @@ def import_file(filename):
             clin_sig_el = assertion_el.find('./ClinicalSignificance')
             description_el = clin_sig_el.find('./Description')
             review_status_el = clin_sig_el.find('./ReviewStatus')
-            sub_condition_el = assertion_el.find('./TraitSet/Trait/Name/ElementValue')
+            trait_name_el = assertion_el.find('./TraitSet/Trait/Name/ElementValue')
             method_el = assertion_el.find('./ObservedIn/Method/MethodType')
             comment_el = clin_sig_el.find('./Comment')
 
-            ncbi_variation_id = int(measure_set_el.attrib['ID'])
-            preferred_name = preferred_name_el.text if preferred_name_el != None else '' #missing in old versions
+            variant_id = int(measure_set_el.attrib['ID'])
+            variant_name = variant_name_el.text if variant_name_el != None else '' #missing in old versions
             variant_type = measure_el.attrib['Type']
-            gene_symbol = gene_symbol_el.text if gene_symbol_el != None else ''
+            gene = gene_el.text if gene_el != None else ''
             submitter_id = int(scv_el.attrib['OrgID']) if scv_el.attrib.get('OrgID') else 0 #missing in old versions
             submitter_name = submission_id_el.get('submitter', '') if submission_id_el != None else '' #missing in old versions
             rcv = reference_assertion_el.find('./ClinVarAccession[@Type="RCV"]').attrib['Acc']
             clin_sig = description_el.text.lower() if description_el != None else 'not provided'
-            corrected_clin_sig = nonstandard_significance_term_map.get(clin_sig, clin_sig)
+            standardized_clin_sig = nonstandard_significance_term_map.get(clin_sig, clin_sig)
             last_eval = clin_sig_el.attrib.get('DateLastEvaluated', '') #missing in old versions
             review_status = review_status_el.text if review_status_el != None else '' #missing in old versions
-            sub_condition = sub_condition_el.text if sub_condition_el != None else ''
+            trait_name = trait_name_el.text if trait_name_el != None else ''
             method = method_el.text if method_el != None else 'not provided' #missing in old versions
             description = comment_el.text if comment_el != None else ''
 
@@ -183,20 +183,20 @@ def import_file(filename):
 
             submissions.append((
                 date,
-                ncbi_variation_id,
-                preferred_name,
+                variant_id,
+                variant_name,
                 variant_type,
-                gene_symbol,
+                gene,
                 submitter_id,
                 submitter_name,
                 rcv,
                 scv,
                 clin_sig,
-                corrected_clin_sig,
+                standardized_clin_sig,
                 last_eval,
                 review_status,
                 star_level,
-                sub_condition,
+                trait_name,
                 method,
                 description,
             ))
@@ -221,33 +221,33 @@ def import_file(filename):
             t2.rcv,
             t2.scv,
             t2.clin_sig,
-            t2.corrected_clin_sig,
+            t2.standardized_clin_sig,
             t2.last_eval,
             t2.review_status,
             t2.star_level,
-            t2.sub_condition,
+            t2.trait_name,
             t2.method,
             t2.description,
             CASE
-                WHEN t1.corrected_clin_sig=t2.corrected_clin_sig AND t1.clin_sig!=t2.clin_sig THEN 1
+                WHEN t1.standardized_clin_sig=t2.standardized_clin_sig AND t1.clin_sig!=t2.clin_sig THEN 1
 
-                WHEN t1.corrected_clin_sig="benign" AND t2.corrected_clin_sig="likely benign" THEN 2
-                WHEN t1.corrected_clin_sig="likely benign" AND t2.corrected_clin_sig="benign" THEN 2
-                WHEN t1.corrected_clin_sig="pathogenic" AND t2.corrected_clin_sig="likely pathogenic" THEN 2
-                WHEN t1.corrected_clin_sig="likely pathogenic" AND t2.corrected_clin_sig="pathogenic" THEN 2
+                WHEN t1.standardized_clin_sig="benign" AND t2.standardized_clin_sig="likely benign" THEN 2
+                WHEN t1.standardized_clin_sig="likely benign" AND t2.standardized_clin_sig="benign" THEN 2
+                WHEN t1.standardized_clin_sig="pathogenic" AND t2.standardized_clin_sig="likely pathogenic" THEN 2
+                WHEN t1.standardized_clin_sig="likely pathogenic" AND t2.standardized_clin_sig="pathogenic" THEN 2
 
-                WHEN t1.corrected_clin_sig IN ("benign", "likely benign") AND t2.corrected_clin_sig="uncertain significance" THEN 3
-                WHEN t1.corrected_clin_sig="uncertain significance" AND t2.corrected_clin_sig IN ("benign", "likely benign") THEN 3
+                WHEN t1.standardized_clin_sig IN ("benign", "likely benign") AND t2.standardized_clin_sig="uncertain significance" THEN 3
+                WHEN t1.standardized_clin_sig="uncertain significance" AND t2.standardized_clin_sig IN ("benign", "likely benign") THEN 3
 
-                WHEN t1.corrected_clin_sig IN ("benign", "likely benign", "uncertain significance") AND t2.corrected_clin_sig IN ("pathogenic", "likely pathogenic") THEN 5
-                WHEN t1.corrected_clin_sig IN ("pathogenic", "likely pathogenic") AND t2.corrected_clin_sig IN ("benign", "likely benign", "uncertain significance") THEN 5
+                WHEN t1.standardized_clin_sig IN ("benign", "likely benign", "uncertain significance") AND t2.standardized_clin_sig IN ("pathogenic", "likely pathogenic") THEN 5
+                WHEN t1.standardized_clin_sig IN ("pathogenic", "likely pathogenic") AND t2.standardized_clin_sig IN ("benign", "likely benign", "uncertain significance") THEN 5
 
-                WHEN t1.corrected_clin_sig!=t2.corrected_clin_sig THEN 4
+                WHEN t1.standardized_clin_sig!=t2.standardized_clin_sig THEN 4
 
                 ELSE 0
             END AS conflict_level
         FROM submissions t1 INNER JOIN submissions t2
-        ON t1.date=? AND t1.date=t2.date AND t1.ncbi_variation_id=t2.ncbi_variation_id
+        ON t1.date=? AND t1.date=t2.date AND t1.variant_id=t2.variant_id
     ''', [date])
 
     db.commit()

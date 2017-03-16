@@ -17,8 +17,8 @@
             {% for row in total_submissions_by_gene  %}
                 <tr>
                     <td>
-                        <a href="submissions-by-gene/{{ row['gene_symbol']|quotepath }}{{ request|querysuffix }}">
-                            {{ row['gene_symbol'] }}
+                        <a href="submissions-by-gene/{{ row['gene']|quotepath }}{{ request|querysuffix }}">
+                            {{ row['gene'] }}
                         </a>
                     </td>
                     <td style="text-align:right">{{ row['count'] }}</td>

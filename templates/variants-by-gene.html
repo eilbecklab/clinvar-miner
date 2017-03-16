@@ -17,8 +17,8 @@
             {% for row in total_submissions_by_variant %}
                 <tr>
                     <td>
-                        <a href="submissions-by-variant/{{ row['ncbi_variation_id'] }}{{ request|querysuffix }}">
-                            {{ row['preferred_name'] }}
+                        <a href="submissions-by-variant/{{ row['variant_id'] }}{{ request|querysuffix }}">
+                            {{ row['variant_name'] }}
                         </a>
                     </td>
                     <td style="text-align:right">{{ row['count'] }}</td>

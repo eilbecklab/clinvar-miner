@@ -109,8 +109,8 @@ def template_functions():
             return submitter_name
         return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + str(submitter_id) + '/">' + break_punctuation(submitter_name) + '</a>'
 
-    def variant_link(ncbi_variation_id, preferred_name):
-        return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + str(ncbi_variation_id) + '/">' + break_punctuation(preferred_name) + '</a>'
+    def variant_link(variant_id, variant_name):
+        return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + str(variant_id) + '/">' + break_punctuation(variant_name) + '</a>'
 
     return {
         'submitter_link': submitter_link,
