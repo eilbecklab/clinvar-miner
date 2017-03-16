@@ -109,11 +109,39 @@ def template_functions():
             return submitter_name
         return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + str(submitter_id) + '/">' + break_punctuation(submitter_name) + '</a>'
 
+    def trait_link(trait_db, trait_id, trait_name):
+        if not trait_name:
+            trait_name = trait_db + ' ' + trait_id
+
+        #find and order DB names and examples with:
+        #SELECT trait_db, trait_id, COUNT(*) FROM current_submissions GROUP BY trait_db ORDER BY COUNT(*) DESC
+        trait_db = trait_db.lower()
+        if trait_db in ('medgen', 'umls'):
+            url = 'https://www.ncbi.nlm.nih.gov/medgen/' + trait_id
+        elif trait_db == 'omim':
+            url = 'https://www.omim.org/entry/' + trait_id
+        elif trait_db == 'genereviews':
+            url = 'https://www.ncbi.nlm.nih.gov/books/' + trait_id
+        elif trait_db == 'hp':
+            url = 'http://compbio.charite.de/hpoweb/showterm?id=' + trait_id
+        elif trait_db == 'mesh':
+            url = 'https://meshb.nlm.nih.gov/#/record/ui?ui=' + trait_id
+        elif trait_db == 'omim phenotypic series':
+            url = 'https://www.omim.org/phenotypicseries/' + trait_id
+        else:
+            url = None
+
+        if url:
+            return '<a href="' + url + '">' + trait_name + '</a>'
+        else:
+            return trait_name
+
     def variant_link(variant_id, variant_name):
         return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + str(variant_id) + '/">' + break_punctuation(variant_name) + '</a>'
 
     return {
         'submitter_link': submitter_link,
+        'trait_link': trait_link,
         'variant_link': variant_link,
     }
 

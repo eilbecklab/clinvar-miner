@@ -87,6 +87,8 @@ class DB():
                 standardized_clin_sig1 AS standardized_clin_sig1,
                 last_eval1 AS last_eval,
                 review_status1 AS review_status,
+                trait1_db AS trait_db,
+                trait1_id AS trait_id,
                 trait1_name AS trait_name,
                 method1 AS method,
                 description1 AS description

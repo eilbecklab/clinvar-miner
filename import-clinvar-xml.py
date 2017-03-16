@@ -40,6 +40,8 @@ def create_tables():
             last_eval TEXT,
             review_status TEXT,
             star_level INTEGER,
+            trait_db TEXT,
+            trait_id TEXT,
             trait_name TEXT,
             method TEXT,
             description TEXT,
@@ -63,6 +65,8 @@ def create_tables():
             last_eval1 TEXT,
             review_status1 TEXT,
             star_level1 INTEGER,
+            trait1_db TEXT,
+            trait1_id TEXT,
             trait1_name TEXT,
             method1 TEXT,
             description1 TEXT,
@@ -75,6 +79,8 @@ def create_tables():
             last_eval2 TEXT,
             review_status2 TEXT,
             star_level2 INTEGER,
+            trait2_db TEXT,
+            trait2_id TEXT,
             trait2_name TEXT,
             method2 TEXT,
             description2 TEXT,
@@ -151,7 +157,9 @@ def import_file(filename):
             clin_sig_el = assertion_el.find('./ClinicalSignificance')
             description_el = clin_sig_el.find('./Description')
             review_status_el = clin_sig_el.find('./ReviewStatus')
-            trait_name_el = assertion_el.find('./TraitSet/Trait/Name/ElementValue')
+            trait_el = assertion_el.find('./TraitSet/Trait')
+            trait_xref_el = trait_el.find('./XRef')
+            trait_name_el = trait_el.find('./Name/ElementValue')
             method_el = assertion_el.find('./ObservedIn/Method/MethodType')
             comment_el = clin_sig_el.find('./Comment')
 
@@ -166,6 +174,8 @@ def import_file(filename):
             standardized_clin_sig = nonstandard_significance_term_map.get(clin_sig, clin_sig)
             last_eval = clin_sig_el.attrib.get('DateLastEvaluated', '') #missing in old versions
             review_status = review_status_el.text if review_status_el != None else '' #missing in old versions
+            trait_db = trait_xref_el.attrib['DB'] if trait_xref_el != None else ''
+            trait_id = trait_xref_el.attrib['ID'] if trait_xref_el != None else ''
             trait_name = trait_name_el.text if trait_name_el != None else ''
             method = method_el.text if method_el != None else 'not provided' #missing in old versions
             description = comment_el.text if comment_el != None else ''
@@ -196,6 +206,8 @@ def import_file(filename):
                 last_eval,
                 review_status,
                 star_level,
+                trait_db,
+                trait_id,
                 trait_name,
                 method,
                 description,
@@ -225,6 +237,8 @@ def import_file(filename):
             t2.last_eval,
             t2.review_status,
             t2.star_level,
+            t2.trait_db,
+            t2.trait_id,
             t2.trait_name,
             t2.method,
             t2.description,

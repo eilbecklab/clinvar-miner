@@ -35,7 +35,7 @@
                         <td>{{ submission['rcv']|rcvlink|safe }}</td>
                         <td>{{ submission['scv'] }}</td>
                         <td>{{ submission['clin_sig'] }}</td>
-                        <td>{{ submission['trait_name'] }}</td>
+                        <td>{{ trait_link(submission['trait_db'], submission['trait_id'], submission['trait_name'])|safe }}</td>
                         <td>{{ submission['last_eval']|date }}</td>
                         <td>{{ submission['review_status'] }}</td>
                         <td>{{ submission['method'] }}</td>
