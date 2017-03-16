@@ -22,6 +22,7 @@
                     <th>RCV</th>
                     <th>SCV</th>
                     <th>Clinical significance</th>
+                    <th>Trait</th>
                     <th>Last evaluated</th>
                     <th>Review status</th>
                     <th>Method</th>
@@ -34,6 +35,7 @@
                         <td>{{ submission['rcv']|rcvlink|safe }}</td>
                         <td>{{ submission['scv'] }}</td>
                         <td>{{ submission['clin_sig'] }}</td>
+                        <td>{{ submission['sub_condition'] }}</td>
                         <td>{{ submission['last_eval']|date }}</td>
                         <td>{{ submission['review_status'] }}</td>
                         <td>{{ submission['method'] }}</td>

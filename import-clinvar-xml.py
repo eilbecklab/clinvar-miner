@@ -151,7 +151,7 @@ def import_file(filename):
             clin_sig_el = assertion_el.find('./ClinicalSignificance')
             description_el = clin_sig_el.find('./Description')
             review_status_el = clin_sig_el.find('./ReviewStatus')
-            sub_condition_el = assertion_el.find('./TraitSet[@Type="PhenotypeInstruction"]/Trait[@Type="PhenotypeInstruction"]/Name/ElementValue[@Type="Preferred"]')
+            sub_condition_el = assertion_el.find('./TraitSet/Trait/Name/ElementValue')
             method_el = assertion_el.find('./ObservedIn/Method/MethodType')
             comment_el = clin_sig_el.find('./Comment')
 
