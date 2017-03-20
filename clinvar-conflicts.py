@@ -176,20 +176,18 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
     significance1 = significance1.replace('%2F', '/')
     significance2 = significance2.replace('%2F', '/')
 
-    variants = db.variants(
-        significance1=significance1,
-        significance2=significance2,
-        min_stars=int_arg('min_stars'),
-        method=request.args.get('method'),
-        corrected_terms=request.args.get('corrected_terms'),
-    )
-
     return render_template(
         'conflicting-variants-by-significance-2significances.html',
         title='Variants reported as ' + significance1 + ' and ' + significance2,
         significance1=significance1,
         significance2=significance2,
-        variants=variants,
+        variants=db.variants(
+            significance1=significance1,
+            significance2=significance2,
+            min_stars=int_arg('min_stars'),
+            method=request.args.get('method'),
+            corrected_terms=request.args.get('corrected_terms'),
+        ),
         method_options=db.methods(),
     )
 
@@ -295,21 +293,20 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
     significance1 = significance1.replace('%2F', '/')
     significance2 = significance2.replace('%2F', '/')
 
-    variants = db.variants(
-        submitter1_id=submitter1_id,
-        submitter2_id=submitter2_id,
-        significance1=significance1,
-        significance2=significance2,
-        min_stars=int_arg('min_stars'),
-        method=request.args.get('method'),
-    )
     return render_template(
         'conflicting-variants-by-submitter-2significances.html',
         submitter1_info=submitter1_info,
         submitter2_info=submitter2_info,
         significance1=significance1,
         significance2=significance2,
-        variants=variants,
+        variants=db.variants(
+            submitter1_id=submitter1_id,
+            submitter2_id=submitter2_id,
+            significance1=significance1,
+            significance2=significance2,
+            min_stars=int_arg('min_stars'),
+            method=request.args.get('method'),
+        ),
         method_options=db.methods(),
     )
 
@@ -349,28 +346,27 @@ def submissions_by_gene(gene = None, variant_id = None):
     db = DB()
 
     if not gene:
-        total_submissions_by_gene=db.total_submissions_by_gene(
-            min_stars=int_arg('min_stars'),
-            method=request.args.get('method'),
-            min_conflict_level=int_arg('min_conflict_level'),
-        )
         return render_template(
             'submissions-by-gene-index.html',
-            total_submissions_by_gene=total_submissions_by_gene,
+            total_submissions_by_gene=db.total_submissions_by_gene(
+                min_stars=int_arg('min_stars'),
+                method=request.args.get('method'),
+                min_conflict_level=int_arg('min_conflict_level'),
+            ),
             method_options=db.methods(),
         )
 
     gene = gene.replace('%2F', '/')
-    total_submissions_by_variant=db.total_submissions_by_variant(
-        gene,
-        min_stars=int_arg('min_stars'),
-        method=request.args.get('method'),
-        min_conflict_level=int_arg('min_conflict_level'),
-    )
+
     return render_template(
         'variants-by-gene.html',
         title='Variants in ' + gene,
-        total_submissions_by_variant=total_submissions_by_variant,
+        total_submissions_by_variant=db.total_submissions_by_variant(
+            gene,
+            min_stars=int_arg('min_stars'),
+            method=request.args.get('method'),
+            min_conflict_level=int_arg('min_conflict_level'),
+        ),
         method_options=db.methods(),
     )
 
@@ -378,18 +374,16 @@ def submissions_by_gene(gene = None, variant_id = None):
 def submissions_by_variant(variant_id):
     db = DB()
 
-    submissions=db.submissions(
-        variant_id=variant_id,
-        min_stars=int_arg('min_stars'),
-        method=request.args.get('method'),
-        min_conflict_level=int_arg('min_conflict_level'),
-    )
-    variant_name=db.variant_name(variant_id)
     return render_template(
         'submissions-by-variant.html',
-        variant_name=variant_name,
+        variant_name=db.variant_name(variant_id),
         variant_id=variant_id,
-        submissions=submissions,
+        submissions=db.submissions(
+            variant_id=variant_id,
+            min_stars=int_arg('min_stars'),
+            method=request.args.get('method'),
+            min_conflict_level=int_arg('min_conflict_level'),
+        ),
         method_options=db.methods(),
     )
 
