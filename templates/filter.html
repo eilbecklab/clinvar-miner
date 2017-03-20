@@ -1,41 +1,29 @@
 <form action="" autocomplete="off" method="get">
     <table class="table" style="width:auto">
-        <tr>
-            <th colspan="2">{{ header }}</th>
-        </tr>
-        <tr>
-            <td>Minimum review status:</td>
-            <td>
-                <select name="min_stars">
-                    <option></option>
-                    <option {% if request.args.get('min_stars') == '1' %}selected="selected"{% endif %} value="1">
-                        ★☆☆☆ criteria provided
-                    </option>
-                    <option {% if request.args.get('min_stars') == '2' %}selected="selected"{% endif %} value="2">
-                        ★★☆☆  criteria provided, multiple submitters, no conflicts<
-                    </option>
-                    <option {% if request.args.get('min_stars') == '3' %}selected="selected"{% endif %} value="3">
-                        ★★★☆ reviewed by expert panel
-                    </option>
-                    <option {% if request.args.get('min_stars') == '4' %}selected="selected"{% endif %} value="4">
-                        ★★★★ practice guideline
-                    </option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Method:</td>
-            <td>
-                <select name="method">
-                    <option></option>
-                    {% for method_option in method_options %}
-                        <option {% if request.args.get('method') == method_option %}selected="selected"{% endif %}>
-                            {{ method_option }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </td>
-        </tr>
+        {% with %}
+            {% set label = review_status1_label or 'Minimum review status' %}
+            {% set name = 'min_stars1' %}
+            {% include 'min_stars_filter.html' %}
+        {% endwith %}
+        {% with %}
+            {% set label = method1_label or 'Method' %}
+            {% set name = 'method1' %}
+            {% include 'method_filter.html' %}
+        {% endwith %}
+        {% if review_status2_label %}
+            {% with %}
+                {% set label = review_status2_label %}
+                {% set name = 'min_stars2' %}
+                {% include 'min_stars_filter.html' %}
+            {% endwith %}
+        {% endif %}
+        {% if method2_label %}
+            {% with %}
+                {% set label = method2_label %}
+                {% set name = 'method2' %}
+                {% include 'method_filter.html' %}
+            {% endwith %}
+        {% endif %}
         {% if min_conflict_level_filter %}
             <tr>
                 <td>Minimum conflict level:</td>

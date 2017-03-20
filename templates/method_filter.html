@@ -1,0 +1,13 @@
+<tr>
+    <td>{{ label }}:</td>
+    <td>
+        <select name="{{ name }}">
+            <option></option>
+            {% for method_option in method_options %}
+                <option {% if request.args.get(name) == method_option %}selected="selected"{% endif %}>
+                    {{ method_option }}
+                </option>
+            {% endfor %}
+        </select>
+    </td>
+</tr>

@@ -157,8 +157,10 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
 
     if not significance2:
         conflict_overview = db.conflict_overview(
-            min_stars=int_arg('min_stars'),
-            method=request.args.get('method'),
+            min_stars1=int_arg('min_stars1'),
+            method1=request.args.get('method1'),
+            min_stars2=int_arg('min_stars2'),
+            method2=request.args.get('method2'),
             corrected_terms=request.args.get('corrected_terms'),
         )
 
@@ -184,8 +186,10 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
         variants=db.variants(
             significance1=significance1,
             significance2=significance2,
-            min_stars=int_arg('min_stars'),
-            method=request.args.get('method'),
+            min_stars1=int_arg('min_stars1'),
+            method1=request.args.get('method1'),
+            min_stars2=int_arg('min_stars2'),
+            method2=request.args.get('method2'),
             corrected_terms=request.args.get('corrected_terms'),
         ),
         method_options=db.methods(),
@@ -216,8 +220,10 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
     if submitter2_id == None:
         conflict_overview = db.conflict_overview(
             submitter1_id=submitter1_id,
-            min_stars=int_arg('min_stars'),
-            method=request.args.get('method'),
+            min_stars1=int_arg('min_stars1'),
+            method1=request.args.get('method1'),
+            min_stars2=int_arg('min_stars2'),
+            method2=request.args.get('method2'),
             corrected_terms=request.args.get('corrected_terms'),
         )
         submitter_primary_method = db.submitter_primary_method(submitter1_id)
@@ -246,7 +252,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
         return render_template(
             'conflicting-variants-by-submitter-1submitter.html',
             submitter1_info=submitter1_info,
-            submitter2_info={'id': 0, 'name': 'All other submitters'},
+            submitter2_info={'id': 0, 'name': 'All submitters'},
             submitter_primary_method=submitter_primary_method,
             summary=summary,
             breakdown=breakdown,
@@ -272,8 +278,10 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
         conflict_overview = db.conflict_overview(
             submitter1_id=submitter1_id,
             submitter2_id=submitter2_id,
-            min_stars=int_arg('min_stars'),
-            method=request.args.get('method'),
+            min_stars1=int_arg('min_stars1'),
+            method1=request.args.get('method1'),
+            min_stars2=int_arg('min_stars2'),
+            method2=request.args.get('method2'),
             corrected_terms=request.args.get('corrected_terms'),
         )
 
@@ -304,8 +312,10 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             submitter2_id=submitter2_id,
             significance1=significance1,
             significance2=significance2,
-            min_stars=int_arg('min_stars'),
-            method=request.args.get('method'),
+            min_stars1=int_arg('min_stars1'),
+            method1=request.args.get('method1'),
+            min_stars2=int_arg('min_stars2'),
+            method2=request.args.get('method2'),
         ),
         method_options=db.methods(),
     )
@@ -349,8 +359,8 @@ def submissions_by_gene(gene = None, variant_id = None):
         return render_template(
             'submissions-by-gene-index.html',
             total_submissions_by_gene=db.total_submissions_by_gene(
-                min_stars=int_arg('min_stars'),
-                method=request.args.get('method'),
+                min_stars=int_arg('min_stars1'),
+                method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
             ),
             method_options=db.methods(),
@@ -363,8 +373,8 @@ def submissions_by_gene(gene = None, variant_id = None):
         title='Variants in ' + gene,
         total_submissions_by_variant=db.total_submissions_by_variant(
             gene,
-            min_stars=int_arg('min_stars'),
-            method=request.args.get('method'),
+            min_stars=int_arg('min_stars1'),
+            method=request.args.get('method1'),
             min_conflict_level=int_arg('min_conflict_level'),
         ),
         method_options=db.methods(),
@@ -380,8 +390,8 @@ def submissions_by_variant(variant_id):
         variant_id=variant_id,
         submissions=db.submissions(
             variant_id=variant_id,
-            min_stars=int_arg('min_stars'),
-            method=request.args.get('method'),
+            min_stars=int_arg('min_stars1'),
+            method=request.args.get('method1'),
             min_conflict_level=int_arg('min_conflict_level'),
         ),
         method_options=db.methods(),

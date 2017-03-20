@@ -6,7 +6,10 @@
 {% endblock %}
 {% block content %}
     {% with %}
-        {% set header = 'Compare variants from ' + submitter1_info['name'] + ' to variants from ' + submitter2_info['name'] + ' that have' %}
+        {% set review_status1_label = 'Minimum review status of the submission from ' + submitter1_info['name'] %}
+        {% set method1_label = 'Method of the submission from ' + submitter1_info['name'] %}
+        {% set review_status2_label = 'Minimum review status of the other submission' %}
+        {% set method2_label = 'Method of the other submission' %}
         {% set corrected_terms_filter = True %}
         {% include 'filter.html' %}
     {% endwith %}

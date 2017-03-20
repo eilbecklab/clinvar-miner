@@ -1,7 +1,6 @@
 {% extends 'skin.html' %}
 {% block content %}
     {% with %}
-        {% set header = 'Include submissions that have' %}
         {% set corrected_terms_filter = True %}
         {% set corrected_terms_disabled = True %}
         {% include 'filter.html' %}
@@ -18,7 +17,7 @@
                 {% for row in variants %}
                     <tr>
                         <td>
-                            <a href="submissions-by-variant/{{ row['variant_id'] }}{{ request|querysuffix }}">
+                            <a href="submissions-by-variant/{{ row['variant_id'] }}">
                                 {{ row['variant_name'] }}
                             </a>
                         </td>

@@ -2,7 +2,10 @@
 {% set title = 'Conflicting variants by significance' %}
 {% block content %}
     {% with %}
-        {% set header = 'Compare all variants to variants with' %}
+        {% set review_status1_label = 'Y axis review status' %}
+        {% set method1_label = 'Y axis method' %}
+        {% set review_status2_label = 'X axis review status' %}
+        {% set method2_label = 'X axis method' %}
         {% set corrected_terms_filter = True %}
         {% include 'filter.html' %}
     {% endwith %}
