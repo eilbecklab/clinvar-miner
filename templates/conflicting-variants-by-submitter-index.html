@@ -1,6 +1,7 @@
 {% extends 'skin.html' %}
 {% set title = 'Conflicting variants by submitter' %}
 {% block content %}
+    {% include 'filter.html' %}
     <table class="sortable table" style="width:auto">
         <thead>
             <tr>
@@ -12,7 +13,7 @@
             {% for row in total_conflicting_variants_by_submitter %}
                 <tr>
                     <td>
-                        <a href="conflicting-variants-by-submitter/{{ row['submitter_id'] }}">
+                        <a href="conflicting-variants-by-submitter/{{ row['submitter_id'] }}{{ request|querysuffix }}">
                             {{ row['submitter_name'] }}
                         </a>
                     </td>

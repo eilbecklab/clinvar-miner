@@ -205,7 +205,12 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
     if submitter1_id == None:
         return render_template(
             'conflicting-variants-by-submitter-index.html',
-            total_conflicting_variants_by_submitter=db.total_variants_by_submitter(min_conflict_level=1),
+            total_conflicting_variants_by_submitter=db.total_variants_by_submitter(
+                min_stars=int_arg('min_stars1'),
+                method=request.args.get('method1'),
+                min_conflict_level=1
+            ),
+            method_options=db.methods(),
         )
 
     try:

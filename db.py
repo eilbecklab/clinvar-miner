@@ -260,21 +260,29 @@ class DB():
             )
         ))
 
-    def total_variants_by_submitter(self, min_conflict_level = 0):
+    def total_variants_by_submitter(self, min_stars = 0, method = None, min_conflict_level = 0):
+        query = '''
+            SELECT
+                submitter1_id AS submitter_id,
+                submitter1_name AS submitter_name,
+                COUNT(DISTINCT variant_id) AS count
+            FROM current_comparisons
+            WHERE star_level1>=:min_stars AND conflict_level>=:min_conflict_level
+        '''
+
+        if method:
+            query += ' AND method1=:method'
+
+        query += ' GROUP BY submitter1_id ORDER BY submitter1_name'
+
         return list(map(
             dict,
             self.cursor.execute(
-                '''
-                    SELECT
-                        submitter1_id AS submitter_id,
-                        submitter1_name AS submitter_name,
-                        COUNT(DISTINCT variant_id) AS count
-                    FROM current_comparisons
-                    WHERE conflict_level>=:min_conflict_level
-                    GROUP BY submitter1_id ORDER BY submitter1_name
-                ''',
+                query,
                 {
-                    'min_conflict_level': min_conflict_level
+                    'min_stars': min_stars,
+                    'method': method,
+                    'min_conflict_level': min_conflict_level,
                 }
             )
         ))
