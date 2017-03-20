@@ -11,6 +11,11 @@ from flask import request
 
 app = Flask(__name__)
 
+nonstandard_significance_term_map = dict(map(
+    lambda line: line[0:-1].split('\t'),
+    open('nonstandard_significance_terms.tsv')
+))
+
 def break_punctuation(text):
     #provide additional line breaking opportunities
     return (text
@@ -77,7 +82,7 @@ def significance_rank(significance):
         'not provided',
     ]
     try:
-        rank = significance_ranks.index(significance)
+        rank = significance_ranks.index(nonstandard_significance_term_map.get(significance, significance))
     except ValueError:
         rank = len(significance_ranks) - 2.5 #insert after everything but "other" and "not provided"
     return rank
