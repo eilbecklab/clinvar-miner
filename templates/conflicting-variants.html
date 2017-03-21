@@ -5,7 +5,7 @@
         {% set corrected_terms_disabled = True %}
         {% include 'filter.html' %}
     {% endwith %}
-    <p>Total variants: {{ variants|length }}</p>
+    <p>Total conflicting variants: {{ variants|length }}</p>
     {% if variants %}
         <table class="sortable table" style="width:auto">
             <thead>

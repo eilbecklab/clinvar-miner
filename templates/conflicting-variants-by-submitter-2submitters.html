@@ -13,5 +13,6 @@
         {% set corrected_terms_filter = True %}
         {% include 'filter.html' %}
     {% endwith %}
+    <p>Total conflicting variants: {{ total }}</p>
     {% include 'breakdown.html' %}
 {% endblock %}

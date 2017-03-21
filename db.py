@@ -7,47 +7,6 @@ class DB():
         self.db.row_factory = sqlite3.Row
         self.cursor = self.db.cursor()
 
-    def conflict_overview(self, submitter1_id = None, submitter2_id = None, min_stars1 = 0, min_stars2 = 0,
-                          method1 = None, method2 = None, corrected_terms = False):
-        if corrected_terms:
-            query = 'SELECT standardized_clin_sig1 AS clin_sig1, standardized_clin_sig2 AS clin_sig2'
-        else:
-            query = 'SELECT clin_sig1, clin_sig2'
-
-        query += ', submitter2_id, submitter2_name, conflict_level, COUNT(DISTINCT variant_id) AS count'
-        query += ' FROM current_comparisons'
-
-        query += ' WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=1'
-
-        if submitter1_id:
-            query += ' AND submitter1_id=:submitter1_id'
-
-        if submitter2_id:
-            query += ' AND submitter2_id=:submitter2_id'
-
-        if method1:
-            query += ' AND method1=:method1'
-
-        if method2:
-            query += ' AND method2=:method2'
-
-        query += ' GROUP BY clin_sig1, clin_sig2, conflict_level, submitter2_id ORDER BY submitter2_name'
-
-        return list(map(
-            dict,
-            self.cursor.execute(
-                query,
-                {
-                    'submitter1_id': submitter1_id,
-                    'submitter2_id': submitter2_id,
-                    'min_stars1': min_stars1,
-                    'min_stars2': min_stars2,
-                    'method1': method1,
-                    'method2': method2,
-                }
-            )
-        ))
-
     def max_date(self):
         return list(self.cursor.execute('SELECT MAX(date) FROM submissions'))[0][0]
 
@@ -148,6 +107,148 @@ class DB():
                 WHERE conflict_level>=1
                 GROUP BY date, method ORDER BY date, method
             ''')
+        ))
+
+    def total_conflicting_variants(self, submitter1_id = None, min_stars1 = 0, min_stars2 = 0, method1 = None,
+                                   method2 = None):
+        query = '''
+            SELECT COUNT(DISTINCT variant_id) FROM current_comparisons
+            WHERE
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=1
+        '''
+
+        if submitter1_id:
+            query += ' AND submitter1_id=:submitter1_id'
+
+        if method1:
+            query += ' AND method1=:method1'
+
+        if method2:
+            query += ' AND method2=:method2'
+
+        return list(
+            self.cursor.execute(
+                query,
+                {
+                    'submitter1_id': submitter1_id,
+                    'min_stars1': min_stars1,
+                    'min_stars2': min_stars2,
+                    'method1': method1,
+                    'method2': method2,
+                }
+            )
+        )[0][0]
+
+    def total_conflicting_variants_by_submitter(self, submitter1_id, min_stars1 = 0, min_stars2 = 0, method1 = None,
+                                                method2 = None):
+        query = '''
+            SELECT submitter2_id, submitter2_name, conflict_level, COUNT(DISTINCT variant_id) AS count FROM current_comparisons
+            WHERE
+                submitter1_id=:submitter1_id AND
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=1
+        '''
+
+        if method1:
+            query += ' AND method1=:method1'
+
+        if method2:
+            query += ' AND method2=:method2'
+
+        query += ' GROUP BY submitter2_id ORDER BY submitter2_name'
+
+        return list(map(
+            dict,
+            self.cursor.execute(
+                query,
+                {
+                    'submitter1_id': submitter1_id,
+                    'min_stars1': min_stars1,
+                    'min_stars2': min_stars2,
+                    'method1': method1,
+                    'method2': method2,
+                }
+            )
+        ))
+
+    def total_conflicting_variants_by_submitter_and_conflict_level(self, submitter1_id, min_stars1 = 0, min_stars2 = 0,
+                                                                   method1 = None, method2 = None):
+        query = '''
+            SELECT submitter2_id, submitter2_name, conflict_level, COUNT(DISTINCT variant_id) AS count FROM current_comparisons
+            WHERE
+                submitter1_id=:submitter1_id AND
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=1
+        '''
+
+        if method1:
+            query += ' AND method1=:method1'
+
+        if method2:
+            query += ' AND method2=:method2'
+
+        query += ' GROUP BY submitter2_id, conflict_level ORDER BY submitter2_name'
+
+        return list(map(
+            dict,
+            self.cursor.execute(
+                query,
+                {
+                    'submitter1_id': submitter1_id,
+                    'min_stars1': min_stars1,
+                    'min_stars2': min_stars2,
+                    'method1': method1,
+                    'method2': method2,
+                }
+            )
+        ))
+
+    def total_conflicting_variants_by_significance_and_significance(self, submitter1_id = None, submitter2_id = None,
+                                                                    min_stars1 = 0, min_stars2 = 0, method1 = None,
+                                                                    method2 = None, corrected_terms = False):
+        if corrected_terms:
+            query = 'SELECT standardized_clin_sig1 AS clin_sig1, standardized_clin_sig2 AS clin_sig2'
+        else:
+            query = 'SELECT clin_sig1, clin_sig2'
+
+        query += ', COUNT(DISTINCT variant_id) AS count FROM current_comparisons'
+
+        query += ' WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=1'
+
+        if submitter1_id:
+            query += ' AND submitter1_id=:submitter1_id'
+
+        if submitter2_id:
+            query += ' AND submitter2_id=:submitter2_id'
+
+        if method1:
+            query += ' AND method1=:method1'
+
+        if method2:
+            query += ' AND method2=:method2'
+
+        if corrected_terms:
+            query += ' GROUP BY standardized_clin_sig1, standardized_clin_sig2'
+        else:
+            query += ' GROUP BY clin_sig1, clin_sig2'
+
+        return list(map(
+            dict,
+            self.cursor.execute(
+                query,
+                {
+                    'submitter1_id': submitter1_id,
+                    'submitter2_id': submitter2_id,
+                    'min_stars1': min_stars1,
+                    'min_stars2': min_stars2,
+                    'method1': method1,
+                    'method2': method2,
+                }
+            )
         ))
 
     def total_significance_terms(self, term):

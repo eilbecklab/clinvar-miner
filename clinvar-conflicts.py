@@ -27,29 +27,20 @@ def break_punctuation(text):
         .replace('-', '-<wbr/>')
     )
 
-def int_arg(name, default = 0):
-    arg = request.args.get(name)
-    try:
-        return int(arg) if arg else default
-    except ValueError:
-        abort(400)
-
-def overview_to_breakdown(conflict_overview):
+def get_breakdown(total_conflicting_variants_by_significance_and_significance):
     breakdown = {}
     submitter1_significances = set()
     submitter2_significances = set()
     total = 0
 
-    for row in conflict_overview:
+    for row in total_conflicting_variants_by_significance_and_significance:
         clin_sig1 = row['clin_sig1']
         clin_sig2 = row['clin_sig2']
         count = row['count']
 
         if not clin_sig1 in breakdown:
             breakdown[clin_sig1] = {}
-        if not clin_sig2 in breakdown[clin_sig1]:
-            breakdown[clin_sig1][clin_sig2] = 0
-        breakdown[clin_sig1][clin_sig2] += count
+        breakdown[clin_sig1][clin_sig2] = count
 
         submitter1_significances.add(clin_sig1)
         submitter2_significances.add(clin_sig2)
@@ -64,7 +55,14 @@ def overview_to_breakdown(conflict_overview):
     submitter1_significances = sorted(submitter1_significances, key=significance_rank)
     submitter2_significances = sorted(submitter2_significances, key=significance_rank)
 
-    return breakdown, submitter1_significances, submitter2_significances, total
+    return breakdown, submitter1_significances, submitter2_significances
+
+def int_arg(name, default = 0):
+    arg = request.args.get(name)
+    try:
+        return int(arg) if arg else default
+    except ValueError:
+        abort(400)
 
 def significance_rank(significance):
     significance_ranks = [
@@ -156,22 +154,27 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
     db = DB()
 
     if not significance2:
-        conflict_overview = db.conflict_overview(
-            min_stars1=int_arg('min_stars1'),
-            method1=request.args.get('method1'),
-            min_stars2=int_arg('min_stars2'),
-            method2=request.args.get('method2'),
-            corrected_terms=request.args.get('corrected_terms'),
+        breakdown, submitter1_significances, submitter2_significances = get_breakdown(
+            db.total_conflicting_variants_by_significance_and_significance(
+                min_stars1=int_arg('min_stars1'),
+                method1=request.args.get('method1'),
+                min_stars2=int_arg('min_stars2'),
+                method2=request.args.get('method2'),
+                corrected_terms=request.args.get('corrected_terms'),
+            )
         )
-
-        breakdown, submitter1_significances, submitter2_significances, total = overview_to_breakdown(conflict_overview)
 
         return render_template(
             'conflicting-variants-by-significance.html',
             breakdown=breakdown,
             submitter1_significances=submitter1_significances,
             submitter2_significances=submitter2_significances,
-            total=total,
+            total=db.total_conflicting_variants(
+                min_stars1=int_arg('min_stars1'),
+                method1=request.args.get('method1'),
+                min_stars2=int_arg('min_stars2'),
+                method2=request.args.get('method2'),
+            ),
             method_options=db.methods(),
         )
 
@@ -223,47 +226,68 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
         submitter1_info = {'id': submitter1_id, 'name': str(submitter1_id)}
 
     if submitter2_id == None:
-        conflict_overview = db.conflict_overview(
+        total_conflicting_variants_by_submitter = db.total_conflicting_variants_by_submitter(
             submitter1_id=submitter1_id,
             min_stars1=int_arg('min_stars1'),
             method1=request.args.get('method1'),
             min_stars2=int_arg('min_stars2'),
             method2=request.args.get('method2'),
-            corrected_terms=request.args.get('corrected_terms'),
         )
-        submitter_primary_method = db.submitter_primary_method(submitter1_id)
-
+        total_conflicting_variants_by_submitter_and_conflict_level = db.total_conflicting_variants_by_submitter_and_conflict_level(
+            submitter1_id=submitter1_id,
+            min_stars1=int_arg('min_stars1'),
+            method1=request.args.get('method1'),
+            min_stars2=int_arg('min_stars2'),
+            method2=request.args.get('method2'),
+        )
         summary = OrderedDict()
-        for row in conflict_overview:
+        for row in total_conflicting_variants_by_submitter:
+            submitter2_id = row['submitter2_id']
+            submitter2_name = row['submitter2_name']
+            count = row['count']
+            summary[submitter2_id] = {
+                'name': submitter2_name,
+                1: 0,
+                2: 0,
+                3: 0,
+                4: 0,
+                5: 0,
+                'total': count,
+            }
+        for row in total_conflicting_variants_by_submitter_and_conflict_level:
             submitter2_id = row['submitter2_id']
             submitter2_name = row['submitter2_name']
             conflict_level = row['conflict_level']
             count = row['count']
-            if not submitter2_id in summary:
-                summary[submitter2_id] = {
-                    'name': submitter2_name,
-                    1: 0,
-                    2: 0,
-                    3: 0,
-                    4: 0,
-                    5: 0,
-                    'total': 0,
-                }
-            summary[submitter2_id][conflict_level] += count
-            summary[submitter2_id]['total'] += count
+            summary[submitter2_id][conflict_level] = count
 
-        breakdown, submitter1_significances, submitter2_significances, total = overview_to_breakdown(conflict_overview)
+        breakdown, submitter1_significances, submitter2_significances = get_breakdown(
+            db.total_conflicting_variants_by_significance_and_significance(
+                submitter1_id=submitter1_id,
+                min_stars1=int_arg('min_stars1'),
+                method1=request.args.get('method1'),
+                min_stars2=int_arg('min_stars2'),
+                method2=request.args.get('method2'),
+                corrected_terms=request.args.get('corrected_terms'),
+            )
+        )
 
         return render_template(
             'conflicting-variants-by-submitter-1submitter.html',
             submitter1_info=submitter1_info,
             submitter2_info={'id': 0, 'name': 'All submitters'},
-            submitter_primary_method=submitter_primary_method,
+            submitter_primary_method=db.submitter_primary_method(submitter1_id),
             summary=summary,
             breakdown=breakdown,
             submitter1_significances=submitter1_significances,
             submitter2_significances=submitter2_significances,
-            total=total,
+            total=db.total_conflicting_variants(
+                submitter1_id=submitter1_id,
+                min_stars1=int_arg('min_stars1'),
+                method1=request.args.get('method1'),
+                min_stars2=int_arg('min_stars2'),
+                method2=request.args.get('method2'),
+            ),
             method_options=db.methods(),
         )
 
@@ -280,17 +304,17 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             submitter2_info = {'id': submitter2_id, 'name': str(submitter2_id)}
 
     if not significance1:
-        conflict_overview = db.conflict_overview(
-            submitter1_id=submitter1_id,
-            submitter2_id=submitter2_id,
-            min_stars1=int_arg('min_stars1'),
-            method1=request.args.get('method1'),
-            min_stars2=int_arg('min_stars2'),
-            method2=request.args.get('method2'),
-            corrected_terms=request.args.get('corrected_terms'),
+        breakdown, submitter1_significances, submitter2_significances = get_breakdown(
+            db.total_conflicting_variants_by_significance_and_significance(
+                submitter1_id=submitter1_id,
+                submitter2_id=submitter2_id,
+                min_stars1=int_arg('min_stars1'),
+                method1=request.args.get('method1'),
+                min_stars2=int_arg('min_stars2'),
+                method2=request.args.get('method2'),
+                corrected_terms=request.args.get('corrected_terms'),
+            )
         )
-
-        breakdown, submitter1_significances, submitter2_significances, total = overview_to_breakdown(conflict_overview)
 
         return render_template(
             'conflicting-variants-by-submitter-2submitters.html',
@@ -299,7 +323,13 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             breakdown=breakdown,
             submitter1_significances=submitter1_significances,
             submitter2_significances=submitter2_significances,
-            total=total,
+            total=db.total_conflicting_variants(
+                submitter1_id=submitter1_id,
+                min_stars1=int_arg('min_stars1'),
+                method1=request.args.get('method1'),
+                min_stars2=int_arg('min_stars2'),
+                method2=request.args.get('method2'),
+            ),
             method_options=db.methods(),
         )
 
