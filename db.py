@@ -31,7 +31,7 @@ class DB():
         return list(map(
             dict,
             self.cursor.execute('''
-                SELECT clin_sig, MIN(date) AS first_seen FROM current_submissions
+                SELECT clin_sig, MIN(date) AS first_seen FROM submissions
                 GROUP BY clin_sig ORDER BY first_seen DESC
             ''')
         ))
