@@ -325,6 +325,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             submitter2_significances=submitter2_significances,
             total=db.total_conflicting_variants(
                 submitter1_id=submitter1_id,
+                submitter2_id=submitter2_id,
                 min_stars1=int_arg('min_stars1'),
                 method1=request.args.get('method1'),
                 min_stars2=int_arg('min_stars2'),

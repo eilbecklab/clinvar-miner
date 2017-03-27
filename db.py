@@ -109,8 +109,8 @@ class DB():
             ''')
         ))
 
-    def total_conflicting_variants(self, submitter1_id = None, min_stars1 = 0, min_stars2 = 0, method1 = None,
-                                   method2 = None):
+    def total_conflicting_variants(self, submitter1_id = None, submitter2_id = None, min_stars1 = 0, min_stars2 = 0,
+                                   method1 = None, method2 = None):
         query = '''
             SELECT COUNT(DISTINCT variant_id) FROM current_comparisons
             WHERE
@@ -121,6 +121,9 @@ class DB():
 
         if submitter1_id:
             query += ' AND submitter1_id=:submitter1_id'
+
+        if submitter2_id:
+            query += ' AND submitter2_id=:submitter2_id'
 
         if method1:
             query += ' AND method1=:method1'
@@ -133,6 +136,7 @@ class DB():
                 query,
                 {
                     'submitter1_id': submitter1_id,
+                    'submitter2_id': submitter2_id,
                     'min_stars1': min_stars1,
                     'min_stars2': min_stars2,
                     'method1': method1,
