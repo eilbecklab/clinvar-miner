@@ -22,7 +22,7 @@ class DB():
             self.cursor.execute('''
                 SELECT * FROM (
                     SELECT clin_sig, MIN(date) AS first_seen, MAX(date) AS last_seen FROM submissions
-                    GROUP BY clin_sig ORDER BY first_seen DESC
+                    GROUP BY clin_sig ORDER BY clin_sig
                 ) WHERE last_seen!=(SELECT MAX(date) FROM submissions)
             ''')
         ))
@@ -32,7 +32,7 @@ class DB():
             dict,
             self.cursor.execute('''
                 SELECT clin_sig, MIN(date) AS first_seen FROM submissions
-                GROUP BY clin_sig ORDER BY first_seen DESC
+                GROUP BY clin_sig ORDER BY clin_sig
             ''')
         ))
 

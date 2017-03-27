@@ -20,33 +20,43 @@
         lineGraph(data, 'Terms', [0, 10, 20, 30, 40, 50]);
     </script>
     <p>All terms in the following table are from SCVs (not RCVs) in the current ClinVar.</p>
-    <ul class="list-group">
-        <li class="list-group-item" style="font-weight:bold">
-            <span style="float:right">First seen</span>
-            Significance term
-        </li>
-        {% for row in significance_term_info %}
-            <li class="list-group-item">
-                <a href="significance-terms/{{ row['clin_sig']|quotepath }}" style="display:block">
-                    {{ row['clin_sig']|orspace }}
-                    <span style="float:right">{{ row['first_seen'] }}</span>
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
-    <p>The following terms were in SCVs in old versions of ClinVar, but are not currently used.</p>
-    <table class="table table-bordered table-striped">
-        <tr>
-            <th>Significance term</th>
-            <th>First seen</th>
-            <th>Last seen</th>
-        </tr>
-        {% for row in old_significance_term_info %}
+    <table class="sortable table">
+        <thead>
             <tr>
-                <td>{{ row['clin_sig'] }}</td>
-                <td>{{ row['first_seen'] }}</td>
-                <td>{{ row['last_seen'] }}</td>
+                <th>Significance term</th>
+                <th>First seen</th>
             </tr>
-        {% endfor %}
-    </ul>
+        </thead>
+        <tbody>
+            {% for row in significance_term_info %}
+                <tr>
+                    <td>
+                        <a href="significance-terms/{{ row['clin_sig']|quotepath }}" style="display:block">
+                            {{ row['clin_sig']|orspace }}
+                        </a>
+                    </td>
+                    <td>{{ row['first_seen'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p>The following terms were in SCVs in old versions of ClinVar, but are not currently used.</p>
+    <table class="sortable table">
+        <thead>
+            <tr>
+                <th>Significance term</th>
+                <th>First seen</th>
+                <th>Last seen</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in old_significance_term_info %}
+                <tr>
+                    <td>{{ row['clin_sig'] }}</td>
+                    <td>{{ row['first_seen'] }}</td>
+                    <td>{{ row['last_seen'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
