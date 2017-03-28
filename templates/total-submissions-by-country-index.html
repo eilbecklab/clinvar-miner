@@ -35,7 +35,7 @@
                 .attr('fill', function(d) { return color(totals[d.id] ? Math.log10(totals[d.id]) : 0); });
         });
 
-        var unplaceableWarning = totals[''] + ' submissions could not be placed on the map.'
+        var unplaceableWarning = totals[''] + ' submissions could not be placed on the choropleth.'
         document.getElementById('unplaceable-warning').textContent = unplaceableWarning;
     </script>
     <table class="sortable table" style="width:auto">
