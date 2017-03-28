@@ -175,7 +175,6 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
                 min_stars2=int_arg('min_stars2'),
                 method2=request.args.get('method2'),
             ),
-            method_options=db.methods(),
         )
 
     significance1 = significance1.replace('%2F', '/')
@@ -195,7 +194,6 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
             method2=request.args.get('method2'),
             corrected_terms=request.args.get('corrected_terms'),
         ),
-        method_options=db.methods(),
     )
 
 @app.route('/conflicting-variants-by-submitter')
@@ -213,7 +211,6 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
                 method=request.args.get('method1'),
                 min_conflict_level=1
             ),
-            method_options=db.methods(),
         )
 
     try:
@@ -288,7 +285,6 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
                 min_stars2=int_arg('min_stars2'),
                 method2=request.args.get('method2'),
             ),
-            method_options=db.methods(),
         )
 
     try:
@@ -331,7 +327,6 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
                 min_stars2=int_arg('min_stars2'),
                 method2=request.args.get('method2'),
             ),
-            method_options=db.methods(),
         )
 
     significance1 = significance1.replace('%2F', '/')
@@ -353,7 +348,6 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             min_stars2=int_arg('min_stars2'),
             method2=request.args.get('method2'),
         ),
-        method_options=db.methods(),
     )
 
 @app.route('/')
@@ -399,7 +393,6 @@ def submissions_by_gene(gene = None, variant_id = None):
                 method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
             ),
-            method_options=db.methods(),
         )
 
     gene = gene.replace('%2F', '/')
@@ -413,7 +406,6 @@ def submissions_by_gene(gene = None, variant_id = None):
             method=request.args.get('method1'),
             min_conflict_level=int_arg('min_conflict_level'),
         ),
-        method_options=db.methods(),
     )
 
 @app.route('/submissions-by-variant/<variant_id>')
@@ -430,7 +422,6 @@ def submissions_by_variant(variant_id):
             method=request.args.get('method1'),
             min_conflict_level=int_arg('min_conflict_level'),
         ),
-        method_options=db.methods(),
     )
 
 @app.route('/total-conflicting-submissions-by-method')
@@ -438,8 +429,8 @@ def total_conflicting_submissions_by_method():
     db = DB()
     return render_template(
         'total-conflicting-submissions-by-method.html',
-        total_conflicting_submissions_by_method_over_time=db.total_conflicting_submissions_by_method_over_time(),
-        max_date=db.max_date(),
+        total_conflicting_submissions_by_standardized_method_over_time=db.total_conflicting_submissions_by_standardized_method_over_time(),
+        total_conflicting_submissions_by_method=db.total_conflicting_submissions_by_method(),
     )
 
 @app.route('/total-submissions-by-method')
@@ -447,8 +438,8 @@ def total_submissions_by_method():
     db = DB()
     return render_template(
         'total-submissions-by-method.html',
-        total_submissions_by_method_over_time=db.total_submissions_by_method_over_time(),
-        max_date=db.max_date(),
+        total_submissions_by_standardized_method_over_time=db.total_submissions_by_standardized_method_over_time(),
+        total_submissions_by_method=db.total_submissions_by_method(),
     )
 
 @app.route('/total-submissions-by-country')

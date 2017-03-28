@@ -3,11 +3,21 @@
     <td>
         <select name="{{ name }}">
             <option></option>
-            {% for method_option in method_options %}
-                <option {% if request.args.get(name) == method_option %}selected="selected"{% endif %}>
-                    {{ method_option }}
-                </option>
-            {% endfor %}
+            <option {% if request.args.get(name) == 'clinical testing' %}selected="selected"{% endif %}>
+                clinical testing
+            </option>
+            <option {% if request.args.get(name) == 'curation' %}selected="selected"{% endif %}>
+                curation
+            </option>
+            <option {% if request.args.get(name) == 'literature only' %}selected="selected"{% endif %}>
+                literature only
+            </option>
+            <option {% if request.args.get(name) == 'research' %}selected="selected"{% endif %}>
+                research
+            </option>
+            <option {% if request.args.get(name) == 'other' %}selected="selected"{% endif %}>
+                other
+            </option>
         </select>
     </td>
 </tr>

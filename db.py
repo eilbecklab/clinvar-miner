@@ -10,12 +10,6 @@ class DB():
     def max_date(self):
         return list(self.cursor.execute('SELECT MAX(date) FROM submissions'))[0][0]
 
-    def methods(self):
-        return list(map(
-            lambda row: row[0],
-            self.cursor.execute('SELECT DISTINCT method FROM current_submissions ORDER BY method')
-        ))
-
     def old_significance_term_info(self):
         return list(map(
             dict,
@@ -67,7 +61,7 @@ class DB():
             query += ' AND variant_id=:variant_id'
 
         if method:
-            query += ' AND method1=:method AND method2=:method'
+            query += ' AND standardized_method1=:method AND standardized_method2=:method'
 
         query += ' ORDER BY submitter_name'
 
@@ -99,13 +93,23 @@ class DB():
             ''', [submitter_id])
         )[0][0]
 
-    def total_conflicting_submissions_by_method_over_time(self):
+    def total_conflicting_submissions_by_method(self):
         return list(map(
             dict,
             self.cursor.execute('''
-                SELECT date, method1 AS method, COUNT(DISTINCT scv1) AS count FROM comparisons
+                SELECT method1 AS method, COUNT(DISTINCT scv1) AS count FROM current_comparisons
                 WHERE conflict_level>=1
-                GROUP BY date, method ORDER BY date, method
+                GROUP BY method ORDER BY method
+            ''')
+        ))
+
+    def total_conflicting_submissions_by_standardized_method_over_time(self):
+        return list(map(
+            dict,
+            self.cursor.execute('''
+                SELECT date, standardized_method1 AS standardized_method, COUNT(DISTINCT scv1) AS count FROM comparisons
+                WHERE conflict_level>=1
+                GROUP BY date, standardized_method ORDER BY date, count DESC
             ''')
         ))
 
@@ -126,10 +130,10 @@ class DB():
             query += ' AND submitter2_id=:submitter2_id'
 
         if method1:
-            query += ' AND method1=:method1'
+            query += ' AND standardized_method1=:method1'
 
         if method2:
-            query += ' AND method2=:method2'
+            query += ' AND standardized_method2=:method2'
 
         return list(
             self.cursor.execute(
@@ -157,10 +161,10 @@ class DB():
         '''
 
         if method1:
-            query += ' AND method1=:method1'
+            query += ' AND standardized_method1=:method1'
 
         if method2:
-            query += ' AND method2=:method2'
+            query += ' AND standardized_method2=:method2'
 
         query += ' GROUP BY submitter2_id ORDER BY submitter2_name'
 
@@ -190,10 +194,10 @@ class DB():
         '''
 
         if method1:
-            query += ' AND method1=:method1'
+            query += ' AND standardized_method1=:method1'
 
         if method2:
-            query += ' AND method2=:method2'
+            query += ' AND standardized_method2=:method2'
 
         query += ' GROUP BY submitter2_id, conflict_level ORDER BY submitter2_name'
 
@@ -230,10 +234,10 @@ class DB():
             query += ' AND submitter2_id=:submitter2_id'
 
         if method1:
-            query += ' AND method1=:method1'
+            query += ' AND standardized_method1=:method1'
 
         if method2:
-            query += ' AND method2=:method2'
+            query += ' AND standardized_method2=:method2'
 
         if corrected_terms:
             query += ' GROUP BY standardized_clin_sig1, standardized_clin_sig2'
@@ -290,7 +294,7 @@ class DB():
             query += ' AND submitter_id=:submitter_id'
 
         if method:
-            query += ' AND method1=:method AND method2=:method'
+            query += ' AND standardized_method1=:method AND standardized_method2=:method'
 
         query += ' GROUP BY gene ORDER BY gene'
 
@@ -307,12 +311,20 @@ class DB():
             )
         ))
 
-    def total_submissions_by_method_over_time(self):
+    def total_submissions_by_method(self):
         return list(map(
             dict,
             self.cursor.execute('''
-                SELECT date, method, COUNT(*) AS count FROM submissions
-                GROUP BY date, method ORDER BY date, method
+                SELECT method, COUNT(*) AS count FROM current_submissions GROUP BY method ORDER BY method
+            ''')
+        ))
+
+    def total_submissions_by_standardized_method_over_time(self):
+        return list(map(
+            dict,
+            self.cursor.execute('''
+                SELECT date, standardized_method, COUNT(*) AS count FROM submissions
+                GROUP BY date, standardized_method ORDER BY date, count DESC
             ''')
         ))
 
@@ -348,7 +360,7 @@ class DB():
         '''
 
         if method:
-            query += ' AND method1=:method AND method2=:method'
+            query += ' AND standardized_method1=:method AND standardized_method2=:method'
 
         query += ' GROUP BY variant_id ORDER BY variant_name'
 
@@ -376,7 +388,7 @@ class DB():
         '''
 
         if method:
-            query += ' AND method1=:method'
+            query += ' AND standardized_method1=:method'
 
         query += ' GROUP BY submitter1_id ORDER BY submitter1_name'
 
@@ -423,10 +435,10 @@ class DB():
                 query += ' AND clin_sig2=:significance2'
 
         if method1:
-            query += ' AND method1=:method1'
+            query += ' AND standardized_method1=:method1'
 
         if method2:
-            query += ' AND method2=:method2'
+            query += ' AND standardized_method2=:method2'
 
         query += ' ORDER BY variant_name'
 

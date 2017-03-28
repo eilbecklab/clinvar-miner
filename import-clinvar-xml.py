@@ -17,6 +17,13 @@ nonstandard_significance_term_map = dict(map(
     open('nonstandard_significance_terms.tsv')
 ))
 
+standard_methods = [
+    'clinical testing',
+    'curation',
+    'literature only',
+    'research',
+]
+
 def connect():
     return sqlite3.connect('clinvar.db', timeout=600)
 
@@ -44,6 +51,7 @@ def create_tables():
             trait_id TEXT,
             trait_name TEXT,
             method TEXT,
+            standardized_method TEXT,
             description TEXT,
             PRIMARY KEY (date, scv)
         )
@@ -69,6 +77,7 @@ def create_tables():
             trait1_id TEXT,
             trait1_name TEXT,
             method1 TEXT,
+            standardized_method1 TEXT,
             description1 TEXT,
             submitter2_id INTEGER,
             submitter2_name TEXT,
@@ -83,6 +92,7 @@ def create_tables():
             trait2_id TEXT,
             trait2_name TEXT,
             method2 TEXT,
+            standardized_method2 TEXT,
             description2 TEXT,
             conflict_level INTEGER,
             PRIMARY KEY (date, scv1, scv2)
@@ -108,7 +118,7 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_id_index ON submissions (submitter_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_name_index ON submissions (submitter_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS clin_sig_index ON submissions (clin_sig)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS method_index ON submissions (method)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method_index ON submissions (standardized_method)')
 
     cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON comparisons (date)')
     cursor.execute('CREATE INDEX IF NOT EXISTS variant_id_index ON comparisons (variant_id)')
@@ -123,8 +133,8 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_clin_sig2_index ON comparisons (standardized_clin_sig2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS star_level1_index ON comparisons (star_level1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS star_level2_index ON comparisons (star_level2)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS method1_index ON comparisons (method1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS method2_index ON comparisons (method2)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method1_index ON comparisons (standardized_method1)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method2_index ON comparisons (standardized_method2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS conflict_level_index ON comparisons (conflict_level)')
 
 def import_file(filename):
@@ -178,6 +188,7 @@ def import_file(filename):
             trait_id = trait_xref_el.attrib['ID'] if trait_xref_el != None else ''
             trait_name = trait_name_el.text if trait_name_el != None else ''
             method = method_el.text if method_el != None else 'not provided' #missing in old versions
+            standardized_method = method if method in standard_methods else 'other'
             description = comment_el.text if comment_el != None else ''
 
             if review_status in ['criteria provided, single submitter', 'criteria provided, conflicting interpretations']:
@@ -210,6 +221,7 @@ def import_file(filename):
                 trait_id,
                 trait_name,
                 method,
+                standardized_method,
                 description,
             ))
 
@@ -241,6 +253,7 @@ def import_file(filename):
             t2.trait_id,
             t2.trait_name,
             t2.method,
+            t2.standardized_method,
             t2.description,
             CASE
                 WHEN t1.standardized_clin_sig=t2.standardized_clin_sig AND t1.clin_sig!=t2.clin_sig THEN 1

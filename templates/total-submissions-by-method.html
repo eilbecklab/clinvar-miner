@@ -7,20 +7,20 @@
 {% block content %}
     <svg id="graph"></svg>
     <script type="application/javascript">
-        var data = {{ total_submissions_by_method_over_time|tojson }};
+        var data = {{ total_submissions_by_method|tojson }};
         var parseTime = d3.timeParse("%Y-%m");
         data = data.map(function(d) {
             return {
                 x: parseTime(d.date),
                 y: d.count,
-                serie: d.method,
+                serie: d.standardized_method,
             }
         });
         lineGraph(data, 'Submissions', [50000, 100000, 150000, 200000, 250000, 300000, 350000, 400000, 450000, 500000]);
     </script>
     {% with %}
         {% set thing = 'submissions' %}
-        {% set total_things_by_method_over_time = total_submissions_by_method_over_time %}
+        {% set total_things_by_method = total_submissions_by_method %}
         {% include 'submissions-by-method.html' %}
     {% endwith %}
 {% endblock %}

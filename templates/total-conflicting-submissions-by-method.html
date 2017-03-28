@@ -7,20 +7,20 @@
 {% block content %}
     <svg id="graph"></svg>
     <script type="application/javascript">
-        var data = {{ total_conflicting_submissions_by_method_over_time|tojson }};
+        var data = {{ total_conflicting_submissions_by_standardized_method_over_time|tojson }};
         var parseTime = d3.timeParse("%Y-%m");
         data = data.map(function(d) {
             return {
                 x: parseTime(d.date),
                 y: d.count,
-                serie: d.method,
+                serie: d.standardized_method,
             }
         });
         lineGraph(data, 'Conflicting submissions', [10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000]);
     </script>
     {% with %}
         {% set thing = 'conflicting submissions' %}
-        {% set total_things_by_method_over_time = total_conflicting_submissions_by_method_over_time %}
+        {% set total_things_by_method = total_conflicting_submissions_by_method %}
         {% include 'submissions-by-method.html' %}
     {% endwith %}
 {% endblock %}

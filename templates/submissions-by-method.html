@@ -7,13 +7,11 @@
         </tr>
     </thead>
     <tbody>
-        {% for row in total_things_by_method_over_time %}
-            {% if row['date'] == max_date %}
-                <tr>
-                    <td>{{ row['method'] }}</td>
-                    <td>{{ row['count'] }}</td>
-                </tr>
-            {% endif %}
+        {% for row in total_things_by_method %}
+            <tr>
+                <td>{{ row['method'] }}</td>
+                <td>{{ row['count'] }}</td>
+            </tr>
         {% endfor %}
     </tbody>
 </table>
