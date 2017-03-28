@@ -42,7 +42,6 @@ class DB():
                 rcv1 AS rcv,
                 scv1 AS scv,
                 clin_sig1 AS clin_sig,
-                standardized_clin_sig1 AS standardized_clin_sig1,
                 last_eval1 AS last_eval,
                 review_status1 AS review_status,
                 trait1_db AS trait_db,
