@@ -429,8 +429,12 @@ def total_conflicting_submissions_by_method():
     db = DB()
     return render_template(
         'total-conflicting-submissions-by-method.html',
-        total_conflicting_submissions_by_standardized_method_over_time=db.total_conflicting_submissions_by_standardized_method_over_time(),
-        total_conflicting_submissions_by_method=db.total_conflicting_submissions_by_method(),
+        total_conflicting_submissions_by_standardized_method_over_time=db.total_conflicting_submissions_by_standardized_method_over_time(
+            min_stars=int_arg('min_stars1'),
+        ),
+        total_conflicting_submissions_by_method=db.total_conflicting_submissions_by_method(
+            min_stars=int_arg('min_stars1'),
+        ),
     )
 
 @app.route('/total-submissions-by-method')
@@ -438,8 +442,12 @@ def total_submissions_by_method():
     db = DB()
     return render_template(
         'total-submissions-by-method.html',
-        total_submissions_by_standardized_method_over_time=db.total_submissions_by_standardized_method_over_time(),
-        total_submissions_by_method=db.total_submissions_by_method(),
+        total_submissions_by_standardized_method_over_time=db.total_submissions_by_standardized_method_over_time(
+            min_stars=int_arg('min_stars1'),
+        ),
+        total_submissions_by_method=db.total_submissions_by_method(
+            min_stars=int_arg('min_stars1')
+        ),
     )
 
 @app.route('/total-submissions-by-country')

@@ -1,7 +1,11 @@
 {% extends 'skin.html' %}
 {% set title = 'Conflicting variants by submitter' %}
 {% block content %}
-    {% include 'filter.html' %}
+    {% with %}
+        {% set review_status1_label = 'Minimum review status' %}
+        {% set method1_label = 'Method' %}
+        {% include 'filter.html' %}
+    {% endwith %}
     <table class="sortable table" style="width:auto">
         <thead>
             <tr>

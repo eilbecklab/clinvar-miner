@@ -5,6 +5,10 @@
     <link href="static/line-graph.css" rel="stylesheet" type="text/css"/>
 {% endblock %}
 {% block content %}
+    {% with %}
+        {% set review_status1_label = 'Minimum review status' %}
+        {% include 'filter.html' %}
+    {% endwith %}
     <svg id="graph"></svg>
     <script type="application/javascript">
         var data = {{ total_submissions_by_method|tojson }};

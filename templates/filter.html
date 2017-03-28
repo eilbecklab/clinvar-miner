@@ -1,15 +1,19 @@
 <form action="" autocomplete="off" method="get">
     <table class="table" style="width:auto">
-        {% with %}
-            {% set label = review_status1_label or 'Minimum review status' %}
-            {% set name = 'min_stars1' %}
-            {% include 'min_stars_filter.html' %}
-        {% endwith %}
-        {% with %}
-            {% set label = method1_label or 'Method' %}
-            {% set name = 'method1' %}
-            {% include 'method_filter.html' %}
-        {% endwith %}
+        {% if review_status1_label %}
+            {% with %}
+                {% set label = review_status1_label %}
+                {% set name = 'min_stars1' %}
+                {% include 'min_stars_filter.html' %}
+            {% endwith %}
+        {% endif %}
+        {% if method1_label %}
+            {% with %}
+                {% set label = method1_label %}
+                {% set name = 'method1' %}
+                {% include 'method_filter.html' %}
+            {% endwith %}
+        {% endif %}
         {% if review_status2_label %}
             {% with %}
                 {% set label = review_status2_label %}

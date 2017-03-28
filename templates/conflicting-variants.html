@@ -1,6 +1,8 @@
 {% extends 'skin.html' %}
 {% block content %}
     {% with %}
+        {% set review_status1_label = 'Minimum review status' %}
+        {% set method1_label = 'Method' %}
         {% set corrected_terms_filter = True %}
         {% set corrected_terms_disabled = True %}
         {% include 'filter.html' %}
