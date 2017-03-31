@@ -1,14 +1,26 @@
 function lineGraph(data, yAxisText, yAxisTickValues) {
     var width = 800, height = 600, margin = 100;
-    var series = {};
+    var series = [];
     var totals = {};
     data.forEach(function(d) {
-        series[d.serie] = true;
+        if (typeof(series[d.serie]) == 'undefined')
+            series[d.serie] = {maxDate: null, valueAtMaxDate: 0};
+        if (d.x > series[d.serie].maxDate) {
+            series[d.serie].maxDate = d.x
+            series[d.serie].valueAtMaxDate = d.y
+        }
         if (typeof(totals[d.x]) == 'undefined')
             totals[d.x] = 0;
         totals[d.x] += d.y;
     });
-    series = Object.keys(series);
+    series = Object.keys(series).sort((a, b) => {
+        if (series[a].valueAtMaxDate < series[b].valueAtMaxDate)
+            return 1;
+        else if (series[a].valueAtMaxDate > series[b].valueAtMaxDate)
+            return -1;
+        else
+            return 0;
+    });
     if (series.length > 1) {
         Object.keys(totals).forEach(function(x) {
             data.push({
