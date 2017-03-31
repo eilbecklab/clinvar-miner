@@ -11,7 +11,7 @@
     {% endwith %}
     <svg id="graph"></svg>
     <script type="application/javascript">
-        var data = {{ total_submissions_by_method|tojson }};
+        var data = {{ total_submissions_by_standardized_method_over_time|tojson }};
         var parseTime = d3.timeParse("%Y-%m");
         data = data.map(function(d) {
             return {
