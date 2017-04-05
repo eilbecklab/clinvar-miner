@@ -10,13 +10,12 @@ from flask import abort
 from flask import render_template
 from flask import request
 from hashlib import sha256
-from math import inf
 from os import environ
 from werkzeug.contrib.cache import SimpleCache
 
 app = Flask(__name__)
 cache = SimpleCache()
-ttl = float(environ.get('TTL', inf))
+ttl = float(environ.get('TTL', 'inf'))
 
 nonstandard_significance_term_map = dict(map(
     lambda line: line[0:-1].split('\t'),
