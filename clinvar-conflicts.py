@@ -5,11 +5,18 @@ from collections import OrderedDict
 from datetime import datetime
 from db import DB
 from flask import Flask
+from flask import Response
 from flask import abort
 from flask import render_template
 from flask import request
+from hashlib import sha256
+from math import inf
+from os import environ
+from werkzeug.contrib.cache import SimpleCache
 
 app = Flask(__name__)
+cache = SimpleCache()
+ttl = float(environ.get('TTL', inf))
 
 nonstandard_significance_term_map = dict(map(
     lambda line: line[0:-1].split('\t'),
@@ -147,6 +154,27 @@ def template_functions():
         'trait_link': trait_link,
         'variant_link': variant_link,
     }
+
+@app.before_request
+def cache_get():
+    response = cache.get(request.url)
+    if not response:
+        return None
+
+    server_etag = response.get_etag()[0]
+    client_etags = request.if_none_match
+    if server_etag in client_etags:
+        return Response(status=304, headers={'ETag': server_etag})
+
+    return response
+
+@app.after_request
+def cache_set(response):
+    if response.status_code == 200 and not response.direct_passthrough:
+        response.set_etag(sha256(response.get_data()).hexdigest())
+        response.freeze()
+        cache.set(request.url, response, timeout=ttl)
+    return response
 
 @app.route('/conflicting-variants-by-significance')
 @app.route('/conflicting-variants-by-significance/<significance1>/<significance2>')
