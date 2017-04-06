@@ -3,17 +3,17 @@ function lineGraph(data, yAxisText, yAxisTickValues) {
     var series = [];
     var totals = {};
 
-    data.forEach(function(d) {
+    data.forEach((d) => {
         // find the current value of each serie
-        if (typeof(series[d.serie]) == 'undefined')
+        if (!series.hasOwnProperty(d.serie))
             series[d.serie] = {maxDate: null, valueAtMaxDate: 0};
         if (d.x > series[d.serie].maxDate) {
             series[d.serie].maxDate = d.x
             series[d.serie].valueAtMaxDate = d.y
         }
 
-        // compute totals for each date
-        if (typeof(totals[d.x]) == 'undefined')
+        // compute totals for each x-value
+        if (!totals.hasOwnProperty(d.x))
             totals[d.x] = 0;
         totals[d.x] += d.y;
     });
@@ -31,7 +31,7 @@ function lineGraph(data, yAxisText, yAxisTickValues) {
 
     // add a "total" serie for the totals for each date
     if (series.length > 1) {
-        Object.keys(totals).forEach(function(x) {
+        Object.keys(totals).forEach((x) => {
             data.push({
                 x: Date.parse(x),
                 y: totals[x],
