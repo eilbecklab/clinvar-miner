@@ -2,17 +2,24 @@ function lineGraph(data, yAxisText, yAxisTickValues) {
     var width = 800, height = 600, margin = 100;
     var series = [];
     var totals = {};
+
     data.forEach(function(d) {
+        // find the current value of each serie
         if (typeof(series[d.serie]) == 'undefined')
             series[d.serie] = {maxDate: null, valueAtMaxDate: 0};
         if (d.x > series[d.serie].maxDate) {
             series[d.serie].maxDate = d.x
             series[d.serie].valueAtMaxDate = d.y
         }
+
+        // compute totals for each date
         if (typeof(totals[d.x]) == 'undefined')
             totals[d.x] = 0;
         totals[d.x] += d.y;
     });
+
+    // make the first serie the serie with the highest current value,
+    // and the last serie the serie with the lowest current value
     series = Object.keys(series).sort((a, b) => {
         if (series[a].valueAtMaxDate < series[b].valueAtMaxDate)
             return 1;
@@ -21,6 +28,8 @@ function lineGraph(data, yAxisText, yAxisTickValues) {
         else
             return 0;
     });
+
+    // add a "total" serie for the totals for each date
     if (series.length > 1) {
         Object.keys(totals).forEach(function(x) {
             data.push({
@@ -32,6 +41,7 @@ function lineGraph(data, yAxisText, yAxisTickValues) {
         series.unshift('total');
     }
 
+    // set up the graph
     var svg = d3
         .select('#graph')
         .attr('width', width)
@@ -41,6 +51,8 @@ function lineGraph(data, yAxisText, yAxisTickValues) {
     var g = svg
         .append('g')
         .attr('transform', 'translate(' + margin + ',' + margin + ')')
+
+    // draw the lines
     var x = d3
         .scaleTime()
         .rangeRound([0, width])
@@ -59,6 +71,8 @@ function lineGraph(data, yAxisText, yAxisTickValues) {
             .attr('d', line)
             .attr('style', 'stroke:' + d3.schemeCategory10[i]);
     });
+
+    // draw the axes
     var xAxis = d3
         .axisBottom(x)
         .ticks(d3.timeYear.every(1))
@@ -82,6 +96,7 @@ function lineGraph(data, yAxisText, yAxisTickValues) {
         .style('text-anchor', 'end')
         .text(yAxisText);
 
+    // draw the legend
     if (series.length > 1) {
         var legend = g.append('g')
             .attr('transform', 'translate(50,0)')
