@@ -451,19 +451,6 @@ def submissions_by_variant(variant_id):
         ),
     )
 
-@app.route('/total-conflicting-submissions-by-method')
-def total_conflicting_submissions_by_method():
-    db = DB()
-    return render_template(
-        'total-conflicting-submissions-by-method.html',
-        total_conflicting_submissions_by_standardized_method_over_time=db.total_conflicting_submissions_by_standardized_method_over_time(
-            min_stars=int_arg('min_stars1'),
-        ),
-        total_conflicting_submissions_by_method=db.total_conflicting_submissions_by_method(
-            min_stars=int_arg('min_stars1'),
-        ),
-    )
-
 @app.route('/total-submissions-by-method')
 def total_submissions_by_method():
     db = DB()
@@ -471,9 +458,11 @@ def total_submissions_by_method():
         'total-submissions-by-method.html',
         total_submissions_by_standardized_method_over_time=db.total_submissions_by_standardized_method_over_time(
             min_stars=int_arg('min_stars1'),
+            min_conflict_level=int_arg('min_conflict_level'),
         ),
         total_submissions_by_method=db.total_submissions_by_method(
-            min_stars=int_arg('min_stars1')
+            min_stars=int_arg('min_stars1'),
+            min_conflict_level=int_arg('min_conflict_level'),
         ),
     )
 

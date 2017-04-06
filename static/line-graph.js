@@ -1,4 +1,4 @@
-function lineGraph(data, yAxisText, yAxisTickValues) {
+function lineGraph(data, yAxisText, yAxisTickSpacing) {
     var width = 800, height = 600, margin = 100;
     var series = [];
     var totals = {};
@@ -53,6 +53,9 @@ function lineGraph(data, yAxisText, yAxisTickValues) {
         .attr('transform', 'translate(' + margin + ',' + margin + ')')
 
     // draw the lines
+    var yAxisTickValues = [];
+    for (var i = 0; i < d3.max(data, d => d.y) + yAxisTickSpacing; i += yAxisTickSpacing)
+        yAxisTickValues.push(i);
     var x = d3
         .scaleTime()
         .rangeRound([0, width])

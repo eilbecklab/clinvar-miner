@@ -7,6 +7,7 @@
 {% block content %}
     {% with %}
         {% set review_status1_label = 'Minimum review status' %}
+        {% set min_conflict_level_filter = True %}
         {% include 'filter.html' %}
     {% endwith %}
     <svg id="graph"></svg>
@@ -20,7 +21,7 @@
                 serie: d.standardized_method,
             }
         });
-        lineGraph(data, 'Submissions', [50000, 100000, 150000, 200000, 250000, 300000, 350000, 400000, 450000, 500000]);
+        lineGraph(data, 'Submissions', 50000);
     </script>
     {% with %}
         {% set thing = 'submissions' %}
