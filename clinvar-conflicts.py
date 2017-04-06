@@ -454,12 +454,33 @@ def submissions_by_variant(variant_id):
 @app.route('/total-submissions-by-method')
 def total_submissions_by_method():
     db = DB()
+    rows = db.total_submissions_by_standardized_method_over_time(
+        min_stars=int_arg('min_stars1'),
+        min_conflict_level=int_arg('min_conflict_level'),
+    )
+
+    dates = set()
+    methods = set()
+    date_method_pairs = set()
+    for row in rows:
+        date = row['date']
+        method = row['standardized_method']
+        count = row['count']
+
+        dates.add(date)
+        methods.add(method)
+        date_method_pairs.add((date, method))
+
+    for date in dates:
+        for method in methods:
+            if not (date, method) in date_method_pairs:
+                rows.append({'date': date, 'standardized_method': method, 'count': 0})
+
+    rows.sort(key=lambda row: row['date'])
+
     return render_template(
         'total-submissions-by-method.html',
-        total_submissions_by_standardized_method_over_time=db.total_submissions_by_standardized_method_over_time(
-            min_stars=int_arg('min_stars1'),
-            min_conflict_level=int_arg('min_conflict_level'),
-        ),
+        total_submissions_by_standardized_method_over_time=rows,
         total_submissions_by_method=db.total_submissions_by_method(
             min_stars=int_arg('min_stars1'),
             min_conflict_level=int_arg('min_conflict_level'),
