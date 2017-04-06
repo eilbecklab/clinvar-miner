@@ -169,7 +169,7 @@ def cache_get():
 
 @app.after_request
 def cache_set(response):
-    if response.status_code == 200 and not response.direct_passthrough:
+    if response.status_code == 200 and not response.direct_passthrough and ttl > 0:
         response.set_etag(sha256(response.get_data()).hexdigest())
         response.freeze()
         cache.set(request.url, response, timeout=ttl)
