@@ -409,7 +409,7 @@ def significance_terms(term = None):
 
 @app.route('/submissions-by-gene')
 @app.route('/submissions-by-gene/<gene>')
-def submissions_by_gene(gene = None, variant_id = None):
+def submissions_by_gene(gene = None):
     db = DB()
 
     if not gene:
