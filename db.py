@@ -304,21 +304,35 @@ class DB():
     def total_submissions_by_method(self, min_stars = 0, min_conflict_level = 0):
         return list(map(
             dict,
-            self.cursor.execute('''
-                SELECT method1 AS method, COUNT(DISTINCT scv1) AS count FROM current_comparisons
-                WHERE star_level1>=? AND conflict_level>=?
-                GROUP BY method ORDER BY method
-            ''', [min_stars, min_conflict_level])
+            self.cursor.execute(
+                '''
+                    SELECT method1 AS method, COUNT(DISTINCT scv1) AS count
+                    FROM current_comparisons
+                    WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
+                    GROUP BY method ORDER BY method
+                ''',
+                {
+                    'min_stars': min_stars,
+                    'min_conflict_level': min_conflict_level,
+                }
+            )
         ))
 
     def total_submissions_by_standardized_method_over_time(self, min_stars = 0, min_conflict_level = 0):
         return list(map(
             dict,
-            self.cursor.execute('''
-                SELECT date, standardized_method1 AS standardized_method, COUNT(DISTINCT scv1) AS count FROM comparisons
-                WHERE star_level1>=? AND conflict_level>=?
-                GROUP BY date, standardized_method ORDER BY date, count DESC
-            ''', [min_stars, min_conflict_level])
+            self.cursor.execute(
+                '''
+                    SELECT date, standardized_method1 AS standardized_method, COUNT(DISTINCT scv1) AS count
+                    FROM comparisons
+                    WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
+                    GROUP BY date, standardized_method ORDER BY date, count DESC
+                ''',
+                {
+                    'min_stars': min_stars,
+                    'min_conflict_level': min_conflict_level,
+                }
+            )
         ))
 
     def total_submissions_by_submitter(self, country = None, min_conflict_level = 0):
