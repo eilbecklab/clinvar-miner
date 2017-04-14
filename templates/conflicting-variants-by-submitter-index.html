@@ -8,24 +8,27 @@
         {% set method2_label = 'Method of the other submitter\'s submission' %}
         {% include 'filter.html' %}
     {% endwith %}
-    <table class="sortable table" style="width:auto">
-        <thead>
-            <tr>
-                <th>Submitter</th>
-                <th style="text-align:right">Conflicting variants</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in total_conflicting_variants_by_submitter %}
+    <p>Total submitters: {{ total_conflicting_variants_by_submitter|length }}</p>
+    {% if total_conflicting_variants_by_submitter %}
+        <table class="sortable table" style="width:auto">
+            <thead>
                 <tr>
-                    <td>
-                        <a href="conflicting-variants-by-submitter/{{ row['submitter_id'] }}{{ request|querysuffix }}">
-                            {{ row['submitter_name'] }}
-                        </a>
-                    </td>
-                    <td style="text-align:right">{{ row['count'] }}</td>
+                    <th>Submitter</th>
+                    <th style="text-align:right">Conflicting variants</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for row in total_conflicting_variants_by_submitter %}
+                    <tr>
+                        <td>
+                            <a href="conflicting-variants-by-submitter/{{ row['submitter_id'] }}{{ request|querysuffix }}">
+                                {{ row['submitter_name'] }}
+                            </a>
+                        </td>
+                        <td style="text-align:right">{{ row['count'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 {% endblock %}

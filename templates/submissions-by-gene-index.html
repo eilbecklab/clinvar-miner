@@ -7,24 +7,27 @@
         {% set min_conflict_level_filter = True %}
         {% include 'filter.html' %}
     {% endwith %}
-    <table class="sortable table" style="width:auto">
-        <thead>
-            <tr>
-                <th>Gene</th>
-                <th style="text-align:right">Submissions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in total_submissions_by_gene  %}
+    <p>Total genes: {{ total_submissions_by_gene|length }}</p>
+    {% if total_submissions_by_gene %}
+        <table class="sortable table" style="width:auto">
+            <thead>
                 <tr>
-                    <td>
-                        <a href="submissions-by-gene/{{ row['gene']|quotepath }}{{ request|querysuffix }}">
-                            {{ row['gene'] }}
-                        </a>
-                    </td>
-                    <td style="text-align:right">{{ row['count'] }}</td>
+                    <th>Gene</th>
+                    <th style="text-align:right">Submissions</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for row in total_submissions_by_gene  %}
+                    <tr>
+                        <td>
+                            <a href="submissions-by-gene/{{ row['gene']|quotepath }}{{ request|querysuffix }}">
+                                {{ row['gene'] }}
+                            </a>
+                        </td>
+                        <td style="text-align:right">{{ row['count'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 {% endblock %}
