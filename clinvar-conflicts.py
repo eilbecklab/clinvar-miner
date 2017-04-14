@@ -233,10 +233,9 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
     if submitter1_id == None:
         return render_template(
             'conflicting-variants-by-submitter-index.html',
-            total_conflicting_variants_by_submitter=db.total_variants_by_submitter(
-                min_stars=int_arg('min_stars1'),
-                method=request.args.get('method1'),
-                min_conflict_level=1
+            total_conflicting_variants_by_submitter=db.total_conflicting_variants_by_submitter(
+                min_stars1=int_arg('min_stars1'),
+                method1=request.args.get('method1'),
             ),
         )
 
@@ -266,8 +265,8 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
         )
         summary = OrderedDict()
         for row in total_conflicting_variants_by_submitter:
-            submitter2_id = row['submitter2_id']
-            submitter2_name = row['submitter2_name']
+            submitter2_id = row['submitter_id']
+            submitter2_name = row['submitter_name']
             count = row['count']
             summary[submitter2_id] = {
                 'name': submitter2_name,
@@ -279,8 +278,8 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
                 'total': count,
             }
         for row in total_conflicting_variants_by_submitter_and_conflict_level:
-            submitter2_id = row['submitter2_id']
-            submitter2_name = row['submitter2_name']
+            submitter2_id = row['submitter_id']
+            submitter2_name = row['submitter_name']
             conflict_level = row['conflict_level']
             count = row['count']
             summary[submitter2_id][conflict_level] = count

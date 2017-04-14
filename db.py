@@ -128,16 +128,22 @@ class DB():
             )
         )[0][0]
 
-    def total_conflicting_variants_by_submitter(self, submitter1_id, min_stars1 = 0, min_stars2 = 0, method1 = None,
-                                                method2 = None):
+    def total_conflicting_variants_by_submitter(self, submitter1_id = None, min_stars1 = 0, min_stars2 = 0,
+                                                method1 = None, method2 = None):
         query = '''
-            SELECT submitter2_id, submitter2_name, conflict_level, COUNT(DISTINCT variant_id) AS count FROM current_comparisons
+            SELECT
+                submitter2_id AS submitter_id,
+                submitter2_name AS submitter_name,
+                COUNT(DISTINCT variant_id) AS count
+            FROM current_comparisons
             WHERE
-                submitter1_id=:submitter1_id AND
                 star_level1>=:min_stars1 AND
                 star_level2>=:min_stars2 AND
                 conflict_level>=1
         '''
+
+        if submitter1_id:
+            query += ' AND submitter1_id=:submitter1_id'
 
         if method1:
             query += ' AND standardized_method1=:method1'
@@ -164,7 +170,12 @@ class DB():
     def total_conflicting_variants_by_submitter_and_conflict_level(self, submitter1_id, min_stars1 = 0, min_stars2 = 0,
                                                                    method1 = None, method2 = None):
         query = '''
-            SELECT submitter2_id, submitter2_name, conflict_level, COUNT(DISTINCT variant_id) AS count FROM current_comparisons
+            SELECT
+                submitter2_id AS submitter_id,
+                submitter2_name AS submitter_name,
+                conflict_level,
+                COUNT(DISTINCT variant_id) AS count
+            FROM current_comparisons
             WHERE
                 submitter1_id=:submitter1_id AND
                 star_level1>=:min_stars1 AND
@@ -352,33 +363,6 @@ class DB():
                 query,
                 {
                     'gene': gene,
-                    'min_stars': min_stars,
-                    'method': method,
-                    'min_conflict_level': min_conflict_level,
-                }
-            )
-        ))
-
-    def total_variants_by_submitter(self, min_stars = 0, method = None, min_conflict_level = 0):
-        query = '''
-            SELECT
-                submitter1_id AS submitter_id,
-                submitter1_name AS submitter_name,
-                COUNT(DISTINCT variant_id) AS count
-            FROM current_comparisons
-            WHERE star_level1>=:min_stars AND conflict_level>=:min_conflict_level
-        '''
-
-        if method:
-            query += ' AND standardized_method1=:method'
-
-        query += ' GROUP BY submitter1_id ORDER BY submitter1_name'
-
-        return list(map(
-            dict,
-            self.cursor.execute(
-                query,
-                {
                     'min_stars': min_stars,
                     'method': method,
                     'min_conflict_level': min_conflict_level,
