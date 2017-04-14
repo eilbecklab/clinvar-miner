@@ -2,8 +2,10 @@
 {% set title = 'Conflicting variants by submitter' %}
 {% block content %}
     {% with %}
-        {% set review_status1_label = 'Minimum review status' %}
-        {% set method1_label = 'Method' %}
+        {% set review_status1_label = 'Minimum review status of the submitter\'s submission' %}
+        {% set method1_label = 'Method of the submitter\'s submission' %}
+        {% set review_status2_label = 'Minimum review status of the other submitter\'s submission' %}
+        {% set method2_label = 'Method of the other submitter\'s submission' %}
         {% include 'filter.html' %}
     {% endwith %}
     <table class="sortable table" style="width:auto">
