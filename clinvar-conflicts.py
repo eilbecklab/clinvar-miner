@@ -37,7 +37,6 @@ def get_breakdown(total_conflicting_variants_by_significance_and_significance):
     breakdown = {}
     submitter1_significances = set()
     submitter2_significances = set()
-    total = 0
 
     for row in total_conflicting_variants_by_significance_and_significance:
         clin_sig1 = row['clin_sig1']
@@ -50,8 +49,6 @@ def get_breakdown(total_conflicting_variants_by_significance_and_significance):
 
         submitter1_significances.add(clin_sig1)
         submitter2_significances.add(clin_sig2)
-
-        total += count
 
     #sort alphabetically to be consistent if there are two or more unranked significance terms
     submitter1_significances = sorted(submitter1_significances)
