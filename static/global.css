@@ -15,7 +15,7 @@
     background-color: #FFEEAA;
 }
 
-.sortable th {
+.sortable thead th {
     cursor: pointer;
 }
 
