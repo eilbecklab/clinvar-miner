@@ -33,7 +33,7 @@ def break_punctuation(text):
         .replace('-', '-<wbr/>')
     )
 
-def get_breakdown(total_conflicting_variants_by_significance_and_significance):
+def get_conflict_breakdown(total_conflicting_variants_by_significance_and_significance):
     breakdown = {}
     submitter1_significances = set()
     submitter2_significances = set()
@@ -59,6 +59,30 @@ def get_breakdown(total_conflicting_variants_by_significance_and_significance):
     submitter2_significances = sorted(submitter2_significances, key=significance_rank)
 
     return breakdown, submitter1_significances, submitter2_significances
+
+def get_submission_breakdown(total_variants_by_submitter_and_significance):
+    breakdown = {}
+    significances = set()
+
+    for row in total_variants_by_submitter_and_significance:
+        submitter_id = row['submitter_id']
+        submitter_name = row['submitter_name']
+        clin_sig = row['clin_sig']
+        count = row['count']
+
+        if not submitter_id in breakdown:
+            breakdown[submitter_id] = {'name': submitter_name, 'counts': {}}
+        breakdown[submitter_id]['counts'][clin_sig] = count
+
+        significances.add(clin_sig)
+
+    #sort alphabetically to be consistent if there are two or more unranked significance terms
+    significances = sorted(significances)
+
+    #sort by rank
+    significances = sorted(significances, key=significance_rank)
+
+    return breakdown, significances
 
 def int_arg(name, default = 0):
     arg = request.args.get(name)
@@ -178,7 +202,7 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
     db = DB()
 
     if not significance2:
-        breakdown, submitter1_significances, submitter2_significances = get_breakdown(
+        breakdown, submitter1_significances, submitter2_significances = get_conflict_breakdown(
             db.total_conflicting_variants_by_significance_and_significance(
                 min_stars1=int_arg('min_stars1'),
                 method1=request.args.get('method1'),
@@ -193,11 +217,12 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
             breakdown=breakdown,
             submitter1_significances=submitter1_significances,
             submitter2_significances=submitter2_significances,
-            total=db.total_conflicting_variants(
+            total=db.total_variants(
                 min_stars1=int_arg('min_stars1'),
                 method1=request.args.get('method1'),
                 min_stars2=int_arg('min_stars2'),
                 method2=request.args.get('method2'),
+                min_conflict_level=1,
             ),
         )
 
@@ -282,7 +307,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             count = row['count']
             summary[submitter2_id][conflict_level] = count
 
-        breakdown, submitter1_significances, submitter2_significances = get_breakdown(
+        breakdown, submitter1_significances, submitter2_significances = get_conflict_breakdown(
             db.total_conflicting_variants_by_significance_and_significance(
                 submitter1_id=submitter1_id,
                 min_stars1=int_arg('min_stars1'),
@@ -302,12 +327,13 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             breakdown=breakdown,
             submitter1_significances=submitter1_significances,
             submitter2_significances=submitter2_significances,
-            total=db.total_conflicting_variants(
+            total=db.total_variants(
                 submitter1_id=submitter1_id,
                 min_stars1=int_arg('min_stars1'),
                 method1=request.args.get('method1'),
                 min_stars2=int_arg('min_stars2'),
                 method2=request.args.get('method2'),
+                min_conflict_level=1,
             ),
         )
 
@@ -324,7 +350,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             submitter2_info = {'id': submitter2_id, 'name': str(submitter2_id)}
 
     if not significance1:
-        breakdown, submitter1_significances, submitter2_significances = get_breakdown(
+        breakdown, submitter1_significances, submitter2_significances = get_conflict_breakdown(
             db.total_conflicting_variants_by_significance_and_significance(
                 submitter1_id=submitter1_id,
                 submitter2_id=submitter2_id,
@@ -343,13 +369,14 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             breakdown=breakdown,
             submitter1_significances=submitter1_significances,
             submitter2_significances=submitter2_significances,
-            total=db.total_conflicting_variants(
+            total=db.total_variants(
                 submitter1_id=submitter1_id,
                 submitter2_id=submitter2_id,
                 min_stars1=int_arg('min_stars1'),
                 method1=request.args.get('method1'),
                 min_stars2=int_arg('min_stars2'),
                 method2=request.args.get('method2'),
+                min_conflict_level=1,
             ),
         )
 
@@ -402,33 +429,6 @@ def significance_terms(term = None):
         'significance-terms.html',
         term=term,
         total_significance_terms=db.total_significance_terms(term),
-    )
-
-@app.route('/submissions-by-gene')
-@app.route('/submissions-by-gene/<gene>')
-def submissions_by_gene(gene = None):
-    db = DB()
-
-    if not gene:
-        return render_template(
-            'submissions-by-gene-index.html',
-            total_submissions_by_gene=db.total_submissions_by_gene(
-                min_stars=int_arg('min_stars1'),
-                method=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-            ),
-        )
-
-    gene = gene.replace('%2F', '/')
-
-    return render_template(
-        'variants-by-gene.html',
-        total_submissions_by_variant=db.total_submissions_by_variant(
-            gene,
-            min_stars=int_arg('min_stars1'),
-            method=request.args.get('method1'),
-            min_conflict_level=int_arg('min_conflict_level'),
-        ),
     )
 
 @app.route('/submissions-by-variant/<variant_id>')
@@ -501,4 +501,70 @@ def total_submissions_by_country(country = None):
         'total-submissions-by-country.html',
         country=country,
         total_submissions_by_submitter=db.total_submissions_by_submitter(country=country),
+    )
+
+@app.route('/variants-by-gene')
+@app.route('/variants-by-gene/', defaults={'gene': ''})
+@app.route('/variants-by-gene/<gene>')
+@app.route('/variants-by-gene//<submitter_id>/<significance>', defaults={'gene': ''})
+@app.route('/variants-by-gene/<gene>/<submitter_id>/<significance>')
+def variants_by_gene(gene = None, submitter_id = None, significance = None):
+    db = DB()
+
+    if gene == None:
+        return render_template(
+            'variants-by-gene-index.html',
+            total_variants_by_gene=db.total_variants_by_gene(
+                min_stars=int_arg('min_stars1'),
+                method=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+            ),
+        )
+
+    gene = gene.replace('%2F', '/')
+
+    if submitter_id == None:
+        breakdown, significances = get_submission_breakdown(
+            db.total_variants_by_submitter_and_significance(
+                gene,
+                min_stars=int_arg('min_stars1'),
+                method=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+                corrected_terms=request.args.get('corrected_terms'),
+            )
+        )
+
+        return render_template(
+            'variants-by-gene.html',
+            gene=gene,
+            breakdown=breakdown,
+            significances=significances,
+            total=db.total_variants(
+                gene=gene,
+                min_stars1=int_arg('min_stars1'),
+                min_stars2=int_arg('min_stars1'),
+                method1=request.args.get('method1'),
+                method2=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+            ),
+        )
+
+    submitter_info = db.submitter_info(submitter_id)
+    if not submitter_info:
+        submitter_info = {'id': submitter_id, 'name': submitter_id}
+
+    return render_template(
+        'variants-by-gene-submitter-significance.html',
+        gene=gene,
+        submitter_info=submitter_info,
+        significance=significance,
+        total_submissions_by_variant=db.total_submissions_by_variant(
+            gene,
+            submitter_id,
+            significance,
+            min_stars=int_arg('min_stars1'),
+            method=request.args.get('method1'),
+            min_conflict_level=int_arg('min_conflict_level'),
+            corrected_terms=request.args.get('corrected_terms'),
+        ),
     )

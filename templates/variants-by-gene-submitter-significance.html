@@ -1,0 +1,37 @@
+{% extends 'skin.html' %}
+{% set title = 'Variants in gene "' + gene + '" reported as ' + significance + ' by ' + submitter_info['name'] %}
+{% block title %}
+    Variants in gene "{{ gene }}" reported as {{ significance }} by
+    {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+{% endblock %}
+{% block content %}
+    {% with %}
+        {% set review_status1_label = 'Minimum review status' %}
+        {% set method1_label = 'Method' %}
+        {% set min_conflict_level_filter = True %}
+        {% set corrected_terms_filter = True %}
+        {% set corrected_terms_disabled = True %}
+        {% include 'filter.html' %}
+    {% endwith %}
+    <p>Total variants: {{ total_submissions_by_variant|length }}</p>
+    {% if total_submissions_by_variant %}
+        <table class="sortable table" style="width:auto">
+            <thead>
+                <tr>
+                    <th>Variant</th>
+                    <th style="text-align:right">Submissions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in total_submissions_by_variant %}
+                    <tr>
+                        <td>
+                            <a href="submissions-by-variant/{{ row['variant_id'] }}">{{ row['variant_name'] }}</a>
+                        </td>
+                        <td style="text-align:right">{{ row['count'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
