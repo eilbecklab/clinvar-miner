@@ -206,7 +206,6 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
 
     return render_template(
         'conflicting-variants-by-significance-2significances.html',
-        title='Variants reported as ' + significance1 + ' and ' + significance2,
         significance1=significance1,
         significance2=significance2,
         variants=db.variants(
@@ -424,7 +423,6 @@ def submissions_by_gene(gene = None):
 
     return render_template(
         'variants-by-gene.html',
-        title='Variants in ' + gene,
         total_submissions_by_variant=db.total_submissions_by_variant(
             gene,
             min_stars=int_arg('min_stars1'),
