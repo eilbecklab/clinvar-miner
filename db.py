@@ -394,6 +394,66 @@ class DB():
             )
         ))
 
+    def total_variants_by_submitter(self, min_stars = 0, method = None, min_conflict_level = 0):
+        query = '''
+            SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name, COUNT(DISTINCT variant_id) AS count
+            FROM current_comparisons
+            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
+        '''
+
+        if method:
+            query += ' AND standardized_method1=:method AND standardized_method2=:method'
+
+        query += ' GROUP BY submitter_id ORDER BY submitter_name'
+
+        return list(map(
+            dict,
+            self.cursor.execute(
+                query,
+                {
+                    'min_stars': min_stars,
+                    'method': method,
+                    'min_conflict_level': min_conflict_level
+                }
+            )
+        ))
+
+    def total_variants_by_gene_and_significance(self, submitter_id, min_stars = 0, method = None,
+                                                min_conflict_level = 0, corrected_terms = False):
+        query = 'SELECT gene, COUNT(DISTINCT variant_id) AS count'
+
+        if corrected_terms:
+            query += ', standardized_clin_sig1 AS clin_sig'
+        else:
+            query += ', clin_sig1 AS clin_sig'
+
+        query += '''
+            FROM current_comparisons
+            WHERE
+                submitter1_id=:submitter_id AND
+                star_level1>=:min_stars AND
+                star_level2>=:min_stars AND
+                conflict_level>=:min_conflict_level
+        '''
+
+        if method:
+            query += ' AND method1=:method AND method2=:method'
+
+        query += ' GROUP BY gene ORDER BY gene'
+
+        return list(map(
+            dict,
+            self.cursor.execute(
+                query,
+                {
+                    'submitter_id': submitter_id,
+                    'min_stars': min_stars,
+                    'method': method,
+                    'min_conflict_level': min_conflict_level
+                }
+            )
+        ))
+
     def total_variants_by_submitter_and_significance(self, gene, min_stars = 0, method = None,
                                                      min_conflict_level = 0, corrected_terms = False):
         query = '''

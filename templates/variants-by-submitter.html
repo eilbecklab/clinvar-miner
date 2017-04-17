@@ -1,0 +1,43 @@
+{% extends 'skin.html' %}
+{% set title = 'Variants from ' + submitter_info['name'] %}
+{% block title %}Variants from {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}{% endblock %}
+{% block content %}
+    {% with %}
+        {% set review_status1_label = 'Minimum review status' %}
+        {% set method1_label = 'Method' %}
+        {% set min_conflict_level_filter = True %}
+        {% set corrected_terms_filter = True %}
+        {% include 'filter.html' %}
+    {% endwith %}
+    <p>Total variants: {{ total }}</p>
+    {% if total %}
+        <table class="breakdown sortable table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Gene</th>
+                    {% for significance in significances %}
+                        <th>{{ significance }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for gene in breakdown %}
+                    <tr>
+                        <th>{{ gene }}</th>
+                        {% for significance in significances %}
+                            {% if breakdown[gene][significance] %}
+                                <td class="highlight">
+                                    <a href="variants-by-submitter/{{ submitter_info['id'] }}/{{ gene }}/{{ significance|quotepath }}{{ request|querysuffix }}">
+                                        {{ breakdown[gene][significance] }}
+                                    </a>
+                                </td>
+                            {% else %}
+                                <td>0</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
