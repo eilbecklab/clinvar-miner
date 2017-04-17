@@ -64,6 +64,9 @@
                             type="checkbox"
                             value="1"
                         />
+                        {% if request.args.get('corrected_terms') and corrected_terms_disabled %}
+                            <input type="hidden" name="corrected_terms" value="1"/>
+                        {% endif %}
                         Use standardized significance terms
                     </label>
                 </td>
