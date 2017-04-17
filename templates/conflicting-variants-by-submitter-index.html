@@ -8,7 +8,7 @@
         {% set method2_label = 'Method of the other submitter\'s submission' %}
         {% include 'filter.html' %}
     {% endwith %}
-    <p>Total submitters: {{ total_conflicting_variants_by_submitter|length }}</p>
+    <p>Total submitters with conflicts: {{ total_conflicting_variants_by_submitter|length }}</p>
     {% if total_conflicting_variants_by_submitter %}
         <table class="sortable table" style="width:auto">
             <thead>
