@@ -139,10 +139,6 @@ def significance_rank(significance):
 def prettify_date(iso_date):
     return datetime.strptime(iso_date[:10], '%Y-%m-%d').strftime('%e %b %Y') if iso_date else ''
 
-@app.template_filter('orspace')
-def string_or_space(path):
-    return path if path else '\u200B'
-
 @app.template_filter('querysuffix')
 def query_suffix(request):
     return '?' + request.query_string.decode('utf-8') if request.query_string else ''
@@ -154,6 +150,10 @@ def quote_path(path):
 @app.template_filter('rcvlink')
 def rcv_link(rcv):
     return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/' + rcv + '/">' + rcv + '</a>'
+
+@app.template_filter('orspace')
+def string_or_space(path):
+    return path if path else '\u200B'
 
 @app.context_processor
 def template_functions():
@@ -470,6 +470,26 @@ def submissions_by_variant(variant_id):
         ),
     )
 
+@app.route('/total-submissions-by-country')
+@app.route('/total-submissions-by-country/', defaults={'country': ''})
+@app.route('/total-submissions-by-country/<country>')
+def total_submissions_by_country(country = None):
+    db = DB()
+
+    if country == None:
+        return render_template(
+            'total-submissions-by-country-index.html',
+            total_submissions_by_country=db.total_submissions_by_country(),
+        )
+
+    country = country.replace('%2F', '/')
+
+    return render_template(
+        'total-submissions-by-country.html',
+        country=country,
+        total_submissions_by_submitter=db.total_submissions_by_submitter(country=country),
+    )
+
 @app.route('/total-submissions-by-method')
 def total_submissions_by_method():
     db = DB()
@@ -504,26 +524,6 @@ def total_submissions_by_method():
             min_stars=int_arg('min_stars1'),
             min_conflict_level=int_arg('min_conflict_level'),
         ),
-    )
-
-@app.route('/total-submissions-by-country')
-@app.route('/total-submissions-by-country/', defaults={'country': ''})
-@app.route('/total-submissions-by-country/<country>')
-def total_submissions_by_country(country = None):
-    db = DB()
-
-    if country == None:
-        return render_template(
-            'total-submissions-by-country-index.html',
-            total_submissions_by_country=db.total_submissions_by_country(),
-        )
-
-    country = country.replace('%2F', '/')
-
-    return render_template(
-        'total-submissions-by-country.html',
-        country=country,
-        total_submissions_by_submitter=db.total_submissions_by_submitter(country=country),
     )
 
 @app.route('/variants-by-gene')
