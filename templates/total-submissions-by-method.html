@@ -23,9 +23,21 @@
         });
         lineGraph(data, 'Submissions', 50000);
     </script>
-    {% with %}
-        {% set thing = 'submissions' %}
-        {% set total_things_by_method = total_submissions_by_method %}
-        {% include 'submissions-by-method.html' %}
-    {% endwith %}
+    <h2>Current submissions</h2>
+    <table class="sortable table" style="width:auto">
+        <thead>
+            <tr>
+                <th>Method</th>
+                <th>Submissions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in total_submissions_by_method %}
+                <tr>
+                    <td>{{ row['method'] }}</td>
+                    <td>{{ row['count'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
