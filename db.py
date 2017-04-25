@@ -171,8 +171,8 @@ class DB():
 
     def total_conflicting_variants_by_significance_and_significance(self, submitter1_id = None, submitter2_id = None,
                                                                     min_stars1 = 0, min_stars2 = 0, method1 = None,
-                                                                    method2 = None, corrected_terms = False):
-        if corrected_terms:
+                                                                    method2 = None, standardized_terms = False):
+        if standardized_terms:
             query = 'SELECT standardized_clin_sig1 AS clin_sig1, standardized_clin_sig2 AS clin_sig2'
         else:
             query = 'SELECT clin_sig1, clin_sig2'
@@ -193,7 +193,7 @@ class DB():
         if method2:
             query += ' AND standardized_method2=:method2'
 
-        if corrected_terms:
+        if standardized_terms:
             query += ' GROUP BY standardized_clin_sig1, standardized_clin_sig2'
         else:
             query += ' GROUP BY clin_sig1, clin_sig2'
@@ -294,7 +294,7 @@ class DB():
         ))
 
     def total_submissions_by_variant(self, gene, submitter_id, clin_sig, min_stars = 0, method = None,
-                                     min_conflict_level = 0, corrected_terms = False):
+                                     min_conflict_level = 0, standardized_terms = False):
         query = '''
             SELECT variant_id, variant_name, COUNT(DISTINCT scv1) AS count FROM current_comparisons
             WHERE
@@ -305,7 +305,7 @@ class DB():
                 conflict_level>=:min_conflict_level
         '''
 
-        if corrected_terms:
+        if standardized_terms:
             query += ' AND standardized_clin_sig1=:clin_sig'
         else:
             query += ' AND clin_sig1=:clin_sig'
@@ -419,10 +419,10 @@ class DB():
         ))
 
     def total_variants_by_gene_and_significance(self, submitter_id, min_stars = 0, method = None,
-                                                min_conflict_level = 0, corrected_terms = False):
+                                                min_conflict_level = 0, standardized_terms = False):
         query = 'SELECT gene, COUNT(DISTINCT variant_id) AS count'
 
-        if corrected_terms:
+        if standardized_terms:
             query += ', standardized_clin_sig1 AS clin_sig'
         else:
             query += ', clin_sig1 AS clin_sig'
@@ -455,14 +455,14 @@ class DB():
         ))
 
     def total_variants_by_submitter_and_significance(self, gene, min_stars = 0, method = None,
-                                                     min_conflict_level = 0, corrected_terms = False):
+                                                     min_conflict_level = 0, standardized_terms = False):
         query = '''
             SELECT submitter1_id AS submitter_id,
             submitter1_name AS submitter_name,
             COUNT(DISTINCT variant_id) AS count
         '''
 
-        if corrected_terms:
+        if standardized_terms:
             query += ', standardized_clin_sig1 AS clin_sig'
         else:
             query += ', clin_sig1 AS clin_sig'
@@ -501,7 +501,7 @@ class DB():
 
     def variants(self, submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None,
                  min_stars1 = 0, min_stars2 = 0, method1 = None, method2 = None, min_conflict_level = 1,
-                 corrected_terms = False):
+                 standardized_terms = False):
         query = '''
             SELECT DISTINCT variant_id, variant_name FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
@@ -513,7 +513,7 @@ class DB():
         if submitter2_id:
             query += ' AND submitter2_id=:submitter2_id'
 
-        if corrected_terms:
+        if standardized_terms:
             if significance1:
                 query += ' AND standardized_clin_sig1=:significance1'
             if significance2:

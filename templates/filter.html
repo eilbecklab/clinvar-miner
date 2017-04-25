@@ -53,19 +53,19 @@
                 </td>
             </tr>
         {% endif %}
-        {% if corrected_terms_filter %}
+        {% if standardized_terms_filter %}
             <tr>
                 <td colspan="2">
                     <label>
                         <input
-                            {% if request.args.get('corrected_terms') %} checked="checked" {% endif %}
-                            {% if corrected_terms_disabled %} disabled="disabled" {% endif %}
-                            name="corrected_terms"
+                            {% if request.args.get('standardized_terms') %} checked="checked" {% endif %}
+                            {% if standardized_terms_disabled %} disabled="disabled" {% endif %}
+                            name="standardized_terms"
                             type="checkbox"
                             value="1"
                         />
-                        {% if request.args.get('corrected_terms') and corrected_terms_disabled %}
-                            <input type="hidden" name="corrected_terms" value="1"/>
+                        {% if request.args.get('standardized_terms') and standardized_terms_disabled %}
+                            <input type="hidden" name="standardized_terms" value="1"/>
                         {% endif %}
                         Use standardized significance terms
                     </label>

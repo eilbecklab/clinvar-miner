@@ -1,8 +1,8 @@
 {% extends 'skin.html' %}
 {% block content %}
     {% with %}
-        {% set corrected_terms_filter = True %}
-        {% set corrected_terms_disabled = True %}
+        {% set standardized_terms_filter = True %}
+        {% set standardized_terms_disabled = True %}
         {% include 'filter.html' %}
     {% endwith %}
     <p>Total conflicting variants: {{ variants|length }}</p>
