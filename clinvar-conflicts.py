@@ -39,14 +39,14 @@ def get_breakdown_by_gene_and_significance(total_variants_by_gene_and_significan
 
     for row in total_variants_by_gene_and_significance:
         gene = row['gene']
-        clin_sig = row['clin_sig']
+        significance = row['significance']
         count = row['count']
 
         if not gene in breakdown:
             breakdown[gene] = {}
-        breakdown[gene][clin_sig] = count
+        breakdown[gene][significance] = count
 
-        significances.add(clin_sig)
+        significances.add(significance)
 
     #sort alphabetically to be consistent if there are two or more unranked significance terms
     significances = sorted(significances)
@@ -63,14 +63,14 @@ def get_breakdown_by_submitter_and_significance(total_variants_by_submitter_and_
     for row in total_variants_by_submitter_and_significance:
         submitter_id = row['submitter_id']
         submitter_name = row['submitter_name']
-        clin_sig = row['clin_sig']
+        significance = row['significance']
         count = row['count']
 
         if not submitter_id in breakdown:
             breakdown[submitter_id] = {'name': submitter_name, 'counts': {}}
-        breakdown[submitter_id]['counts'][clin_sig] = count
+        breakdown[submitter_id]['counts'][significance] = count
 
-        significances.add(clin_sig)
+        significances.add(significance)
 
     #sort alphabetically to be consistent if there are two or more unranked significance terms
     significances = sorted(significances)
@@ -86,16 +86,16 @@ def get_conflict_breakdown(total_conflicting_variants_by_significance_and_signif
     submitter2_significances = set()
 
     for row in total_conflicting_variants_by_significance_and_significance:
-        clin_sig1 = row['clin_sig1']
-        clin_sig2 = row['clin_sig2']
+        significance1 = row['significance1']
+        significance2 = row['significance2']
         count = row['count']
 
-        if not clin_sig1 in breakdown:
-            breakdown[clin_sig1] = {}
-        breakdown[clin_sig1][clin_sig2] = count
+        if not significance1 in breakdown:
+            breakdown[significance1] = {}
+        breakdown[significance1][significance2] = count
 
-        submitter1_significances.add(clin_sig1)
-        submitter2_significances.add(clin_sig2)
+        submitter1_significances.add(significance1)
+        submitter2_significances.add(significance2)
 
     #sort alphabetically to be consistent if there are two or more unranked significance terms
     submitter1_significances = sorted(submitter1_significances)

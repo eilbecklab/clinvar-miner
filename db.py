@@ -15,8 +15,8 @@ class DB():
             dict,
             self.cursor.execute('''
                 SELECT * FROM (
-                    SELECT clin_sig, MIN(date) AS first_seen, MAX(date) AS last_seen FROM submissions
-                    GROUP BY clin_sig ORDER BY clin_sig
+                    SELECT significance, MIN(date) AS first_seen, MAX(date) AS last_seen FROM submissions
+                    GROUP BY significance ORDER BY significance
                 ) WHERE last_seen!=(SELECT MAX(date) FROM submissions)
             ''')
         ))
@@ -25,8 +25,8 @@ class DB():
         return list(map(
             dict,
             self.cursor.execute('''
-                SELECT clin_sig, MIN(date) AS first_seen FROM submissions
-                GROUP BY clin_sig ORDER BY clin_sig
+                SELECT significance, MIN(date) AS first_seen FROM submissions
+                GROUP BY significance ORDER BY significance
             ''')
         ))
 
@@ -41,7 +41,7 @@ class DB():
                 submitter1_name AS submitter_name,
                 rcv1 AS rcv,
                 scv1 AS scv,
-                clin_sig1 AS clin_sig,
+                significance1 AS significance,
                 last_eval1 AS last_eval,
                 review_status1 AS review_status,
                 trait1_db AS trait_db,
@@ -173,9 +173,9 @@ class DB():
                                                                     min_stars1 = 0, min_stars2 = 0, method1 = None,
                                                                     method2 = None, standardized_terms = False):
         if standardized_terms:
-            query = 'SELECT standardized_clin_sig1 AS clin_sig1, standardized_clin_sig2 AS clin_sig2'
+            query = 'SELECT standardized_significance1 AS significance1, standardized_significance2 AS significance2'
         else:
-            query = 'SELECT clin_sig1, clin_sig2'
+            query = 'SELECT significance1, significance2'
 
         query += ', COUNT(DISTINCT variant_id) AS count FROM current_comparisons'
 
@@ -194,9 +194,9 @@ class DB():
             query += ' AND standardized_method2=:method2'
 
         if standardized_terms:
-            query += ' GROUP BY standardized_clin_sig1, standardized_clin_sig2'
+            query += ' GROUP BY standardized_significance1, standardized_significance2'
         else:
-            query += ' GROUP BY clin_sig1, clin_sig2'
+            query += ' GROUP BY significance1, significance2'
 
         return list(map(
             dict,
@@ -217,7 +217,7 @@ class DB():
         return list(map(
             dict,
             self.cursor.execute('''
-                SELECT submitter_id, submitter_name, COUNT(*) AS count FROM current_submissions WHERE clin_sig=?
+                SELECT submitter_id, submitter_name, COUNT(*) AS count FROM current_submissions WHERE significance=?
                 GROUP BY submitter_id ORDER BY submitter_name
             ''', [term])
         ))
@@ -225,7 +225,7 @@ class DB():
     def total_significance_terms_over_time(self):
         return list(map(
             dict,
-            self.cursor.execute('SELECT date, COUNT(DISTINCT clin_sig) AS count FROM submissions GROUP BY date')
+            self.cursor.execute('SELECT date, COUNT(DISTINCT significance) AS count FROM submissions GROUP BY date')
         ))
 
     def total_submissions_by_country(self):
@@ -293,7 +293,7 @@ class DB():
             self.cursor.execute(query, {'country': country, 'min_conflict_level': min_conflict_level})
         ))
 
-    def total_submissions_by_variant(self, gene, submitter_id, clin_sig, min_stars = 0, method = None,
+    def total_submissions_by_variant(self, gene, submitter_id, significance, min_stars = 0, method = None,
                                      min_conflict_level = 0, standardized_terms = False):
         query = '''
             SELECT variant_id, variant_name, COUNT(DISTINCT scv1) AS count FROM current_comparisons
@@ -306,9 +306,9 @@ class DB():
         '''
 
         if standardized_terms:
-            query += ' AND standardized_clin_sig1=:clin_sig'
+            query += ' AND standardized_significance1=:significance'
         else:
-            query += ' AND clin_sig1=:clin_sig'
+            query += ' AND significance1=:significance'
 
         if method:
             query += ' AND standardized_method1=:method AND standardized_method2=:method'
@@ -322,7 +322,7 @@ class DB():
                 {
                     'gene': gene,
                     'submitter_id': submitter_id,
-                    'clin_sig': clin_sig,
+                    'significance': significance,
                     'min_stars': min_stars,
                     'method': method,
                     'min_conflict_level': min_conflict_level,
@@ -423,9 +423,9 @@ class DB():
         query = 'SELECT gene, COUNT(DISTINCT variant_id) AS count'
 
         if standardized_terms:
-            query += ', standardized_clin_sig1 AS clin_sig'
+            query += ', standardized_significance1 AS significance'
         else:
-            query += ', clin_sig1 AS clin_sig'
+            query += ', significance1 AS significance'
 
         query += '''
             FROM current_comparisons
@@ -463,9 +463,9 @@ class DB():
         '''
 
         if standardized_terms:
-            query += ', standardized_clin_sig1 AS clin_sig'
+            query += ', standardized_significance1 AS significance'
         else:
-            query += ', clin_sig1 AS clin_sig'
+            query += ', significance1 AS significance'
 
         query += '''
             FROM current_comparisons
@@ -479,7 +479,7 @@ class DB():
         if method:
             query += ' AND method1=:method AND method2=:method'
 
-        query += ' GROUP BY submitter_id, clin_sig ORDER BY submitter1_name'
+        query += ' GROUP BY submitter_id, significance ORDER BY submitter1_name'
 
         return list(map(
             dict,
@@ -515,14 +515,14 @@ class DB():
 
         if standardized_terms:
             if significance1:
-                query += ' AND standardized_clin_sig1=:significance1'
+                query += ' AND standardized_significance1=:significance1'
             if significance2:
-                query += ' AND standardized_clin_sig2=:significance2'
+                query += ' AND standardized_significance2=:significance2'
         else:
             if significance1:
-                query += ' AND clin_sig1=:significance1'
+                query += ' AND significance1=:significance1'
             if significance2:
-                query += ' AND clin_sig2=:significance2'
+                query += ' AND significance2=:significance2'
 
         if method1:
             query += ' AND standardized_method1=:method1'

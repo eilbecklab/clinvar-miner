@@ -42,8 +42,8 @@ def create_tables():
             submitter_name TEXT,
             rcv TEXT,
             scv TEXT,
-            clin_sig TEXT,
-            standardized_clin_sig TEXT,
+            significance TEXT,
+            standardized_significance TEXT,
             last_eval TEXT,
             review_status TEXT,
             star_level INTEGER,
@@ -68,8 +68,8 @@ def create_tables():
             submitter1_name TEXT,
             rcv1 TEXT,
             scv1 TEXT,
-            clin_sig1 TEXT,
-            standardized_clin_sig1 TEXT,
+            significance1 TEXT,
+            standardized_significance1 TEXT,
             last_eval1 TEXT,
             review_status1 TEXT,
             star_level1 INTEGER,
@@ -83,8 +83,8 @@ def create_tables():
             submitter2_name TEXT,
             rcv2 TEXT,
             scv2 TEXT,
-            clin_sig2 TEXT,
-            standardized_clin_sig2 TEXT,
+            significance2 TEXT,
+            standardized_significance2 TEXT,
             last_eval2 TEXT,
             review_status2 TEXT,
             star_level2 INTEGER,
@@ -117,7 +117,7 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS variant_id_index ON submissions (variant_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_id_index ON submissions (submitter_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_name_index ON submissions (submitter_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS clin_sig_index ON submissions (clin_sig)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS significance_index ON submissions (significance)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method_index ON submissions (standardized_method)')
 
     cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON comparisons (date)')
@@ -127,10 +127,10 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter1_id_index ON comparisons (submitter1_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter2_id_index ON comparisons (submitter2_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter2_name_index ON comparisons (submitter2_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS clin_sig1_index ON comparisons (clin_sig1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS clin_sig2_index ON comparisons (clin_sig2)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS standardized_clin_sig1_index ON comparisons (standardized_clin_sig1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS standardized_clin_sig2_index ON comparisons (standardized_clin_sig2)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS significance1_index ON comparisons (significance1)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS significance2_index ON comparisons (significance2)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS standardized_significance1_index ON comparisons (standardized_significance1)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS standardized_significance2_index ON comparisons (standardized_significance2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS star_level1_index ON comparisons (star_level1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS star_level2_index ON comparisons (star_level2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method1_index ON comparisons (standardized_method1)')
@@ -164,14 +164,14 @@ def import_file(filename):
             scv = scv_el.attrib['Acc']
 
             submission_id_el = assertion_el.find('./ClinVarSubmissionID')
-            clin_sig_el = assertion_el.find('./ClinicalSignificance')
-            description_el = clin_sig_el.find('./Description')
-            review_status_el = clin_sig_el.find('./ReviewStatus')
+            significance_el = assertion_el.find('./ClinicalSignificance')
+            description_el = significance_el.find('./Description')
+            review_status_el = significance_el.find('./ReviewStatus')
             trait_el = assertion_el.find('./TraitSet/Trait')
             trait_xref_el = trait_el.find('./XRef')
             trait_name_el = trait_el.find('./Name/ElementValue')
             method_el = assertion_el.find('./ObservedIn/Method/MethodType')
-            comment_el = clin_sig_el.find('./Comment')
+            comment_el = significance_el.find('./Comment')
 
             variant_id = int(measure_set_el.attrib['ID'])
             variant_name = variant_name_el.text if variant_name_el != None else '' #missing in old versions
@@ -180,9 +180,9 @@ def import_file(filename):
             submitter_id = int(scv_el.attrib['OrgID']) if scv_el.attrib.get('OrgID') else 0 #missing in old versions
             submitter_name = submission_id_el.get('submitter', '') if submission_id_el != None else '' #missing in old versions
             rcv = reference_assertion_el.find('./ClinVarAccession[@Type="RCV"]').attrib['Acc']
-            clin_sig = description_el.text.lower() if description_el != None else 'not provided'
-            standardized_clin_sig = nonstandard_significance_term_map.get(clin_sig, clin_sig)
-            last_eval = clin_sig_el.attrib.get('DateLastEvaluated', '') #missing in old versions
+            significance = description_el.text.lower() if description_el != None else 'not provided'
+            standardized_significance = nonstandard_significance_term_map.get(significance, significance)
+            last_eval = significance_el.attrib.get('DateLastEvaluated', '') #missing in old versions
             review_status = review_status_el.text if review_status_el != None else '' #missing in old versions
             trait_db = trait_xref_el.attrib['DB'] if trait_xref_el != None else ''
             trait_id = trait_xref_el.attrib['ID'] if trait_xref_el != None else ''
@@ -212,8 +212,8 @@ def import_file(filename):
                 submitter_name,
                 rcv,
                 scv,
-                clin_sig,
-                standardized_clin_sig,
+                significance,
+                standardized_significance,
                 last_eval,
                 review_status,
                 star_level,
@@ -244,8 +244,8 @@ def import_file(filename):
             t2.submitter_name,
             t2.rcv,
             t2.scv,
-            t2.clin_sig,
-            t2.standardized_clin_sig,
+            t2.significance,
+            t2.standardized_significance,
             t2.last_eval,
             t2.review_status,
             t2.star_level,
@@ -256,20 +256,20 @@ def import_file(filename):
             t2.standardized_method,
             t2.description,
             CASE
-                WHEN t1.standardized_clin_sig=t2.standardized_clin_sig AND t1.clin_sig!=t2.clin_sig THEN 1
+                WHEN t1.standardized_significance=t2.standardized_significance AND t1.significance!=t2.significance THEN 1
 
-                WHEN t1.standardized_clin_sig="benign" AND t2.standardized_clin_sig="likely benign" THEN 2
-                WHEN t1.standardized_clin_sig="likely benign" AND t2.standardized_clin_sig="benign" THEN 2
-                WHEN t1.standardized_clin_sig="pathogenic" AND t2.standardized_clin_sig="likely pathogenic" THEN 2
-                WHEN t1.standardized_clin_sig="likely pathogenic" AND t2.standardized_clin_sig="pathogenic" THEN 2
+                WHEN t1.standardized_significance="benign" AND t2.standardized_significance="likely benign" THEN 2
+                WHEN t1.standardized_significance="likely benign" AND t2.standardized_significance="benign" THEN 2
+                WHEN t1.standardized_significance="pathogenic" AND t2.standardized_significance="likely pathogenic" THEN 2
+                WHEN t1.standardized_significance="likely pathogenic" AND t2.standardized_significance="pathogenic" THEN 2
 
-                WHEN t1.standardized_clin_sig IN ("benign", "likely benign") AND t2.standardized_clin_sig="uncertain significance" THEN 3
-                WHEN t1.standardized_clin_sig="uncertain significance" AND t2.standardized_clin_sig IN ("benign", "likely benign") THEN 3
+                WHEN t1.standardized_significance IN ("benign", "likely benign") AND t2.standardized_significance="uncertain significance" THEN 3
+                WHEN t1.standardized_significance="uncertain significance" AND t2.standardized_significance IN ("benign", "likely benign") THEN 3
 
-                WHEN t1.standardized_clin_sig IN ("benign", "likely benign", "uncertain significance") AND t2.standardized_clin_sig IN ("pathogenic", "likely pathogenic") THEN 5
-                WHEN t1.standardized_clin_sig IN ("pathogenic", "likely pathogenic") AND t2.standardized_clin_sig IN ("benign", "likely benign", "uncertain significance") THEN 5
+                WHEN t1.standardized_significance IN ("benign", "likely benign", "uncertain significance") AND t2.standardized_significance IN ("pathogenic", "likely pathogenic") THEN 5
+                WHEN t1.standardized_significance IN ("pathogenic", "likely pathogenic") AND t2.standardized_significance IN ("benign", "likely benign", "uncertain significance") THEN 5
 
-                WHEN t1.standardized_clin_sig!=t2.standardized_clin_sig THEN 4
+                WHEN t1.standardized_significance!=t2.standardized_significance THEN 4
 
                 ELSE 0
             END AS conflict_level

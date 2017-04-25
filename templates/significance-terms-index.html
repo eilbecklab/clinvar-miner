@@ -31,8 +31,8 @@
             {% for row in significance_term_info %}
                 <tr>
                     <td>
-                        <a href="significance-terms/{{ row['clin_sig']|quotepath }}" style="display:block">
-                            {{ row['clin_sig']|orspace }}
+                        <a href="significance-terms/{{ row['significance']|quotepath }}" style="display:block">
+                            {{ row['significance']|orspace }}
                         </a>
                     </td>
                     <td>{{ row['first_seen'] }}</td>
@@ -52,7 +52,7 @@
         <tbody>
             {% for row in old_significance_term_info %}
                 <tr>
-                    <td>{{ row['clin_sig'] }}</td>
+                    <td>{{ row['significance'] }}</td>
                     <td>{{ row['first_seen'] }}</td>
                     <td>{{ row['last_seen'] }}</td>
                 </tr>
