@@ -141,11 +141,13 @@ class DB():
 
     def total_conflicting_variants_by_submitter(self, submitter1_id = None, min_stars1 = 0, min_stars2 = 0,
                                                 standardized_method1 = None, standardized_method2 = None):
-        query = '''
-            SELECT
-                submitter2_id AS submitter_id,
-                submitter2_name AS submitter_name,
-                COUNT(DISTINCT variant_id) AS count
+        if submitter1_id:
+            query = 'SELECT submitter2_id AS submitter_id, submitter2_name AS submitter_name'
+        else:
+            query = 'SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name'
+
+        query += '''
+            , COUNT(DISTINCT variant_id) AS count
             FROM current_comparisons
             WHERE
                 star_level1>=:min_stars1 AND
@@ -162,7 +164,7 @@ class DB():
         if standardized_method2:
             query += ' AND standardized_method2=:standardized_method2'
 
-        query += ' GROUP BY submitter2_id ORDER BY submitter2_name'
+        query += ' GROUP BY submitter_id ORDER BY submitter_name'
 
         return list(map(
             dict,
