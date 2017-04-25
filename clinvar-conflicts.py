@@ -228,9 +228,9 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
         breakdown, submitter1_significances, submitter2_significances = get_conflict_breakdown(
             db.total_conflicting_variants_by_significance_and_significance(
                 min_stars1=int_arg('min_stars1'),
-                method1=request.args.get('method1'),
+                standardized_method1=request.args.get('method1'),
                 min_stars2=int_arg('min_stars2'),
-                method2=request.args.get('method2'),
+                standardized_method2=request.args.get('method2'),
                 standardized_terms=request.args.get('standardized_terms'),
             )
         )
@@ -242,9 +242,9 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
             submitter2_significances=submitter2_significances,
             total=db.total_variants(
                 min_stars1=int_arg('min_stars1'),
-                method1=request.args.get('method1'),
+                standardized_method1=request.args.get('method1'),
                 min_stars2=int_arg('min_stars2'),
-                method2=request.args.get('method2'),
+                standardized_method2=request.args.get('method2'),
                 min_conflict_level=1,
             ),
         )
@@ -260,9 +260,9 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
             significance1=significance1,
             significance2=significance2,
             min_stars1=int_arg('min_stars1'),
-            method1=request.args.get('method1'),
+            standardized_method1=request.args.get('method1'),
             min_stars2=int_arg('min_stars2'),
-            method2=request.args.get('method2'),
+            standardized_method2=request.args.get('method2'),
             standardized_terms=request.args.get('standardized_terms'),
         ),
     )
@@ -279,9 +279,9 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             'conflicting-variants-by-submitter-index.html',
             total_conflicting_variants_by_submitter=db.total_conflicting_variants_by_submitter(
                 min_stars1=int_arg('min_stars1'),
-                method1=request.args.get('method1'),
+                standardized_method1=request.args.get('method1'),
                 min_stars2=int_arg('min_stars2'),
-                method2=request.args.get('method2'),
+                standardized_method2=request.args.get('method2'),
             ),
         )
 
@@ -298,16 +298,16 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
         total_conflicting_variants_by_submitter = db.total_conflicting_variants_by_submitter(
             submitter1_id=submitter1_id,
             min_stars1=int_arg('min_stars1'),
-            method1=request.args.get('method1'),
+            standardized_method1=request.args.get('method1'),
             min_stars2=int_arg('min_stars2'),
-            method2=request.args.get('method2'),
+            standardized_method2=request.args.get('method2'),
         )
         total_conflicting_variants_by_submitter_and_conflict_level = db.total_conflicting_variants_by_submitter_and_conflict_level(
             submitter1_id=submitter1_id,
             min_stars1=int_arg('min_stars1'),
-            method1=request.args.get('method1'),
+            standardized_method1=request.args.get('method1'),
             min_stars2=int_arg('min_stars2'),
-            method2=request.args.get('method2'),
+            standardized_method2=request.args.get('method2'),
         )
         summary = OrderedDict()
         for row in total_conflicting_variants_by_submitter:
@@ -334,9 +334,9 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             db.total_conflicting_variants_by_significance_and_significance(
                 submitter1_id=submitter1_id,
                 min_stars1=int_arg('min_stars1'),
-                method1=request.args.get('method1'),
+                standardized_method1=request.args.get('method1'),
                 min_stars2=int_arg('min_stars2'),
-                method2=request.args.get('method2'),
+                standardized_method2=request.args.get('method2'),
                 standardized_terms=request.args.get('standardized_terms'),
             )
         )
@@ -353,9 +353,9 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             total=db.total_variants(
                 submitter1_id=submitter1_id,
                 min_stars1=int_arg('min_stars1'),
-                method1=request.args.get('method1'),
+                standardized_method1=request.args.get('method1'),
                 min_stars2=int_arg('min_stars2'),
-                method2=request.args.get('method2'),
+                standardized_method2=request.args.get('method2'),
                 min_conflict_level=1,
             ),
         )
@@ -378,9 +378,9 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
                 submitter1_id=submitter1_id,
                 submitter2_id=submitter2_id,
                 min_stars1=int_arg('min_stars1'),
-                method1=request.args.get('method1'),
+                standardized_method1=request.args.get('method1'),
                 min_stars2=int_arg('min_stars2'),
-                method2=request.args.get('method2'),
+                standardized_method2=request.args.get('method2'),
                 standardized_terms=request.args.get('standardized_terms'),
             )
         )
@@ -396,9 +396,9 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
                 submitter1_id=submitter1_id,
                 submitter2_id=submitter2_id,
                 min_stars1=int_arg('min_stars1'),
-                method1=request.args.get('method1'),
+                standardized_method1=request.args.get('method1'),
                 min_stars2=int_arg('min_stars2'),
-                method2=request.args.get('method2'),
+                standardized_method2=request.args.get('method2'),
                 min_conflict_level=1,
             ),
         )
@@ -418,9 +418,9 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             significance1=significance1,
             significance2=significance2,
             min_stars1=int_arg('min_stars1'),
-            method1=request.args.get('method1'),
+            standardized_method1=request.args.get('method1'),
             min_stars2=int_arg('min_stars2'),
-            method2=request.args.get('method2'),
+            standardized_method2=request.args.get('method2'),
         ),
     )
 
@@ -465,7 +465,7 @@ def submissions_by_variant(variant_id):
         submissions=db.submissions(
             variant_id=variant_id,
             min_stars=int_arg('min_stars1'),
-            method=request.args.get('method1'),
+            standardized_method=request.args.get('method1'),
             min_conflict_level=int_arg('min_conflict_level'),
         ),
     )
@@ -539,7 +539,7 @@ def variants_by_gene(gene = None, submitter_id = None, significance = None):
             'variants-by-gene-index.html',
             total_variants_by_gene=db.total_variants_by_gene(
                 min_stars=int_arg('min_stars1'),
-                method=request.args.get('method1'),
+                standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
             ),
         )
@@ -551,7 +551,7 @@ def variants_by_gene(gene = None, submitter_id = None, significance = None):
             db.total_variants_by_submitter_and_significance(
                 gene,
                 min_stars=int_arg('min_stars1'),
-                method=request.args.get('method1'),
+                standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
                 standardized_terms=request.args.get('standardized_terms'),
             )
@@ -566,8 +566,8 @@ def variants_by_gene(gene = None, submitter_id = None, significance = None):
                 gene=gene,
                 min_stars1=int_arg('min_stars1'),
                 min_stars2=int_arg('min_stars1'),
-                method1=request.args.get('method1'),
-                method2=request.args.get('method1'),
+                standardized_method1=request.args.get('method1'),
+                standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
             ),
         )
@@ -586,7 +586,7 @@ def variants_by_gene(gene = None, submitter_id = None, significance = None):
             submitter_id,
             significance,
             min_stars=int_arg('min_stars1'),
-            method=request.args.get('method1'),
+            standardized_method=request.args.get('method1'),
             min_conflict_level=int_arg('min_conflict_level'),
             standardized_terms=request.args.get('standardized_terms'),
         ),
@@ -604,7 +604,7 @@ def variants_by_submitter(submitter_id = None, gene = None, significance = None)
             'variants-by-submitter-index.html',
             total_variants_by_submitter=db.total_variants_by_submitter(
                 min_stars=int_arg('min_stars1'),
-                method=request.args.get('method1'),
+                standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
             ),
         )
@@ -618,7 +618,7 @@ def variants_by_submitter(submitter_id = None, gene = None, significance = None)
             db.total_variants_by_gene_and_significance(
                 submitter_id,
                 min_stars=int_arg('min_stars1'),
-                method=request.args.get('method1'),
+                standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
                 standardized_terms=request.args.get('standardized_terms'),
             )
@@ -633,8 +633,8 @@ def variants_by_submitter(submitter_id = None, gene = None, significance = None)
                 submitter1_id=submitter_id,
                 min_stars1=int_arg('min_stars1'),
                 min_stars2=int_arg('min_stars1'),
-                method1=request.args.get('method1'),
-                method2=request.args.get('method1'),
+                standardized_method1=request.args.get('method1'),
+                standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
             ),
         )
@@ -651,7 +651,7 @@ def variants_by_submitter(submitter_id = None, gene = None, significance = None)
             submitter_id,
             significance,
             min_stars=int_arg('min_stars1'),
-            method=request.args.get('method1'),
+            standardized_method=request.args.get('method1'),
             min_conflict_level=int_arg('min_conflict_level'),
         ),
     )

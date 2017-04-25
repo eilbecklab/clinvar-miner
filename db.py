@@ -30,7 +30,8 @@ class DB():
             ''')
         ))
 
-    def submissions(self, gene = None, variant_id = None, min_stars = 0, method = None, min_conflict_level = 0):
+    def submissions(self, gene = None, variant_id = None, min_stars = 0, standardized_method = None,
+                    min_conflict_level = 0):
         query = '''
             SELECT DISTINCT
                 variant_id,
@@ -59,8 +60,8 @@ class DB():
         if variant_id:
             query += ' AND variant_id=:variant_id'
 
-        if method:
-            query += ' AND standardized_method1=:method AND standardized_method2=:method'
+        if standardized_method:
+            query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
         query += ' ORDER BY submitter_name'
 
@@ -72,7 +73,7 @@ class DB():
                     'gene': gene,
                     'variant_id': variant_id,
                     'min_stars': min_stars,
-                    'method': method,
+                    'standardized_method': standardized_method,
                     'min_conflict_level': min_conflict_level,
                 }
             )
@@ -93,7 +94,7 @@ class DB():
         )[0][0]
 
     def total_conflicting_variants_by_submitter(self, submitter1_id = None, min_stars1 = 0, min_stars2 = 0,
-                                                method1 = None, method2 = None):
+                                                standardized_method1 = None, standardized_method2 = None):
         query = '''
             SELECT
                 submitter2_id AS submitter_id,
@@ -109,11 +110,11 @@ class DB():
         if submitter1_id:
             query += ' AND submitter1_id=:submitter1_id'
 
-        if method1:
-            query += ' AND standardized_method1=:method1'
+        if standardized_method1:
+            query += ' AND standardized_method1=:standardized_method1'
 
-        if method2:
-            query += ' AND standardized_method2=:method2'
+        if standardized_method2:
+            query += ' AND standardized_method2=:standardized_method2'
 
         query += ' GROUP BY submitter2_id ORDER BY submitter2_name'
 
@@ -125,14 +126,15 @@ class DB():
                     'submitter1_id': submitter1_id,
                     'min_stars1': min_stars1,
                     'min_stars2': min_stars2,
-                    'method1': method1,
-                    'method2': method2,
+                    'standardized_method1': standardized_method1,
+                    'standardized_method2': standardized_method2,
                 }
             )
         ))
 
     def total_conflicting_variants_by_submitter_and_conflict_level(self, submitter1_id, min_stars1 = 0, min_stars2 = 0,
-                                                                   method1 = None, method2 = None):
+                                                                   standardized_method1 = None,
+                                                                   standardized_method2 = None):
         query = '''
             SELECT
                 submitter2_id AS submitter_id,
@@ -147,11 +149,11 @@ class DB():
                 conflict_level>=1
         '''
 
-        if method1:
-            query += ' AND standardized_method1=:method1'
+        if standardized_method1:
+            query += ' AND standardized_method1=:standardized_method1'
 
-        if method2:
-            query += ' AND standardized_method2=:method2'
+        if standardized_method2:
+            query += ' AND standardized_method2=:standardized_method2'
 
         query += ' GROUP BY submitter2_id, conflict_level ORDER BY submitter2_name'
 
@@ -163,15 +165,17 @@ class DB():
                     'submitter1_id': submitter1_id,
                     'min_stars1': min_stars1,
                     'min_stars2': min_stars2,
-                    'method1': method1,
-                    'method2': method2,
+                    'standardized_method1': standardized_method1,
+                    'standardized_method2': standardized_method2,
                 }
             )
         ))
 
     def total_conflicting_variants_by_significance_and_significance(self, submitter1_id = None, submitter2_id = None,
-                                                                    min_stars1 = 0, min_stars2 = 0, method1 = None,
-                                                                    method2 = None, standardized_terms = False):
+                                                                    min_stars1 = 0, min_stars2 = 0,
+                                                                    standardized_method1 = None,
+                                                                    standardized_method2 = None,
+                                                                    standardized_terms = False):
         if standardized_terms:
             query = 'SELECT standardized_significance1 AS significance1, standardized_significance2 AS significance2'
         else:
@@ -187,11 +191,11 @@ class DB():
         if submitter2_id:
             query += ' AND submitter2_id=:submitter2_id'
 
-        if method1:
-            query += ' AND standardized_method1=:method1'
+        if standardized_method1:
+            query += ' AND standardized_method1=:standardized_method1'
 
-        if method2:
-            query += ' AND standardized_method2=:method2'
+        if standardized_method2:
+            query += ' AND standardized_method2=:standardized_method2'
 
         if standardized_terms:
             query += ' GROUP BY standardized_significance1, standardized_significance2'
@@ -207,8 +211,8 @@ class DB():
                     'submitter2_id': submitter2_id,
                     'min_stars1': min_stars1,
                     'min_stars2': min_stars2,
-                    'method1': method1,
-                    'method2': method2,
+                    'standardized_method1': standardized_method1,
+                    'standardized_method2': standardized_method2,
                 }
             )
         ))
@@ -293,7 +297,7 @@ class DB():
             self.cursor.execute(query, {'country': country, 'min_conflict_level': min_conflict_level})
         ))
 
-    def total_submissions_by_variant(self, gene, submitter_id, significance, min_stars = 0, method = None,
+    def total_submissions_by_variant(self, gene, submitter_id, significance, min_stars = 0, standardized_method = None,
                                      min_conflict_level = 0, standardized_terms = False):
         query = '''
             SELECT variant_id, variant_name, COUNT(DISTINCT scv1) AS count FROM current_comparisons
@@ -310,8 +314,8 @@ class DB():
         else:
             query += ' AND significance1=:significance'
 
-        if method:
-            query += ' AND standardized_method1=:method AND standardized_method2=:method'
+        if standardized_method:
+            query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
         query += ' GROUP BY variant_id ORDER BY variant_name'
 
@@ -324,14 +328,14 @@ class DB():
                     'submitter_id': submitter_id,
                     'significance': significance,
                     'min_stars': min_stars,
-                    'method': method,
+                    'standardized_method': standardized_method,
                     'min_conflict_level': min_conflict_level,
                 }
             )
         ))
 
     def total_variants(self, gene = None, submitter1_id = None, submitter2_id = None, min_stars1 = 0, min_stars2 = 0,
-                       method1 = None, method2 = None, min_conflict_level = 0):
+                       standardized_method1 = None, standardized_method2 = None, min_conflict_level = 0):
         query = '''
             SELECT COUNT(DISTINCT variant_id) FROM current_comparisons
             WHERE
@@ -349,11 +353,11 @@ class DB():
         if submitter2_id:
             query += ' AND submitter2_id=:submitter2_id'
 
-        if method1:
-            query += ' AND standardized_method1=:method1'
+        if standardized_method1:
+            query += ' AND standardized_method1=:standardized_method1'
 
-        if method2:
-            query += ' AND standardized_method2=:method2'
+        if standardized_method2:
+            query += ' AND standardized_method2=:standardized_method2'
 
         return list(
             self.cursor.execute(
@@ -364,21 +368,21 @@ class DB():
                     'submitter2_id': submitter2_id,
                     'min_stars1': min_stars1,
                     'min_stars2': min_stars2,
-                    'method1': method1,
-                    'method2': method2,
+                    'standardized_method1': standardized_method1,
+                    'standardized_method2': standardized_method2,
                     'min_conflict_level': min_conflict_level,
                 }
             )
         )[0][0]
 
-    def total_variants_by_gene(self, min_stars = 0, method = None, min_conflict_level = 0):
+    def total_variants_by_gene(self, min_stars = 0, standardized_method = None, min_conflict_level = 0):
         query = '''
             SELECT gene, COUNT(DISTINCT variant_id) AS count FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
 
-        if method:
-            query += ' AND standardized_method1=:method AND standardized_method2=:method'
+        if standardized_method:
+            query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
         query += ' GROUP BY gene ORDER BY gene'
 
@@ -388,21 +392,21 @@ class DB():
                 query,
                 {
                     'min_stars': min_stars,
-                    'method': method,
+                    'standardized_method': standardized_method,
                     'min_conflict_level': min_conflict_level,
                 }
             )
         ))
 
-    def total_variants_by_submitter(self, min_stars = 0, method = None, min_conflict_level = 0):
+    def total_variants_by_submitter(self, min_stars = 0, standardized_method = None, min_conflict_level = 0):
         query = '''
             SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name, COUNT(DISTINCT variant_id) AS count
             FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
 
-        if method:
-            query += ' AND standardized_method1=:method AND standardized_method2=:method'
+        if standardized_method:
+            query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
         query += ' GROUP BY submitter_id ORDER BY submitter_name'
 
@@ -412,13 +416,13 @@ class DB():
                 query,
                 {
                     'min_stars': min_stars,
-                    'method': method,
+                    'standardized_method': standardized_method,
                     'min_conflict_level': min_conflict_level
                 }
             )
         ))
 
-    def total_variants_by_gene_and_significance(self, submitter_id, min_stars = 0, method = None,
+    def total_variants_by_gene_and_significance(self, submitter_id, min_stars = 0, standardized_method = None,
                                                 min_conflict_level = 0, standardized_terms = False):
         query = 'SELECT gene, COUNT(DISTINCT variant_id) AS count'
 
@@ -436,8 +440,8 @@ class DB():
                 conflict_level>=:min_conflict_level
         '''
 
-        if method:
-            query += ' AND method1=:method AND method2=:method'
+        if standardized_method:
+            query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
         query += ' GROUP BY gene ORDER BY gene'
 
@@ -448,13 +452,13 @@ class DB():
                 {
                     'submitter_id': submitter_id,
                     'min_stars': min_stars,
-                    'method': method,
+                    'standardized_method': standardized_method,
                     'min_conflict_level': min_conflict_level
                 }
             )
         ))
 
-    def total_variants_by_submitter_and_significance(self, gene, min_stars = 0, method = None,
+    def total_variants_by_submitter_and_significance(self, gene, min_stars = 0, standardized_method = None,
                                                      min_conflict_level = 0, standardized_terms = False):
         query = '''
             SELECT submitter1_id AS submitter_id,
@@ -476,8 +480,8 @@ class DB():
                 conflict_level>=:min_conflict_level
         '''
 
-        if method:
-            query += ' AND method1=:method AND method2=:method'
+        if standardized_method:
+            query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
         query += ' GROUP BY submitter_id, significance ORDER BY submitter1_name'
 
@@ -488,7 +492,7 @@ class DB():
                 {
                     'gene': gene,
                     'min_stars': min_stars,
-                    'method': method,
+                    'standardized_method': standardized_method,
                     'min_conflict_level': min_conflict_level
                 }
             )
@@ -500,8 +504,8 @@ class DB():
         ))[0][0]
 
     def variants(self, submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None,
-                 min_stars1 = 0, min_stars2 = 0, method1 = None, method2 = None, min_conflict_level = 1,
-                 standardized_terms = False):
+                 min_stars1 = 0, min_stars2 = 0, standardized_method1 = None, standardized_method2 = None,
+                 min_conflict_level = 1, standardized_terms = False):
         query = '''
             SELECT DISTINCT variant_id, variant_name FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
@@ -524,11 +528,11 @@ class DB():
             if significance2:
                 query += ' AND significance2=:significance2'
 
-        if method1:
-            query += ' AND standardized_method1=:method1'
+        if standardized_method1:
+            query += ' AND standardized_method1=:standardized_method1'
 
-        if method2:
-            query += ' AND standardized_method2=:method2'
+        if standardized_method2:
+            query += ' AND standardized_method2=:standardized_method2'
 
         query += ' ORDER BY variant_name'
 
@@ -543,8 +547,8 @@ class DB():
                     'significance2': significance2,
                     'min_stars1': min_stars1,
                     'min_stars2': min_stars2,
-                    'method1': method1,
-                    'method2': method2,
+                    'standardized_method1': standardized_method1,
+                    'standardized_method2': standardized_method2,
                     'min_conflict_level': min_conflict_level,
                 }
             )
