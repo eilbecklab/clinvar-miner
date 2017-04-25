@@ -10,29 +10,31 @@
         {% include 'filter.html' %}
     {% endwith %}
     <p>Total conflicting variants: {{ total }}</p>
-    <h2>Significance breakdown</h2>
-    <table class="breakdown table table-bordered table-condensed table-striped">
-        <tr>
-            <th></th>
-            {% for significance2 in submitter2_significances %}
-                <th>{{ significance2 }}</th>
-            {% endfor %}
-        </tr>
-        {% for significance1 in submitter1_significances %}
+    {% if total %}
+        <h2>Significance breakdown</h2>
+        <table class="breakdown table table-bordered table-condensed table-striped">
             <tr>
-                <th>{{ significance1 }}</th>
+                <th></th>
                 {% for significance2 in submitter2_significances %}
-                    {% if breakdown[significance1].get(significance2, 0) > 0 %}
-                        <td class="highlight">
-                            <a href="conflicting-variants-by-significance/{{ significance1|quotepath }}/{{ significance2|quotepath }}{{ request|querysuffix }}">
-                                {{ breakdown[significance1][significance2] }}
-                            </a>
-                        </td>
-                    {% else %}
-                        <td>0</td>
-                    {% endif %}
+                    <th>{{ significance2 }}</th>
                 {% endfor %}
             </tr>
-        {% endfor %}
-    </table>
+            {% for significance1 in submitter1_significances %}
+                <tr>
+                    <th>{{ significance1 }}</th>
+                    {% for significance2 in submitter2_significances %}
+                        {% if breakdown[significance1].get(significance2, 0) > 0 %}
+                            <td class="highlight">
+                                <a href="conflicting-variants-by-significance/{{ significance1|quotepath }}/{{ significance2|quotepath }}{{ request|querysuffix }}">
+                                    {{ breakdown[significance1][significance2] }}
+                                </a>
+                            </td>
+                        {% else %}
+                            <td>0</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
 {% endblock %}
