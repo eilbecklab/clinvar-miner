@@ -6,9 +6,10 @@ function import {
     echo Downloading $url
     curl $url | gunzip > $filename 2> /dev/null
     if [ -s $filename ]; then
-        ./import-clinvar-xml.py $filename
+        if ./import-clinvar-xml.py $filename; then
+            rm $filename
+        fi
     fi
-    rm $filename
     echo
 }
 
