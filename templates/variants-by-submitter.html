@@ -1,40 +1,30 @@
 {% extends 'skin.html' %}
-{% set title = 'Variants from ' + submitter_info['name'] %}
-{% block title %}Variants from {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}{% endblock %}
+{% set title = 'Variants by submitter' %}
 {% block content %}
     {% with %}
         {% set review_status1_label = 'Minimum review status' %}
         {% set method1_label = 'Method' %}
         {% set min_conflict_level_filter = True %}
-        {% set standardized_terms_filter = True %}
         {% include 'filter.html' %}
     {% endwith %}
-    <p>Total variants: {{ total }}</p>
-    {% if total %}
-        <table class="breakdown sortable table table-bordered table-striped">
+    <p>Total submitters: {{ total_variants_by_submitter|length }}</p>
+    {% if total_variants_by_submitter %}
+        <table class="sortable table" style="width:auto">
             <thead>
                 <tr>
-                    <th>Gene</th>
-                    {% for significance in significances %}
-                        <th>{{ significance }}</th>
-                    {% endfor %}
+                    <th>Submitter</th>
+                    <th style="text-align:right">Variants</th>
                 </tr>
             </thead>
             <tbody>
-                {% for gene in breakdown %}
+                {% for row in total_variants_by_submitter %}
                     <tr>
-                        <th>{{ gene }}</th>
-                        {% for significance in significances %}
-                            {% if breakdown[gene][significance] %}
-                                <td class="highlight">
-                                    <a href="variants-by-submitter/{{ submitter_info['id'] }}/{{ gene }}/{{ significance|quotepath }}{{ request|querysuffix }}">
-                                        {{ breakdown[gene][significance] }}
-                                    </a>
-                                </td>
-                            {% else %}
-                                <td>0</td>
-                            {% endif %}
-                        {% endfor %}
+                        <td>
+                            <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ request|querysuffix }}">
+                                {{ row['submitter_name'] }}
+                            </a>
+                        </td>
+                        <td style="text-align:right">{{ row['count'] }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

@@ -1,0 +1,20 @@
+{% extends 'skin.html' %}
+{% set title = 'Total submissions from ' + country %}
+{% block content %}
+    <table class="sortable table" style="width:auto">
+        <thead>
+            <tr>
+                <th>Submitter</th>
+                <th>Submissions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in total_submissions_by_submitter %}
+                <tr>
+                    <td>{{ submitter_link(row['submitter_id'], row['submitter_name'])|safe }}</td>
+                    <td>{{ row['count'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

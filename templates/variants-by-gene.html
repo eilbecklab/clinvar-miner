@@ -1,39 +1,30 @@
 {% extends 'skin.html' %}
-{% set title = 'Variants in gene "' + gene + '"' %}
+{% set title = 'Variants by gene' %}
 {% block content %}
     {% with %}
         {% set review_status1_label = 'Minimum review status' %}
         {% set method1_label = 'Method' %}
         {% set min_conflict_level_filter = True %}
-        {% set standardized_terms_filter = True %}
         {% include 'filter.html' %}
     {% endwith %}
-    <p>Total variants: {{ total }}</p>
-    {% if total %}
-        <table class="breakdown sortable table table-bordered table-striped">
+    <p>Total genes: {{ total_variants_by_gene|length }}</p>
+    {% if total_variants_by_gene %}
+        <table class="sortable table" style="width:auto">
             <thead>
                 <tr>
-                    <th>Submitter</th>
-                    {% for significance in significances %}
-                        <th>{{ significance }}</th>
-                    {% endfor %}
+                    <th>Gene</th>
+                    <th style="text-align:right">Variants</th>
                 </tr>
             </thead>
             <tbody>
-                {% for submitter_id in breakdown %}
+                {% for row in total_variants_by_gene %}
                     <tr>
-                        <th>{{ submitter_link(submitter_id, breakdown[submitter_id]['name'])|safe }}</th>
-                        {% for significance in significances %}
-                            {% if breakdown[submitter_id]['counts'][significance] %}
-                                <td class="highlight">
-                                    <a href="variants-by-gene/{{ gene|quotepath }}/{{ submitter_id }}/{{ significance|quotepath }}{{ request|querysuffix }}">
-                                        {{ breakdown[submitter_id]['counts'][significance] }}
-                                    </a>
-                                </td>
-                            {% else %}
-                                <td>0</td>
-                            {% endif %}
-                        {% endfor %}
+                        <td>
+                            <a href="variants-by-gene/{{ row['gene']|quotepath }}{{ request|querysuffix }}">
+                                {{ row['gene']|orspace }}
+                            </a>
+                        </td>
+                        <td style="text-align:right">{{ row['count'] }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

@@ -1,17 +1,58 @@
 {% extends 'skin.html' %}
-{% set title = 'Total submissions from ' + country %}
+{% set title = 'Total submissions by country' %}
+{% block head %}
+    <script src="static/d3-scale-chromatic.js" type="application/javascript"></script>
+    <script src="static/topojson.v2.js" type="application/javascript"></script>
+{% endblock %}
 {% block content %}
+    <svg id="map"></svg>
+    <div id="unplaceable-warning" style="margin-bottom:2em"></div>
+    <script type="application/javascript">
+        var width = '100%', height = 500;
+        var data = {{ total_submissions_by_country|tojson }};
+        var totals = {};
+        data.forEach((d) => {
+            country_code = d.hasOwnProperty('country_code') ? d.country_code : '';
+            if (!totals.hasOwnProperty(country_code))
+                totals[country_code] = 0;
+            totals[country_code] += d.count;
+        });
+
+        var projection = d3.geoEquirectangular();
+        var path = d3.geoPath().projection(projection);
+        var color = d3.scaleSequential(d3.interpolateBlues)
+            .domain([0, 5])
+        var svg = d3.select('#map')
+            .attr('width', width)
+            .attr('height', height);
+
+        d3.json('static/countries.json', function(error, countries) {
+            svg.selectAll('path')
+                .data(topojson.feature(countries, countries.objects.units).features)
+                .enter()
+                .append('path')
+                .attr('d', path)
+                .attr('fill', function(d) { return color(totals[d.id] ? Math.log10(totals[d.id]) : 0); });
+        });
+
+        var unplaceableWarning = totals[''] + ' submissions could not be placed on the choropleth.'
+        document.getElementById('unplaceable-warning').textContent = unplaceableWarning;
+    </script>
     <table class="sortable table" style="width:auto">
         <thead>
             <tr>
-                <th>Submitter</th>
+                <th>Country</th>
                 <th>Submissions</th>
             </tr>
         </thead>
         <tbody>
-            {% for row in total_submissions_by_submitter %}
+            {% for row in total_submissions_by_country %}
                 <tr>
-                    <td>{{ submitter_link(row['submitter_id'], row['submitter_name'])|safe }}</td>
+                    <td>
+                        <a href="total-submissions-by-country/{{ row['country']|quotepath }}">
+                            {{ row['country']|orspace }}
+                        </a>
+                    </td>
                     <td>{{ row['count'] }}</td>
                 </tr>
             {% endfor %}

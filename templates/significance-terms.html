@@ -1,16 +1,62 @@
 {% extends 'skin.html' %}
-{% set title = 'Submitters of ' + term + ' variants' %}
+{% set title = 'Significance terms' %}
+{% block head %}
+    <script src="static/line-graph.js" type="application/javascript"></script>
+    <link href="static/line-graph.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
 {% block content %}
-    <table class="table table-bordered table-striped">
-        <tr>
-            <th>Submitter</th>
-            <th>Submissions</th>
-        </tr>
-        {% for row in total_significance_terms %}
+    <p>The following graph shows the number of distinct terms from SCVs (not RCVs) over time.</p>
+    <svg id="graph"></svg>
+    <script type="application/javascript">
+        var data = {{ total_significance_terms_over_time|tojson }};
+        var parseTime = d3.timeParse("%Y-%m");
+        data = data.map(function(d) {
+            return {
+                x: parseTime(d.date),
+                y: d.count,
+                serie: 'terms',
+            }
+        });
+        lineGraph(data, 'Terms', 10);
+    </script>
+    <p>All terms in the following table are from SCVs (not RCVs) in the current ClinVar.</p>
+    <table class="sortable table">
+        <thead>
             <tr>
-                <td>{{ submitter_link(row['submitter_id'], row['submitter_name'])|safe }}</td>
-                <td>{{ row['count'] }}</td>
+                <th>Significance term</th>
+                <th>First seen</th>
             </tr>
-        {% endfor %}
+        </thead>
+        <tbody>
+            {% for row in significance_term_info %}
+                <tr>
+                    <td>
+                        <a href="significance-terms/{{ row['significance']|quotepath }}" style="display:block">
+                            {{ row['significance']|orspace }}
+                        </a>
+                    </td>
+                    <td>{{ row['first_seen'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p>The following terms were in SCVs in old versions of ClinVar, but are not currently used.</p>
+    <table class="sortable table">
+        <thead>
+            <tr>
+                <th>Significance term</th>
+                <th>First seen</th>
+                <th>Last seen</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in old_significance_term_info %}
+                <tr>
+                    <td>{{ row['significance'] }}</td>
+                    <td>{{ row['first_seen'] }}</td>
+                    <td>{{ row['last_seen'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
     </table>
 {% endblock %}

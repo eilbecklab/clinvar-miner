@@ -253,7 +253,7 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
     significance2 = significance2.replace('%2F', '/')
 
     return render_template(
-        'conflicting-variants-by-significance-2significances.html',
+        'conflicting-variants-by-significance--2significances.html',
         significance1=significance1,
         significance2=significance2,
         variants=db.variants(
@@ -276,7 +276,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
 
     if submitter1_id == None:
         return render_template(
-            'conflicting-variants-by-submitter-index.html',
+            'conflicting-variants-by-submitter.html',
             total_conflicting_variants_by_submitter=db.total_conflicting_variants_by_submitter(
                 min_stars1=int_arg('min_stars1'),
                 standardized_method1=request.args.get('method1'),
@@ -342,7 +342,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
         )
 
         return render_template(
-            'conflicting-variants-by-submitter-1submitter.html',
+            'conflicting-variants-by-submitter--1submitter.html',
             submitter1_info=submitter1_info,
             submitter2_info={'id': 0, 'name': 'All submitters'},
             submitter_primary_method=db.submitter_primary_method(submitter1_id),
@@ -386,7 +386,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
         )
 
         return render_template(
-            'conflicting-variants-by-submitter-2submitters.html',
+            'conflicting-variants-by-submitter--2submitters.html',
             submitter1_info=submitter1_info,
             submitter2_info=submitter2_info,
             breakdown=breakdown,
@@ -407,7 +407,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
     significance2 = significance2.replace('%2F', '/')
 
     return render_template(
-        'conflicting-variants-by-submitter-2significances.html',
+        'conflicting-variants-by-submitter--2significances.html',
         submitter1_info=submitter1_info,
         submitter2_info=submitter2_info,
         significance1=significance1,
@@ -440,7 +440,7 @@ def significance_terms(term = None):
 
     if term == None:
         return render_template(
-            'significance-terms-index.html',
+            'significance-terms.html',
             total_significance_terms_over_time=db.total_significance_terms_over_time(),
             significance_term_info=db.significance_term_info(),
             old_significance_term_info=db.old_significance_term_info(),
@@ -449,7 +449,7 @@ def significance_terms(term = None):
     term = term.replace('%2F', '/')
 
     return render_template(
-        'significance-terms.html',
+        'significance-terms--term.html',
         term=term,
         total_significance_terms=db.total_significance_terms(term),
     )
@@ -478,14 +478,14 @@ def total_submissions_by_country(country = None):
 
     if country == None:
         return render_template(
-            'total-submissions-by-country-index.html',
+            'total-submissions-by-country.html',
             total_submissions_by_country=db.total_submissions_by_country(),
         )
 
     country = country.replace('%2F', '/')
 
     return render_template(
-        'total-submissions-by-country.html',
+        'total-submissions-by-country--country.html',
         country=country,
         total_submissions_by_submitter=db.total_submissions_by_submitter(country=country),
     )
@@ -536,7 +536,7 @@ def variants_by_gene(gene = None, submitter_id = None, significance = None):
 
     if gene == None:
         return render_template(
-            'variants-by-gene-index.html',
+            'variants-by-gene.html',
             total_variants_by_gene=db.total_variants_by_gene(
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
@@ -558,7 +558,7 @@ def variants_by_gene(gene = None, submitter_id = None, significance = None):
         )
 
         return render_template(
-            'variants-by-gene.html',
+            'variants-by-gene--gene.html',
             gene=gene,
             breakdown=breakdown,
             significances=significances,
@@ -601,7 +601,7 @@ def variants_by_submitter(submitter_id = None, gene = None, significance = None)
 
     if submitter_id == None:
         return render_template(
-            'variants-by-submitter-index.html',
+            'variants-by-submitter.html',
             total_variants_by_submitter=db.total_variants_by_submitter(
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
@@ -625,7 +625,7 @@ def variants_by_submitter(submitter_id = None, gene = None, significance = None)
         )
 
         return render_template(
-            'variants-by-submitter.html',
+            'variants-by-submitter--submitter.html',
             submitter_info=submitter_info,
             breakdown=breakdown,
             significances=significances,
