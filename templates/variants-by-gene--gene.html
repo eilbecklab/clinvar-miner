@@ -1,5 +1,9 @@
 {% extends 'skin.html' %}
-{% set title = 'Variants in gene "' + gene + '"' %}
+{% if gene %}
+    {% set title = 'Variants in gene ' + gene %}
+{% else %}
+    {% set title = 'Intergenic variants' %}
+{% endif %}
 {% block content %}
     {% with %}
         {% set review_status1_label = 'Minimum review status' %}
@@ -26,7 +30,7 @@
                         {% for significance in significances %}
                             {% if breakdown[submitter_id]['counts'][significance] %}
                                 <td class="highlight">
-                                    <a href="variants-by-gene/{{ gene|quotepath }}/{{ submitter_id }}/{{ significance|quotepath }}{{ request|querysuffix }}">
+                                    <a href="variants-by-gene/{{ gene|quotepath|orintergenic }}/{{ submitter_id }}/{{ significance|quotepath }}{{ request|querysuffix }}">
                                         {{ breakdown[submitter_id]['counts'][significance] }}
                                     </a>
                                 </td>

@@ -151,6 +151,10 @@ def quote_path(path):
 def rcv_link(rcv):
     return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/' + rcv + '/">' + rcv + '</a>'
 
+@app.template_filter('orintergenic')
+def string_or_space(path):
+    return path if path else 'intergenic'
+
 @app.template_filter('orspace')
 def string_or_space(path):
     return path if path else '\u200B'
@@ -530,7 +534,6 @@ def total_submissions_by_method():
 @app.route('/variants-by-gene')
 @app.route('/variants-by-gene/', defaults={'gene': ''})
 @app.route('/variants-by-gene/<gene>')
-@app.route('/variants-by-gene//<submitter_id>/<significance>', defaults={'gene': ''})
 @app.route('/variants-by-gene/<gene>/<submitter_id>/<significance>')
 def variants_by_gene(gene = None, submitter_id = None, significance = None):
     db = DB()
@@ -545,7 +548,7 @@ def variants_by_gene(gene = None, submitter_id = None, significance = None):
             ),
         )
 
-    gene = gene.replace('%2F', '/')
+    gene = '' if gene == 'intergenic' else gene.replace('%2F', '/')
 
     if submitter_id == None:
         breakdown, significances = get_breakdown_by_submitter_and_significance(
@@ -595,7 +598,6 @@ def variants_by_gene(gene = None, submitter_id = None, significance = None):
 
 @app.route('/variants-by-submitter')
 @app.route('/variants-by-submitter/<submitter_id>')
-@app.route('/variants-by-submitter/<submitter_id>//<significance>', defaults={'gene': ''})
 @app.route('/variants-by-submitter/<submitter_id>/<gene>/<significance>')
 def variants_by_submitter(submitter_id = None, gene = None, significance = None):
     db = DB()
@@ -640,7 +642,7 @@ def variants_by_submitter(submitter_id = None, gene = None, significance = None)
             ),
         )
 
-    gene = gene.replace('%2F', '/')
+    gene = '' if gene == 'intergenic' else gene.replace('%2F', '/')
 
     return render_template(
         'variants-by-gene-submitter-significance.html',

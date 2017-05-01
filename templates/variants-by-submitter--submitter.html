@@ -27,7 +27,7 @@
                         {% for significance in significances %}
                             {% if breakdown[gene][significance] %}
                                 <td class="highlight">
-                                    <a href="variants-by-submitter/{{ submitter_info['id'] }}/{{ gene }}/{{ significance|quotepath }}{{ request|querysuffix }}">
+                                    <a href="variants-by-submitter/{{ submitter_info['id'] }}/{{ gene|quotepath|orintergenic }}/{{ significance|quotepath }}{{ request|querysuffix }}">
                                         {{ breakdown[gene][significance] }}
                                     </a>
                                 </td>

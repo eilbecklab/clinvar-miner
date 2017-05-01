@@ -1,8 +1,17 @@
 {% extends 'skin.html' %}
-{% set title = 'Variants in gene "' + gene + '" reported as ' + significance + ' by ' + submitter_info['name'] %}
+{% if gene %}
+    {% set title = 'Variants in gene ' + gene + ' reported as ' + significance + ' by ' + submitter_info['name'] %}
+{% else %}
+    {% set title = 'Intergenic variants reported as ' + significance + ' by ' + submitter_info['name'] %}
+{% endif %}
 {% block title %}
-    Variants in gene "{{ gene }}" reported as {{ significance }} by
-    {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+    {% if gene %}
+        Variants in gene {{ gene }} reported as {{ significance }} by
+        {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+    {% else %}
+        Intergenic variants reported as {{ significance }} by
+        {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+    {% endif %}
 {% endblock %}
 {% block content %}
     {% with %}

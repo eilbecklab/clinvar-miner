@@ -20,7 +20,7 @@
                 {% for row in total_variants_by_gene %}
                     <tr>
                         <td>
-                            <a href="variants-by-gene/{{ row['gene']|quotepath }}{{ request|querysuffix }}">
+                            <a href="variants-by-gene/{{ row['gene']|quotepath|orintergenic }}{{ request|querysuffix }}">
                                 {{ row['gene']|orspace }}
                             </a>
                         </td>
