@@ -421,6 +421,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             standardized_method1=request.args.get('method1'),
             min_stars2=int_arg('min_stars2'),
             standardized_method2=request.args.get('method2'),
+            standardized_terms=request.args.get('standardized_terms'),
         ),
     )
 
