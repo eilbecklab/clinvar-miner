@@ -159,6 +159,12 @@ def import_file(filename):
         measure_el = measure_set_el.find('./Measure')
         gene_el = measure_el.find('./MeasureRelationship/Symbol/ElementValue[@Type="Preferred"]')
 
+        variant_id = int(measure_set_el.attrib['ID'])
+        variant_name = variant_name_el.text if variant_name_el != None else '' #missing in old versions
+        variant_type = measure_el.attrib['Type']
+        gene = gene_el.text if gene_el != None else ''
+        rcv = reference_assertion_el.find('./ClinVarAccession[@Type="RCV"]').attrib['Acc']
+
         for assertion_el in set_el.findall('./ClinVarAssertion'):
             scv_el = assertion_el.find('./ClinVarAccession[@Type="SCV"]')
             scv = scv_el.attrib['Acc']
@@ -173,13 +179,8 @@ def import_file(filename):
             method_el = assertion_el.find('./ObservedIn/Method/MethodType')
             comment_el = significance_el.find('./Comment')
 
-            variant_id = int(measure_set_el.attrib['ID'])
-            variant_name = variant_name_el.text if variant_name_el != None else '' #missing in old versions
-            variant_type = measure_el.attrib['Type']
-            gene = gene_el.text if gene_el != None else ''
             submitter_id = int(scv_el.attrib['OrgID']) if scv_el.attrib.get('OrgID') else 0 #missing in old versions
             submitter_name = submission_id_el.get('submitter', '') if submission_id_el != None else '' #missing in old versions
-            rcv = reference_assertion_el.find('./ClinVarAccession[@Type="RCV"]').attrib['Acc']
             significance = description_el.text.lower() if description_el != None else 'not provided'
             standardized_significance = nonstandard_significance_term_map.get(significance, significance)
             last_eval = significance_el.attrib.get('DateLastEvaluated', '') #missing in old versions
