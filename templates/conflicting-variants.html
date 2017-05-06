@@ -14,11 +14,11 @@
                 </tr>
             </thead>
             <tbody>
-                {% for row in variants %}
+                {% for variant in variants %}
                     <tr>
                         <td>
-                            <a href="submissions-by-variant/{{ row['variant_id'] }}">
-                                {{ row['variant_name'] }}
+                            <a href="submissions-by-variant/{{ variant|quotepath }}">
+                                {{ variant }}
                             </a>
                         </td>
                     </tr>

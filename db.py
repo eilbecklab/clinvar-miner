@@ -30,11 +30,10 @@ class DB():
             ''')
         ))
 
-    def submissions(self, gene = None, variant_id = None, min_stars = 0, standardized_method = None,
+    def submissions(self, gene = None, variant_name = None, min_stars = 0, standardized_method = None,
                     min_conflict_level = 0):
         query = '''
             SELECT DISTINCT
-                variant_id,
                 variant_name,
                 gene,
                 submitter1_id AS submitter_id,
@@ -56,8 +55,8 @@ class DB():
         if gene:
             query += ' AND gene=:gene'
 
-        if variant_id:
-            query += ' AND variant_id=:variant_id'
+        if variant_name:
+            query += ' AND variant_name=:variant_name'
 
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
@@ -70,7 +69,7 @@ class DB():
                 query,
                 {
                     'gene': gene,
-                    'variant_id': variant_id,
+                    'variant_name': variant_name,
                     'min_stars': min_stars,
                     'standardized_method': standardized_method,
                     'min_conflict_level': min_conflict_level,
@@ -102,7 +101,7 @@ class DB():
         else:
             query = 'SELECT significance1, significance2'
 
-        query += ', COUNT(DISTINCT variant_id) AS count FROM current_comparisons'
+        query += ', COUNT(DISTINCT variant_name) AS count FROM current_comparisons'
 
         query += ' WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=1'
 
@@ -146,7 +145,7 @@ class DB():
             query = 'SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name'
 
         query += '''
-            , COUNT(DISTINCT variant_id) AS count
+            , COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
             WHERE
                 star_level1>=:min_stars1 AND
@@ -187,7 +186,7 @@ class DB():
                 submitter2_id AS submitter_id,
                 submitter2_name AS submitter_name,
                 conflict_level,
-                COUNT(DISTINCT variant_id) AS count
+                COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
             WHERE
                 submitter1_id=:submitter1_id AND
@@ -301,7 +300,7 @@ class DB():
     def total_submissions_by_variant(self, gene, submitter_id, significance, min_stars = 0, standardized_method = None,
                                      min_conflict_level = 0, standardized_terms = False):
         query = '''
-            SELECT variant_id, variant_name, COUNT(DISTINCT scv1) AS count FROM current_comparisons
+            SELECT variant_name, COUNT(DISTINCT scv1) AS count FROM current_comparisons
             WHERE
                 gene=:gene AND
                 submitter1_id=:submitter_id AND
@@ -318,7 +317,7 @@ class DB():
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
-        query += ' GROUP BY variant_id ORDER BY variant_name'
+        query += ' GROUP BY variant_name ORDER BY variant_name'
 
         return list(map(
             dict,
@@ -338,7 +337,7 @@ class DB():
     def total_variants(self, gene = None, submitter1_id = None, submitter2_id = None, min_stars1 = 0, min_stars2 = 0,
                        standardized_method1 = None, standardized_method2 = None, min_conflict_level = 0):
         query = '''
-            SELECT COUNT(DISTINCT variant_id) FROM current_comparisons
+            SELECT COUNT(DISTINCT variant_name) FROM current_comparisons
             WHERE
                 star_level1>=:min_stars1 AND
                 star_level2>=:min_stars2 AND
@@ -378,7 +377,7 @@ class DB():
 
     def total_variants_by_gene(self, min_stars = 0, standardized_method = None, min_conflict_level = 0):
         query = '''
-            SELECT gene, COUNT(DISTINCT variant_id) AS count FROM current_comparisons
+            SELECT gene, COUNT(DISTINCT variant_name) AS count FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
 
@@ -401,7 +400,7 @@ class DB():
 
     def total_variants_by_gene_and_significance(self, submitter_id, min_stars = 0, standardized_method = None,
                                                 min_conflict_level = 0, standardized_terms = False):
-        query = 'SELECT gene, COUNT(DISTINCT variant_id) AS count'
+        query = 'SELECT gene, COUNT(DISTINCT variant_name) AS count'
 
         if standardized_terms:
             query += ', standardized_significance1 AS significance'
@@ -437,7 +436,7 @@ class DB():
 
     def total_variants_by_submitter(self, min_stars = 0, standardized_method = None, min_conflict_level = 0):
         query = '''
-            SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name, COUNT(DISTINCT variant_id) AS count
+            SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name, COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
@@ -464,7 +463,7 @@ class DB():
         query = '''
             SELECT submitter1_id AS submitter_id,
             submitter1_name AS submitter_name,
-            COUNT(DISTINCT variant_id) AS count
+            COUNT(DISTINCT variant_name) AS count
         '''
 
         if standardized_terms:
@@ -499,16 +498,16 @@ class DB():
             )
         ))
 
-    def variant_name(self, variant_id):
+    def variant_id(self, variant_name):
         return list(self.cursor.execute(
-            'SELECT variant_name FROM current_submissions WHERE variant_id=?', [variant_id]
+            'SELECT variant_id FROM current_submissions WHERE variant_name=?', [variant_name]
         ))[0][0]
 
     def variants(self, submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None,
                  min_stars1 = 0, min_stars2 = 0, standardized_method1 = None, standardized_method2 = None,
                  min_conflict_level = 1, standardized_terms = False):
         query = '''
-            SELECT DISTINCT variant_id, variant_name FROM current_comparisons
+            SELECT DISTINCT variant_name FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
@@ -538,7 +537,7 @@ class DB():
         query += ' ORDER BY variant_name'
 
         return list(map(
-            dict,
+            lambda row: row[0],
             self.cursor.execute(
                 query,
                 {

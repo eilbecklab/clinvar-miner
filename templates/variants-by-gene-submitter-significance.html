@@ -35,7 +35,7 @@
                 {% for row in total_submissions_by_variant %}
                     <tr>
                         <td>
-                            <a href="submissions-by-variant/{{ row['variant_id'] }}">{{ row['variant_name'] }}</a>
+                            <a href="submissions-by-variant/{{ row['variant_name']|quotepath }}">{{ row['variant_name'] }}</a>
                         </td>
                         <td style="text-align:right">{{ row['count'] }}</td>
                     </tr>

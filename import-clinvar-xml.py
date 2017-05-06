@@ -112,14 +112,13 @@ def create_tables():
     ''')
 
     cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON submissions (date)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS variant_id_index ON submissions (variant_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS variant_name_index ON submissions (variant_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_id_index ON submissions (submitter_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_name_index ON submissions (submitter_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS significance_index ON submissions (significance)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method_index ON submissions (standardized_method)')
 
     cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON comparisons (date)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS variant_id_index ON comparisons (variant_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS variant_name_index ON comparisons (variant_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS gene_index ON comparisons (gene)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter1_id_index ON comparisons (submitter1_id)')
@@ -152,15 +151,23 @@ def import_file(filename):
             continue
 
         reference_assertion_el = set_el.find('./ReferenceClinVarAssertion')
-        measure_set_el = reference_assertion_el.find('./MeasureSet')
-        variant_name_el = measure_set_el.find('./Name/ElementValue[@Type="Preferred"]')
-        measure_el = measure_set_el.find('./Measure')
-        gene_el = measure_el.find('./MeasureRelationship/Symbol/ElementValue[@Type="Preferred"]')
-
-        variant_id = int(measure_set_el.attrib['ID'])
-        variant_name = variant_name_el.text if variant_name_el != None else '' #missing in old versions
-        gene = gene_el.text if gene_el != None else ''
         rcv = reference_assertion_el.find('./ClinVarAccession[@Type="RCV"]').attrib['Acc']
+
+        measure_set_el = reference_assertion_el.find('./MeasureSet')
+        genotype_set_el = reference_assertion_el.find('./GenotypeSet')
+
+        if genotype_set_el != None:
+            variant_id = 0
+            variant_name = set_el.find('./Title').text.partition(' AND ')[0]
+            measure_el = genotype_set_el.find('./MeasureSet/Measure')
+        else:
+            variant_name_el = measure_set_el.find('./Name/ElementValue[@Type="Preferred"]')
+            variant_id = int(measure_set_el.attrib['ID'])
+            variant_name = variant_name_el.text if variant_name_el != None else '' #missing in old versions
+            measure_el = measure_set_el.find('./Measure')
+
+        gene_el = measure_el.find('./MeasureRelationship/Symbol/ElementValue[@Type="Preferred"]')
+        gene = gene_el.text if gene_el != None else ''
 
         for assertion_el in set_el.findall('./ClinVarAssertion'):
             scv_el = assertion_el.find('./ClinVarAccession[@Type="SCV"]')
@@ -271,7 +278,7 @@ def import_file(filename):
                 ELSE 0
             END AS conflict_level
         FROM submissions t1 INNER JOIN submissions t2
-        ON t1.date=? AND t1.date=t2.date AND t1.variant_id=t2.variant_id
+        ON t1.date=? AND t1.date=t2.date AND t1.variant_name=t2.variant_name
     ''', [date])
 
     db.commit()

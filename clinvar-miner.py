@@ -194,6 +194,8 @@ def template_functions():
             return trait_name
 
     def variant_link(variant_id, variant_name):
+        if variant_id == 0:
+            return variant_name
         return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + str(variant_id) + '/">' + break_punctuation(variant_name) + '</a>'
 
     return {
@@ -459,16 +461,18 @@ def significance_terms(term = None):
         total_significance_terms=db.total_significance_terms(term),
     )
 
-@app.route('/submissions-by-variant/<variant_id>')
-def submissions_by_variant(variant_id):
+@app.route('/submissions-by-variant/<variant_name>')
+def submissions_by_variant(variant_name):
     db = DB()
+
+    variant_name = variant_name.replace('%2F', '/')
 
     return render_template(
         'submissions-by-variant.html',
-        variant_name=db.variant_name(variant_id),
-        variant_id=variant_id,
+        variant_name=variant_name,
+        variant_id=db.variant_id(variant_name),
         submissions=db.submissions(
-            variant_id=variant_id,
+            variant_name=variant_name,
             min_stars=int_arg('min_stars1'),
             standardized_method=request.args.get('method1'),
             min_conflict_level=int_arg('min_conflict_level'),
