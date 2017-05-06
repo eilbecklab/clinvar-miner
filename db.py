@@ -48,7 +48,7 @@ class DB():
                 trait1_id AS trait_id,
                 trait1_name AS trait_name,
                 method1 AS method,
-                description1 AS description
+                comment1 AS comment
             FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''

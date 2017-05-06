@@ -51,7 +51,7 @@ def create_tables():
             trait_name TEXT,
             method TEXT,
             standardized_method TEXT,
-            description TEXT,
+            comment TEXT,
             PRIMARY KEY (date, scv)
         )
     ''')
@@ -76,7 +76,7 @@ def create_tables():
             trait1_name TEXT,
             method1 TEXT,
             standardized_method1 TEXT,
-            description1 TEXT,
+            comment1 TEXT,
             submitter2_id INTEGER,
             submitter2_name TEXT,
             rcv2 TEXT,
@@ -91,7 +91,7 @@ def create_tables():
             trait2_name TEXT,
             method2 TEXT,
             standardized_method2 TEXT,
-            description2 TEXT,
+            comment2 TEXT,
             conflict_level INTEGER,
             PRIMARY KEY (date, scv1, scv2)
         )
@@ -187,7 +187,7 @@ def import_file(filename):
             trait_name = trait_name_el.text if trait_name_el != None else ''
             method = method_el.text if method_el != None else 'not provided' #missing in old versions
             standardized_method = method if method in standard_methods else 'other'
-            description = comment_el.text if comment_el != None else ''
+            comment = comment_el.text if comment_el != None else ''
 
             if review_status in ['criteria provided, single submitter', 'criteria provided, conflicting interpretations']:
                 star_level = 1
@@ -219,7 +219,7 @@ def import_file(filename):
                 trait_name,
                 method,
                 standardized_method,
-                description,
+                comment,
             ))
 
         set_el.clear() #conserve memory
@@ -251,7 +251,7 @@ def import_file(filename):
             t2.trait_name,
             t2.method,
             t2.standardized_method,
-            t2.description,
+            t2.comment,
             CASE
                 WHEN t1.standardized_significance=t2.standardized_significance AND t1.significance!=t2.significance THEN 1
 
