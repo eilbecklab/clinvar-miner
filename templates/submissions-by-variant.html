@@ -27,6 +27,7 @@
                     <th>Last evaluated</th>
                     <th>Review status</th>
                     <th>Method</th>
+                    <th>Comment</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,6 +41,7 @@
                         <td>{{ submission['last_eval']|date }}</td>
                         <td>{{ submission['review_status'] }}</td>
                         <td>{{ submission['method'] }}</td>
+                        <td>{{ submission['comment'] }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
