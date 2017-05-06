@@ -159,15 +159,18 @@ def import_file(filename):
         if genotype_set_el != None:
             variant_id = 0
             variant_name = set_el.find('./Title').text.partition(' AND ')[0]
-            measure_el = genotype_set_el.find('./MeasureSet/Measure')
+            measure_els = genotype_set_el.findall('./MeasureSet/Measure')
         else:
             variant_name_el = measure_set_el.find('./Name/ElementValue[@Type="Preferred"]')
             variant_id = int(measure_set_el.attrib['ID'])
             variant_name = variant_name_el.text if variant_name_el != None else '' #missing in old versions
-            measure_el = measure_set_el.find('./Measure')
+            measure_els = measure_set_el.findall('./Measure')
 
-        gene_el = measure_el.find('./MeasureRelationship/Symbol/ElementValue[@Type="Preferred"]')
-        gene = gene_el.text if gene_el != None else ''
+        if len(measure_els) == 1:
+            gene_el = measure_els[0].find('./MeasureRelationship/Symbol/ElementValue[@Type="Preferred"]')
+            gene = gene_el.text if gene_el != None else ''
+        else:
+            gene = ''
 
         for assertion_el in set_el.findall('./ClinVarAssertion'):
             scv_el = assertion_el.find('./ClinVarAccession[@Type="SCV"]')
