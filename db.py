@@ -36,7 +36,6 @@ class DB():
             SELECT DISTINCT
                 variant_id,
                 variant_name,
-                variant_type,
                 gene,
                 submitter1_id AS submitter_id,
                 submitter1_name AS submitter_name,

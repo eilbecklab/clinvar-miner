@@ -36,7 +36,6 @@ def create_tables():
             date TEXT,
             variant_id INTEGER,
             variant_name TEXT,
-            variant_type TEXT,
             gene TEXT,
             submitter_id INTEGER,
             submitter_name TEXT,
@@ -62,7 +61,6 @@ def create_tables():
             date TEXT,
             variant_id TEXT,
             variant_name TEXT,
-            variant_type TEXT,
             gene TEXT,
             submitter1_id INTEGER,
             submitter1_name TEXT,
@@ -161,7 +159,6 @@ def import_file(filename):
 
         variant_id = int(measure_set_el.attrib['ID'])
         variant_name = variant_name_el.text if variant_name_el != None else '' #missing in old versions
-        variant_type = measure_el.attrib['Type']
         gene = gene_el.text if gene_el != None else ''
         rcv = reference_assertion_el.find('./ClinVarAccession[@Type="RCV"]').attrib['Acc']
 
@@ -207,7 +204,6 @@ def import_file(filename):
                 date,
                 variant_id,
                 variant_name,
-                variant_type,
                 gene,
                 submitter_id,
                 submitter_name,
