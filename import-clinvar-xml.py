@@ -123,6 +123,7 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS gene_index ON comparisons (gene)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter1_id_index ON comparisons (submitter1_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter2_id_index ON comparisons (submitter2_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submitter1_name_index ON comparisons (submitter1_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter2_name_index ON comparisons (submitter2_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS significance1_index ON comparisons (significance1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS significance2_index ON comparisons (significance2)')
