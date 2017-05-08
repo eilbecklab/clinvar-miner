@@ -7,8 +7,17 @@
     background-color: lightblue !important;
 }
 
-.breakdown a, .summary a, .sortable a {
+.breakdown a:not(.external), .summary a:not(.external), .sortable a:not(.external) {
     display: block;
+}
+
+.external {
+    /* adapted from https://commons.wikimedia.org/wiki/File:Icon_External_Link.svg */
+    background-image: url(external-link.svg);
+    background-position: center right;
+    background-repeat: no-repeat;
+    background-size: 1.1em 1.1em;
+    padding-right: 1.1em;
 }
 
 .highlight {

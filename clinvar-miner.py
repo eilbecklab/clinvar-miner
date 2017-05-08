@@ -149,7 +149,7 @@ def quote_path(path):
 
 @app.template_filter('rcvlink')
 def rcv_link(rcv):
-    return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/' + rcv + '/">' + rcv + '</a>'
+    return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/' + rcv + '/">' + rcv + '</a>'
 
 @app.template_filter('orintergenic')
 def string_or_space(path):
@@ -164,7 +164,7 @@ def template_functions():
     def submitter_link(submitter_id, submitter_name):
         if submitter_id == 0:
             return submitter_name
-        return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + str(submitter_id) + '/">' + break_punctuation(submitter_name) + '</a>'
+        return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + str(submitter_id) + '/">' + break_punctuation(submitter_name) + '</a>'
 
     def trait_link(trait_db, trait_id, trait_name):
         #find and order DB names and examples with:
@@ -186,14 +186,14 @@ def template_functions():
             url = None
 
         if url:
-            return '<a href="' + url + '">' + trait_name + '</a>'
+            return '<a class="external" href="' + url + '">' + trait_name + '</a>'
         else:
             return trait_name
 
     def variant_link(variant_id, variant_name):
         if variant_id == 0:
             return variant_name
-        return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + str(variant_id) + '/">' + break_punctuation(variant_name) + '</a>'
+        return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + str(variant_id) + '/">' + break_punctuation(variant_name) + '</a>'
 
     return {
         'submitter_link': submitter_link,
