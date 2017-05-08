@@ -199,6 +199,9 @@ def import_file(filename):
             standardized_method = method if method in standard_methods else 'other'
             comment = comment_el.text if comment_el != None else ''
 
+            if trait_id and not trait_name and trait_db != 'HP':
+                trait_name = trait_db + ' ' + trait_id
+
             if review_status in ['criteria provided, single submitter', 'criteria provided, conflicting interpretations']:
                 star_level = 1
             elif review_status in ['criteria provided, multiple submitters, no conflicts']:

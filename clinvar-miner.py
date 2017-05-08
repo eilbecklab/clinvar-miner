@@ -167,9 +167,6 @@ def template_functions():
         return '<a href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + str(submitter_id) + '/">' + break_punctuation(submitter_name) + '</a>'
 
     def trait_link(trait_db, trait_id, trait_name):
-        if not trait_name:
-            trait_name = trait_db + ' ' + trait_id
-
         #find and order DB names and examples with:
         #SELECT trait_db, trait_id, COUNT(*) FROM current_submissions GROUP BY trait_db ORDER BY COUNT(*) DESC
         trait_db = trait_db.lower()
