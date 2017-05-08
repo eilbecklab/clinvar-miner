@@ -166,7 +166,7 @@ def import_file(filename):
         else:
             variant_name_el = measure_set_el.find('./Name/ElementValue[@Type="Preferred"]')
             variant_id = int(measure_set_el.attrib['ID'])
-            variant_name = variant_name_el.text if variant_name_el != None else '' #missing in old versions
+            variant_name = variant_name_el.text if variant_name_el != None else str(variant_id) #missing in old versions
             measure_els = measure_set_el.findall('./Measure')
 
         if len(measure_els) == 1:
