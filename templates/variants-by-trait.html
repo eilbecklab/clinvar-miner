@@ -1,0 +1,33 @@
+{% extends 'skin.html' %}
+{% set title = 'Variants by trait' %}
+{% block content %}
+    {% with %}
+        {% set review_status1_label = 'Minimum review status' %}
+        {% set method1_label = 'Method' %}
+        {% set min_conflict_level_filter = True %}
+        {% include 'filter.html' %}
+    {% endwith %}
+    <p>Total traits: {{ total_variants_by_trait|length }}</p>
+    {% if total_variants_by_trait %}
+        <table class="sortable table" style="width:auto">
+            <thead>
+                <tr>
+                    <th>Trait</th>
+                    <th style="text-align:right">Variants</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in total_variants_by_trait %}
+                    <tr>
+                        <td>
+                            <a href="variants-by-trait/{{ row['trait']|quotepath }}{{ request|querysuffix }}">
+                                {{ row['trait']|orspace }}
+                            </a>
+                        </td>
+                        <td style="text-align:right">{{ row['count'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
