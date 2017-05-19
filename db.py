@@ -436,7 +436,7 @@ class DB():
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
-        query += ' GROUP BY gene ORDER BY gene'
+        query += ' GROUP BY gene, significance ORDER BY gene, significance'
 
         return list(map(
             dict,
