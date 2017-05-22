@@ -627,6 +627,8 @@ def variants_by_gene(gene = None, submitter_id = None, trait_name = None, signif
         )
 
     if trait_name:
+        trait_name = trait_name.replace('%2F', '/')
+
         return render_template(
             'variants-by-gene--gene-trait-significance.html',
             gene=gene,
@@ -716,6 +718,8 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
         )
 
     if trait_name:
+        trait_name = trait_name.replace('%2F', '/')
+
         return render_template(
             'variants-by-submitter--submitter-trait-significance.html',
             trait_name=trait_name,
@@ -747,6 +751,8 @@ def variants_by_trait(trait_name = None, gene = None, submitter_id = None, signi
                 min_conflict_level=int_arg('min_conflict_level'),
             ),
         )
+
+    trait_name = trait_name.replace('%2F', '/')
 
     if gene == None and submitter_id == None:
         breakdown_by_gene_and_significance, significances = get_breakdown_by_gene_and_significance(
