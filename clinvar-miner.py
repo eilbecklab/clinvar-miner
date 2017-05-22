@@ -319,10 +319,6 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
     except ValueError:
         return abort(404)
 
-    submitter1_info = db.submitter_info(submitter1_id)
-    if not submitter1_info:
-        submitter1_info = {'id': submitter1_id, 'name': str(submitter1_id)}
-
     if submitter2_id == None:
         total_conflicting_variants_by_submitter = db.total_conflicting_variants_by_submitter(
             submitter1_id=submitter1_id,
@@ -372,7 +368,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
 
         return render_template(
             'conflicting-variants-by-submitter--1submitter.html',
-            submitter1_info=submitter1_info,
+            submitter1_info=db.submitter_info(submitter1_id),
             submitter2_info={'id': 0, 'name': 'All submitters'},
             submitter_primary_method=db.submitter_primary_method(submitter1_id),
             summary=summary,
@@ -394,12 +390,10 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
     except ValueError:
         abort(404)
 
-    submitter2_info = db.submitter_info(submitter2_id)
-    if not submitter2_info:
-        if submitter2_id == 0:
-            submitter2_info = {'id': 0, 'name': 'any other submitter'}
-        else:
-            submitter2_info = {'id': submitter2_id, 'name': str(submitter2_id)}
+    if submitter2_id == '0':
+        submitter2_info = {'id': 0, 'name': 'any other submitter'}
+    else:
+        submitter2_info = db.submitter_info(submitter2_id)
 
     if not significance1:
         breakdown, submitter1_significances, submitter2_significances = get_conflict_breakdown(
@@ -616,14 +610,10 @@ def variants_by_gene(gene = None, submitter_id = None, trait_name = None, signif
         )
 
     if submitter_id:
-        submitter_info = db.submitter_info(submitter_id)
-        if not submitter_info:
-            submitter_info = {'id': submitter_id, 'name': submitter_id}
-
         return render_template(
             'variants-by-gene--gene-submitter-significance.html',
             gene=gene,
-            submitter_info=submitter_info,
+            submitter_info=db.submitter_info(submitter_id),
             significance=significance,
             total_submissions_by_variant=db.total_submissions_by_variant(
                 gene=gene,
@@ -670,10 +660,6 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
             ),
         )
 
-    submitter_info = db.submitter_info(submitter_id)
-    if not submitter_info:
-        submitter_info = {'id': submitter_id, 'name': submitter_id}
-
     if gene == None and trait_name == None:
         breakdown_by_gene_and_significance, significances = get_breakdown_by_gene_and_significance(
             db.total_variants_by_gene_and_significance(
@@ -697,7 +683,7 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
 
         return render_template(
             'variants-by-submitter--submitter.html',
-            submitter_info=submitter_info,
+            submitter_info=db.submitter_info(submitter_id),
             breakdown_by_gene_and_significance=breakdown_by_gene_and_significance,
             breakdown_by_trait_and_significance=breakdown_by_trait_and_significance,
             significances=significances,
@@ -717,7 +703,7 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
         return render_template(
             'variants-by-submitter--submitter-gene-significance.html',
             gene=gene,
-            submitter_info=submitter_info,
+            submitter_info=db.submitter_info(submitter_id),
             significance=significance,
             total_submissions_by_variant=db.total_submissions_by_variant(
                 gene=gene,
@@ -733,7 +719,7 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
         return render_template(
             'variants-by-submitter--submitter-trait-significance.html',
             trait_name=trait_name,
-            submitter_info=submitter_info,
+            submitter_info=db.submitter_info(submitter_id),
             significance=significance,
             total_submissions_by_variant=db.total_submissions_by_variant(
                 trait_name=trait_name,
@@ -818,14 +804,10 @@ def variants_by_trait(trait_name = None, gene = None, submitter_id = None, signi
         )
 
     if submitter_id:
-        submitter_info = db.submitter_info(submitter_id)
-        if not submitter_info:
-            submitter_info = {'id': submitter_id, 'name': submitter_id}
-
         return render_template(
             'variants-by-trait--trait-submitter-significance.html',
             trait_name=trait_name,
-            submitter_info=submitter_info,
+            submitter_info=db.submitter_info(submitter_id),
             significance=significance,
             total_submissions_by_variant=db.total_submissions_by_variant(
                 trait_name=trait_name,

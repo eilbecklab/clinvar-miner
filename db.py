@@ -81,7 +81,7 @@ class DB():
         try:
             return dict(list(self.cursor.execute('SELECT * from submitter_info WHERE id=:id', [submitter_id]))[0])
         except (IndexError, OperationalError):
-            return None
+            return {'id': int(submitter_id), 'name': submitter_id}
 
     def submitter_primary_method(self, submitter_id):
         return list(
