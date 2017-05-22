@@ -459,7 +459,7 @@ def index():
     db = DB()
     return render_template(
         'index.html',
-        max_date=db.max_date(),
+        max_date=datetime.strptime(db.max_date(), '%Y-%m').strftime('%B %Y')
     )
 
 @app.route('/significance-terms')
