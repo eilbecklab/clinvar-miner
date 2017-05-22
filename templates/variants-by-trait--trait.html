@@ -20,14 +20,42 @@
                 </tr>
             </thead>
             <tbody>
-                {% for gene in breakdown %}
+                {% for gene in breakdown_by_gene_and_significance %}
                     <tr>
                         <th>{{ gene }}</th>
                         {% for significance in significances %}
-                            {% if breakdown[gene][significance] %}
+                            {% if breakdown_by_gene_and_significance[gene][significance] %}
                                 <td class="highlight">
-                                    <a href="variants-by-trait/{{ trait_name|quotepath }}/{{ gene|quotepath|orintergenic }}/{{ significance|quotepath }}{{ request|querysuffix }}">
-                                        {{ breakdown[gene][significance] }}
+                                    <a href="variants-by-trait/{{ trait_name|quotepath }}/gene/{{ gene|quotepath|orintergenic }}/{{ significance|quotepath }}{{ request|querysuffix }}">
+                                        {{ breakdown_by_gene_and_significance[gene][significance] }}
+                                    </a>
+                                </td>
+                            {% else %}
+                                <td>0</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <table class="breakdown sortable table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Submitter</th>
+                    {% for significance in significances %}
+                        <th>{{ significance }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for submitter_id in breakdown_by_submitter_and_significance %}
+                    <tr>
+                        <th>{{ submitter_link(submitter_id, breakdown_by_submitter_and_significance[submitter_id]['name'])|safe }}</th>
+                        {% for significance in significances %}
+                            {% if breakdown_by_submitter_and_significance[submitter_id]['counts'][significance] %}
+                                <td class="highlight">
+                                    <a href="variants-by-trait/{{ trait_name|quotepath }}/submitter/{{ submitter_id }}/{{ significance|quotepath }}{{ request|querysuffix }}">
+                                        {{ breakdown_by_submitter_and_significance[submitter_id]['counts'][significance] }}
                                     </a>
                                 </td>
                             {% else %}

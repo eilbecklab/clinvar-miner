@@ -470,8 +470,9 @@ class DB():
             )
         ))
 
-    def total_variants_by_submitter_and_significance(self, gene, min_stars = 0, standardized_method = None,
-                                                     min_conflict_level = 0, standardized_terms = False):
+    def total_variants_by_submitter_and_significance(self, gene = None, trait_name = None, min_stars = 0,
+                                                     standardized_method = None, min_conflict_level = 0,
+                                                     standardized_terms = False):
         query = '''
             SELECT
                 submitter1_id AS submitter_id,
@@ -487,11 +488,16 @@ class DB():
         query += '''
             FROM current_comparisons
             WHERE
-                gene=:gene AND
                 star_level1>=:min_stars AND
                 star_level2>=:min_stars AND
                 conflict_level>=:min_conflict_level
         '''
+
+        if gene:
+            query += ' AND gene=:gene'
+
+        if trait_name:
+            query += ' AND UPPER(trait1_name)=:trait_name'
 
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
@@ -504,6 +510,7 @@ class DB():
                 query,
                 {
                     'gene': gene,
+                    'trait_name': trait_name,
                     'min_stars': min_stars,
                     'standardized_method': standardized_method,
                     'min_conflict_level': min_conflict_level
