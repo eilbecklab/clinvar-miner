@@ -1,0 +1,13 @@
+{% extends 'submissions-by-variant.html' %}
+{% if gene %}
+    {% set title = 'Variants in gene ' + gene + ' reported as ' + significance + ' for ' + trait_name %}
+{% else %}
+    {% set title = 'Intergenic variants reported as ' + significance + ' for ' + trait_name %}
+{% endif %}
+{% block title %}
+    {% if gene %}
+        Variants in gene {{ gene }} reported as {{ significance }} for {{ trait_name }}
+    {% else %}
+        Intergenic variants reported as {{ significance }} for {{trait_name }}
+    {% endif %}
+{% endblock %}
