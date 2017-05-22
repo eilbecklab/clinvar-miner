@@ -1,47 +1,29 @@
 {% extends 'skin.html' %}
-{% set title = 'Submissions for variant ' + variant_name %}
-{% block head %}
-    <script src="static/jquery-3.1.1.js" type="application/javascript"></script>
-    <script src="static/jquery.tablesorter.js" type="application/javascript"></script>
-{% endblock %}
-{% block title %}
-    Submissions for variant {{ variant_link(variant_id, variant_name)|safe }}
-{% endblock %}
 {% block content %}
     {% with %}
         {% set review_status1_label = 'Minimum review status' %}
         {% set method1_label = 'Method' %}
         {% set min_conflict_level_filter = True %}
+        {% set standardized_terms_filter = True %}
+        {% set standardized_terms_disabled = True %}
         {% include 'filter.html' %}
     {% endwith %}
-    <p>Total submissions: {{ submissions|length }}</p>
-    {% if submissions %}
-        <table class="sortable table table-bordered table-condensed table-striped">
+    <p>Total variants: {{ total_submissions_by_variant|length }}</p>
+    {% if total_submissions_by_variant %}
+        <table class="sortable table" style="width:auto">
             <thead>
                 <tr>
-                    <th>Submitter</th>
-                    <th>RCV</th>
-                    <th>SCV</th>
-                    <th>Clinical significance</th>
-                    <th>Trait</th>
-                    <th>Last evaluated</th>
-                    <th>Review status</th>
-                    <th>Method</th>
-                    <th>Comment</th>
+                    <th>Variant</th>
+                    <th style="text-align:right">Submissions</th>
                 </tr>
             </thead>
             <tbody>
-                {% for submission in submissions %}
+                {% for row in total_submissions_by_variant %}
                     <tr>
-                        <td>{{ submitter_link(submission['submitter_id'], submission['submitter_name'])|safe }}</td>
-                        <td>{{ submission['rcv']|rcvlink|safe }}</td>
-                        <td>{{ submission['scv'] }}</td>
-                        <td>{{ submission['significance'] }}</td>
-                        <td>{{ trait_link(submission['trait_db'], submission['trait_id'], submission['trait_name'])|safe }}</td>
-                        <td>{{ submission['last_eval']|date }}</td>
-                        <td>{{ submission['review_status'] }}</td>
-                        <td>{{ submission['method'] }}</td>
-                        <td>{{ submission['comment'] }}</td>
+                        <td>
+                            <a href="submissions-by-variant/{{ row['variant_name']|quotepath }}">{{ row['variant_name'] }}</a>
+                        </td>
+                        <td style="text-align:right">{{ row['count'] }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

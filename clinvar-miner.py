@@ -465,7 +465,7 @@ def submissions_by_variant(variant_name):
     variant_name = variant_name.replace('%2F', '/')
 
     return render_template(
-        'submissions-by-variant.html',
+        'submissions-by-variant--variant.html',
         variant_name=variant_name,
         variant_id=db.variant_id(variant_name),
         submissions=db.submissions(
@@ -582,7 +582,7 @@ def variants_by_gene(gene = None, submitter_id = None, significance = None):
         submitter_info = {'id': submitter_id, 'name': submitter_id}
 
     return render_template(
-        'variants-by-gene-submitter-significance.html',
+        'variants-by-gene--gene-submitter-significance.html',
         gene=gene,
         submitter_info=submitter_info,
         significance=significance,
@@ -646,7 +646,7 @@ def variants_by_submitter(submitter_id = None, gene = None, significance = None)
     gene = '' if gene == 'intergenic' else gene.replace('%2F', '/')
 
     return render_template(
-        'variants-by-gene-submitter-significance.html',
+        'variants-by-submitter--submitter-gene-significance.html',
         gene=gene,
         submitter_info=submitter_info,
         significance=significance,
@@ -705,7 +705,7 @@ def variants_by_trait(trait_name = None, gene = None, significance = None):
     gene = '' if gene == 'intergenic' else gene.replace('%2F', '/')
 
     return render_template(
-        'variants-by-trait--gene-significance.html',
+        'variants-by-trait--trait-gene-significance.html',
         trait_name=trait_name,
         gene=gene,
         significance=significance,
