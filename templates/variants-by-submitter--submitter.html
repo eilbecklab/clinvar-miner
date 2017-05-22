@@ -11,7 +11,7 @@
     {% endwith %}
     <p>Total variants: {{ total }}</p>
     {% if total %}
-        {% with base_url = 'variants-by-submitter/' + submitter_info['id'] %}
+        {% with base_url = 'variants-by-submitter/' + submitter_info['id']|string %}
             {% include 'breakdown-by-gene-and-significance.html' %}
             {% include 'breakdown-by-trait-and-significance.html' %}
         {% endwith %}
