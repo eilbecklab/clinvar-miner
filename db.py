@@ -147,10 +147,7 @@ class DB():
         query += '''
             , COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
-            WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=1
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=1
         '''
 
         if submitter1_id:
@@ -345,10 +342,7 @@ class DB():
                        min_conflict_level = 0):
         query = '''
             SELECT COUNT(DISTINCT variant_name) FROM current_comparisons
-            WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
         if gene:
@@ -421,10 +415,7 @@ class DB():
 
         query += '''
             FROM current_comparisons
-            WHERE
-                star_level1>=:min_stars AND
-                star_level2>=:min_stars AND
-                conflict_level>=:min_conflict_level
+            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
 
         if submitter_id:
@@ -454,7 +445,10 @@ class DB():
 
     def total_variants_by_submitter(self, min_stars = 0, standardized_method = None, min_conflict_level = 0):
         query = '''
-            SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name, COUNT(DISTINCT variant_name) AS count
+            SELECT
+                submitter1_id AS submitter_id,
+                submitter1_name AS submitter_name,
+                COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
@@ -479,9 +473,10 @@ class DB():
     def total_variants_by_submitter_and_significance(self, gene, min_stars = 0, standardized_method = None,
                                                      min_conflict_level = 0, standardized_terms = False):
         query = '''
-            SELECT submitter1_id AS submitter_id,
-            submitter1_name AS submitter_name,
-            COUNT(DISTINCT variant_name) AS count
+            SELECT
+                submitter1_id AS submitter_id,
+                submitter1_name AS submitter_name,
+                COUNT(DISTINCT variant_name) AS count
         '''
 
         if standardized_terms:
