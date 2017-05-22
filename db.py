@@ -233,7 +233,8 @@ class DB():
         return list(map(
             dict,
             self.cursor.execute('''
-                SELECT country, country_code, COUNT(*) AS count FROM current_submissions
+                SELECT IFNULL(country, '') AS country, IFNULL(country_code, '') AS country_code, COUNT(*) AS count
+                FROM current_submissions
                 LEFT JOIN submitter_info ON current_submissions.submitter_id=submitter_info.id
                 GROUP BY country ORDER BY country
             ''')
@@ -289,10 +290,13 @@ class DB():
 
         query += ' GROUP BY submitter1_id ORDER BY submitter1_name'
 
-        return list(map(
-            dict,
-            self.cursor.execute(query, {'country': country, 'min_conflict_level': min_conflict_level})
-        ))
+        try:
+            return list(map(
+                dict,
+                self.cursor.execute(query, {'country': country, 'min_conflict_level': min_conflict_level})
+            ))
+        except OperationalError:
+            return []
 
     def total_submissions_by_variant(self, gene = None, trait_name = None, submitter_id = None, significance = None,
                                      min_stars = 0, standardized_method = None, min_conflict_level = 0,

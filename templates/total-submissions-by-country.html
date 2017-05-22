@@ -12,10 +12,9 @@
         var data = {{ total_submissions_by_country|tojson }};
         var totals = {};
         data.forEach((d) => {
-            country_code = d.hasOwnProperty('country_code') ? d.country_code : '';
-            if (!totals.hasOwnProperty(country_code))
-                totals[country_code] = 0;
-            totals[country_code] += d.count;
+            if (!totals.hasOwnProperty(d.country_code))
+                totals[d.country_code] = 0;
+            totals[d.country_code] += d.count;
         });
 
         var projection = d3.geoEquirectangular();

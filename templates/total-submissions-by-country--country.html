@@ -1,5 +1,9 @@
 {% extends 'skin.html' %}
-{% set title = 'Total submissions from ' + country %}
+{% if country %}
+    {% set title = 'Total submissions from ' + country %}
+{% else %}
+    {% set title = 'Total submissions from nowhere' %}
+{% endif %}
 {% block content %}
     <table class="sortable table" style="width:auto">
         <thead>
