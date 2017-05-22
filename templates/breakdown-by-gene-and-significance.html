@@ -1,0 +1,28 @@
+<table class="breakdown sortable table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Gene</th>
+            {% for significance in significances %}
+                <th>{{ significance }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for gene in breakdown_by_gene_and_significance %}
+            <tr>
+                <th>{{ gene }}</th>
+                {% for significance in significances %}
+                    {% if breakdown_by_gene_and_significance[gene][significance] %}
+                        <td class="highlight">
+                            <a href="{{ base_url }}/gene/{{ gene|quotepath|orintergenic }}/{{ significance|quotepath }}{{ request|querysuffix }}">
+                                {{ breakdown_by_gene_and_significance[gene][significance] }}
+                            </a>
+                        </td>
+                    {% else %}
+                        <td>0</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

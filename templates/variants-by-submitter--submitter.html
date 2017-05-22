@@ -11,61 +11,9 @@
     {% endwith %}
     <p>Total variants: {{ total }}</p>
     {% if total %}
-        <table class="breakdown sortable table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Gene</th>
-                    {% for significance in significances %}
-                        <th>{{ significance }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for gene in breakdown_by_gene_and_significance %}
-                    <tr>
-                        <th>{{ gene }}</th>
-                        {% for significance in significances %}
-                            {% if breakdown_by_gene_and_significance[gene][significance] %}
-                                <td class="highlight">
-                                    <a href="variants-by-submitter/{{ submitter_info['id'] }}/gene/{{ gene|quotepath|orintergenic }}/{{ significance|quotepath }}{{ request|querysuffix }}">
-                                        {{ breakdown_by_gene_and_significance[gene][significance] }}
-                                    </a>
-                                </td>
-                            {% else %}
-                                <td>0</td>
-                            {% endif %}
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <table class="breakdown sortable table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Trait</th>
-                    {% for significance in significances %}
-                        <th>{{ significance }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for trait in breakdown_by_trait_and_significance %}
-                    <tr>
-                        <th>{{ trait }}</th>
-                        {% for significance in significances %}
-                            {% if breakdown_by_trait_and_significance[trait][significance] %}
-                                <td class="highlight">
-                                    <a href="variants-by-submitter/{{ submitter_info['id'] }}/trait/{{ trait }}/{{ significance|quotepath }}{{ request|querysuffix }}">
-                                        {{ breakdown_by_trait_and_significance[trait][significance] }}
-                                    </a>
-                                </td>
-                            {% else %}
-                                <td>0</td>
-                            {% endif %}
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {% with base_url = 'variants-by-submitter/' + submitter_info['id'] %}
+            {% include 'breakdown-by-gene-and-significance.html' %}
+            {% include 'breakdown-by-trait-and-significance.html' %}
+        {% endwith %}
     {% endif %}
 {% endblock %}

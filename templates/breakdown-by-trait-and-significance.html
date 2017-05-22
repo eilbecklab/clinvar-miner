@@ -1,0 +1,28 @@
+<table class="breakdown sortable table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Trait</th>
+            {% for significance in significances %}
+                <th>{{ significance }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for trait in breakdown_by_trait_and_significance %}
+            <tr>
+                <th>{{ trait }}</th>
+                {% for significance in significances %}
+                    {% if breakdown_by_trait_and_significance[trait][significance] %}
+                        <td class="highlight">
+                            <a href="{{ base_url }}/trait/{{ trait }}/{{ significance|quotepath }}{{ request|querysuffix }}">
+                                {{ breakdown_by_trait_and_significance[trait][significance] }}
+                            </a>
+                        </td>
+                    {% else %}
+                        <td>0</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
