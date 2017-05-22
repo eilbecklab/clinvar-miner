@@ -52,7 +52,7 @@ class DB():
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
 
-        if gene:
+        if gene != None:
             query += ' AND gene=:gene'
 
         if variant_name:
@@ -279,12 +279,12 @@ class DB():
             FROM current_comparisons
         '''
 
-        if country:
+        if country != None:
             query += ' LEFT JOIN submitter_info ON current_comparisons.submitter1_id=submitter_info.id'
 
         query += ' WHERE conflict_level>=:min_conflict_level'
 
-        if country:
+        if country != None:
             query += ' AND country=:country'
 
         query += ' GROUP BY submitter1_id ORDER BY submitter1_name'
@@ -302,7 +302,7 @@ class DB():
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
 
-        if gene:
+        if gene != None:
             query += ' AND gene=:gene'
 
         if trait_name:
@@ -337,7 +337,7 @@ class DB():
             )
         ))
 
-    def total_variants(self, gene = None, submitter1_id = None, submitter2_id = None, trait_name = None, min_stars1 = 0,
+    def total_variants(self, gene = None, trait_name = None, submitter1_id = None, submitter2_id = None, min_stars1 = 0,
                        min_stars2 = 0, standardized_method1 = None, standardized_method2 = None,
                        min_conflict_level = 0):
         query = '''
@@ -345,17 +345,17 @@ class DB():
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
-        if gene:
+        if gene != None:
             query += ' AND gene=:gene'
+
+        if trait_name:
+            query += ' AND UPPER(trait1_name)=:trait_name'
 
         if submitter1_id:
             query += ' AND submitter1_id=:submitter1_id'
 
         if submitter2_id:
             query += ' AND submitter2_id=:submitter2_id'
-
-        if trait_name:
-            query += ' AND UPPER(trait1_name)=:trait_name'
 
         if standardized_method1:
             query += ' AND standardized_method1=:standardized_method1'
@@ -403,7 +403,7 @@ class DB():
             )
         ))
 
-    def total_variants_by_gene_and_significance(self, submitter_id = None, trait_name = None, min_stars = 0,
+    def total_variants_by_gene_and_significance(self, trait_name = None, submitter_id = None, min_stars = 0,
                                                 standardized_method = None, min_conflict_level = 0,
                                                 standardized_terms = False):
         query = 'SELECT gene, COUNT(DISTINCT variant_name) AS count'
@@ -418,11 +418,11 @@ class DB():
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
 
-        if submitter_id:
-            query += ' AND submitter1_id=:submitter_id'
-
         if trait_name:
             query += ' AND UPPER(trait1_name)=:trait_name'
+
+        if submitter_id:
+            query += ' AND submitter1_id=:submitter_id'
 
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
@@ -493,7 +493,7 @@ class DB():
                 conflict_level>=:min_conflict_level
         '''
 
-        if gene:
+        if gene != None:
             query += ' AND gene=:gene'
 
         if trait_name:
@@ -545,7 +545,8 @@ class DB():
         ))
 
     def total_variants_by_trait_and_significance(self, gene = None, submitter_id = None, min_stars = 0,
-                                                 standardized_method = None, min_conflict_level = 0, standardized_terms = False):
+                                                 standardized_method = None, min_conflict_level = 0,
+                                                 standardized_terms = False):
         query = '''
             SELECT
                 trait1_db AS trait_db,
@@ -567,7 +568,7 @@ class DB():
                 conflict_level>=:min_conflict_level
         '''
 
-        if gene:
+        if gene != None:
             query += ' AND gene=:gene'
 
         if submitter_id:

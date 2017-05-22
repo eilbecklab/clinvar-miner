@@ -204,6 +204,8 @@ def import_file(filename):
 
             if trait_id and not trait_name and trait_db != 'HP':
                 trait_name = trait_db + ' ' + trait_id
+            elif not trait_name:
+                trait_name = 'NOT SPECIFIED'
 
             if review_status in ['criteria provided, single submitter', 'criteria provided, conflicting interpretations']:
                 star_level = 1
