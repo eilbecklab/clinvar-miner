@@ -578,7 +578,7 @@ def variants_by_gene(gene = None, submitter_id = None, trait_name = None, signif
     if submitter_id == None and trait_name == None:
         breakdown_by_trait_and_significance, significances = get_breakdown_by_trait_and_significance(
             db.total_variants_by_trait_and_significance(
-                gene,
+                gene=gene,
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
@@ -652,8 +652,9 @@ def variants_by_gene(gene = None, submitter_id = None, trait_name = None, signif
 
 @app.route('/variants-by-submitter')
 @app.route('/variants-by-submitter/<submitter_id>')
-@app.route('/variants-by-submitter/<submitter_id>/<gene>/<significance>')
-def variants_by_submitter(submitter_id = None, gene = None, significance = None):
+@app.route('/variants-by-submitter/<submitter_id>/gene/<gene>/<significance>')
+@app.route('/variants-by-submitter/<submitter_id>/trait/<trait_name>/<significance>')
+def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, significance = None):
     db = DB()
 
     if submitter_id == None:
@@ -670,9 +671,19 @@ def variants_by_submitter(submitter_id = None, gene = None, significance = None)
     if not submitter_info:
         submitter_info = {'id': submitter_id, 'name': submitter_id}
 
-    if gene == None:
-        breakdown, significances = get_breakdown_by_gene_and_significance(
+    if gene == None and trait_name == None:
+        breakdown_by_gene_and_significance, significances = get_breakdown_by_gene_and_significance(
             db.total_variants_by_gene_and_significance(
+                submitter_id=submitter_id,
+                min_stars=int_arg('min_stars1'),
+                standardized_method=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+                standardized_terms=request.args.get('standardized_terms'),
+            )
+        )
+
+        breakdown_by_trait_and_significance, significances = get_breakdown_by_trait_and_significance(
+            db.total_variants_by_trait_and_significance(
                 submitter_id=submitter_id,
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
@@ -684,7 +695,8 @@ def variants_by_submitter(submitter_id = None, gene = None, significance = None)
         return render_template(
             'variants-by-submitter--submitter.html',
             submitter_info=submitter_info,
-            breakdown=breakdown,
+            breakdown_by_gene_and_significance=breakdown_by_gene_and_significance,
+            breakdown_by_trait_and_significance=breakdown_by_trait_and_significance,
             significances=significances,
             total=db.total_variants(
                 submitter1_id=submitter_id,
@@ -696,22 +708,39 @@ def variants_by_submitter(submitter_id = None, gene = None, significance = None)
             ),
         )
 
-    gene = '' if gene == 'intergenic' else gene.replace('%2F', '/')
+    if gene:
+        gene = '' if gene == 'intergenic' else gene.replace('%2F', '/')
 
-    return render_template(
-        'variants-by-submitter--submitter-gene-significance.html',
-        gene=gene,
-        submitter_info=submitter_info,
-        significance=significance,
-        total_submissions_by_variant=db.total_submissions_by_variant(
+        return render_template(
+            'variants-by-submitter--submitter-gene-significance.html',
             gene=gene,
-            submitter_id=submitter_id,
+            submitter_info=submitter_info,
             significance=significance,
-            min_stars=int_arg('min_stars1'),
-            standardized_method=request.args.get('method1'),
-            min_conflict_level=int_arg('min_conflict_level'),
-        ),
-    )
+            total_submissions_by_variant=db.total_submissions_by_variant(
+                gene=gene,
+                submitter_id=submitter_id,
+                significance=significance,
+                min_stars=int_arg('min_stars1'),
+                standardized_method=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+            ),
+        )
+
+    if trait_name:
+        return render_template(
+            'variants-by-submitter--submitter-trait-significance.html',
+            trait_name=trait_name,
+            submitter_info=submitter_info,
+            significance=significance,
+            total_submissions_by_variant=db.total_submissions_by_variant(
+                trait_name=trait_name,
+                submitter_id=submitter_id,
+                significance=significance,
+                min_stars=int_arg('min_stars1'),
+                standardized_method=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+            ),
+        )
 
 @app.route('/variants-by-trait')
 @app.route('/variants-by-trait/<trait_name>')
