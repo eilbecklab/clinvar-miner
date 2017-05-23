@@ -203,7 +203,7 @@ def template_functions():
         elif trait_db == 'hp':
             url = 'http://compbio.charite.de/hpoweb/showterm?id=' + trait_id
         elif trait_db == 'mesh':
-            url = 'https://meshb.nlm.nih.gov/#/record/ui?ui=' + trait_id
+            url = 'https://www.ncbi.nlm.nih.gov/mesh/?term=' + trait_id
         elif trait_db == 'omim phenotypic series':
             url = 'https://www.omim.org/phenotypicseries/' + trait_id
         else:
