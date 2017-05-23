@@ -599,7 +599,7 @@ class DB():
 
     def variant_id(self, variant_name):
         return list(self.cursor.execute(
-            'SELECT variant_id FROM current_submissions WHERE variant_name=?', [variant_name]
+            'SELECT variant_id FROM current_submissions WHERE variant_name=? LIMIT 1', [variant_name]
         ))[0][0]
 
     def variants(self, submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None,
