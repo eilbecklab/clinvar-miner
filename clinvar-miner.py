@@ -161,6 +161,10 @@ def significance_rank(significance):
         rank = len(significance_ranks) - 2.5 #insert after everything but "other" and "not provided"
     return rank
 
+@app.template_filter('genelink')
+def gene_link(gene):
+    return '<a class="external" href="https://ghr.nlm.nih.gov/gene/' + gene + '">' + gene + '</a>'
+
 @app.template_filter('date')
 def prettify_date(iso_date):
     return datetime.strptime(iso_date[:10], '%Y-%m-%d').strftime('%e %b %Y') if iso_date else ''
