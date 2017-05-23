@@ -24,6 +24,25 @@ standard_methods = [
     'research',
 ]
 
+def trait_from_trait_el(trait_el):
+    trait_xref_el = trait_el.find('./XRef')
+    trait_name_el = trait_el.find('./Name/ElementValue')
+
+    trait_db = trait_xref_el.attrib['DB'] if trait_xref_el != None else ''
+    trait_id = trait_xref_el.attrib['ID'] if trait_xref_el != None else ''
+    trait_name = trait_name_el.text if trait_name_el != None else ''
+
+    if not trait_name or trait_name.upper() == 'NOT PROVIDED':
+        if trait_id:
+            if trait_db == 'HP':
+                trait_name = trait_id
+            else:
+                trait_name = trait_db + ' ' + trait_id
+        else:
+            trait_name = 'NOT SPECIFIED'
+
+    return trait_db, trait_id, trait_name
+
 def connect():
     return sqlite3.connect('clinvar.db', timeout=600)
 
@@ -179,13 +198,18 @@ def import_file(filename):
             scv_el = assertion_el.find('./ClinVarAccession[@Type="SCV"]')
             scv = scv_el.attrib['Acc']
 
+            trait_els = assertion_el.findall('./TraitSet/Trait')
+            if len(trait_els) == 1:
+                trait_db, trait_id, trait_name = trait_from_trait_el(trait_els[0])
+            else:
+                trait_db = ''
+                trait_id = ''
+                trait_name = '; '.join(map(lambda trait_el: trait_from_trait_el(trait_el)[2], trait_els))
+
             submission_id_el = assertion_el.find('./ClinVarSubmissionID')
             significance_el = assertion_el.find('./ClinicalSignificance')
             description_el = significance_el.find('./Description')
             review_status_el = significance_el.find('./ReviewStatus')
-            trait_el = assertion_el.find('./TraitSet/Trait')
-            trait_xref_el = trait_el.find('./XRef')
-            trait_name_el = trait_el.find('./Name/ElementValue')
             method_el = assertion_el.find('./ObservedIn/Method/MethodType')
             comment_el = significance_el.find('./Comment')
 
@@ -195,17 +219,9 @@ def import_file(filename):
             standardized_significance = nonstandard_significance_term_map.get(significance, significance)
             last_eval = significance_el.attrib.get('DateLastEvaluated', '') #missing in old versions
             review_status = review_status_el.text if review_status_el != None else '' #missing in old versions
-            trait_db = trait_xref_el.attrib['DB'] if trait_xref_el != None else ''
-            trait_id = trait_xref_el.attrib['ID'] if trait_xref_el != None else ''
-            trait_name = trait_name_el.text if trait_name_el != None else ''
             method = method_el.text if method_el != None else 'not provided' #missing in old versions
             standardized_method = method if method in standard_methods else 'other'
             comment = comment_el.text if comment_el != None else ''
-
-            if trait_id and not trait_name and trait_db != 'HP':
-                trait_name = trait_db + ' ' + trait_id
-            elif not trait_name:
-                trait_name = 'NOT SPECIFIED'
 
             if review_status in ['criteria provided, single submitter', 'criteria provided, conflicting interpretations']:
                 star_level = 1
