@@ -9,14 +9,14 @@
         </tr>
     </thead>
     <tbody>
-        {% for trait in breakdown_by_trait_and_significance %}
+        {% for trait_name in breakdown_by_trait_and_significance %}
             <tr>
-                <th>{{ trait }}</th>
+                <th>{{ trait_link(breakdown_by_trait_and_significance[trait_name]['db'], breakdown_by_trait_and_significance[trait_name]['id'], trait_name)|safe }}</th>
                 {% for significance in significances %}
-                    {% if breakdown_by_trait_and_significance[trait][significance] %}
+                    {% if breakdown_by_trait_and_significance[trait_name]['counts'][significance] %}
                         <td class="highlight">
-                            <a href="{{ base_url }}/trait/{{ trait }}/{{ significance|quotepath }}{{ request|querysuffix }}">
-                                {{ breakdown_by_trait_and_significance[trait][significance] }}
+                            <a href="{{ base_url }}/trait/{{ trait_name }}/{{ significance|quotepath }}{{ request|querysuffix }}">
+                                {{ breakdown_by_trait_and_significance[trait_name]['counts'][significance] }}
                             </a>
                         </td>
                     {% else %}

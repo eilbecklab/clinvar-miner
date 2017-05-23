@@ -597,6 +597,15 @@ class DB():
             )
         ))
 
+    def trait_info(self, trait_name):
+        try:
+            row = list(self.cursor.execute('''
+                SELECT trait_db, trait_id FROM current_submissions WHERE UPPER(trait_name)=? AND trait_id!='' LIMIT 1
+            ''', [trait_name]))[0]
+            return {'db': row[0], 'id': row[1], 'name': trait_name}
+        except IndexError:
+            return {'db': '', 'id': '', 'name': trait_name}
+
     def variant_id(self, variant_name):
         return list(self.cursor.execute(
             'SELECT variant_id FROM current_submissions WHERE variant_name=? LIMIT 1', [variant_name]

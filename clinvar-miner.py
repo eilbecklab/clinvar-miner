@@ -86,13 +86,15 @@ def get_breakdown_by_trait_and_significance(total_variants_by_trait_and_signific
     significances = set()
 
     for row in total_variants_by_trait_and_significance:
+        trait_db = row['trait_db']
+        trait_id = row['trait_id']
         trait_name = row['trait_name']
         significance = row['significance']
         count = row['count']
 
         if not trait_name in breakdown:
-            breakdown[trait_name] = {}
-        breakdown[trait_name][significance] = count
+            breakdown[trait_name] = {'db': trait_db, 'id': trait_id, 'counts': {}}
+        breakdown[trait_name]['counts'][significance] = count
 
         significances.add(significance)
 
@@ -632,7 +634,7 @@ def variants_by_gene(gene = None, submitter_id = None, trait_name = None, signif
         return render_template(
             'variants-by-gene--gene-trait-significance.html',
             gene=gene,
-            trait_name=trait_name,
+            trait_info=db.trait_info(trait_name),
             significance=significance,
             total_submissions_by_variant=db.total_submissions_by_variant(
                 gene=gene,
@@ -722,7 +724,7 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
 
         return render_template(
             'variants-by-submitter--submitter-trait-significance.html',
-            trait_name=trait_name,
+            trait_info=db.trait_info(trait_name),
             submitter_info=db.submitter_info(submitter_id),
             significance=significance,
             total_submissions_by_variant=db.total_submissions_by_variant(
@@ -777,7 +779,7 @@ def variants_by_trait(trait_name = None, gene = None, submitter_id = None, signi
 
         return render_template(
             'variants-by-trait--trait.html',
-            trait_name=trait_name,
+            trait_info=db.trait_info(trait_name),
             breakdown_by_gene_and_significance=breakdown_by_gene_and_significance,
             breakdown_by_submitter_and_significance=breakdown_by_submitter_and_significance,
             significances=significances,
@@ -796,7 +798,7 @@ def variants_by_trait(trait_name = None, gene = None, submitter_id = None, signi
 
         return render_template(
             'variants-by-trait--trait-gene-significance.html',
-            trait_name=trait_name,
+            trait_info=db.trait_info(trait_name),
             gene=gene,
             significance=significance,
             total_submissions_by_variant=db.total_submissions_by_variant(
@@ -812,7 +814,7 @@ def variants_by_trait(trait_name = None, gene = None, submitter_id = None, signi
     if submitter_id:
         return render_template(
             'variants-by-trait--trait-submitter-significance.html',
-            trait_name=trait_name,
+            trait_info=db.trait_info(trait_name),
             submitter_info=db.submitter_info(submitter_id),
             significance=significance,
             total_submissions_by_variant=db.total_submissions_by_variant(

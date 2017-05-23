@@ -1,5 +1,8 @@
 {% extends 'skin.html' %}
-{% set title = 'Variants studied for ' + trait_name %}
+{% set title = 'Variants studied for ' + trait_info['name'] %}
+{% block title %}
+    Variants studied for {{ trait_link(trait_info['db'], trait_info['id'], trait_info['name'])|safe }}
+{% endblock %}
 {% block content %}
     {% with %}
         {% set review_status1_label = 'Minimum review status' %}
@@ -10,7 +13,7 @@
     {% endwith %}
     <p>Total variants: {{ total }}</p>
     {% if total %}
-        {% with base_url = 'variants-by-trait/' + trait_name|quotepath %}
+        {% with base_url = 'variants-by-trait/' + trait_info['name']|quotepath %}
             {% include 'breakdown-by-gene-and-significance.html' %}
             {% include 'breakdown-by-submitter-and-significance.html' %}
         {% endwith %}
