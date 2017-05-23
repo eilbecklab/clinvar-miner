@@ -396,7 +396,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
     except ValueError:
         abort(404)
 
-    if submitter2_id == '0':
+    if submitter2_id == 0:
         submitter2_info = {'id': 0, 'name': 'any other submitter'}
     else:
         submitter2_info = db.submitter_info(submitter2_id)
@@ -416,7 +416,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
 
         return render_template(
             'conflicting-variants-by-submitter--2submitters.html',
-            submitter1_info=submitter1_info,
+            submitter1_info=db.submitter_info(submitter1_id),
             submitter2_info=submitter2_info,
             breakdown=breakdown,
             submitter1_significances=submitter1_significances,
@@ -437,7 +437,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
 
     return render_template(
         'conflicting-variants-by-submitter--2significances.html',
-        submitter1_info=submitter1_info,
+        submitter1_info=db.submitter_info(submitter1_id),
         submitter2_info=submitter2_info,
         significance1=significance1,
         significance2=significance2,
