@@ -68,6 +68,7 @@ def create_tables():
             trait_db TEXT,
             trait_id TEXT,
             trait_name TEXT,
+            upper_trait_name TEXT,
             method TEXT,
             standardized_method TEXT,
             comment TEXT,
@@ -93,6 +94,7 @@ def create_tables():
             trait1_db TEXT,
             trait1_id TEXT,
             trait1_name TEXT,
+            upper_trait1_name TEXT,
             method1 TEXT,
             standardized_method1 TEXT,
             comment1 TEXT,
@@ -108,6 +110,7 @@ def create_tables():
             trait2_db TEXT,
             trait2_id TEXT,
             trait2_name TEXT,
+            upper_trait2_name TEXT,
             method2 TEXT,
             standardized_method2 TEXT,
             comment2 TEXT,
@@ -135,6 +138,7 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_id_index ON submissions (submitter_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_name_index ON submissions (submitter_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS significance_index ON submissions (significance)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS upper_trait_name_index ON submissions (upper_trait_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS method_index ON submissions (method)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method_index ON submissions (standardized_method)')
 
@@ -151,8 +155,8 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_significance2_index ON comparisons (standardized_significance2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS star_level1_index ON comparisons (star_level1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS star_level2_index ON comparisons (star_level2)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS trait1_name_index ON comparisons (trait1_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS trait2_name_index ON comparisons (trait2_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS upper_trait1_name_index ON comparisons (upper_trait1_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS upper_trait2_name_index ON comparisons (upper_trait2_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS method1_index ON comparisons (method1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS method2_index ON comparisons (method2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method1_index ON comparisons (standardized_method1)')
@@ -254,6 +258,7 @@ def import_file(filename):
                 trait_db,
                 trait_id,
                 trait_name,
+                trait_name.upper(),
                 method,
                 standardized_method,
                 comment,
@@ -286,6 +291,7 @@ def import_file(filename):
             t2.trait_db,
             t2.trait_id,
             t2.trait_name,
+            t2.upper_trait_name,
             t2.method,
             t2.standardized_method,
             t2.comment,
