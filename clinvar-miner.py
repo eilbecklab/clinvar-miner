@@ -234,7 +234,7 @@ def template_functions():
 @app.before_request
 def cache_get():
     response = cache.get(request.url)
-    if not response:
+    if not response or 'gzip' not in request.accept_encodings:
         return None
 
     server_etag = response.get_etag()[0]
@@ -246,7 +246,8 @@ def cache_get():
 
 @app.after_request
 def cache_set(response):
-    if not cache.has(request.url) and ttl > 0 and response.status_code == 200 and not response.direct_passthrough:
+    if (not cache.has(request.url) and ttl > 0 and response.status_code == 200 and not response.direct_passthrough and
+            'gzip' in request.accept_encodings):
         response.set_data(gzip.compress(response.get_data()))
         response.set_etag(sha256(response.get_data()).hexdigest())
         response.headers.set('Content-Encoding', 'gzip')
