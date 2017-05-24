@@ -7,6 +7,14 @@ class DB():
         self.db.row_factory = sqlite3.Row
         self.cursor = self.db.cursor()
 
+    def country_name(self, country_code):
+        try:
+            return list(self.cursor.execute(
+                'SELECT country_name FROM submitter_info WHERE country_code=? LIMIT 1', [country_code]
+            ))[0][0]
+        except (IndexError, OperationalError):
+            return country_code
+
     def max_date(self):
         return list(self.cursor.execute('SELECT MAX(date) FROM submissions'))[0][0]
 
@@ -233,10 +241,13 @@ class DB():
         return list(map(
             dict,
             self.cursor.execute('''
-                SELECT IFNULL(country, '') AS country, IFNULL(country_code, '') AS country_code, COUNT(*) AS count
+                SELECT
+                    IFNULL(country_name, '') AS country_name,
+                    IFNULL(country_code, '') AS country_code,
+                    COUNT(*) AS count
                 FROM current_submissions
                 LEFT JOIN submitter_info ON current_submissions.submitter_id=submitter_info.id
-                GROUP BY country_code ORDER BY country
+                GROUP BY country_code ORDER BY country_name
             ''')
         ))
 
@@ -274,26 +285,26 @@ class DB():
             )
         ))
 
-    def total_submissions_by_submitter(self, country = None, min_conflict_level = 0):
+    def total_submissions_by_submitter(self, country_code = None, min_conflict_level = 0):
         query = '''
             SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name, COUNT(DISTINCT scv1) AS count
             FROM current_comparisons
         '''
 
-        if country != None:
+        if country_code != None:
             query += ' LEFT JOIN submitter_info ON current_comparisons.submitter1_id=submitter_info.id'
 
         query += ' WHERE conflict_level>=:min_conflict_level'
 
-        if country != None:
-            query += ' AND country=:country'
+        if country_code != None:
+            query += ' AND country_code=:country_code'
 
         query += ' GROUP BY submitter1_id ORDER BY submitter1_name'
 
         try:
             return list(map(
                 dict,
-                self.cursor.execute(query, {'country': country, 'min_conflict_level': min_conflict_level})
+                self.cursor.execute(query, {'country_code': country_code, 'min_conflict_level': min_conflict_level})
             ))
         except OperationalError:
             return []

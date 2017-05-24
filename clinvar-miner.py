@@ -504,23 +504,21 @@ def submissions_by_variant(variant_name):
     )
 
 @app.route('/total-submissions-by-country')
-@app.route('/total-submissions-by-country/', defaults={'country': ''})
-@app.route('/total-submissions-by-country/<country>')
-def total_submissions_by_country(country = None):
+@app.route('/total-submissions-by-country/', defaults={'country_code': ''})
+@app.route('/total-submissions-by-country/<country_code>')
+def total_submissions_by_country(country_code = None):
     db = DB()
 
-    if country == None:
+    if country_code == None:
         return render_template(
             'total-submissions-by-country.html',
             total_submissions_by_country=db.total_submissions_by_country(),
         )
 
-    country = country.replace('%2F', '/')
-
     return render_template(
         'total-submissions-by-country--country.html',
-        country=country,
-        total_submissions_by_submitter=db.total_submissions_by_submitter(country=country),
+        country_name=db.country_name(country_code),
+        total_submissions_by_submitter=db.total_submissions_by_submitter(country_code=country_code),
     )
 
 @app.route('/total-submissions-by-method')

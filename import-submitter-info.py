@@ -25,14 +25,14 @@ cursor.execute('''
         city TEXT,
         state TEXT,
         zip_code TEXT,
-        country TEXT,
         country_code TEXT,
+        country_name TEXT,
         PRIMARY KEY (id)
     )
 ''')
 
-cursor.execute('CREATE INDEX IF NOT EXISTS country_index ON submitter_info (country)')
 cursor.execute('CREATE INDEX IF NOT EXISTS country_code_index ON submitter_info (country_code)')
+cursor.execute('CREATE INDEX IF NOT EXISTS country_name_index ON submitter_info (country_name)')
 
 count = 0
 stdout.write('Importing information on ' + str(len(submitter_ids)) + ' submitters...\n')
@@ -49,8 +49,8 @@ for submitter_id in submitter_ids:
             city = ''
             state = ''
             zip_code = ''
-            country = ''
             country_code = ''
+            country_name = ''
             if contact_info_el: #the "ClinVar" submitter has no contact information
                 contact_info = list(contact_info_el.itertext())[1:]
                 contact_info = list(filter(lambda info: not re.match('http://|https://|Organization ID:', info), contact_info))
@@ -59,14 +59,14 @@ for submitter_id in submitter_ids:
                 if len(contact_info) >= 1:
                     country_and_zip = re.match('(.+) - (.+)', contact_info[-1])
                     zip_code = country_and_zip.group(2) if country_and_zip else ''
-                    country = country_and_zip.group(1) if country_and_zip else contact_info[-1]
+                    country_name = country_and_zip.group(1) if country_and_zip else contact_info[-1]
                     try:
-                        country_code = countries.lookup(country).alpha_3
+                        country_code = countries.lookup(country_name).alpha_3
                     except LookupError: #not a real country
-                        country = ''
+                        country_name = ''
             cursor.execute(
                 'INSERT OR REPLACE INTO submitter_info VALUES (?,?,?,?,?,?,?)',
-                (int(submitter_id), name, city, state, zip_code, country, country_code)
+                (int(submitter_id), name, city, state, zip_code, country_code, country_name)
             )
     except HTTPError as err:
         if err.code == 404:

@@ -1,6 +1,6 @@
 {% extends 'skin.html' %}
-{% if country %}
-    {% set title = 'Total submissions from ' + country %}
+{% if country_name %}
+    {% set title = 'Total submissions from ' + country_name %}
 {% else %}
     {% set title = 'Total submissions from nowhere' %}
 {% endif %}
