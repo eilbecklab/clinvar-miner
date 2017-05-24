@@ -246,7 +246,7 @@ def cache_get():
 
 @app.after_request
 def cache_set(response):
-    if response.status_code == 200 and not response.direct_passthrough and ttl > 0:
+    if not cache.has(request.url) and ttl > 0 and response.status_code == 200 and not response.direct_passthrough:
         response.set_data(gzip.compress(response.get_data()))
         response.set_etag(sha256(response.get_data()).hexdigest())
         response.headers.set('Content-Encoding', 'gzip')
