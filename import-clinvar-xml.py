@@ -135,6 +135,7 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_id_index ON submissions (submitter_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_name_index ON submissions (submitter_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS significance_index ON submissions (significance)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS method_index ON submissions (method)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method_index ON submissions (standardized_method)')
 
     cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON comparisons (date)')
@@ -152,6 +153,8 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS star_level2_index ON comparisons (star_level2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS trait1_name_index ON comparisons (trait1_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS trait2_name_index ON comparisons (trait2_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS method1_index ON comparisons (method1)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS method2_index ON comparisons (method2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method1_index ON comparisons (standardized_method1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method2_index ON comparisons (standardized_method2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS conflict_level_index ON comparisons (conflict_level)')
