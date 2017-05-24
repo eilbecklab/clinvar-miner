@@ -32,6 +32,7 @@ cursor.execute('''
 ''')
 
 cursor.execute('CREATE INDEX IF NOT EXISTS country_index ON submitter_info (country)')
+cursor.execute('CREATE INDEX IF NOT EXISTS country_code_index ON submitter_info (country_code)')
 
 count = 0
 stdout.write('Importing information on ' + str(len(submitter_ids)) + ' submitters...\n')
@@ -61,8 +62,8 @@ for submitter_id in submitter_ids:
                     country = country_and_zip.group(1) if country_and_zip else contact_info[-1]
                     try:
                         country_code = countries.lookup(country).alpha_3
-                    except LookupError:
-                        pass
+                    except LookupError: #not a real country
+                        country = ''
             cursor.execute(
                 'INSERT OR REPLACE INTO submitter_info VALUES (?,?,?,?,?,?,?)',
                 (int(submitter_id), name, city, state, zip_code, country, country_code)

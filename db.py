@@ -236,7 +236,7 @@ class DB():
                 SELECT IFNULL(country, '') AS country, IFNULL(country_code, '') AS country_code, COUNT(*) AS count
                 FROM current_submissions
                 LEFT JOIN submitter_info ON current_submissions.submitter_id=submitter_info.id
-                GROUP BY country ORDER BY country
+                GROUP BY country_code ORDER BY country
             ''')
         ))
 
