@@ -53,21 +53,21 @@
                 </td>
             </tr>
         {% endif %}
-        {% if standardized_terms_filter %}
+        {% if original_terms_filter %}
             <tr>
                 <td colspan="2">
                     <label>
                         <input
-                            {% if request.args.get('standardized_terms') %} checked="checked" {% endif %}
-                            {% if standardized_terms_disabled %} disabled="disabled" {% endif %}
-                            name="standardized_terms"
+                            {% if request.args.get('original_terms') %} checked="checked" {% endif %}
+                            {% if original_terms_disabled %} disabled="disabled" {% endif %}
+                            name="original_terms"
                             type="checkbox"
                             value="1"
                         />
-                        {% if request.args.get('standardized_terms') and standardized_terms_disabled %}
-                            <input type="hidden" name="standardized_terms" value="1"/>
+                        {% if request.args.get('original_terms') and original_terms_disabled %}
+                            <input type="hidden" name="original_terms" value="1"/>
                         {% endif %}
-                        Use standardized significance terms
+                        Show significances as they were submitted (without aggregation into standard terms)
                     </label>
                 </td>
             </tr>

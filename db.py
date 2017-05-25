@@ -103,11 +103,11 @@ class DB():
                                                                     min_stars1 = 0, min_stars2 = 0,
                                                                     standardized_method1 = None,
                                                                     standardized_method2 = None,
-                                                                    standardized_terms = False):
-        if standardized_terms:
-            query = 'SELECT standardized_significance1 AS significance1, standardized_significance2 AS significance2'
-        else:
+                                                                    original_terms = False):
+        if original_terms:
             query = 'SELECT significance1, significance2'
+        else:
+            query = 'SELECT standardized_significance1 AS significance1, standardized_significance2 AS significance2'
 
         query += ', COUNT(DISTINCT variant_name) AS count FROM current_comparisons'
 
@@ -125,10 +125,10 @@ class DB():
         if standardized_method2:
             query += ' AND standardized_method2=:standardized_method2'
 
-        if standardized_terms:
-            query += ' GROUP BY standardized_significance1, standardized_significance2'
-        else:
+        if original_terms:
             query += ' GROUP BY significance1, significance2'
+        else:
+            query += ' GROUP BY standardized_significance1, standardized_significance2'
 
         return list(map(
             dict,
@@ -311,7 +311,7 @@ class DB():
 
     def total_submissions_by_variant(self, gene = None, trait_name = None, submitter_id = None, significance = None,
                                      min_stars = 0, standardized_method = None, min_conflict_level = 0,
-                                     standardized_terms = False):
+                                     original_terms = False):
         query = '''
             SELECT variant_name, COUNT(DISTINCT scv1) AS count FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
@@ -326,10 +326,10 @@ class DB():
         if submitter_id:
             query += ' AND submitter1_id=:submitter_id'
 
-        if standardized_terms:
-            query += ' AND standardized_significance1=:significance'
-        else:
+        if original_terms:
             query += ' AND significance1=:significance'
+        else:
+            query += ' AND standardized_significance1=:significance'
 
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
@@ -420,13 +420,13 @@ class DB():
 
     def total_variants_by_gene_and_significance(self, trait_name = None, submitter_id = None, min_stars = 0,
                                                 standardized_method = None, min_conflict_level = 0,
-                                                standardized_terms = False):
+                                                original_terms = False):
         query = 'SELECT gene, COUNT(DISTINCT variant_name) AS count'
 
-        if standardized_terms:
-            query += ', standardized_significance1 AS significance'
-        else:
+        if original_terms:
             query += ', significance1 AS significance'
+        else:
+            query += ', standardized_significance1 AS significance'
 
         query += '''
             FROM current_comparisons
@@ -487,7 +487,7 @@ class DB():
 
     def total_variants_by_submitter_and_significance(self, gene = None, trait_name = None, min_stars = 0,
                                                      standardized_method = None, min_conflict_level = 0,
-                                                     standardized_terms = False):
+                                                     original_terms = False):
         query = '''
             SELECT
                 submitter1_id AS submitter_id,
@@ -495,10 +495,10 @@ class DB():
                 COUNT(DISTINCT variant_name) AS count
         '''
 
-        if standardized_terms:
-            query += ', standardized_significance1 AS significance'
-        else:
+        if original_terms:
             query += ', significance1 AS significance'
+        else:
+            query += ', standardized_significance1 AS significance'
 
         query += '''
             FROM current_comparisons
@@ -561,7 +561,7 @@ class DB():
 
     def total_variants_by_trait_and_significance(self, gene = None, submitter_id = None, min_stars = 0,
                                                  standardized_method = None, min_conflict_level = 0,
-                                                 standardized_terms = False):
+                                                 original_terms = False):
         query = '''
             SELECT
                 trait1_db AS trait_db,
@@ -570,10 +570,10 @@ class DB():
                 COUNT(DISTINCT variant_name) AS count
         '''
 
-        if standardized_terms:
-            query += ', standardized_significance1 AS significance'
-        else:
+        if original_terms:
             query += ', significance1 AS significance'
+        else:
+            query += ', standardized_significance1 AS significance'
 
         query += '''
             FROM current_comparisons
@@ -624,7 +624,7 @@ class DB():
 
     def variants(self, submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None,
                  min_stars1 = 0, min_stars2 = 0, standardized_method1 = None, standardized_method2 = None,
-                 min_conflict_level = 1, standardized_terms = False):
+                 min_conflict_level = 1, original_terms = False):
         query = '''
             SELECT DISTINCT variant_name FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
@@ -636,16 +636,17 @@ class DB():
         if submitter2_id:
             query += ' AND submitter2_id=:submitter2_id'
 
-        if standardized_terms:
-            if significance1:
-                query += ' AND standardized_significance1=:significance1'
-            if significance2:
-                query += ' AND standardized_significance2=:significance2'
-        else:
-            if significance1:
+        if significance1:
+            if original_terms:
                 query += ' AND significance1=:significance1'
-            if significance2:
+            else:
+                query += ' AND standardized_significance1=:significance1'
+
+        if significance2:
+            if original_terms:
                 query += ' AND significance2=:significance2'
+            else:
+                query += ' AND standardized_significance2=:significance2'
 
         if standardized_method1:
             query += ' AND standardized_method1=:standardized_method1'

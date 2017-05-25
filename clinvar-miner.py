@@ -267,7 +267,7 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
                 standardized_method1=request.args.get('method1'),
                 min_stars2=int_arg('min_stars2'),
                 standardized_method2=request.args.get('method2'),
-                standardized_terms=request.args.get('standardized_terms'),
+                original_terms=request.args.get('original_terms'),
             )
         )
 
@@ -299,7 +299,7 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
             standardized_method1=request.args.get('method1'),
             min_stars2=int_arg('min_stars2'),
             standardized_method2=request.args.get('method2'),
-            standardized_terms=request.args.get('standardized_terms'),
+            original_terms=request.args.get('original_terms'),
         ),
     )
 
@@ -369,7 +369,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
                 standardized_method1=request.args.get('method1'),
                 min_stars2=int_arg('min_stars2'),
                 standardized_method2=request.args.get('method2'),
-                standardized_terms=request.args.get('standardized_terms'),
+                original_terms=request.args.get('original_terms'),
             )
         )
 
@@ -411,7 +411,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
                 standardized_method1=request.args.get('method1'),
                 min_stars2=int_arg('min_stars2'),
                 standardized_method2=request.args.get('method2'),
-                standardized_terms=request.args.get('standardized_terms'),
+                original_terms=request.args.get('original_terms'),
             )
         )
 
@@ -451,7 +451,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             standardized_method1=request.args.get('method1'),
             min_stars2=int_arg('min_stars2'),
             standardized_method2=request.args.get('method2'),
-            standardized_terms=request.args.get('standardized_terms'),
+            original_terms=request.args.get('original_terms'),
         ),
     )
 
@@ -584,7 +584,7 @@ def variants_by_gene(gene = None, submitter_id = None, trait_name = None, signif
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
-                standardized_terms=request.args.get('standardized_terms'),
+                original_terms=request.args.get('original_terms'),
             )
         )
 
@@ -594,7 +594,7 @@ def variants_by_gene(gene = None, submitter_id = None, trait_name = None, signif
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
-                standardized_terms=request.args.get('standardized_terms'),
+                original_terms=request.args.get('original_terms'),
             )
         )
 
@@ -627,7 +627,7 @@ def variants_by_gene(gene = None, submitter_id = None, trait_name = None, signif
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
-                standardized_terms=request.args.get('standardized_terms'),
+                original_terms=request.args.get('original_terms'),
             ),
         )
 
@@ -646,7 +646,7 @@ def variants_by_gene(gene = None, submitter_id = None, trait_name = None, signif
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
-                standardized_terms=request.args.get('standardized_terms'),
+                original_terms=request.args.get('original_terms'),
             ),
         )
 
@@ -674,7 +674,7 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
-                standardized_terms=request.args.get('standardized_terms'),
+                original_terms=request.args.get('original_terms'),
             )
         )
 
@@ -684,7 +684,7 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
-                standardized_terms=request.args.get('standardized_terms'),
+                original_terms=request.args.get('original_terms'),
             )
         )
 
@@ -766,7 +766,7 @@ def variants_by_trait(trait_name = None, gene = None, submitter_id = None, signi
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
-                standardized_terms=request.args.get('standardized_terms'),
+                original_terms=request.args.get('original_terms'),
             )
         )
 
@@ -776,7 +776,7 @@ def variants_by_trait(trait_name = None, gene = None, submitter_id = None, signi
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
-                standardized_terms=request.args.get('standardized_terms'),
+                original_terms=request.args.get('original_terms'),
             )
         )
 
