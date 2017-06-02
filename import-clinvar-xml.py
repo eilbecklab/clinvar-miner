@@ -82,6 +82,7 @@ def create_tables():
             variant_id TEXT,
             variant_name TEXT,
             gene TEXT,
+
             submitter1_id INTEGER,
             submitter1_name TEXT,
             rcv1 TEXT,
@@ -98,23 +99,17 @@ def create_tables():
             method1 TEXT,
             standardized_method1 TEXT,
             comment1 TEXT,
+
             submitter2_id INTEGER,
             submitter2_name TEXT,
-            rcv2 TEXT,
             scv2 TEXT,
             significance2 TEXT,
             standardized_significance2 TEXT,
-            last_eval2 TEXT,
-            review_status2 TEXT,
             star_level2 INTEGER,
-            trait2_db TEXT,
-            trait2_id TEXT,
-            trait2_name TEXT,
-            upper_trait2_name TEXT,
-            method2 TEXT,
             standardized_method2 TEXT,
-            comment2 TEXT,
+
             conflict_level INTEGER,
+
             PRIMARY KEY (date, scv1, scv2)
         )
     ''')
@@ -146,22 +141,19 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS variant_name_index ON comparisons (variant_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS gene_index ON comparisons (gene)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter1_id_index ON comparisons (submitter1_id)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS submitter2_id_index ON comparisons (submitter2_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter1_name_index ON comparisons (submitter1_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS submitter2_name_index ON comparisons (submitter2_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS scv1_index ON comparisons(scv1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS scv2_index ON comparisons(scv2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS significance1_index ON comparisons (significance1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS significance2_index ON comparisons (significance2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_significance1_index ON comparisons (standardized_significance1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS standardized_significance2_index ON comparisons (standardized_significance2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS star_level1_index ON comparisons (star_level1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS star_level2_index ON comparisons (star_level2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS upper_trait1_name_index ON comparisons (upper_trait1_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS upper_trait2_name_index ON comparisons (upper_trait2_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS method1_index ON comparisons (method1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS method2_index ON comparisons (method2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method1_index ON comparisons (standardized_method1)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submitter2_id_index ON comparisons (submitter2_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submitter2_name_index ON comparisons (submitter2_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS significance2_index ON comparisons (significance2)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS standardized_significance2_index ON comparisons (standardized_significance2)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS star_level2_index ON comparisons (star_level2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method2_index ON comparisons (standardized_method2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS conflict_level_index ON comparisons (conflict_level)')
 
@@ -283,20 +275,11 @@ def import_file(filename):
             t1.*,
             t2.submitter_id,
             t2.submitter_name,
-            t2.rcv,
             t2.scv,
             t2.significance,
             t2.standardized_significance,
-            t2.last_eval,
-            t2.review_status,
             t2.star_level,
-            t2.trait_db,
-            t2.trait_id,
-            t2.trait_name,
-            t2.upper_trait_name,
-            t2.method,
             t2.standardized_method,
-            t2.comment,
             CASE
                 WHEN t1.standardized_significance=t2.standardized_significance AND t1.significance!=t2.significance THEN 1
 
