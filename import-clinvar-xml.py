@@ -149,6 +149,8 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter2_id_index ON comparisons (submitter2_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter1_name_index ON comparisons (submitter1_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter2_name_index ON comparisons (submitter2_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS scv1_index ON comparisons(scv1)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS scv2_index ON comparisons(scv2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS significance1_index ON comparisons (significance1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS significance2_index ON comparisons (significance2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_significance1_index ON comparisons (standardized_significance1)')

@@ -41,7 +41,7 @@ class DB():
     def submissions(self, gene = None, variant_name = None, min_stars = 0, standardized_method = None,
                     min_conflict_level = 0):
         query = '''
-            SELECT DISTINCT
+            SELECT
                 variant_name,
                 gene,
                 submitter1_id AS submitter_id,
@@ -58,6 +58,7 @@ class DB():
                 comment1 AS comment
             FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
+            GROUP BY scv1
         '''
 
         if gene != None:
