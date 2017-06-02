@@ -18,6 +18,9 @@ app = Flask(__name__)
 cache = SimpleCache()
 ttl = float(environ.get('TTL', 'inf'))
 
+app.jinja_env.trim_blocks = True
+app.jinja_env.lstrip_blocks = True
+
 nonstandard_significance_term_map = dict(map(
     lambda line: line[0:-1].split('\t'),
     open('nonstandard_significance_terms.tsv')
