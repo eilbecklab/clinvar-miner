@@ -39,7 +39,7 @@
             <tbody>
                 {% for submitter2_id, row in summary.items() %}
                     <tr>
-                        <th>{{ row['name'] }}</th>
+                        <th>{{ submitter_link(submitter2_id, row['name'])|safe }}</th>
                         {% for i in range(1, 6) %}
                             {% if row[i] > 0 %}
                                 <td class="highlight">{{ row[i] }}</td>
