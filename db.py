@@ -58,7 +58,6 @@ class DB():
                 comment1 AS comment
             FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
-            GROUP BY scv1
         '''
 
         if gene != None:
@@ -70,7 +69,7 @@ class DB():
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
-        query += ' ORDER BY submitter_name'
+        query += ' GROUP BY scv1 ORDER BY submitter_name'
 
         return list(map(
             dict,
