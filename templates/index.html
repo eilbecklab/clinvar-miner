@@ -15,7 +15,8 @@
     <p>Welcome to the <b>ClinVar Miner</b> website!</p>
 
     <p>
-        The content on this site is current as of {{ max_date.strftime('%B %Y') }}. At that time, there were
+        The content on this site is current as of {{ max_date.strftime('%B %Y') }}. At that time,
+        <a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/">ClinVar</a> had
         {{ '{:,}'.format(total_submissions) }} submissions on {{ '{:,}'.format(total_variants) }} variants.
     </p>
 
