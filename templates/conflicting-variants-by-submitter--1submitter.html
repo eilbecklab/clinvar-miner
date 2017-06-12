@@ -19,11 +19,9 @@
         {% set original_terms_filter = True %}
         {% include 'filter.html' %}
     {% endwith %}
-    <p>Total conflicting variants: {{ total }}</p>
+    {% include 'conflict-overview.html' %}
+    {% if overview['total'] %}
     <h2>Submitter to submitter summary</h2>
-    {% if not summary %}
-        No conflicts
-    {% else %}
         <table class="sortable summary table table-bordered table-striped">
             <thead>
                 <tr>

@@ -395,6 +395,38 @@ class DB():
             )
         )[0][0]
 
+    def total_variants_by_conflict_level(self, submitter1_id = None, min_stars1 = 0, min_stars2 = 0,
+                                         standardized_method1 = None, standardized_method2 = None):
+        query = '''
+            SELECT conflict_level, COUNT(DISTINCT variant_name) AS count FROM current_comparisons
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2
+        '''
+
+        if submitter1_id:
+            query += ' AND submitter1_id=:submitter1_id'
+
+        if standardized_method1:
+            query += ' AND standardized_method1=:standardized_method1'
+
+        if standardized_method2:
+            query += ' AND standardized_method2=:standardized_method2'
+
+        query += ' GROUP BY conflict_level ORDER BY conflict_level'
+
+        return list(map(
+            dict,
+            self.cursor.execute(
+                query,
+                {
+                    'submitter1_id': submitter1_id,
+                    'min_stars1': min_stars1,
+                    'min_stars2': min_stars2,
+                    'standardized_method1': standardized_method1,
+                    'standardized_method2': standardized_method2,
+                }
+            )
+        ))
+
     def total_variants_by_gene(self, min_stars = 0, standardized_method = None, min_conflict_level = 0):
         query = '''
             SELECT gene, COUNT(DISTINCT variant_name) AS count FROM current_comparisons

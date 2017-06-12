@@ -1,0 +1,25 @@
+<table class="summary table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Variants with no conflict</th>
+            <th>Variants with a synonymous conflict</th>
+            <th>Variants with a confidence conflict</th>
+            <th>Variants with a benign vs uncertain conflict</th>
+            <th>Variants with a category conflict</th>
+            <th>Variants with a clinically significant conflict</th>
+            <th>Variants with any kind of conflict</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ overview[0] }}</td>
+            {% for i in [1, 2, 3, 4, 5, 'total'] %}
+                {% if overview[i] %}
+                    <td class="highlight">{{ overview[i] }}</td>
+                {% else %}
+                    <td>0</td>
+                {% endif %}
+            {% endfor %}
+        </tr>
+    </tbody>
+</table>
