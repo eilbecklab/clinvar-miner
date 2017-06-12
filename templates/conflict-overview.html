@@ -12,7 +12,7 @@
     </thead>
     <tbody>
         <tr>
-            <td>{{ overview[0] }}</td>
+            <td>{{ overview[0] - overview['total'] }}</td>
             {% for i in [1, 2, 3, 4, 5, 'total'] %}
                 {% if overview[i] %}
                     <td class="highlight">{{ overview[i] }}</td>
