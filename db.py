@@ -237,6 +237,9 @@ class DB():
             self.cursor.execute('SELECT date, COUNT(DISTINCT significance) AS count FROM submissions GROUP BY date')
         ))
 
+    def total_submissions(self):
+        return list(self.cursor.execute('SELECT COUNT(*) FROM current_submissions'))[0][0]
+
     def total_submissions_by_country(self):
         return list(map(
             dict,
