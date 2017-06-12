@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>ClinVar Miner - {{ title }}</title>
+        <title>
+            {% if title %}
+                ClinVar Miner - {{ title }}
+            {% else %}
+                ClinVar Miner
+            {% endif %}
+        </title>
 
         <base href="{{ request.script_root }}/"/>
 
