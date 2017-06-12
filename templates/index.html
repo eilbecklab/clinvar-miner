@@ -16,7 +16,7 @@
     <p>Welcome to the ClinVar Miner website!</p>
 
     <p>
-        The content on this site is current as of {{ max_date }}. At that time, there were
+        The content on this site is current as of {{ max_date.strftime('%B %Y') }}. At that time, there were
         {{ '{:,}'.format(total_submissions) }} submissions on {{ '{:,}'.format(total_variants) }} variants.
     </p>
 

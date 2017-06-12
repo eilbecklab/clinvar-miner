@@ -498,7 +498,7 @@ def index():
     db = DB()
     return render_template(
         'index.html',
-        max_date=datetime.strptime(db.max_date(), '%Y-%m').strftime('%B %Y'),
+        max_date=datetime.strptime(db.max_date(), '%Y-%m'),
         total_submissions=db.total_submissions(),
         total_variants=db.total_variants(),
     )
