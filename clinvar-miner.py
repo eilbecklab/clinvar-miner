@@ -457,9 +457,6 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             'conflicting-variants-by-submitter--2submitters.html',
             submitter1_info=db.submitter_info(submitter1_id),
             submitter2_info=submitter2_info,
-            breakdown=breakdown,
-            submitter1_significances=submitter1_significances,
-            submitter2_significances=submitter2_significances,
             total=db.total_variants(
                 submitter1_id=submitter1_id,
                 submitter2_id=submitter2_id,
@@ -469,6 +466,9 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
                 standardized_method2=request.args.get('method2'),
                 min_conflict_level=1,
             ),
+            submitter1_significances=submitter1_significances,
+            submitter2_significances=submitter2_significances,
+            breakdown=breakdown,
         )
 
     significance1 = significance1.replace('%2F', '/')
@@ -641,9 +641,6 @@ def variants_by_gene(gene = None, submitter_id = None, trait_name = None, signif
         return render_template(
             'variants-by-gene--gene.html',
             gene=gene,
-            breakdown_by_trait_and_significance=breakdown_by_trait_and_significance,
-            breakdown_by_submitter_and_significance=breakdown_by_submitter_and_significance,
-            significances=significances,
             total=db.total_variants(
                 gene=gene,
                 min_stars1=int_arg('min_stars1'),
@@ -652,6 +649,9 @@ def variants_by_gene(gene = None, submitter_id = None, trait_name = None, signif
                 standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
             ),
+            significances=significances,
+            breakdown_by_trait_and_significance=breakdown_by_trait_and_significance,
+            breakdown_by_submitter_and_significance=breakdown_by_submitter_and_significance,
         )
 
     if submitter_id:
@@ -731,9 +731,6 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
         return render_template(
             'variants-by-submitter--submitter.html',
             submitter_info=db.submitter_info(submitter_id),
-            breakdown_by_gene_and_significance=breakdown_by_gene_and_significance,
-            breakdown_by_trait_and_significance=breakdown_by_trait_and_significance,
-            significances=significances,
             total=db.total_variants(
                 submitter1_id=submitter_id,
                 min_stars1=int_arg('min_stars1'),
@@ -742,6 +739,9 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
                 standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
             ),
+            significances=significances,
+            breakdown_by_gene_and_significance=breakdown_by_gene_and_significance,
+            breakdown_by_trait_and_significance=breakdown_by_trait_and_significance,
         )
 
     if gene:
@@ -823,9 +823,6 @@ def variants_by_trait(trait_name = None, gene = None, submitter_id = None, signi
         return render_template(
             'variants-by-trait--trait.html',
             trait_info=db.trait_info(trait_name),
-            breakdown_by_gene_and_significance=breakdown_by_gene_and_significance,
-            breakdown_by_submitter_and_significance=breakdown_by_submitter_and_significance,
-            significances=significances,
             total=db.total_variants(
                 trait_name=trait_name,
                 min_stars1=int_arg('min_stars1'),
@@ -834,6 +831,9 @@ def variants_by_trait(trait_name = None, gene = None, submitter_id = None, signi
                 standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
             ),
+            significances=significances,
+            breakdown_by_gene_and_significance=breakdown_by_gene_and_significance,
+            breakdown_by_submitter_and_significance=breakdown_by_submitter_and_significance,
         )
 
     if gene:
