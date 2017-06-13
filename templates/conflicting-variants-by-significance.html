@@ -10,7 +10,7 @@
         {% include 'filter.html' %}
     {% endwith %}
     {% include 'conflict-overview.html' %}
-    {% if overview['total'] %}
+    {% if total_conflicting_variants %}
         <h2>Significance breakdown</h2>
         {% include 'synonyms-note.html' %}
         <table class="breakdown table table-bordered table-condensed table-striped">
