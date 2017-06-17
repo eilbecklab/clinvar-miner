@@ -13,9 +13,7 @@
     {% endwith %}
     <p>Total variants: {{ total }}</p>
     {% if total %}
-        {% with base_url = 'variants-by-trait/' + trait_info['name']|quotepath %}
-            {% include 'include/breakdown-by-gene-and-significance.html' %}
-            {% include 'include/breakdown-by-submitter-and-significance.html' %}
-        {% endwith %}
+        {% include 'include/breakdown-by-gene-and-significance.html' %}
+        {% include 'include/breakdown-by-submitter-and-significance.html' %}
     {% endif %}
 {% endblock %}

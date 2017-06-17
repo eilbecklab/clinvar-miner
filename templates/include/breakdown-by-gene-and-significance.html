@@ -15,7 +15,7 @@
                 {% for significance in significances %}
                     {% if breakdown_by_gene_and_significance[gene][significance] %}
                         <td class="highlight">
-                            <a href="{{ base_url }}/gene/{{ gene|quotepath|orintergenic }}/{{ significance|quotepath }}{{ request|querysuffix }}">
+                            <a href="{{ request.base_url }}/gene/{{ gene|quotepath|orintergenic }}/{{ significance|quotepath }}{{ request|querysuffix }}">
                                 {{ breakdown_by_gene_and_significance[gene][significance] }}
                             </a>
                         </td>
