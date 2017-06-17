@@ -1,0 +1,16 @@
+<table class="sortable table" style="width:auto">
+    <thead>
+        <tr>
+            <th>Variant</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for variant in variants %}
+            <tr>
+                <td>
+                    <a href="submissions-by-variant/{{ variant|quotepath }}">{{ variant }}</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -657,13 +657,16 @@ class DB():
             'SELECT variant_id FROM current_submissions WHERE variant_name=? LIMIT 1', [variant_name]
         ))[0][0]
 
-    def variants(self, submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None,
-                 min_stars1 = 0, min_stars2 = 0, standardized_method1 = None, standardized_method2 = None,
-                 min_conflict_level = 1, original_terms = False):
+    def variants(self, gene = None, submitter1_id = None, submitter2_id = None, significance1 = None,
+                 significance2 = None, min_stars1 = 0, min_stars2 = 0, standardized_method1 = None,
+                 standardized_method2 = None, min_conflict_level = 1, original_terms = False):
         query = '''
             SELECT DISTINCT variant_name FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
+
+        if gene != None:
+            query += ' AND gene=:gene'
 
         if submitter1_id:
             query += ' AND submitter1_id=:submitter1_id'
@@ -696,6 +699,7 @@ class DB():
             self.cursor.execute(
                 query,
                 {
+                    'gene': gene,
                     'submitter1_id': submitter1_id,
                     'submitter2_id': submitter2_id,
                     'significance1': significance1,

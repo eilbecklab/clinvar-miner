@@ -19,11 +19,13 @@
         {% set original_terms_filter = True %}
         {% include 'include/filter.html' %}
     {% endwith %}
-    <p>Total variants: {{ total }}</p>
-    {% if total %}
+    <p>Total variants: {{ variants|length }}</p>
+    {% if variants %}
         {% with base_url = 'variants-by-gene/' + gene|quotepath|orintergenic %}
             {% include 'include/breakdown-by-trait-and-significance.html' %}
             {% include 'include/breakdown-by-submitter-and-significance.html' %}
         {% endwith %}
+        <h2>All variants</h2>
+        {% include 'include/variants.html' %}
     {% endif %}
 {% endblock %}

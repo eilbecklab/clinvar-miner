@@ -652,7 +652,10 @@ def variants_by_gene(gene = None, submitter_id = None, trait_name = None, signif
         return render_template(
             'variants-by-gene--gene.html',
             gene=gene,
-            total=db.total_variants(
+            significances=significances,
+            breakdown_by_trait_and_significance=breakdown_by_trait_and_significance,
+            breakdown_by_submitter_and_significance=breakdown_by_submitter_and_significance,
+            variants=db.variants(
                 gene=gene,
                 min_stars1=int_arg('min_stars1'),
                 min_stars2=int_arg('min_stars1'),
@@ -660,9 +663,6 @@ def variants_by_gene(gene = None, submitter_id = None, trait_name = None, signif
                 standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
             ),
-            significances=significances,
-            breakdown_by_trait_and_significance=breakdown_by_trait_and_significance,
-            breakdown_by_submitter_and_significance=breakdown_by_submitter_and_significance,
         )
 
     if submitter_id:
