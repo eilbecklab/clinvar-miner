@@ -1,1 +1,7 @@
-variants-by-trait--trait-submitter-significance.html
+{% extends 'extend/submissions-by-variant.html' %}
+{% set title = 'Variants reported as ' + significance + ' for ' + trait_info['name'] + ' by ' + submitter_info['name'] %}
+{% block title %}
+    Variants reported as {{ significance }} for
+    {{ trait_link(trait_info['db'], trait_info['id'], trait_info['name'])|safe }} by
+    {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+{% endblock %}

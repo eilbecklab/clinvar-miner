@@ -1,4 +1,4 @@
-{% extends 'skin.html' %}
+{% extends 'extend/skin.html' %}
 {% set title = 'Total submissions by method' %}
 {% block head %}
     <script src="static/line-graph.js" type="application/javascript"></script>
@@ -8,7 +8,7 @@
     {% with %}
         {% set review_status1_label = 'Minimum review status' %}
         {% set min_conflict_level_filter = True %}
-        {% include 'filter.html' %}
+        {% include 'include/filter.html' %}
     {% endwith %}
     {% if total_submissions_by_method %}
         <svg id="graph"></svg>

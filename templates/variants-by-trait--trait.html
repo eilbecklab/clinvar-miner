@@ -1,4 +1,4 @@
-{% extends 'skin.html' %}
+{% extends 'extend/skin.html' %}
 {% set title = 'Variants studied for ' + trait_info['name'] %}
 {% block title %}
     Variants studied for {{ trait_link(trait_info['db'], trait_info['id'], trait_info['name'])|safe }}
@@ -9,13 +9,13 @@
         {% set method1_label = 'Method' %}
         {% set min_conflict_level_filter = True %}
         {% set original_terms_filter = True %}
-        {% include 'filter.html' %}
+        {% include 'include/filter.html' %}
     {% endwith %}
     <p>Total variants: {{ total }}</p>
     {% if total %}
         {% with base_url = 'variants-by-trait/' + trait_info['name']|quotepath %}
-            {% include 'breakdown-by-gene-and-significance.html' %}
-            {% include 'breakdown-by-submitter-and-significance.html' %}
+            {% include 'include/breakdown-by-gene-and-significance.html' %}
+            {% include 'include/breakdown-by-submitter-and-significance.html' %}
         {% endwith %}
     {% endif %}
 {% endblock %}

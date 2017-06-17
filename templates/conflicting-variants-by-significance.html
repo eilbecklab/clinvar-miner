@@ -1,4 +1,4 @@
-{% extends 'skin.html' %}
+{% extends 'extend/skin.html' %}
 {% set title = 'Conflicting variants by significance' %}
 {% block content %}
     {% with %}
@@ -7,12 +7,12 @@
         {% set review_status2_label = 'X axis minimum review status' %}
         {% set method2_label = 'X axis method' %}
         {% set original_terms_filter = True %}
-        {% include 'filter.html' %}
+        {% include 'include/filter.html' %}
     {% endwith %}
-    {% include 'conflict-overview.html' %}
+    {% include 'include/conflict-overview.html' %}
     {% if total_conflicting_variants %}
         <h2>Significance breakdown</h2>
-        {% include 'synonyms-note.html' %}
+        {% include 'include/synonyms-note.html' %}
         <table class="breakdown table table-bordered table-condensed table-striped">
             <tr>
                 <th></th>

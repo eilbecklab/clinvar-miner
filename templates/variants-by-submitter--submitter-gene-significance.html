@@ -1,1 +1,15 @@
-variants-by-gene--gene-submitter-significance.html
+{% extends 'extend/submissions-by-variant.html' %}
+{% if gene %}
+    {% set title = 'Variants in gene ' + gene + ' reported as ' + significance + ' by ' + submitter_info['name'] %}
+{% else %}
+    {% set title = 'Intergenic variants reported as ' + significance + ' by ' + submitter_info['name'] %}
+{% endif %}
+{% block title %}
+    {% if gene %}
+        Variants in gene {{ gene|genelink|safe }} reported as {{ significance }} by
+        {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+    {% else %}
+        Intergenic variants reported as {{ significance }} by
+        {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+    {% endif %}
+{% endblock %}

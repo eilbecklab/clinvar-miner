@@ -1,4 +1,4 @@
-{% extends 'skin.html' %}
+{% extends 'extend/skin.html' %}
 {% set title = 'Variants from ' + submitter_info['name'] %}
 {% block title %}Variants from {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}{% endblock %}
 {% block content %}
@@ -7,13 +7,13 @@
         {% set method1_label = 'Method' %}
         {% set min_conflict_level_filter = True %}
         {% set original_terms_filter = True %}
-        {% include 'filter.html' %}
+        {% include 'include/filter.html' %}
     {% endwith %}
     <p>Total variants: {{ total }}</p>
     {% if total %}
         {% with base_url = 'variants-by-submitter/' + submitter_info['id']|string %}
-            {% include 'breakdown-by-gene-and-significance.html' %}
-            {% include 'breakdown-by-trait-and-significance.html' %}
+            {% include 'include/breakdown-by-gene-and-significance.html' %}
+            {% include 'include/breakdown-by-trait-and-significance.html' %}
         {% endwith %}
     {% endif %}
 {% endblock %}

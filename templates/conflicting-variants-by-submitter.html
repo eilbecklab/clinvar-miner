@@ -1,4 +1,4 @@
-{% extends 'skin.html' %}
+{% extends 'extend/skin.html' %}
 {% set title = 'Conflicting variants by submitter' %}
 {% block content %}
     {% with %}
@@ -6,7 +6,7 @@
         {% set method1_label = 'Method of the submitter\'s submission' %}
         {% set review_status2_label = 'Minimum review status of the other submitter\'s submission' %}
         {% set method2_label = 'Method of the other submitter\'s submission' %}
-        {% include 'filter.html' %}
+        {% include 'include/filter.html' %}
     {% endwith %}
     <p>Total submitters with conflicts: {{ total_conflicting_variants_by_submitter|length }}</p>
     {% if total_conflicting_variants_by_submitter %}

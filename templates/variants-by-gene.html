@@ -1,11 +1,11 @@
-{% extends 'skin.html' %}
+{% extends 'extend/skin.html' %}
 {% set title = 'Variants by gene' %}
 {% block content %}
     {% with %}
         {% set review_status1_label = 'Minimum review status' %}
         {% set method1_label = 'Method' %}
         {% set min_conflict_level_filter = True %}
-        {% include 'filter.html' %}
+        {% include 'include/filter.html' %}
     {% endwith %}
     <p>Total genes: {{ total_variants_by_gene|length }}</p>
     {% if total_variants_by_gene %}

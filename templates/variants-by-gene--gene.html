@@ -1,4 +1,4 @@
-{% extends 'skin.html' %}
+{% extends 'extend/skin.html' %}
 {% if gene %}
     {% set title = 'Variants in gene ' + gene %}
 {% else %}
@@ -17,13 +17,13 @@
         {% set method1_label = 'Method' %}
         {% set min_conflict_level_filter = True %}
         {% set original_terms_filter = True %}
-        {% include 'filter.html' %}
+        {% include 'include/filter.html' %}
     {% endwith %}
     <p>Total variants: {{ total }}</p>
     {% if total %}
         {% with base_url = 'variants-by-gene/' + gene|quotepath|orintergenic %}
-            {% include 'breakdown-by-trait-and-significance.html' %}
-            {% include 'breakdown-by-submitter-and-significance.html' %}
+            {% include 'include/breakdown-by-trait-and-significance.html' %}
+            {% include 'include/breakdown-by-submitter-and-significance.html' %}
         {% endwith %}
     {% endif %}
 {% endblock %}

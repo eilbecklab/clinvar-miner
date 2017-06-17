@@ -1,4 +1,4 @@
-{% extends 'skin.html' %}
+{% extends 'extend/skin.html' %}
 {% set title = 'Submissions for variant ' + variant_name %}
 {% block head %}
     <script src="static/jquery-3.1.1.js" type="application/javascript"></script>
@@ -12,7 +12,7 @@
         {% set review_status1_label = 'Minimum review status' %}
         {% set method1_label = 'Method' %}
         {% set min_conflict_level_filter = True %}
-        {% include 'filter.html' %}
+        {% include 'include/filter.html' %}
     {% endwith %}
     <p>Total submissions: {{ submissions|length }}</p>
     {% if submissions %}

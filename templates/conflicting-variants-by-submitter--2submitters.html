@@ -1,4 +1,4 @@
-{% extends 'skin.html' %}
+{% extends 'extend/skin.html' %}
 {% set title = 'Conflicting variants between ' + submitter1_info['name'] + ' and ' + submitter2_info['name'] %}
 {% block title %}
     Conflicting variants between {{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }} and
@@ -11,8 +11,8 @@
         {% set review_status2_label = 'Minimum review status of the other submission' %}
         {% set method2_label = 'Method of the other submission' %}
         {% set original_terms_filter = True %}
-        {% include 'filter.html' %}
+        {% include 'include/filter.html' %}
     {% endwith %}
     <p>Total conflicting variants: {{ total }}</p>
-    {% include 'conflict-breakdown.html' %}
+    {% include 'include/conflict-breakdown.html' %}
 {% endblock %}

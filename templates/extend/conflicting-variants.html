@@ -1,9 +1,9 @@
-{% extends 'skin.html' %}
+{% extends 'extend/skin.html' %}
 {% block content %}
     {% with %}
         {% set original_terms_filter = True %}
         {% set original_terms_disabled = True %}
-        {% include 'filter.html' %}
+        {% include 'include/filter.html' %}
     {% endwith %}
     <p>Total conflicting variants: {{ variants|length }}</p>
     {% if variants %}
