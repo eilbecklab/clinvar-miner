@@ -23,7 +23,7 @@
     {% if variants %}
         {% include 'include/breakdown-by-trait-and-significance.html' %}
         {% include 'include/breakdown-by-submitter-and-significance.html' %}
-        <h2>All variants</h2>
+        {{ h2('All variants')|safe }}
         {% include 'include/variants.html' %}
     {% endif %}
 {% endblock %}

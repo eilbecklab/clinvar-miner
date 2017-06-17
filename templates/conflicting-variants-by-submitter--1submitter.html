@@ -21,7 +21,7 @@
     {% endwith %}
     {% include 'include/conflict-overview.html' %}
     {% if total_conflicting_variants %}
-    <h2>Submitter to submitter summary</h2>
+        {{ h2('Submitter to submitter summary')|safe }}
         <table class="sortable summary table table-bordered table-striped">
             <thead>
                 <tr>

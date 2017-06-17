@@ -210,6 +210,10 @@ def string_or_space(path):
 
 @app.context_processor
 def template_functions():
+    def h2(text):
+        section_id = text.lower().replace(' ', '-')
+        return '<h2 id="' + section_id + '">' + text + ' <a class="internal" href="' + request.url + '#' + section_id + '">#</a></h2>'
+
     def submitter_link(submitter_id, submitter_name):
         if submitter_id == 0:
             return submitter_name
@@ -245,6 +249,7 @@ def template_functions():
         return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + str(variant_id) + '/">' + break_punctuation(variant_name) + '</a>'
 
     return {
+        'h2': h2,
         'submitter_link': submitter_link,
         'trait_link': trait_link,
         'variant_link': variant_link,

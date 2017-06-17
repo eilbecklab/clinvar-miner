@@ -20,6 +20,10 @@
     padding-right: 1.1em;
 }
 
+.internal {
+    display: none;
+}
+
 .highlight {
     background-color: #FFEEAA;
 }
@@ -52,4 +56,8 @@
     opacity: 0.5;
     padding-left: 10px;
     vertical-align: middle;
+}
+
+*:hover > .internal {
+    display: inline;
 }

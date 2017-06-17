@@ -11,7 +11,7 @@
     {% endwith %}
     {% include 'include/conflict-overview.html' %}
     {% if total_conflicting_variants %}
-        <h2>Significance breakdown</h2>
+        {{ h2('Significance breakdown')|safe }}
         {% include 'include/synonyms-note.html' %}
         <table class="breakdown table table-bordered table-condensed table-striped">
             <tr>
