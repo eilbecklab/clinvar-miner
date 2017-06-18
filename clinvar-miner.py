@@ -473,7 +473,25 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             'conflicting-variants-by-submitter--2submitters.html',
             submitter1_info=db.submitter_info(submitter1_id),
             submitter2_info=submitter2_info,
-            total=db.total_variants(
+            overview=get_conflict_overview(
+                db.total_conflicting_variants_by_conflict_level(
+                    submitter1_id=submitter1_id,
+                    submitter2_id=submitter2_id,
+                    min_stars1=int_arg('min_stars1'),
+                    standardized_method1=request.args.get('method1'),
+                    min_stars2=int_arg('min_stars2'),
+                    standardized_method2=request.args.get('method2'),
+                ),
+            ),
+            total_variants=db.total_variants(
+                submitter1_id=submitter1_id,
+                submitter2_id=submitter2_id,
+                min_stars1=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                min_stars2=int_arg('min_stars2'),
+                standardized_method2=request.args.get('method2'),
+            ),
+            total_conflicting_variants=db.total_variants(
                 submitter1_id=submitter1_id,
                 submitter2_id=submitter2_id,
                 min_stars1=int_arg('min_stars1'),

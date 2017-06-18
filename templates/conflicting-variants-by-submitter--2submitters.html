@@ -13,6 +13,6 @@
         {% set original_terms_filter = True %}
         {% include 'include/filter.html' %}
     {% endwith %}
-    <p>Total conflicting variants: {{ total }}</p>
+    {% include 'include/conflict-overview.html' %}
     {% include 'include/conflict-breakdown.html' %}
 {% endblock %}
