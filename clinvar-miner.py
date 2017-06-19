@@ -182,7 +182,7 @@ def significance_rank(significance):
 
 @app.template_filter('genelink')
 def gene_link(gene):
-    return '<a class="external" href="https://ghr.nlm.nih.gov/gene/' + gene + '">' + gene + '</a>'
+    return '<a class="external" href="https://ghr.nlm.nih.gov/gene/' + gene + '">' + gene + '</a>' if gene else ''
 
 @app.template_filter('date')
 def prettify_date(iso_date):
