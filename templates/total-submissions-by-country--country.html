@@ -5,20 +5,29 @@
     {% set title = 'Total submissions from unspecified countries' %}
 {% endif %}
 {% block content %}
-    <table class="sortable table" style="width:auto">
-        <thead>
-            <tr>
-                <th>Submitter</th>
-                <th>Submissions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in total_submissions_by_submitter %}
+    {% with %}
+        {% set review_status1_label = 'Minimum review status' %}
+        {% set method1_label = 'Method' %}
+        {% set min_conflict_level_filter = True %}
+        {% include 'include/filter.html' %}
+    {% endwith %}
+    <p>Total submitters: {{ total_submissions_by_submitter|length }}</p>
+    {% if total_submissions_by_submitter %}
+        <table class="sortable table" style="width:auto">
+            <thead>
                 <tr>
-                    <td>{{ submitter_link(row['submitter_id'], row['submitter_name'])|safe }}</td>
-                    <td>{{ row['count'] }}</td>
+                    <th>Submitter</th>
+                    <th>Submissions</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for row in total_submissions_by_submitter %}
+                    <tr>
+                        <td>{{ submitter_link(row['submitter_id'], row['submitter_name'])|safe }}</td>
+                        <td>{{ row['count'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 {% endblock %}

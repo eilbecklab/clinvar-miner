@@ -5,6 +5,12 @@
     <script src="static/topojson.v2.js" type="application/javascript"></script>
 {% endblock %}
 {% block content %}
+    {% with %}
+        {% set review_status1_label = 'Minimum review status' %}
+        {% set method1_label = 'Method' %}
+        {% set min_conflict_level_filter = True %}
+        {% include 'include/filter.html' %}
+    {% endwith %}
     <svg id="map"></svg>
     <script type="application/javascript">
         var width = '100%', height = 500;
@@ -32,24 +38,26 @@
         });
     </script>
     <p>Total countries: {{ total_submissions_by_country|length }}</p>
-    <table class="sortable table" style="width:auto">
-        <thead>
-            <tr>
-                <th>Country</th>
-                <th>Submissions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in total_submissions_by_country %}
+    {% if total_submissions_by_country %}
+        <table class="sortable table" style="width:auto">
+            <thead>
                 <tr>
-                    <td>
-                        <a href="total-submissions-by-country/{{ row['country_code'] }}">
-                            {{ row['country_name']|orspace }}
-                        </a>
-                    </td>
-                    <td>{{ row['count'] }}</td>
+                    <th>Country</th>
+                    <th>Submissions</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for row in total_submissions_by_country %}
+                    <tr>
+                        <td>
+                            <a href="total-submissions-by-country/{{ row['country_code'] }}{{ request|querysuffix }}">
+                                {{ row['country_name']|orspace }}
+                            </a>
+                        </td>
+                        <td>{{ row['count'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 {% endblock %}

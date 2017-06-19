@@ -586,13 +586,22 @@ def total_submissions_by_country(country_code = None):
     if country_code == None:
         return render_template(
             'total-submissions-by-country.html',
-            total_submissions_by_country=db.total_submissions_by_country(),
+            total_submissions_by_country=db.total_submissions_by_country(
+                min_stars=int_arg('min_stars1'),
+                standardized_method=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+            ),
         )
 
     return render_template(
         'total-submissions-by-country--country.html',
         country_name=db.country_name(country_code),
-        total_submissions_by_submitter=db.total_submissions_by_submitter(country_code=country_code),
+        total_submissions_by_submitter=db.total_submissions_by_submitter(
+            country_code=country_code,
+            min_stars=int_arg('min_stars1'),
+            standardized_method=request.args.get('method1'),
+            min_conflict_level=int_arg('min_conflict_level'),
+        ),
     )
 
 @app.route('/total-submissions-by-method')

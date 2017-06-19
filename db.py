@@ -277,18 +277,32 @@ class DB():
     def total_submissions(self):
         return list(self.cursor.execute('SELECT COUNT(*) FROM current_submissions'))[0][0]
 
-    def total_submissions_by_country(self):
+    def total_submissions_by_country(self, min_stars = 0, standardized_method = None, min_conflict_level = 0):
+        query = '''
+            SELECT
+                IFNULL(country_name, '') AS country_name,
+                IFNULL(country_code, '') AS country_code,
+                COUNT(DISTINCT scv1) AS count
+            FROM current_comparisons
+            LEFT JOIN submitter_info ON current_comparisons.submitter1_id=submitter_info.id
+            WHERE star_level1>=:min_stars AND conflict_level>=:min_conflict_level
+        '''
+
+        if standardized_method:
+            query += ' AND standardized_method1=:standardized_method'
+
+        query += ' GROUP BY country_code ORDER BY country_name'
+
         return list(map(
             dict,
-            self.cursor.execute('''
-                SELECT
-                    IFNULL(country_name, '') AS country_name,
-                    IFNULL(country_code, '') AS country_code,
-                    COUNT(*) AS count
-                FROM current_submissions
-                LEFT JOIN submitter_info ON current_submissions.submitter_id=submitter_info.id
-                GROUP BY country_code ORDER BY country_name
-            ''')
+            self.cursor.execute(
+                query,
+                {
+                    'min_stars': min_stars,
+                    'standardized_method': standardized_method,
+                    'min_conflict_level': min_conflict_level,
+                }
+            )
         ))
 
     def total_submissions_by_method(self, min_stars = 0, min_conflict_level = 0):
@@ -325,7 +339,8 @@ class DB():
             )
         ))
 
-    def total_submissions_by_submitter(self, country_code = None, min_conflict_level = 0):
+    def total_submissions_by_submitter(self, country_code = None, min_stars = 0, standardized_method = None,
+                                       min_conflict_level = 0):
         query = '''
             SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name, COUNT(DISTINCT scv1) AS count
             FROM current_comparisons
@@ -334,17 +349,28 @@ class DB():
         if country_code != None:
             query += ' LEFT JOIN submitter_info ON current_comparisons.submitter1_id=submitter_info.id'
 
-        query += ' WHERE conflict_level>=:min_conflict_level'
+        query += ' WHERE star_level1>=:min_stars AND conflict_level>=:min_conflict_level'
 
         if country_code != None:
             query += ' AND country_code=:country_code'
+
+        if standardized_method:
+            query += ' AND standardized_method1=:standardized_method'
 
         query += ' GROUP BY submitter1_id ORDER BY submitter1_name'
 
         try:
             return list(map(
                 dict,
-                self.cursor.execute(query, {'country_code': country_code, 'min_conflict_level': min_conflict_level})
+                self.cursor.execute(
+                    query,
+                    {
+                        'country_code': country_code,
+                        'min_stars': min_stars,
+                        'standardized_method': standardized_method,
+                        'min_conflict_level': min_conflict_level,
+                    }
+                )
             ))
         except OperationalError:
             return []
