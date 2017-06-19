@@ -189,9 +189,13 @@ def import_file(filename):
             variant_name = variant_name_el.text if variant_name_el != None else str(variant_id) #missing in old versions
             measure_els = measure_set_el.findall('./Measure')
 
-        if len(measure_els) == 1:
+        genes = set()
+        for measure_el in measure_els:
             gene_el = measure_els[0].find('./MeasureRelationship/Symbol/ElementValue[@Type="Preferred"]')
-            gene = gene_el.text if gene_el != None else ''
+            if gene_el != None:
+                genes.add(gene_el.text)
+        if len(genes) == 1:
+            gene = list(genes)[0]
         else:
             gene = ''
 
