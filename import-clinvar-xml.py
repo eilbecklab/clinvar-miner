@@ -230,8 +230,6 @@ def import_file(filename):
 
             if review_status in ['criteria provided, single submitter', 'criteria provided, conflicting interpretations']:
                 star_level = 1
-            elif review_status == 'criteria provided, multiple submitters, no conflicts':
-                star_level = 2
             elif review_status == 'reviewed by expert panel':
                 star_level = 3
             elif review_status == 'practice guideline':
