@@ -3,8 +3,10 @@
 from collections import OrderedDict
 from itertools import combinations
 from os.path import basename
+from pycountry import countries
 from sys import argv
 from xml.etree import ElementTree
+import csv
 import re
 import sqlite3
 
@@ -15,6 +17,11 @@ if len(argv) < 2:
 nonstandard_significance_term_map = dict(map(
     lambda line: line[0:-1].split('\t'),
     open('nonstandard_significance_terms.tsv')
+))
+
+submitter_country_codes = dict(map(
+    lambda row: (int(row[0]), row[2]),
+    csv.reader(open('submitter_info.tsv', 'r'), delimiter='\t')
 ))
 
 standard_methods = [
@@ -58,6 +65,8 @@ def create_tables():
             gene TEXT,
             submitter_id INTEGER,
             submitter_name TEXT,
+            submitter_country_code TEXT,
+            submitter_country_name TEXT,
             rcv TEXT,
             scv TEXT,
             significance TEXT,
@@ -85,6 +94,8 @@ def create_tables():
 
             submitter1_id INTEGER,
             submitter1_name TEXT,
+            submitter1_country_code TEXT,
+            submitter1_country_name TEXT,
             rcv1 TEXT,
             scv1 TEXT,
             significance1 TEXT,
@@ -132,6 +143,7 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS variant_name_index ON submissions (variant_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_id_index ON submissions (submitter_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_name_index ON submissions (submitter_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submitter_country_code_index ON submissions (submitter_country_code)')
     cursor.execute('CREATE INDEX IF NOT EXISTS significance_index ON submissions (significance)')
     cursor.execute('CREATE INDEX IF NOT EXISTS upper_trait_name_index ON submissions (upper_trait_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS method_index ON submissions (method)')
@@ -142,6 +154,8 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS gene_index ON comparisons (gene)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter1_id_index ON comparisons (submitter1_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter1_name_index ON comparisons (submitter1_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submitter1_country_code_index ON comparisons (submitter1_country_code)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submitter1_country_name_index ON comparisons (submitter1_country_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS scv1_index ON comparisons(scv1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS significance1_index ON comparisons (significance1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_significance1_index ON comparisons (standardized_significance1)')
@@ -220,6 +234,16 @@ def import_file(filename):
 
             submitter_id = int(scv_el.attrib['OrgID']) if scv_el.attrib.get('OrgID') else 0 #missing in old versions
             submitter_name = submission_id_el.get('submitter', '') if submission_id_el != None else '' #missing in old versions
+            submitter_country_code = submitter_country_codes[submitter_id] if submitter_id in submitter_country_codes else ''
+            if submitter_country_code:
+                submitter_country = countries.get(alpha_3=submitter_country_code)
+                if hasattr(submitter_country, 'common_name'):
+                    submitter_country_name = submitter_country.common_name
+                else:
+                    submitter_country_name = submitter_country.name
+            else:
+                submitter_country_name = ''
+
             significance = description_el.text.lower() if description_el != None else 'not provided'
             standardized_significance = nonstandard_significance_term_map.get(significance, significance)
             last_eval = significance_el.attrib.get('DateLastEvaluated', '') #missing in old versions
@@ -244,6 +268,8 @@ def import_file(filename):
                 gene,
                 submitter_id,
                 submitter_name,
+                submitter_country_code,
+                submitter_country_name,
                 rcv,
                 scv,
                 significance,

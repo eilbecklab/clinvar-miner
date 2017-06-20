@@ -10,9 +10,10 @@ class DB():
     def country_name(self, country_code):
         try:
             return list(self.cursor.execute(
-                'SELECT country_name FROM submitter_info WHERE country_code=? LIMIT 1', [country_code]
+                'SELECT submitter_country_name FROM current_submissions WHERE submitter_country_code=? LIMIT 1',
+                [country_code]
             ))[0][0]
-        except (IndexError, OperationalError):
+        except IndexError:
             return country_code
 
     def max_date(self):
@@ -87,8 +88,11 @@ class DB():
 
     def submitter_info(self, submitter_id):
         try:
-            return dict(list(self.cursor.execute('SELECT * from submitter_info WHERE id=:id', [submitter_id]))[0])
-        except (IndexError, OperationalError):
+            return dict(list(self.cursor.execute(
+                'SELECT submitter_id, submitter_name from current_submissions WHERE submitter_id=? LIMIT 1',
+                [submitter_id]
+            ))[0])
+        except IndexError:
             return {'id': submitter_id, 'name': str(submitter_id)}
 
     def submitter_primary_method(self, submitter_id):
@@ -280,11 +284,10 @@ class DB():
     def total_submissions_by_country(self, min_stars = 0, standardized_method = None, min_conflict_level = 0):
         query = '''
             SELECT
-                IFNULL(country_name, '') AS country_name,
-                IFNULL(country_code, '') AS country_code,
+                submitter1_country_code AS country_code,
+                submitter1_country_name AS country_name,
                 COUNT(DISTINCT scv1) AS count
             FROM current_comparisons
-            LEFT JOIN submitter_info ON current_comparisons.submitter1_id=submitter_info.id
             WHERE star_level1>=:min_stars AND conflict_level>=:min_conflict_level
         '''
 
@@ -346,13 +349,10 @@ class DB():
             FROM current_comparisons
         '''
 
-        if country_code != None:
-            query += ' LEFT JOIN submitter_info ON current_comparisons.submitter1_id=submitter_info.id'
-
         query += ' WHERE star_level1>=:min_stars AND conflict_level>=:min_conflict_level'
 
         if country_code != None:
-            query += ' AND country_code=:country_code'
+            query += ' AND submitter1_country_code=:country_code'
 
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method'

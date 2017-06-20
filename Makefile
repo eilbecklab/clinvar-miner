@@ -1,6 +1,10 @@
 all:
+	./scrape-submitter-info.py
 	./import-all-clinvar-xmls.sh
-	./import-submitter-info.py
+
+latest:
+	./scrape-submitter-info.py
+	./import-latest-clinvar-xml.sh
 
 clean:
 	rm -f clinvar.db
