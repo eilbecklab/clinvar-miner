@@ -145,6 +145,7 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_name_index ON submissions (submitter_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_country_code_index ON submissions (submitter_country_code)')
     cursor.execute('CREATE INDEX IF NOT EXISTS significance_index ON submissions (significance)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS trait_id_index ON submissions (trait_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS upper_trait_name_index ON submissions (upper_trait_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS method_index ON submissions (method)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method_index ON submissions (standardized_method)')
