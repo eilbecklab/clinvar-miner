@@ -13,6 +13,7 @@
     {% endwith %}
     <p>Total variants: {{ total }}</p>
     {% if total %}
+        {% include 'include/significance-overview.html' %}
         {% include 'include/breakdown-by-gene-and-significance.html' %}
         {% include 'include/breakdown-by-submitter-and-significance.html' %}
     {% endif %}

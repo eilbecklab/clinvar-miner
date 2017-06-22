@@ -1,0 +1,16 @@
+<table class="summary table table-bordered table-striped">
+    <thead>
+        <tr>
+            {% for significance in significances %}
+                <th>{{ significance }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            {% for significance in significances %}
+                <td>{{ overview[significance] }}</td>
+            {% endfor %}
+        </tr>
+    </tbody>
+</table>
