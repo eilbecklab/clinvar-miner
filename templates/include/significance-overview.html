@@ -1,14 +1,14 @@
 <table class="overview table table-bordered table-striped">
     <thead>
         <tr>
-            {% for significance in significances %}
+            {% for significance in overview %}
                 <th>{{ significance }}</th>
             {% endfor %}
         </tr>
     </thead>
     <tbody>
         <tr>
-            {% for significance in significances %}
+            {% for significance in overview %}
                 <td>{{ overview[significance] }}</td>
             {% endfor %}
         </tr>

@@ -153,10 +153,24 @@ def get_conflict_overview(total_conflicting_variants_by_conflict_level):
     return overview
 
 def get_significance_overview(total_variants_by_significance):
-    return dict(map(
-        lambda row: (row['significance'], row['count']),
-        total_variants_by_significance
-    ))
+    overview = {
+        'pathogenic': 0,
+        'likely pathogenic': 0,
+        'uncertain significance': 0,
+        'likely benign': 0,
+        'benign': 0,
+    }
+
+    for row in total_variants_by_significance:
+        significance = row['significance']
+        count = row['count']
+        overview[significance] = count
+
+    #significances from the database query are already sorted alphabetically
+    #sort the finished list by rank
+    overview = OrderedDict(sorted(overview.items(), key=lambda pair: significance_rank(pair[0])))
+
+    return overview
 
 def int_arg(name, default = 0):
     arg = request.args.get(name)
@@ -684,7 +698,6 @@ def variants_by_gene(gene = None, submitter_id = None, trait_name = None, signif
         return render_template(
             'variants-by-gene--gene.html',
             gene=gene,
-            significances=significances,
             overview=get_significance_overview(
                 db.total_variants_by_significance(
                     gene=gene,
@@ -694,6 +707,7 @@ def variants_by_gene(gene = None, submitter_id = None, trait_name = None, signif
                     original_terms=request.args.get('original_terms'),
                 )
             ),
+            significances=significances,
             breakdown_by_trait_and_significance=breakdown_by_trait_and_significance,
             breakdown_by_submitter_and_significance=breakdown_by_submitter_and_significance,
             variants=db.variants(
@@ -793,7 +807,6 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
                 standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
             ),
-            significances=significances,
             overview=get_significance_overview(
                 db.total_variants_by_significance(
                     submitter_id=submitter_id,
@@ -803,6 +816,7 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
                     original_terms=request.args.get('original_terms'),
                 )
             ),
+            significances=significances,
             breakdown_by_gene_and_significance=breakdown_by_gene_and_significance,
             breakdown_by_trait_and_significance=breakdown_by_trait_and_significance,
         )
@@ -896,7 +910,6 @@ def variants_by_trait(trait_name = None, gene = None, submitter_id = None, signi
                 standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
             ),
-            significances=significances,
             overview=get_significance_overview(
                 db.total_variants_by_significance(
                     trait_name=trait_name,
@@ -906,6 +919,7 @@ def variants_by_trait(trait_name = None, gene = None, submitter_id = None, signi
                     original_terms=request.args.get('original_terms'),
                 )
             ),
+            significances=significances,
             breakdown_by_gene_and_significance=breakdown_by_gene_and_significance,
             breakdown_by_submitter_and_significance=breakdown_by_submitter_and_significance,
         )
