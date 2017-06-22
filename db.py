@@ -88,11 +88,12 @@ class DB():
 
     def submitter_info(self, submitter_id):
         try:
-            row = list(self.cursor.execute(
-                'SELECT submitter_id, submitter_name from current_submissions WHERE submitter_id=? LIMIT 1',
-                [submitter_id]
+            row = list(self.cursor.execute('''
+                SELECT submitter_id, submitter_name, submitter_country_name
+                FROM current_submissions WHERE submitter_id=? LIMIT 1
+                ''', [submitter_id]
             ))[0]
-            return {'id': row[0], 'name': row[1]}
+            return {'id': row[0], 'name': row[1], 'country': row[2]}
         except IndexError:
             return {'id': submitter_id, 'name': str(submitter_id)}
 
