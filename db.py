@@ -412,9 +412,9 @@ class DB():
                 query,
                 {
                     'gene': gene,
+                    'trait_name': trait_name,
                     'submitter1_id': submitter1_id,
                     'submitter2_id': submitter2_id,
-                    'trait_name': trait_name,
                     'min_stars1': min_stars1,
                     'min_stars2': min_stars2,
                     'standardized_method1': standardized_method1,
@@ -478,8 +478,8 @@ class DB():
             self.cursor.execute(
                 query,
                 {
-                    'submitter_id': submitter_id,
                     'trait_name': trait_name,
+                    'submitter_id': submitter_id,
                     'min_stars': min_stars,
                     'standardized_method': standardized_method,
                     'min_conflict_level': min_conflict_level
