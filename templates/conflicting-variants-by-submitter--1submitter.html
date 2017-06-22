@@ -2,13 +2,7 @@
 {% set title = 'Conflicting variants with ' + submitter1_info['name'] %}
 {% block title %}
     Conflicting variants with {{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }}
-    <br/>
-    <small style="font-size:medium">
-        Primary submission method: {{ submitter_primary_method }}
-        {% if 'country' in submitter1_info %}
-            &mdash; Location: {{ submitter1_info['country'] }}
-        {% endif %}
-    </small>
+    {{ submitter_tagline(submitter1_info, submitter1_primary_method)|safe }}
 {% endblock %}
 {% block content %}
     {% with %}

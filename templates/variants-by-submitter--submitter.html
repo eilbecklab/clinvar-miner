@@ -1,6 +1,9 @@
 {% extends 'extend/skin.html' %}
 {% set title = 'Variants from ' + submitter_info['name'] %}
-{% block title %}Variants from {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}{% endblock %}
+{% block title %}
+    Variants from {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+    {{ submitter_tagline(submitter_info, submitter_primary_method)|safe }}
+{% endblock %}
 {% block content %}
     {% with %}
         {% set review_status1_label = 'Minimum review status' %}

@@ -231,6 +231,14 @@ def template_functions():
             return submitter_name
         return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + str(submitter_id) + '/">' + break_punctuation(submitter_name) + '</a>'
 
+    def submitter_tagline(submitter_info, submitter_primary_method):
+        tagline = '<div><small style="font-size:medium">'
+        if 'country_name' in submitter_info:
+            tagline += 'Location: ' + submitter_info['country_name'] + ' &mdash; '
+        tagline += 'Primary submission method: ' + submitter_primary_method
+        tagline += '</small></div>'
+        return tagline
+
     def trait_link(trait_db, trait_id, trait_name):
         #find and order DB names and examples with:
         #SELECT trait_db, trait_id, COUNT(*) FROM current_submissions GROUP BY trait_db ORDER BY COUNT(*) DESC
@@ -263,6 +271,7 @@ def template_functions():
     return {
         'h2': h2,
         'submitter_link': submitter_link,
+        'submitter_tagline': submitter_tagline,
         'trait_link': trait_link,
         'variant_link': variant_link,
     }
@@ -428,8 +437,8 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
         return render_template(
             'conflicting-variants-by-submitter--1submitter.html',
             submitter1_info=db.submitter_info(submitter1_id),
+            submitter1_primary_method=db.submitter_primary_method(submitter1_id),
             submitter2_info={'id': 0, 'name': 'All submitters'},
-            submitter_primary_method=db.submitter_primary_method(submitter1_id),
             overview=get_conflict_overview(
                 db.total_conflicting_variants_by_conflict_level(
                     submitter1_id=submitter1_id,
@@ -799,6 +808,7 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
         return render_template(
             'variants-by-submitter--submitter.html',
             submitter_info=db.submitter_info(submitter_id),
+            submitter_primary_method=db.submitter_primary_method(submitter_id),
             total=db.total_variants(
                 submitter1_id=submitter_id,
                 min_stars1=int_arg('min_stars1'),

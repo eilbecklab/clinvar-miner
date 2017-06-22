@@ -93,7 +93,7 @@ class DB():
                 FROM current_submissions WHERE submitter_id=? LIMIT 1
                 ''', [submitter_id]
             ))[0]
-            return {'id': row[0], 'name': row[1], 'country': row[2]}
+            return {'id': row[0], 'name': row[1], 'country_name': row[2]}
         except IndexError:
             return {'id': submitter_id, 'name': str(submitter_id)}
 
