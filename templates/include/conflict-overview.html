@@ -12,7 +12,9 @@
     </thead>
     <tbody>
         <tr>
-            <td>{{ total_variants - total_conflicting_variants }}</td>
+            {% if total_variants - total_conflicting_variants %}
+                <td class="highlight">{{ total_variants - total_conflicting_variants }}</td>
+            {% endif %}
             {% for i in range(1, 6) %}
                 {% if overview[i] %}
                     <td class="highlight">{{ overview[i] }}</td>

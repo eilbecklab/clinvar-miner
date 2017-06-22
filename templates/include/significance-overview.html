@@ -9,7 +9,11 @@
     <tbody>
         <tr>
             {% for significance in overview %}
-                <td>{{ overview[significance] }}</td>
+                {% if overview[significance] %}
+                    <td class="highlight">{{ overview[significance] }}</td>
+                {% else %}
+                    <td>0</td>
+                {% endif %}
             {% endfor %}
         </tr>
     </tbody>
