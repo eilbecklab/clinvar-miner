@@ -187,44 +187,6 @@ class DB():
             )
         ))
 
-    def total_conflicting_variants_by_submitter(self, submitter1_id = None, min_stars1 = 0, min_stars2 = 0,
-                                                standardized_method1 = None, standardized_method2 = None):
-        if submitter1_id:
-            query = 'SELECT submitter2_id AS submitter_id, submitter2_name AS submitter_name'
-        else:
-            query = 'SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name'
-
-        query += '''
-            , COUNT(DISTINCT variant_name) AS count
-            FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=1
-        '''
-
-        if submitter1_id:
-            query += ' AND submitter1_id=:submitter1_id'
-
-        if standardized_method1:
-            query += ' AND standardized_method1=:standardized_method1'
-
-        if standardized_method2:
-            query += ' AND standardized_method2=:standardized_method2'
-
-        query += ' GROUP BY submitter_id ORDER BY submitter_name'
-
-        return list(map(
-            dict,
-            self.cursor.execute(
-                query,
-                {
-                    'submitter1_id': submitter1_id,
-                    'min_stars1': min_stars1,
-                    'min_stars2': min_stars2,
-                    'standardized_method1': standardized_method1,
-                    'standardized_method2': standardized_method2,
-                }
-            )
-        ))
-
     def total_conflicting_variants_by_submitter_and_conflict_level(self, submitter1_id, min_stars1 = 0, min_stars2 = 0,
                                                                    standardized_method1 = None,
                                                                    standardized_method2 = None):
@@ -525,18 +487,27 @@ class DB():
             )
         ))
 
-    def total_variants_by_submitter(self, min_stars = 0, standardized_method = None, min_conflict_level = 0):
-        query = '''
-            SELECT
-                submitter1_id AS submitter_id,
-                submitter1_name AS submitter_name,
-                COUNT(DISTINCT variant_name) AS count
+    def total_variants_by_submitter(self, submitter1_id = None, min_stars1 = 0, min_stars2 = 0,
+                                    standardized_method1 = None, standardized_method2 = None, min_conflict_level = 0):
+        if submitter1_id:
+            query = 'SELECT submitter2_id AS submitter_id, submitter2_name AS submitter_name'
+        else:
+            query = 'SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name'
+
+        query += '''
+            , COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
-            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
-        if standardized_method:
-            query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
+        if submitter1_id:
+            query += ' AND submitter1_id=:submitter1_id'
+
+        if standardized_method1:
+            query += ' AND standardized_method1=:standardized_method1'
+
+        if standardized_method2:
+            query += ' AND standardized_method2=:standardized_method2'
 
         query += ' GROUP BY submitter_id ORDER BY submitter_name'
 
@@ -545,9 +516,12 @@ class DB():
             self.cursor.execute(
                 query,
                 {
-                    'min_stars': min_stars,
-                    'standardized_method': standardized_method,
-                    'min_conflict_level': min_conflict_level
+                    'submitter1_id': submitter1_id,
+                    'min_stars1': min_stars1,
+                    'min_stars2': min_stars2,
+                    'standardized_method1': standardized_method1,
+                    'standardized_method2': standardized_method2,
+                    'min_conflict_level': min_conflict_level,
                 }
             )
         ))

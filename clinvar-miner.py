@@ -343,11 +343,12 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
     if submitter1_id == None:
         return render_template(
             'conflicting-variants-by-submitter.html',
-            total_conflicting_variants_by_submitter=db.total_conflicting_variants_by_submitter(
+            total_conflicting_variants_by_submitter=db.total_variants_by_submitter(
                 min_stars1=int_arg('min_stars1'),
                 standardized_method1=request.args.get('method1'),
                 min_stars2=int_arg('min_stars2'),
                 standardized_method2=request.args.get('method2'),
+                min_conflict_level=1,
             ),
         )
 
@@ -357,12 +358,13 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
         return abort(404)
 
     if submitter2_id == None:
-        total_conflicting_variants_by_submitter = db.total_conflicting_variants_by_submitter(
+        total_conflicting_variants_by_submitter = db.total_variants_by_submitter(
             submitter1_id=submitter1_id,
             min_stars1=int_arg('min_stars1'),
             standardized_method1=request.args.get('method1'),
             min_stars2=int_arg('min_stars2'),
             standardized_method2=request.args.get('method2'),
+            min_conflict_level=1,
         )
         total_conflicting_variants_by_submitter_and_conflict_level = db.total_conflicting_variants_by_submitter_and_conflict_level(
             submitter1_id=submitter1_id,
@@ -736,8 +738,10 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
         return render_template(
             'variants-by-submitter.html',
             total_variants_by_submitter=db.total_variants_by_submitter(
-                min_stars=int_arg('min_stars1'),
-                standardized_method=request.args.get('method1'),
+                min_stars1=int_arg('min_stars1'),
+                min_stars2=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
             ),
         )
