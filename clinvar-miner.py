@@ -822,6 +822,7 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
+                original_terms=request.args.get('original_terms'),
             ),
         )
 
@@ -840,6 +841,7 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
+                original_terms=request.args.get('original_terms'),
             ),
         )
 
@@ -923,6 +925,7 @@ def variants_by_trait(trait_name = None, gene = None, submitter_id = None, signi
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
+                original_terms=request.args.get('original_terms'),
             ),
         )
 
@@ -939,5 +942,6 @@ def variants_by_trait(trait_name = None, gene = None, submitter_id = None, signi
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
+                original_terms=request.args.get('original_terms'),
             ),
         )
