@@ -28,6 +28,10 @@
     background-color: #FFEEAA;
 }
 
+.overview td {
+    text-align: center;
+}
+
 .sortable thead th {
     cursor: pointer;
 }
