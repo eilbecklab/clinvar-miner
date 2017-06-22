@@ -21,7 +21,7 @@
                     <tr>
                         <td>
                             <a href="variants-by-gene/{{ row['gene']|quotepath or 'intergenic' }}{{ request|querysuffix }}">
-                                {{ row['gene'] or '\u200B' }}
+                                {{ row['gene'] or '\u200Bintergenic' }}
                             </a>
                         </td>
                         <td style="text-align:right">{{ row['count'] }}</td>

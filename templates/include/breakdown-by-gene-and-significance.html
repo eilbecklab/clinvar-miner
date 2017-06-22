@@ -11,7 +11,7 @@
     <tbody>
         {% for gene in breakdown_by_gene_and_significance %}
             <tr>
-                <th>{{ gene|genelink|safe }}</th>
+                <th>{{ gene|genelink|safe or '\u200Bintergenic' }}</th>
                 {% for significance in significances %}
                     {% if breakdown_by_gene_and_significance[gene][significance] %}
                         <td class="highlight">
