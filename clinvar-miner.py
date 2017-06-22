@@ -200,14 +200,6 @@ def quote_path(path):
 def rcv_link(rcv):
     return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/' + rcv + '/">' + rcv + '</a>'
 
-@app.template_filter('orintergenic')
-def string_or_space(path):
-    return path if path else 'intergenic'
-
-@app.template_filter('orspace')
-def string_or_space(path):
-    return path if path else '\u200B'
-
 @app.context_processor
 def template_functions():
     def h2(text):

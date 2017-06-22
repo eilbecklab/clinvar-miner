@@ -32,7 +32,7 @@
                 <tr>
                     <td>
                         <a href="significance-terms/{{ row['significance']|quotepath }}" style="display:block">
-                            {{ row['significance']|orspace }}
+                            {{ row['significance'] or '\u200B' }}
                         </a>
                     </td>
                     <td>{{ row['first_seen'] }}</td>

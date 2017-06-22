@@ -51,7 +51,7 @@
                     <tr>
                         <td>
                             <a href="total-submissions-by-country/{{ row['country_code'] }}{{ request|querysuffix }}">
-                                {{ row['country_name']|orspace }}
+                                {{ row['country_name'] or '\u200B' }}
                             </a>
                         </td>
                         <td>{{ row['count'] }}</td>
