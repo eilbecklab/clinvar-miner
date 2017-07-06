@@ -13,7 +13,8 @@
         <table class="sortable table" style="width:auto">
             <thead>
                 <tr>
-                    <th>Variant</th>
+                    <th>HGVS</th>
+                    <th>dbSNP</th>
                     <th style="text-align:right">Submissions</th>
                 </tr>
             </thead>
@@ -23,6 +24,7 @@
                         <td>
                             <a href="submissions-by-variant/{{ row['variant_name']|quotepath }}">{{ row['variant_name'] }}</a>
                         </td>
+                        <td>{{ row['variant_rsid'] }}</td>
                         <td style="text-align:right">{{ row['count'] }}</td>
                     </tr>
                 {% endfor %}

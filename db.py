@@ -343,7 +343,7 @@ class DB():
                                      min_stars = 0, standardized_method = None, min_conflict_level = 0,
                                      original_terms = False):
         query = '''
-            SELECT variant_name, COUNT(DISTINCT scv1) AS count FROM current_comparisons
+            SELECT variant_name, variant_rsid, COUNT(DISTINCT scv1) AS count FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
 
@@ -702,16 +702,17 @@ class DB():
         except IndexError:
             return {'db': '', 'id': '', 'name': trait_name}
 
-    def variant_id(self, variant_name):
-        return list(self.cursor.execute(
-            'SELECT variant_id FROM current_submissions WHERE variant_name=? LIMIT 1', [variant_name]
-        ))[0][0]
+    def variant_info(self, variant_name):
+        row = list(self.cursor.execute(
+            'SELECT variant_id, variant_rsid FROM current_submissions WHERE variant_name=? LIMIT 1', [variant_name]
+        ))[0]
+        return {'id': row[0], 'name': variant_name, 'rsid': row[1]}
 
     def variants(self, gene = None, submitter1_id = None, submitter2_id = None, significance1 = None,
                  significance2 = None, min_stars1 = 0, min_stars2 = 0, standardized_method1 = None,
                  standardized_method2 = None, min_conflict_level = 1, original_terms = False):
         query = '''
-            SELECT DISTINCT variant_name FROM current_comparisons
+            SELECT DISTINCT variant_name, variant_rsid FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
@@ -745,7 +746,7 @@ class DB():
         query += ' ORDER BY variant_name'
 
         return list(map(
-            lambda row: row[0],
+            dict,
             self.cursor.execute(
                 query,
                 {

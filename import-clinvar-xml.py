@@ -62,6 +62,7 @@ def create_tables():
             date TEXT,
             variant_id INTEGER,
             variant_name TEXT,
+            variant_rsid TEXT,
             gene TEXT,
             submitter_id INTEGER,
             submitter_name TEXT,
@@ -90,6 +91,7 @@ def create_tables():
             date TEXT,
             variant_id TEXT,
             variant_name TEXT,
+            variant_rsid TEXT,
             gene TEXT,
 
             submitter1_id INTEGER,
@@ -204,6 +206,12 @@ def import_file(filename):
             variant_name = variant_name_el.text if variant_name_el != None else str(variant_id) #missing in old versions
             measure_els = measure_set_el.findall('./Measure')
 
+        variant_rsid = ''
+        if len(measure_els) == 1:
+            rsid_el = measure_els[0].find('./XRef[@Type="rs"]')
+            if rsid_el != None:
+                variant_rsid = 'rs' + rsid_el.attrib['ID']
+
         genes = set()
         for measure_el in measure_els:
             gene_el = measure_el.find('./MeasureRelationship/Symbol/ElementValue[@Type="Preferred"]')
@@ -266,6 +274,7 @@ def import_file(filename):
                 date,
                 variant_id,
                 variant_name,
+                variant_rsid,
                 gene,
                 submitter_id,
                 submitter_name,

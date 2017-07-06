@@ -263,10 +263,16 @@ def template_functions():
         else:
             return trait_name
 
-    def variant_link(variant_id, variant_name):
+    def variant_link(variant_id, variant_name, variant_rsid):
         if variant_id == 0:
             return variant_name
-        return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + str(variant_id) + '/">' + break_punctuation(variant_name) + '</a>'
+
+        ret = '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + str(variant_id) + '/">' + break_punctuation(variant_name) + '</a>'
+
+        if variant_rsid:
+            ret += ' / <a class="external" href="https://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=' + variant_rsid + '">' + variant_rsid + '</a>'
+
+        return ret
 
     return {
         'h2': h2,
@@ -590,8 +596,7 @@ def submissions_by_variant(variant_name):
 
     return render_template(
         'submissions-by-variant--variant.html',
-        variant_name=variant_name,
-        variant_id=db.variant_id(variant_name),
+        variant_info=db.variant_info(variant_name),
         submissions=db.submissions(
             variant_name=variant_name,
             min_stars=int_arg('min_stars1'),

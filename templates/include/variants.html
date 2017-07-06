@@ -1,15 +1,17 @@
 <table class="sortable table" style="width:auto">
     <thead>
         <tr>
-            <th>Variant</th>
+            <th>HGVS</th>
+            <th>dbSNP</th>
         </tr>
     </thead>
     <tbody>
-        {% for variant in variants %}
+        {% for row in variants %}
             <tr>
                 <td>
-                    <a href="submissions-by-variant/{{ variant|quotepath }}">{{ variant }}</a>
+                    <a href="submissions-by-variant/{{ row['variant_name']|quotepath }}">{{ row['variant_name'] }}</a>
                 </td>
+                <td>{{ row['variant_rsid'] }}</td>
             </tr>
         {% endfor %}
     </tbody>
