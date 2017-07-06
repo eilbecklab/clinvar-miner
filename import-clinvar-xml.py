@@ -206,7 +206,7 @@ def import_file(filename):
 
         genes = set()
         for measure_el in measure_els:
-            gene_el = measure_els[0].find('./MeasureRelationship/Symbol/ElementValue[@Type="Preferred"]')
+            gene_el = measure_el.find('./MeasureRelationship/Symbol/ElementValue[@Type="Preferred"]')
             if gene_el != None:
                 genes.add(gene_el.text)
         if len(genes) == 1:
