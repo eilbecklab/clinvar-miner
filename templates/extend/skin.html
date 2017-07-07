@@ -20,9 +20,19 @@
         {% block head %}{% endblock %}
     </head>
     <body>
-        <div id="top-stripe">
-            <div><a href="">ClinVar Miner</a></div>
-        </div>
+        <table id="top-stripe">
+            <tr>
+                <td>
+                    <a href="">ClinVar Miner</a>
+                </td>
+                <td>
+                    <form action="/search" method="get">
+                        <input accesskey="f" name="q" placeholder="Search by gene, HGVS, rsID, etc." type="text"/>
+                        <input type="submit" value=" "/>
+                    </form>
+                </td>
+            </tr>
+        </table>
         <div style="display:flex">
             <div class="container">
                 <h1>{% block title %}{{ title }}{% endblock %}</h1>

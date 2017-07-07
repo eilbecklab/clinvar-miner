@@ -8,6 +8,7 @@ from db import DB
 from flask import Flask
 from flask import Response
 from flask import abort
+from flask import redirect
 from flask import render_template
 from flask import request
 from hashlib import sha256
@@ -562,6 +563,29 @@ def index():
         total_submissions=db.total_submissions(),
         total_variants=db.total_variants(),
     )
+
+@app.route('/search')
+def search():
+    db = DB()
+    query = request.args.get('q')
+
+    if not query:
+        return redirect(request.url_root)
+
+    variant_name = db.variant_name_from_rsid(query.lower())
+    if variant_name:
+        return redirect(request.script_root + '/submissions-by-variant/' + super_escape(variant_name))
+
+    if db.is_gene(query.upper()):
+        return redirect(request.script_root + '/variants-by-gene/' + query.upper())
+
+    if query.lower() == 'intergenic':
+        return redirect(request.script_root + '/variants-by-gene/intergenic')
+
+    if db.is_variant_name(query):
+        return redirect(request.script_root + '/submissions-by-variant/' + super_escape(query))
+
+    return redirect('https://www.google.com/#q=site:' + urllib.parse.quote(request.url_root + ' ' + query, safe=''))
 
 @app.route('/significance-terms')
 @app.route('/significance-terms/', defaults={'term': ''})

@@ -16,6 +16,16 @@ class DB():
         except IndexError:
             return country_code
 
+    def is_gene(self, gene):
+        return bool(list(self.cursor.execute(
+            'SELECT 1 FROM current_submissions WHERE gene=? LIMIT 1', [gene]
+        )))
+
+    def is_variant_name(self, variant_name):
+        return bool(list(self.cursor.execute(
+            'SELECT 1 FROM current_submissions WHERE variant_name=? LIMIT 1', [variant_name]
+        )))
+
     def max_date(self):
         return list(self.cursor.execute('SELECT MAX(date) FROM submissions'))[0][0]
 
@@ -707,6 +717,14 @@ class DB():
             'SELECT variant_id, variant_rsid FROM current_submissions WHERE variant_name=? LIMIT 1', [variant_name]
         ))[0]
         return {'id': row[0], 'name': variant_name, 'rsid': row[1]}
+
+    def variant_name_from_rsid(self, rsid):
+        try:
+            return list(self.cursor.execute(
+                'SELECT variant_name FROM current_submissions WHERE variant_rsid=? LIMIT 1', [rsid]
+            ))[0][0]
+        except IndexError:
+            return None
 
     def variants(self, gene = None, submitter1_id = None, submitter2_id = None, significance1 = None,
                  significance2 = None, min_stars1 = 0, min_stars2 = 0, standardized_method1 = None,

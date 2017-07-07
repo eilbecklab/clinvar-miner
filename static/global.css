@@ -51,15 +51,48 @@
 #top-stripe {
     background: url(clingen-stripe.png);
     background-repeat: repeat-x;
+    vertical-align: middle;
+    width: 100%;
 }
 
-#top-stripe > div {
+#top-stripe a {
     font-size: 25px;
     font-weight: bold;
     line-height: 40px;
     opacity: 0.5;
     padding-left: 10px;
-    vertical-align: middle;
+}
+
+#top-stripe form {
+    background-color: white;
+    border: 1px solid #AAA;
+    float: right;
+    margin-right: 0.8ex;
+    padding: 2px;
+}
+
+#top-stripe input {
+    background-color: white;
+    border: none;
+    padding: 1px
+}
+
+#top-stripe input[type=text] {
+    width: 30ex;
+}
+
+#top-stripe input[type=text]:focus {
+    outline: none;
+}
+
+#top-stripe input[type=submit] {
+    /* adapted from https://phabricator.wikimedia.org/source/mediawiki/browse/master/resources/lib/oojs-ui/themes/wikimediaui/images/indicators/search-ltr.svg */
+    background-image: url(search.svg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 1.1em;
+    width: 1.5em;
 }
 
 *:hover > .internal {
