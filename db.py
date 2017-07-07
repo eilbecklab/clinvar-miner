@@ -349,49 +349,6 @@ class DB():
         except OperationalError:
             return []
 
-    def total_submissions_by_variant(self, gene = None, trait_name = None, submitter_id = None, significance = None,
-                                     min_stars = 0, standardized_method = None, min_conflict_level = 0,
-                                     original_terms = False):
-        query = '''
-            SELECT variant_name, variant_rsid, COUNT(DISTINCT scv1) AS count FROM current_comparisons
-            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
-        '''
-
-        if gene != None:
-            query += ' AND gene=:gene'
-
-        if trait_name:
-            query += ' AND upper_trait1_name=:trait_name'
-
-        if submitter_id:
-            query += ' AND submitter1_id=:submitter_id'
-
-        if original_terms:
-            query += ' AND significance1=:significance'
-        else:
-            query += ' AND standardized_significance1=:significance'
-
-        if standardized_method:
-            query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
-
-        query += ' GROUP BY variant_name ORDER BY variant_name'
-
-        return list(map(
-            dict,
-            self.cursor.execute(
-                query,
-                {
-                    'gene': gene,
-                    'trait_name': trait_name,
-                    'significance': significance,
-                    'submitter_id': submitter_id,
-                    'min_stars': min_stars,
-                    'standardized_method': standardized_method,
-                    'min_conflict_level': min_conflict_level,
-                }
-            )
-        ))
-
     def total_variants(self, gene = None, trait_name = None, submitter1_id = None, submitter2_id = None, min_stars1 = 0,
                        min_stars2 = 0, standardized_method1 = None, standardized_method2 = None,
                        min_conflict_level = 0):
@@ -726,9 +683,10 @@ class DB():
         except IndexError:
             return None
 
-    def variants(self, gene = None, submitter1_id = None, submitter2_id = None, significance1 = None,
-                 significance2 = None, min_stars1 = 0, min_stars2 = 0, standardized_method1 = None,
-                 standardized_method2 = None, min_conflict_level = 1, original_terms = False):
+    def variants(self, gene = None, trait1_name = None, submitter1_id = None, submitter2_id = None,
+                 significance1 = None, significance2 = None, min_stars1 = 0, min_stars2 = 0,
+                 standardized_method1 = None, standardized_method2 = None, min_conflict_level = 1,
+                 original_terms = False):
         query = '''
             SELECT DISTINCT variant_name, variant_rsid FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
@@ -736,6 +694,9 @@ class DB():
 
         if gene != None:
             query += ' AND gene=:gene'
+
+        if trait1_name:
+            query += ' AND upper_trait1_name=:trait1_name'
 
         if submitter1_id:
             query += ' AND submitter1_id=:submitter1_id'
@@ -769,6 +730,7 @@ class DB():
                 query,
                 {
                     'gene': gene,
+                    'trait1_name': trait1_name,
                     'submitter1_id': submitter1_id,
                     'submitter2_id': submitter2_id,
                     'significance1': significance1,
