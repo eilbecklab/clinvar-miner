@@ -564,6 +564,11 @@ def index():
         total_variants=db.total_variants(),
     )
 
+@app.route('/robots.txt')
+def robots_txt():
+    #tell search engines to not index pages with query parameters
+    return Response('Disallow: /*?', mimetype='text/plain')
+
 @app.route('/search')
 def search():
     db = DB()
