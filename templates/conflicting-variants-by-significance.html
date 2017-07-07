@@ -26,7 +26,7 @@
                     {% for significance2 in submitter2_significances %}
                         {% if breakdown[significance1].get(significance2, 0) > 0 %}
                             <td class="highlight">
-                                <a href="conflicting-variants-by-significance/{{ significance1|quotepath }}/{{ significance2|quotepath }}{{ request|querysuffix }}">
+                                <a href="conflicting-variants-by-significance/{{ significance1|superescaped }}/{{ significance2|superescaped }}{{ request|querysuffix }}">
                                     {{ breakdown[significance1][significance2] }}
                                 </a>
                             </td>

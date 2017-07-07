@@ -31,7 +31,7 @@
             {% for row in significance_term_info %}
                 <tr>
                     <td>
-                        <a href="significance-terms/{{ row['significance']|quotepath }}" style="display:block">
+                        <a href="significance-terms/{{ row['significance']|superescaped }}" style="display:block">
                             {{ row['significance'] or '\u200B' }}
                         </a>
                     </td>

@@ -13,6 +13,7 @@ from flask import request
 from hashlib import sha256
 from os import environ
 from werkzeug.contrib.cache import SimpleCache
+from werkzeug.routing import BaseConverter
 
 app = Flask(__name__)
 cache = SimpleCache()
@@ -20,6 +21,18 @@ ttl = float(environ.get('TTL', 'inf'))
 
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
+
+#it's necessary to double-escape slashes because WSGI decodes them before passing the URL to Flask
+class SuperEscapedConverter(BaseConverter):
+    @staticmethod
+    def to_python(value):
+        return value.replace('%2F', '/')
+
+    @staticmethod
+    def to_url(value):
+        return urllib.parse.quote(value).replace('/', '%252F')
+
+app.url_map.converters['superescaped'] = SuperEscapedConverter
 
 nonstandard_significance_term_map = dict(map(
     lambda line: line[0:-1].split('\t'),
@@ -212,13 +225,13 @@ def prettify_date(iso_date):
 def query_suffix(request):
     return '?' + request.query_string.decode('utf-8') if request.query_string else ''
 
-@app.template_filter('quotepath')
-def quote_path(path):
-    return urllib.parse.quote(path).replace('/', '%252F')
-
 @app.template_filter('rcvlink')
 def rcv_link(rcv):
     return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/' + rcv + '/">' + rcv + '</a>'
+
+@app.template_filter('superescaped')
+def super_escape(path):
+    return SuperEscapedConverter.to_url(path)
 
 @app.context_processor
 def template_functions():
@@ -307,7 +320,7 @@ def cache_set(response):
     return response
 
 @app.route('/conflicting-variants-by-significance')
-@app.route('/conflicting-variants-by-significance/<significance1>/<significance2>')
+@app.route('/conflicting-variants-by-significance/<superescaped:significance1>/<superescaped:significance2>')
 def conflicting_variants_by_significance(significance1 = None, significance2 = None):
     db = DB()
 
@@ -350,9 +363,6 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
             submitter2_significances=submitter2_significances,
         )
 
-    significance1 = significance1.replace('%2F', '/')
-    significance2 = significance2.replace('%2F', '/')
-
     return render_template(
         'conflicting-variants-by-significance--2significances.html',
         significance1=significance1,
@@ -369,9 +379,9 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
     )
 
 @app.route('/conflicting-variants-by-submitter')
-@app.route('/conflicting-variants-by-submitter/<submitter1_id>')
-@app.route('/conflicting-variants-by-submitter/<submitter1_id>/<submitter2_id>')
-@app.route('/conflicting-variants-by-submitter/<submitter1_id>/<submitter2_id>/<significance1>/<significance2>')
+@app.route('/conflicting-variants-by-submitter/<int:submitter1_id>')
+@app.route('/conflicting-variants-by-submitter/<int:submitter1_id>/<int:submitter2_id>')
+@app.route('/conflicting-variants-by-submitter/<int:submitter1_id>/<int:submitter2_id>/<superescaped:significance1>/<superescaped:significance2>')
 def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None):
     db = DB()
 
@@ -386,11 +396,6 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
                 min_conflict_level=1,
             ),
         )
-
-    try:
-        submitter1_id = int(submitter1_id)
-    except ValueError:
-        return abort(404)
 
     if submitter2_id == None:
         total_conflicting_variants_by_submitter = db.total_variants_by_submitter(
@@ -475,11 +480,6 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             submitter2_significances=submitter2_significances,
         )
 
-    try:
-        submitter2_id = int(submitter2_id)
-    except ValueError:
-        abort(404)
-
     if submitter2_id == 0:
         submitter2_info = {'id': 0, 'name': 'any other submitter'}
     else:
@@ -534,9 +534,6 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             breakdown=breakdown,
         )
 
-    significance1 = significance1.replace('%2F', '/')
-    significance2 = significance2.replace('%2F', '/')
-
     return render_template(
         'conflicting-variants-by-submitter--2significances.html',
         submitter1_info=db.submitter_info(submitter1_id),
@@ -568,7 +565,7 @@ def index():
 
 @app.route('/significance-terms')
 @app.route('/significance-terms/', defaults={'term': ''})
-@app.route('/significance-terms/<term>')
+@app.route('/significance-terms/<superescaped:term>')
 def significance_terms(term = None):
     db = DB()
 
@@ -580,19 +577,15 @@ def significance_terms(term = None):
             old_significance_term_info=db.old_significance_term_info(),
         )
 
-    term = term.replace('%2F', '/')
-
     return render_template(
         'significance-terms--term.html',
         term=term,
         total_significance_terms=db.total_significance_terms(term),
     )
 
-@app.route('/submissions-by-variant/<variant_name>')
+@app.route('/submissions-by-variant/<superescaped:variant_name>')
 def submissions_by_variant(variant_name):
     db = DB()
-
-    variant_name = variant_name.replace('%2F', '/')
 
     return render_template(
         'submissions-by-variant--variant.html',
@@ -670,9 +663,9 @@ def total_submissions_by_method():
 
 @app.route('/variants-by-gene')
 @app.route('/variants-by-gene/', defaults={'gene': ''})
-@app.route('/variants-by-gene/<gene>')
-@app.route('/variants-by-gene/<gene>/submitter/<submitter_id>/<significance>')
-@app.route('/variants-by-gene/<gene>/trait/<trait_name>/<significance>')
+@app.route('/variants-by-gene/<superescaped:gene>')
+@app.route('/variants-by-gene/<superescaped:gene>/submitter/<int:submitter_id>/<superescaped:significance>')
+@app.route('/variants-by-gene/<superescaped:gene>/trait/<superescaped:trait_name>/<superescaped:significance>')
 def variants_by_gene(gene = None, submitter_id = None, trait_name = None, significance = None):
     db = DB()
 
@@ -686,7 +679,8 @@ def variants_by_gene(gene = None, submitter_id = None, trait_name = None, signif
             ),
         )
 
-    gene = '' if gene == 'intergenic' else gene.replace('%2F', '/')
+    if gene == 'intergenic':
+        gene = ''
 
     if submitter_id == None and trait_name == None:
         breakdown_by_trait_and_significance, significances = get_breakdown_by_trait_and_significance(
@@ -752,8 +746,6 @@ def variants_by_gene(gene = None, submitter_id = None, trait_name = None, signif
         )
 
     if trait_name:
-        trait_name = trait_name.replace('%2F', '/')
-
         return render_template(
             'variants-by-gene--gene-trait-significance.html',
             gene=gene,
@@ -771,9 +763,9 @@ def variants_by_gene(gene = None, submitter_id = None, trait_name = None, signif
         )
 
 @app.route('/variants-by-submitter')
-@app.route('/variants-by-submitter/<submitter_id>')
-@app.route('/variants-by-submitter/<submitter_id>/gene/<gene>/<significance>')
-@app.route('/variants-by-submitter/<submitter_id>/trait/<trait_name>/<significance>')
+@app.route('/variants-by-submitter/<int:submitter_id>')
+@app.route('/variants-by-submitter/<int:submitter_id>/gene/<superescaped:gene>/<superescaped:significance>')
+@app.route('/variants-by-submitter/<int:submitter_id>/trait/<superescaped:trait_name>/<superescaped:significance>')
 def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, significance = None):
     db = DB()
 
@@ -875,9 +867,9 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
         )
 
 @app.route('/variants-by-trait')
-@app.route('/variants-by-trait/<trait_name>')
-@app.route('/variants-by-trait/<trait_name>/gene/<gene>/<significance>')
-@app.route('/variants-by-trait/<trait_name>/submitter/<submitter_id>/<significance>')
+@app.route('/variants-by-trait/<superescaped:trait_name>')
+@app.route('/variants-by-trait/<superescaped:trait_name>/gene/<superescaped:gene>/<superescaped:significance>')
+@app.route('/variants-by-trait/<superescaped:trait_name>/submitter/<int:submitter_id>/<superescaped:significance>')
 def variants_by_trait(trait_name = None, gene = None, submitter_id = None, significance = None):
     db = DB()
 
@@ -890,8 +882,6 @@ def variants_by_trait(trait_name = None, gene = None, submitter_id = None, signi
                 min_conflict_level=int_arg('min_conflict_level'),
             ),
         )
-
-    trait_name = trait_name.replace('%2F', '/')
 
     if gene == None and submitter_id == None:
         breakdown_by_gene_and_significance, significances = get_breakdown_by_gene_and_significance(
@@ -940,7 +930,8 @@ def variants_by_trait(trait_name = None, gene = None, submitter_id = None, signi
         )
 
     if gene:
-        gene = '' if gene == 'intergenic' else gene.replace('%2F', '/')
+        if gene == 'intergenic':
+            gene = ''
 
         return render_template(
             'variants-by-trait--trait-gene-significance.html',

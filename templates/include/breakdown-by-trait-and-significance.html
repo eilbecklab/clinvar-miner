@@ -15,7 +15,7 @@
                 {% for significance in significances %}
                     {% if breakdown_by_trait_and_significance[trait_name]['counts'][significance] %}
                         <td class="highlight">
-                            <a href="{{ request.base_url }}/trait/{{ trait_name|quotepath }}/{{ significance|quotepath }}{{ request|querysuffix }}">
+                            <a href="{{ request.base_url }}/trait/{{ trait_name|superescaped }}/{{ significance|superescaped }}{{ request|querysuffix }}">
                                 {{ breakdown_by_trait_and_significance[trait_name]['counts'][significance] }}
                             </a>
                         </td>

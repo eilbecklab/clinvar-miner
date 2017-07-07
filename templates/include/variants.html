@@ -9,7 +9,7 @@
         {% for row in variants %}
             <tr>
                 <td>
-                    <a href="submissions-by-variant/{{ row['variant_name']|quotepath }}">{{ row['variant_name'] }}</a>
+                    <a href="submissions-by-variant/{{ row['variant_name']|superescaped }}">{{ row['variant_name'] }}</a>
                 </td>
                 <td>{{ row['variant_rsid'] }}</td>
             </tr>

@@ -20,7 +20,7 @@
                 {% for row in total_variants_by_trait %}
                     <tr>
                         <td>
-                            <a href="variants-by-trait/{{ row['trait']|quotepath }}{{ request|querysuffix }}">
+                            <a href="variants-by-trait/{{ row['trait']|superescaped }}{{ request|querysuffix }}">
                                 {{ row['trait'] }}
                             </a>
                         </td>
