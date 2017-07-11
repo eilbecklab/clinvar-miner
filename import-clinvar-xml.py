@@ -306,11 +306,11 @@ def import_file(filename):
     cursor = db.cursor()
 
     cursor.executemany(
-        'INSERT OR IGNORE INTO submissions VALUES (' + ','.join('?' * len(submissions[0])) + ')', submissions
+        'INSERT OR REPLACE INTO submissions VALUES (' + ','.join('?' * len(submissions[0])) + ')', submissions
     )
 
     cursor.execute('''
-        INSERT OR IGNORE INTO comparisons
+        INSERT OR REPLACE INTO comparisons
         SELECT
             t1.*,
             t2.submitter_id,
