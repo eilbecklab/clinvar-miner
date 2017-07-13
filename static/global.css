@@ -32,6 +32,10 @@
     text-align: center;
 }
 
+.overview thead tr th, .summary thead tr th {
+    vertical-align: top;
+}
+
 .sortable thead th {
     cursor: pointer;
 }
