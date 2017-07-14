@@ -33,7 +33,7 @@
                     <tr>
                         <th>{{ submitter_link(submitter2_id, row['name'])|safe }}</th>
                         {% for i in range(1, 6) %}
-                            {% if row[i] > 0 %}
+                            {% if row[i] %}
                                 <td class="highlight">{{ row[i] }}</td>
                             {% else %}
                                 <td>0</td>
