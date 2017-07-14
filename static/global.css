@@ -36,6 +36,10 @@
     vertical-align: top;
 }
 
+.simple-numeric td + td {
+    text-align: right;
+}
+
 .sortable thead th {
     cursor: pointer;
 }
