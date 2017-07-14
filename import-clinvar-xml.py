@@ -145,6 +145,8 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS variant_name_index ON submissions (variant_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS variant_rsid_index ON submissions (variant_rsid)')
     cursor.execute('CREATE INDEX IF NOT EXISTS gene_index ON submissions (gene)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS rcv_index ON submissions (rcv)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS scv_index ON submissions (scv)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_id_index ON submissions (submitter_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_name_index ON submissions (submitter_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_country_code_index ON submissions (submitter_country_code)')

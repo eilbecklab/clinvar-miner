@@ -675,10 +675,26 @@ class DB():
         ))[0]
         return {'id': row[0], 'name': variant_name, 'rsid': row[1]}
 
+    def variant_name_from_rcv(self, rcv):
+        try:
+            return list(self.cursor.execute(
+                'SELECT variant_name FROM current_submissions WHERE rcv=? LIMIT 1', [rcv]
+            ))[0][0]
+        except IndexError:
+            return None
+
     def variant_name_from_rsid(self, rsid):
         try:
             return list(self.cursor.execute(
                 'SELECT variant_name FROM current_submissions WHERE variant_rsid=? LIMIT 1', [rsid]
+            ))[0][0]
+        except IndexError:
+            return None
+
+    def variant_name_from_scv(self, scv):
+        try:
+            return list(self.cursor.execute(
+                'SELECT variant_name FROM current_submissions WHERE scv=? LIMIT 1', [scv]
             ))[0][0]
         except IndexError:
             return None

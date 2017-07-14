@@ -570,19 +570,26 @@ def search():
     db = DB()
     query = request.args.get('q')
 
+    #blank
     if not query:
         return redirect(request.url_root)
 
-    variant_name = db.variant_name_from_rsid(query.lower())
+    #rsID, RCV, SCV
+    variant_name = (
+        db.variant_name_from_rsid(query.lower()) or
+        db.variant_name_from_rcv(query.upper()) or
+        db.variant_name_from_scv(query.upper())
+    )
     if variant_name:
         return redirect(request.script_root + '/submissions-by-variant/' + super_escape(variant_name))
 
+    #gene
     if db.is_gene(query.upper()):
         return redirect(request.script_root + '/variants-by-gene/' + query.upper())
-
     if query.lower() == 'intergenic':
         return redirect(request.script_root + '/variants-by-gene/intergenic')
 
+    #HGVS
     if db.is_variant_name(query):
         return redirect(request.script_root + '/submissions-by-variant/' + super_escape(query))
 
