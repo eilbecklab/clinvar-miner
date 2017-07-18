@@ -1,9 +1,10 @@
 all:
-	./scrape-submitter-info.py
 	./import-all-clinvar-xmls.sh
 
-latest:
+countries:
 	./scrape-submitter-info.py
+
+latest:
 	./import-latest-clinvar-xml.sh
 
 clean:
