@@ -13,7 +13,7 @@
     {% endwith %}
     <p>Total submitters: {{ total_submissions_by_submitter|length }}</p>
     {% if total_submissions_by_submitter %}
-        <table class="sortable table" style="width:auto">
+        <table class="simple-numeric sortable table" style="width:auto">
             <thead>
                 <tr>
                     <th>Submitter</th>
@@ -24,7 +24,9 @@
                 {% for row in total_submissions_by_submitter %}
                     <tr>
                         <td>{{ submitter_link(row['submitter_id'], row['submitter_name'])|safe }}</td>
-                        <td>{{ row['count'] }}</td>
+                        <td>
+                            <a href="variants-by-submitter/{{ row['submitter_id']}}">{{ row['count'] }}</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
