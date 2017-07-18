@@ -562,8 +562,7 @@ def index():
 
 @app.route('/robots.txt')
 def robots_txt():
-    #tell search engines to not index pages with query parameters
-    return Response('Disallow: /*?', mimetype='text/plain')
+    return app.send_static_file('robots.txt')
 
 @app.route('/search')
 def search():

@@ -1,0 +1,3 @@
+# Tell search engines to not index pages with query parameters
+User-Agent: *
+Disallow: /*?
