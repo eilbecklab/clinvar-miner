@@ -361,7 +361,7 @@ class DB():
             query += ' AND gene=:gene'
 
         if trait_name:
-            query += ' AND upper_trait1_name=:trait_name'
+            query += ' AND trait1_name=:trait_name'
 
         if submitter1_id:
             query += ' AND submitter1_id=:submitter1_id'
@@ -431,7 +431,7 @@ class DB():
         '''
 
         if trait_name:
-            query += ' AND upper_trait1_name=:trait_name'
+            query += ' AND trait1_name=:trait_name'
 
         if submitter_id:
             query += ' AND submitter1_id=:submitter_id'
@@ -473,7 +473,7 @@ class DB():
             query += ' AND gene=:gene'
 
         if trait_name:
-            query += ' AND upper_trait1_name=:trait_name'
+            query += ' AND trait1_name=:trait_name'
 
         if submitter_id:
             query += ' AND submitter1_id=:submitter_id'
@@ -564,7 +564,7 @@ class DB():
             query += ' AND gene=:gene'
 
         if trait_name:
-            query += ' AND upper_trait1_name=:trait_name'
+            query += ' AND trait1_name=:trait_name'
 
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
@@ -588,7 +588,7 @@ class DB():
     def total_variants_by_trait(self, min_stars = 0, standardized_method = None, min_conflict_level = 0):
         query = '''
             SELECT
-                upper_trait1_name AS trait,
+                trait1_name AS trait_name,
                 COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
@@ -597,7 +597,7 @@ class DB():
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
-        query += ' GROUP BY trait ORDER BY trait'
+        query += ' GROUP BY trait_name ORDER BY trait_name'
 
         return list(map(
             dict,
@@ -618,7 +618,7 @@ class DB():
             SELECT
                 trait1_db AS trait_db,
                 trait1_id AS trait_id,
-                upper_trait1_name AS trait_name,
+                trait1_name AS trait_name,
                 COUNT(DISTINCT variant_name) AS count
         '''
 
@@ -663,7 +663,7 @@ class DB():
     def trait_info(self, trait_name):
         try:
             row = list(self.cursor.execute('''
-                SELECT trait_db, trait_id FROM current_submissions WHERE upper_trait_name=? AND trait_id!='' LIMIT 1
+                SELECT trait_db, trait_id FROM current_submissions WHERE trait_name=? AND trait_id!='' LIMIT 1
             ''', [trait_name]))[0]
             return {'db': row[0], 'id': row[1], 'name': trait_name}
         except IndexError:
@@ -712,7 +712,7 @@ class DB():
             query += ' AND gene=:gene'
 
         if trait1_name:
-            query += ' AND upper_trait1_name=:trait1_name'
+            query += ' AND trait1_name=:trait1_name'
 
         if submitter1_id:
             query += ' AND submitter1_id=:submitter1_id'

@@ -31,25 +31,6 @@ standard_methods = [
     'research',
 ]
 
-def trait_from_trait_el(trait_el):
-    trait_xref_el = trait_el.find('./XRef')
-    trait_name_el = trait_el.find('./Name/ElementValue')
-
-    trait_db = trait_xref_el.attrib['DB'] if trait_xref_el != None else ''
-    trait_id = trait_xref_el.attrib['ID'] if trait_xref_el != None else ''
-    trait_name = trait_name_el.text if trait_name_el != None else ''
-
-    if not trait_name or trait_name.upper() == 'NOT PROVIDED':
-        if trait_id:
-            if trait_db == 'HP':
-                trait_name = trait_id
-            else:
-                trait_name = trait_db + ' ' + trait_id
-        else:
-            trait_name = 'NOT SPECIFIED'
-
-    return trait_db, trait_id, trait_name
-
 def connect():
     return sqlite3.connect('clinvar.db', timeout=600)
 
@@ -78,7 +59,6 @@ def create_tables():
             trait_db TEXT,
             trait_id TEXT,
             trait_name TEXT,
-            upper_trait_name TEXT,
             method TEXT,
             standardized_method TEXT,
             comment TEXT,
@@ -108,7 +88,6 @@ def create_tables():
             trait1_db TEXT,
             trait1_id TEXT,
             trait1_name TEXT,
-            upper_trait1_name TEXT,
             method1 TEXT,
             standardized_method1 TEXT,
             comment1 TEXT,
@@ -152,7 +131,7 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_country_code_index ON submissions (submitter_country_code)')
     cursor.execute('CREATE INDEX IF NOT EXISTS significance_index ON submissions (significance)')
     cursor.execute('CREATE INDEX IF NOT EXISTS trait_id_index ON submissions (trait_id)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS upper_trait_name_index ON submissions (upper_trait_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS trait_name_index ON submissions (trait_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS method_index ON submissions (method)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method_index ON submissions (standardized_method)')
 
@@ -167,7 +146,7 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS significance1_index ON comparisons (significance1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_significance1_index ON comparisons (standardized_significance1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS star_level1_index ON comparisons (star_level1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS upper_trait1_name_index ON comparisons (upper_trait1_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS trait1_name_index ON comparisons (trait1_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS method1_index ON comparisons (method1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method1_index ON comparisons (standardized_method1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter2_id_index ON comparisons (submitter2_id)')
@@ -227,17 +206,23 @@ def import_file(filename):
         else:
             gene = ''
 
+        trait_name_els = reference_assertion_el.findall('./TraitSet/Trait/Name/ElementValue[@Type="Preferred"]')
+        if trait_name_els:
+            trait_name = '; '.join(map(lambda el: el.text, trait_name_els))
+        else:
+            trait_name = 'not specified'
+
         for assertion_el in set_el.findall('./ClinVarAssertion'):
             scv_el = assertion_el.find('./ClinVarAccession[@Type="SCV"]')
             scv = scv_el.attrib['Acc']
 
-            trait_els = assertion_el.findall('./TraitSet/Trait')
-            if len(trait_els) == 1:
-                trait_db, trait_id, trait_name = trait_from_trait_el(trait_els[0])
+            if len(trait_name_els) == 1:
+                trait_xref_el = assertion_el.find('./TraitSet/Trait/XRef')
+                trait_db = trait_xref_el.attrib['DB'] if trait_xref_el != None else ''
+                trait_id = trait_xref_el.attrib['ID'] if trait_xref_el != None else ''
             else:
                 trait_db = ''
                 trait_id = ''
-                trait_name = '; '.join(map(lambda trait_el: trait_from_trait_el(trait_el)[2], trait_els))
 
             submission_id_el = assertion_el.find('./ClinVarSubmissionID')
             significance_el = assertion_el.find('./ClinicalSignificance')
@@ -295,7 +280,6 @@ def import_file(filename):
                 trait_db,
                 trait_id,
                 trait_name,
-                trait_name.upper(),
                 method,
                 standardized_method,
                 comment,

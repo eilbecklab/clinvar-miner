@@ -20,8 +20,8 @@
                 {% for row in total_variants_by_trait %}
                     <tr>
                         <td>
-                            <a href="variants-by-trait/{{ row['trait']|superescaped }}{{ request|querysuffix }}">
-                                {{ row['trait'] }}
+                            <a href="variants-by-trait/{{ row['trait_name']|superescaped }}{{ request|querysuffix }}">
+                                {{ row['trait_name'] }}
                             </a>
                         </td>
                         <td style="text-align:right">{{ row['count'] }}</td>
