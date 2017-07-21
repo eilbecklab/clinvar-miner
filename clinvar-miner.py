@@ -592,6 +592,10 @@ def search():
     if db.is_variant_name(query):
         return redirect(request.script_root + '/submissions-by-variant/' + super_escape(query))
 
+    #trait
+    if db.is_trait_name(query):
+        return redirect(request.script_root + '/variants-by-trait/' + super_escape(query))
+
     return redirect('https://www.google.com/#q=site:' + urllib.parse.quote(request.url_root + ' ' + query, safe=''))
 
 @app.route('/significance-terms')

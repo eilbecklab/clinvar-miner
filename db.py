@@ -21,6 +21,11 @@ class DB():
             'SELECT 1 FROM current_submissions WHERE gene=? LIMIT 1', [gene]
         )))
 
+    def is_trait_name(self, trait_name):
+        return bool(list(self.cursor.execute(
+            'SELECT 1 FROM current_submissions WHERE trait_name=? LIMIT 1', [trait_name]
+        )))
+
     def is_variant_name(self, variant_name):
         return bool(list(self.cursor.execute(
             'SELECT 1 FROM current_submissions WHERE variant_name=? LIMIT 1', [variant_name]
