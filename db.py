@@ -242,15 +242,6 @@ class DB():
             )
         ))
 
-    def total_significance_terms(self, term):
-        return list(map(
-            dict,
-            self.cursor.execute('''
-                SELECT submitter_id, submitter_name, COUNT(*) AS count FROM current_submissions WHERE significance=?
-                GROUP BY submitter_id ORDER BY submitter_name
-            ''', [term])
-        ))
-
     def total_significance_terms_over_time(self):
         return list(map(
             dict,
@@ -503,7 +494,7 @@ class DB():
             )
         ))
 
-    def total_variants_by_submitter(self, submitter1_id = None, min_stars1 = 0, min_stars2 = 0,
+    def total_variants_by_submitter(self, submitter1_id = None, significance1 = None, min_stars1 = 0, min_stars2 = 0,
                                     standardized_method1 = None, standardized_method2 = None, min_conflict_level = 0):
         if submitter1_id:
             query = 'SELECT submitter2_id AS submitter_id, submitter2_name AS submitter_name'
@@ -519,6 +510,9 @@ class DB():
         if submitter1_id:
             query += ' AND submitter1_id=:submitter1_id'
 
+        if significance1:
+            query += ' AND significance1=:significance1'
+
         if standardized_method1:
             query += ' AND standardized_method1=:standardized_method1'
 
@@ -533,6 +527,7 @@ class DB():
                 query,
                 {
                     'submitter1_id': submitter1_id,
+                    'significance1': significance1,
                     'min_stars1': min_stars1,
                     'min_stars2': min_stars2,
                     'standardized_method1': standardized_method1,

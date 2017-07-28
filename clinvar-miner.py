@@ -615,7 +615,7 @@ def significance_terms(term = None):
     return render_template(
         'significance-terms--term.html',
         term=term,
-        total_significance_terms=db.total_significance_terms(term),
+        total_variants_by_submitter=db.total_variants_by_submitter(significance1=term),
     )
 
 @app.route('/submissions-by-variant/<superescaped:variant_name>')

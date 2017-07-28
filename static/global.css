@@ -32,6 +32,10 @@
     background-color: #FFEEAA;
 }
 
+.simple-numeric {
+    width: auto;
+}
+
 .simple-numeric td + td {
     text-align: right;
 }
