@@ -863,14 +863,6 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
             'variants-by-submitter--submitter.html',
             submitter_info=db.submitter_info(submitter_id),
             submitter_primary_method=db.submitter_primary_method(submitter_id),
-            total=db.total_variants(
-                submitter1_id=submitter_id,
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                standardized_method1=request.args.get('method1'),
-                standardized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-            ),
             overview=get_significance_overview(
                 db.total_variants_by_significance(
                     submitter_id=submitter_id,
@@ -883,6 +875,14 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
             significances=significances,
             breakdown_by_gene_and_significance=breakdown_by_gene_and_significance,
             breakdown_by_trait_and_significance=breakdown_by_trait_and_significance,
+            variants=db.variants(
+                submitter1_id=submitter_id,
+                min_stars1=int_arg('min_stars1'),
+                min_stars2=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                standardized_method2=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+            ),
         )
 
     if gene == None and trait_name == None:
@@ -985,14 +985,6 @@ def variants_by_trait(significance = None, trait_name = None, gene = None, submi
         return render_template(
             'variants-by-trait--trait.html',
             trait_info=db.trait_info(trait_name),
-            total=db.total_variants(
-                trait_name=trait_name,
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                standardized_method1=request.args.get('method1'),
-                standardized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-            ),
             overview=get_significance_overview(
                 db.total_variants_by_significance(
                     trait_name=trait_name,
@@ -1005,6 +997,14 @@ def variants_by_trait(significance = None, trait_name = None, gene = None, submi
             significances=significances,
             breakdown_by_gene_and_significance=breakdown_by_gene_and_significance,
             breakdown_by_submitter_and_significance=breakdown_by_submitter_and_significance,
+            variants=db.variants(
+                trait1_name=trait_name,
+                min_stars1=int_arg('min_stars1'),
+                min_stars2=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                standardized_method2=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+            ),
         )
 
     if gene == None and submitter_id == None:

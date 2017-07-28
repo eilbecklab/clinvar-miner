@@ -345,19 +345,12 @@ class DB():
         except OperationalError:
             return []
 
-    def total_variants(self, gene = None, trait_name = None, submitter1_id = None, submitter2_id = None, min_stars1 = 0,
-                       min_stars2 = 0, standardized_method1 = None, standardized_method2 = None,
-                       min_conflict_level = 0):
+    def total_variants(self, submitter1_id = None, submitter2_id = None, min_stars1 = 0, min_stars2 = 0,
+                       standardized_method1 = None, standardized_method2 = None, min_conflict_level = 0):
         query = '''
             SELECT COUNT(DISTINCT variant_name) FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
-
-        if gene != None:
-            query += ' AND gene=:gene'
-
-        if trait_name:
-            query += ' AND trait1_name=:trait_name'
 
         if submitter1_id:
             query += ' AND submitter1_id=:submitter1_id'
@@ -375,8 +368,6 @@ class DB():
             self.cursor.execute(
                 query,
                 {
-                    'gene': gene,
-                    'trait_name': trait_name,
                     'submitter1_id': submitter1_id,
                     'submitter2_id': submitter2_id,
                     'min_stars1': min_stars1,

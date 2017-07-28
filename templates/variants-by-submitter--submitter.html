@@ -12,10 +12,11 @@
         {% set original_terms_filter = True %}
         {% include 'include/filter.html' %}
     {% endwith %}
-    <p>Total variants: {{ total }}</p>
-    {% if total %}
+    <p>Total variants: {{ variants|length }}</p>
+    {% if variants %}
         {% include 'include/significance-overview.html' %}
         {% include 'include/breakdown-by-gene-and-significance.html' %}
         {% include 'include/breakdown-by-trait-and-significance.html' %}
+        {% include 'include/all-variants.html' %}
     {% endif %}
 {% endblock %}
