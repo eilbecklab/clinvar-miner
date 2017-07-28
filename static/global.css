@@ -57,6 +57,7 @@
 }
 
 #top-stripe {
+    /* adapted from http://variantexplorer.org/img/clingen-bg.jpg */
     background: url(clingen-stripe.png);
     background-repeat: repeat-x;
     vertical-align: middle;
