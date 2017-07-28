@@ -7,7 +7,11 @@
     background-color: lightblue !important;
 }
 
-.breakdown a:not(.external), .summary a:not(.external), .sortable a:not(.external) {
+.breakdown thead tr th, .summary thead tr th {
+    vertical-align: top;
+}
+
+.breakdown a:not(.external), .sortable a:not(.external) {
     display: block;
 }
 
@@ -26,14 +30,6 @@
 
 .highlight {
     background-color: #FFEEAA;
-}
-
-.overview td {
-    text-align: center;
-}
-
-.overview thead tr th, .summary thead tr th {
-    vertical-align: top;
 }
 
 .simple-numeric td + td {
