@@ -868,7 +868,8 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
         )
 
     if gene:
-        gene = '' if gene == 'intergenic' else gene.replace('%2F', '/')
+        if gene == 'intergenic':
+            gene = ''
 
         return render_template(
             'variants-by-submitter--submitter-gene-significance.html',
@@ -889,8 +890,6 @@ def variants_by_submitter(submitter_id = None, gene = None, trait_name = None, s
         )
 
     if trait_name:
-        trait_name = trait_name.replace('%2F', '/')
-
         return render_template(
             'variants-by-submitter--submitter-trait-significance.html',
             trait_info=db.trait_info(trait_name),
