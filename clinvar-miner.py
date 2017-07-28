@@ -697,7 +697,6 @@ def total_submissions_by_method():
     )
 
 @app.route('/variants-by-gene')
-@app.route('/variants-by-gene/', defaults={'gene': ''})
 @app.route('/variants-by-gene/<superescaped:gene>')
 @app.route('/variants-by-gene/<superescaped:gene>/submitter/<int:submitter_id>/<superescaped:significance>')
 @app.route('/variants-by-gene/<superescaped:gene>/trait/<superescaped:trait_name>/<superescaped:significance>')
