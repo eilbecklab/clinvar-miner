@@ -463,7 +463,11 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
                 min_stars2=int_arg('min_stars2'),
                 standardized_method2=request.args.get('method2'),
             ),
-            total_conflicting_variants=db.total_variants(
+            summary=summary,
+            breakdown=breakdown,
+            submitter1_significances=submitter1_significances,
+            submitter2_significances=submitter2_significances,
+            variants=db.variants(
                 submitter1_id=submitter1_id,
                 min_stars1=int_arg('min_stars1'),
                 standardized_method1=request.args.get('method1'),
@@ -471,10 +475,6 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
                 standardized_method2=request.args.get('method2'),
                 min_conflict_level=1,
             ),
-            summary=summary,
-            breakdown=breakdown,
-            submitter1_significances=submitter1_significances,
-            submitter2_significances=submitter2_significances,
         )
 
     if submitter2_id == 0:
@@ -517,7 +517,10 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
                 min_stars2=int_arg('min_stars2'),
                 standardized_method2=request.args.get('method2'),
             ),
-            total_conflicting_variants=db.total_variants(
+            submitter1_significances=submitter1_significances,
+            submitter2_significances=submitter2_significances,
+            breakdown=breakdown,
+            variants=db.variants(
                 submitter1_id=submitter1_id,
                 submitter2_id=submitter2_id,
                 min_stars1=int_arg('min_stars1'),
@@ -526,9 +529,6 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
                 standardized_method2=request.args.get('method2'),
                 min_conflict_level=1,
             ),
-            submitter1_significances=submitter1_significances,
-            submitter2_significances=submitter2_significances,
-            breakdown=breakdown,
         )
 
     return render_template(

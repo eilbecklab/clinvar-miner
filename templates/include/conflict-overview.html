@@ -13,7 +13,7 @@
     <tbody>
         <tr>
             {% if total_variants - total_conflicting_variants %}
-                <td class="highlight">{{ total_variants - total_conflicting_variants }}</td>
+                <td class="highlight">{{ total_variants - conflicting_variants|length }}</td>
             {% else %}
                 <td>0</td>
             {% endif %}

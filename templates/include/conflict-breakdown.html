@@ -1,39 +1,35 @@
 {{ h2('Significance breakdown')|safe }}
-{% if not breakdown %}
-    No conflicts
-{% else %}
-    {% include 'include/synonyms-note.html' %}
-    <table class="breakdown table table-bordered table-condensed table-striped">
+{% include 'include/synonyms-note.html' %}
+<table class="breakdown table table-bordered table-condensed table-striped">
+    <tr>
+        <th></th>
+        <th colspan="{{ submitter2_significances|length + 1 }}">
+            {{ submitter_link(submitter2_info['id'], submitter2_info['name'])|safe }}
+        </th>
+    </tr>
+    <tr>
+        <th rowspan="{{ submitter1_significances|length + 1 }}">
+            {{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }}
+        </th>
+        <th></th>
+        {% for significance2 in submitter2_significances %}
+            <th>{{ significance2 }}</th>
+        {% endfor %}
+    </tr>
+    {% for significance1 in submitter1_significances %}
         <tr>
-            <th></th>
-            <th colspan="{{ submitter2_significances|length + 1 }}">
-                {{ submitter_link(submitter2_info['id'], submitter2_info['name'])|safe }}
-            </th>
-        </tr>
-        <tr>
-            <th rowspan="{{ submitter1_significances|length + 1 }}">
-                {{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }}
-            </th>
-            <th></th>
+            <th>{{ significance1 }}</th>
             {% for significance2 in submitter2_significances %}
-                <th>{{ significance2 }}</th>
+                {% if breakdown[significance1].get(significance2, 0) > 0 %}
+                    <td class="highlight">
+                        <a href="conflicting-variants-by-submitter/{{ submitter1_info['id'] }}/{{ submitter2_info['id'] }}/{{ significance1|superescaped }}/{{ significance2|superescaped }}{{ request|querysuffix }}">
+                            {{ breakdown[significance1][significance2] }}
+                        </a>
+                    </td>
+                {% else %}
+                    <td>0</td>
+                {% endif %}
             {% endfor %}
         </tr>
-        {% for significance1 in submitter1_significances %}
-            <tr>
-                <th>{{ significance1 }}</th>
-                {% for significance2 in submitter2_significances %}
-                    {% if breakdown[significance1].get(significance2, 0) > 0 %}
-                        <td class="highlight">
-                            <a href="conflicting-variants-by-submitter/{{ submitter1_info['id'] }}/{{ submitter2_info['id'] }}/{{ significance1|superescaped }}/{{ significance2|superescaped }}{{ request|querysuffix }}">
-                                {{ breakdown[significance1][significance2] }}
-                            </a>
-                        </td>
-                    {% else %}
-                        <td>0</td>
-                    {% endif %}
-                {% endfor %}
-            </tr>
-        {% endfor %}
-    </table>
-{% endif %}
+    {% endfor %}
+</table>

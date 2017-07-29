@@ -13,8 +13,11 @@
         {% set original_terms_filter = True %}
         {% include 'include/filter.html' %}
     {% endwith %}
-    {% include 'include/conflict-overview.html' %}
-    {% if total_conflicting_variants %}
+    {% with %}
+        {% set total_conflicting_variants = variants|length %}
+        {% include 'include/conflict-overview.html' %}
+    {% endwith %}
+    {% if variants %}
         {{ h2('Submitter to submitter summary')|safe }}
         <table class="sortable summary table table-bordered table-striped">
             <thead>
@@ -49,5 +52,6 @@
             </tbody>
         </table>
         {% include 'include/conflict-breakdown.html' %}
+        {% include 'include/all-conflicting-variants.html' %}
     {% endif %}
 {% endblock %}
