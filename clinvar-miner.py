@@ -609,7 +609,7 @@ def significance_terms(term = None):
             'significance-terms.html',
             total_significance_terms_over_time=db.total_significance_terms_over_time(),
             significance_term_info=db.significance_term_info(),
-            old_significance_term_info=db.old_significance_term_info(),
+            max_date=db.max_date(),
         )
 
     return render_template(

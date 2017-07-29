@@ -28,7 +28,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for row in significance_term_info %}
+            {% for row in significance_term_info if row['last_seen'] == max_date %}
                 <tr>
                     <td>
                         <a href="significance-terms/{{ row['significance']|superescaped }}" style="display:block">
@@ -50,7 +50,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for row in old_significance_term_info %}
+            {% for row in significance_term_info if row['last_seen'] != max_date %}
                 <tr>
                     <td>{{ row['significance'] }}</td>
                     <td>{{ row['first_seen'] }}</td>

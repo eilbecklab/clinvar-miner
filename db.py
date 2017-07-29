@@ -34,22 +34,11 @@ class DB():
     def max_date(self):
         return list(self.cursor.execute('SELECT MAX(date) FROM submissions'))[0][0]
 
-    def old_significance_term_info(self):
-        return list(map(
-            dict,
-            self.cursor.execute('''
-                SELECT * FROM (
-                    SELECT significance, MIN(date) AS first_seen, MAX(date) AS last_seen FROM submissions
-                    GROUP BY significance ORDER BY significance
-                ) WHERE last_seen!=(SELECT MAX(date) FROM submissions)
-            ''')
-        ))
-
     def significance_term_info(self):
         return list(map(
             dict,
             self.cursor.execute('''
-                SELECT significance, MIN(date) AS first_seen FROM submissions
+                SELECT significance, MIN(date) AS first_seen, MAX(date) AS last_seen FROM submissions
                 GROUP BY significance ORDER BY significance
             ''')
         ))
