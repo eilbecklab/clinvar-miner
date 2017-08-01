@@ -247,11 +247,11 @@ class DB():
                 submitter1_country_name AS country_name,
                 COUNT(DISTINCT scv1) AS count
             FROM current_comparisons
-            WHERE star_level1>=:min_stars AND conflict_level>=:min_conflict_level
+            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
 
         if standardized_method:
-            query += ' AND standardized_method1=:standardized_method'
+            query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
         query += ' GROUP BY country_code ORDER BY country_name'
 
