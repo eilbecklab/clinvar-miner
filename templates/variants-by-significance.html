@@ -1,0 +1,38 @@
+{% extends 'extend/skin.html' %}
+{% set title = 'Variants by significance' %}
+{% block head %}
+    <script src="static/line-graph.js" type="application/javascript"></script>
+    <link href="static/line-graph.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+{% block content %}
+    {% with %}
+        {% set review_status1_label = 'Minimum submission review status' %}
+        {% set method1_label = 'Submission method' %}
+        {% set min_conflict_level_filter = True %}
+        {% set original_terms_filter = True %}
+        {% include 'include/filter.html' %}
+    {% endwith %}
+    <p>Total significance terms: {{ total_variants_by_significance|length }}</p>
+    {% if total_variants_by_significance %}
+        <table class="simple-numeric sortable table">
+            <thead>
+                <tr>
+                    <th>Submission significance</th>
+                    <th>Variants</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in total_variants_by_significance %}
+                    <tr>
+                        <td>
+                            <a href="variants-by-significance/{{ row['significance']|superescaped }}{{ request|querysuffix }}">
+                                {{ row['significance'] }}
+                            </a>
+                        </td>
+                        <td>{{ row['count'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

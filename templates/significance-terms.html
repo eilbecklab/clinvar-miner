@@ -31,7 +31,7 @@
             {% for row in significance_term_info if row['last_seen'] == max_date %}
                 <tr>
                     <td>
-                        <a href="significance-terms/{{ row['significance']|superescaped }}" style="display:block">
+                        <a href="variants-by-significance/{{ row['significance']|superescaped }}?original_terms=1">
                             {{ row['significance'] or '\u200B' }}
                         </a>
                     </td>

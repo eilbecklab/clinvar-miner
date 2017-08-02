@@ -599,23 +599,14 @@ def search():
     return redirect('https://www.google.com/#q=site:' + urllib.parse.quote(request.url_root + ' ' + query, safe=''))
 
 @app.route('/significance-terms')
-@app.route('/significance-terms/', defaults={'term': ''})
-@app.route('/significance-terms/<superescaped:term>')
 def significance_terms(term = None):
     db = DB()
 
-    if term == None:
-        return render_template(
-            'significance-terms.html',
-            total_significance_terms_over_time=db.total_significance_terms_over_time(),
-            significance_term_info=db.significance_term_info(),
-            max_date=db.max_date(),
-        )
-
     return render_template(
-        'significance-terms--term.html',
-        term=term,
-        total_variants_by_submitter=db.total_variants_by_submitter(significance1=term),
+        'significance-terms.html',
+        total_significance_terms_over_time=db.total_significance_terms_over_time(),
+        significance_term_info=db.significance_term_info(),
+        max_date=db.max_date(),
     )
 
 @app.route('/submissions-by-variant/<superescaped:variant_name>')
@@ -817,6 +808,59 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, trai
                 original_terms=request.args.get('original_terms'),
             ),
         )
+
+@app.route('/variants-by-significance')
+@app.route('/variants-by-significance/<superescaped:significance>')
+def variants_by_significance(significance = None):
+    db = DB()
+
+    if significance == None:
+        return render_template(
+            'variants-by-significance.html',
+            total_variants_by_significance=db.total_variants_by_significance(
+                min_stars=int_arg('min_stars1'),
+                standardized_method=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+                original_terms=request.args.get('original_terms'),
+            ),
+        )
+
+    return render_template(
+        'variants-by-significance--significance.html',
+        significance=significance,
+        total_variants=db.total_variants(
+            significance=significance,
+            min_stars1=int_arg('min_stars1'),
+            min_stars2=int_arg('min_stars1'),
+            standardized_method1=request.args.get('method1'),
+            standardized_method2=request.args.get('method1'),
+            min_conflict_level=int_arg('min_conflict_level'),
+            original_terms=request.args.get('original_terms'),
+        ),
+        total_variants_by_submitter=db.total_variants_by_submitter(
+            significance=significance,
+            min_stars1=int_arg('min_stars1'),
+            min_stars2=int_arg('min_stars1'),
+            standardized_method1=request.args.get('method1'),
+            standardized_method2=request.args.get('method1'),
+            min_conflict_level=int_arg('min_conflict_level'),
+            original_terms=request.args.get('original_terms'),
+        ),
+        total_variants_by_gene=db.total_variants_by_gene(
+            significance=significance,
+            min_stars=int_arg('min_stars1'),
+            standardized_method=request.args.get('method1'),
+            min_conflict_level=int_arg('min_conflict_level'),
+            original_terms=request.args.get('original_terms'),
+        ),
+        total_variants_by_trait=db.total_variants_by_trait(
+            significance=significance,
+            min_stars=int_arg('min_stars1'),
+            standardized_method=request.args.get('method1'),
+            min_conflict_level=int_arg('min_conflict_level'),
+            original_terms=request.args.get('original_terms'),
+        ),
+    )
 
 @app.route('/variants-by-submitter')
 @app.route('/variants-by-submitter/<int:submitter_id>')
