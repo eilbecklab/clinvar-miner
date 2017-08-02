@@ -9,11 +9,11 @@
     {% endwith %}
     <p>Total genes: {{ total_variants_by_gene|length }}</p>
     {% if total_variants_by_gene %}
-        <table class="sortable table" style="width:auto">
+        <table class="simple-numeric sortable table">
             <thead>
                 <tr>
                     <th>Gene</th>
-                    <th style="text-align:right">Variants</th>
+                    <th>Variants</th>
                 </tr>
             </thead>
             <tbody>
@@ -24,7 +24,7 @@
                                 {{ row['gene'] or '\u200Bintergenic' }}
                             </a>
                         </td>
-                        <td style="text-align:right">{{ row['count'] }}</td>
+                        <td>{{ row['count'] }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
