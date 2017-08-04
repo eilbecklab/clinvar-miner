@@ -1,0 +1,6 @@
+{% extends 'extend/variants.html' %}
+{% set title = 'Variants reported as ' + significance + ' for ' + condition_info['name'] %}
+{% block title %}
+    Variants reported as {{ significance }} for
+    {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
+{% endblock %}

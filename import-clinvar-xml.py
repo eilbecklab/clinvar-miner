@@ -56,9 +56,9 @@ def create_tables():
             last_eval TEXT,
             review_status TEXT,
             star_level INTEGER,
-            trait_db TEXT,
-            trait_id TEXT,
-            trait_name TEXT,
+            condition_db TEXT,
+            condition_id TEXT,
+            condition_name TEXT,
             method TEXT,
             standardized_method TEXT,
             comment TEXT,
@@ -85,9 +85,9 @@ def create_tables():
             last_eval1 TEXT,
             review_status1 TEXT,
             star_level1 INTEGER,
-            trait1_db TEXT,
-            trait1_id TEXT,
-            trait1_name TEXT,
+            condition1_db TEXT,
+            condition1_id TEXT,
+            condition1_name TEXT,
             method1 TEXT,
             standardized_method1 TEXT,
             comment1 TEXT,
@@ -130,8 +130,8 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_name_index ON submissions (submitter_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter_country_code_index ON submissions (submitter_country_code)')
     cursor.execute('CREATE INDEX IF NOT EXISTS significance_index ON submissions (significance)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS trait_id_index ON submissions (trait_id)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS trait_name_index ON submissions (trait_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS condition_id_index ON submissions (condition_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS condition_name_index ON submissions (condition_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS method_index ON submissions (method)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method_index ON submissions (standardized_method)')
 
@@ -146,7 +146,7 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS significance1_index ON comparisons (significance1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_significance1_index ON comparisons (standardized_significance1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS star_level1_index ON comparisons (star_level1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS trait1_name_index ON comparisons (trait1_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS condition1_name_index ON comparisons (condition1_name)')
     cursor.execute('CREATE INDEX IF NOT EXISTS method1_index ON comparisons (method1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method1_index ON comparisons (standardized_method1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submitter2_id_index ON comparisons (submitter2_id)')
@@ -208,9 +208,9 @@ def import_file(filename):
 
         trait_name_els = reference_assertion_el.findall('./TraitSet/Trait/Name/ElementValue[@Type="Preferred"]')
         if trait_name_els:
-            trait_name = '; '.join(map(lambda el: el.text, trait_name_els))
+            condition_name = '; '.join(map(lambda el: el.text, trait_name_els))
         else:
-            trait_name = 'not specified'
+            condition_name = 'not specified'
 
         for assertion_el in set_el.findall('./ClinVarAssertion'):
             scv_el = assertion_el.find('./ClinVarAccession[@Type="SCV"]')
@@ -218,11 +218,11 @@ def import_file(filename):
 
             if len(trait_name_els) == 1:
                 trait_xref_el = assertion_el.find('./TraitSet/Trait/XRef')
-                trait_db = trait_xref_el.attrib['DB'] if trait_xref_el != None else ''
-                trait_id = trait_xref_el.attrib['ID'] if trait_xref_el != None else ''
+                condition_db = trait_xref_el.attrib['DB'] if trait_xref_el != None else ''
+                condition_id = trait_xref_el.attrib['ID'] if trait_xref_el != None else ''
             else:
-                trait_db = ''
-                trait_id = ''
+                condition_db = ''
+                condition_id = ''
 
             submission_id_el = assertion_el.find('./ClinVarSubmissionID')
             significance_el = assertion_el.find('./ClinicalSignificance')
@@ -277,9 +277,9 @@ def import_file(filename):
                 last_eval,
                 review_status,
                 star_level,
-                trait_db,
-                trait_id,
-                trait_name,
+                condition_db,
+                condition_id,
+                condition_name,
                 method,
                 standardized_method,
                 comment,

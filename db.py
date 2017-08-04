@@ -21,9 +21,9 @@ class DB():
             'SELECT 1 FROM current_submissions WHERE gene=? LIMIT 1', [gene]
         )))
 
-    def is_trait_name(self, trait_name):
+    def is_condition_name(self, condition_name):
         return bool(list(self.cursor.execute(
-            'SELECT 1 FROM current_submissions WHERE trait_name=? LIMIT 1', [trait_name]
+            'SELECT 1 FROM current_submissions WHERE condition_name=? LIMIT 1', [condition_name]
         )))
 
     def is_variant_name(self, variant_name):
@@ -56,9 +56,9 @@ class DB():
                 significance1 AS significance,
                 last_eval1 AS last_eval,
                 review_status1 AS review_status,
-                trait1_db AS trait_db,
-                trait1_id AS trait_id,
-                trait1_name AS trait_name,
+                condition1_db AS condition_db,
+                condition1_id AS condition_id,
+                condition1_name AS condition_name,
                 method1 AS method,
                 comment1 AS comment
             FROM current_comparisons
@@ -407,7 +407,7 @@ class DB():
             )
         ))
 
-    def total_variants_by_gene_and_significance(self, trait_name = None, submitter_id = None, min_stars = 0,
+    def total_variants_by_gene_and_significance(self, condition_name = None, submitter_id = None, min_stars = 0,
                                                 standardized_method = None, min_conflict_level = 0,
                                                 original_terms = False):
         query = 'SELECT gene, COUNT(DISTINCT variant_name) AS count'
@@ -422,8 +422,8 @@ class DB():
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
 
-        if trait_name:
-            query += ' AND trait1_name=:trait_name'
+        if condition_name:
+            query += ' AND condition1_name=:condition_name'
 
         if submitter_id:
             query += ' AND submitter1_id=:submitter_id'
@@ -438,7 +438,7 @@ class DB():
             self.cursor.execute(
                 query,
                 {
-                    'trait_name': trait_name,
+                    'condition_name': condition_name,
                     'submitter_id': submitter_id,
                     'min_stars': min_stars,
                     'standardized_method': standardized_method,
@@ -447,7 +447,7 @@ class DB():
             )
         ))
 
-    def total_variants_by_significance(self, gene = None, trait_name = None, submitter_id = None, min_stars = 0,
+    def total_variants_by_significance(self, gene = None, condition_name = None, submitter_id = None, min_stars = 0,
                                        standardized_method = None, min_conflict_level = 0, original_terms = False):
         query = 'SELECT COUNT(DISTINCT variant_name) AS count'
 
@@ -464,8 +464,8 @@ class DB():
         if gene:
             query += ' AND gene=:gene'
 
-        if trait_name:
-            query += ' AND trait1_name=:trait_name'
+        if condition_name:
+            query += ' AND condition1_name=:condition_name'
 
         if submitter_id:
             query += ' AND submitter1_id=:submitter_id'
@@ -481,7 +481,7 @@ class DB():
                 query,
                 {
                     'gene': gene,
-                    'trait_name': trait_name,
+                    'condition_name': condition_name,
                     'submitter_id': submitter_id,
                     'min_stars': min_stars,
                     'standardized_method': standardized_method,
@@ -537,7 +537,7 @@ class DB():
             )
         ))
 
-    def total_variants_by_submitter_and_significance(self, gene = None, trait_name = None, min_stars = 0,
+    def total_variants_by_submitter_and_significance(self, gene = None, condition_name = None, min_stars = 0,
                                                      standardized_method = None, min_conflict_level = 0,
                                                      original_terms = False):
         query = '''
@@ -563,8 +563,8 @@ class DB():
         if gene != None:
             query += ' AND gene=:gene'
 
-        if trait_name:
-            query += ' AND trait1_name=:trait_name'
+        if condition_name:
+            query += ' AND condition1_name=:condition_name'
 
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
@@ -577,7 +577,7 @@ class DB():
                 query,
                 {
                     'gene': gene,
-                    'trait_name': trait_name,
+                    'condition_name': condition_name,
                     'min_stars': min_stars,
                     'standardized_method': standardized_method,
                     'min_conflict_level': min_conflict_level
@@ -585,11 +585,11 @@ class DB():
             )
         ))
 
-    def total_variants_by_trait(self, significance = None, min_stars = 0, standardized_method = None,
-                                min_conflict_level = 0, original_terms = False):
+    def total_variants_by_condition(self, significance = None, min_stars = 0, standardized_method = None,
+                                    min_conflict_level = 0, original_terms = False):
         query = '''
             SELECT
-                trait1_db AS trait_db, trait1_id AS trait_id, trait1_name AS trait_name,
+                condition1_db AS condition_db, condition1_id AS condition_id, condition1_name AS condition_name,
                 COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
@@ -604,7 +604,7 @@ class DB():
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
-        query += ' GROUP BY trait_name ORDER BY trait_name'
+        query += ' GROUP BY condition_name ORDER BY condition_name'
 
         return list(map(
             dict,
@@ -619,14 +619,14 @@ class DB():
             )
         ))
 
-    def total_variants_by_trait_and_significance(self, gene = None, submitter_id = None, min_stars = 0,
-                                                 standardized_method = None, min_conflict_level = 0,
-                                                 original_terms = False):
+    def total_variants_by_condition_and_significance(self, gene = None, submitter_id = None, min_stars = 0,
+                                                     standardized_method = None, min_conflict_level = 0,
+                                                     original_terms = False):
         query = '''
             SELECT
-                trait1_db AS trait_db,
-                trait1_id AS trait_id,
-                trait1_name AS trait_name,
+                condition1_db AS condition_db,
+                condition1_id AS condition_id,
+                condition1_name AS condition_name,
                 COUNT(DISTINCT variant_name) AS count
         '''
 
@@ -652,7 +652,7 @@ class DB():
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
-        query += ' GROUP BY trait_name, significance ORDER BY trait_name'
+        query += ' GROUP BY condition_name, significance ORDER BY condition_name'
 
         return list(map(
             dict,
@@ -668,14 +668,15 @@ class DB():
             )
         ))
 
-    def trait_info(self, trait_name):
+    def condition_info(self, condition_name):
         try:
             row = list(self.cursor.execute('''
-                SELECT trait_db, trait_id FROM current_submissions WHERE trait_name=? AND trait_id!='' LIMIT 1
-            ''', [trait_name]))[0]
-            return {'db': row[0], 'id': row[1], 'name': trait_name}
+                SELECT condition_db, condition_id FROM current_submissions
+                WHERE condition_name=? AND condition_id!='' LIMIT 1
+            ''', [condition_name]))[0]
+            return {'db': row[0], 'id': row[1], 'name': condition_name}
         except IndexError:
-            return {'db': '', 'id': '', 'name': trait_name}
+            return {'db': '', 'id': '', 'name': condition_name}
 
     def variant_info(self, variant_name):
         row = list(self.cursor.execute(
@@ -707,7 +708,7 @@ class DB():
         except IndexError:
             return None
 
-    def variants(self, gene = None, trait1_name = None, submitter1_id = None, submitter2_id = None,
+    def variants(self, gene = None, condition1_name = None, submitter1_id = None, submitter2_id = None,
                  significance1 = None, significance2 = None, min_stars1 = 0, min_stars2 = 0,
                  standardized_method1 = None, standardized_method2 = None, min_conflict_level = 1,
                  original_terms = False):
@@ -719,8 +720,8 @@ class DB():
         if gene != None:
             query += ' AND gene=:gene'
 
-        if trait1_name:
-            query += ' AND trait1_name=:trait1_name'
+        if condition1_name:
+            query += ' AND condition1_name=:condition1_name'
 
         if submitter1_id:
             query += ' AND submitter1_id=:submitter1_id'
@@ -754,7 +755,7 @@ class DB():
                 query,
                 {
                     'gene': gene,
-                    'trait1_name': trait1_name,
+                    'condition1_name': condition1_name,
                     'submitter1_id': submitter1_id,
                     'submitter2_id': submitter2_id,
                     'significance1': significance1,
