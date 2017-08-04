@@ -829,7 +829,7 @@ def variants_by_significance(significance = None):
         'variants-by-significance--significance.html',
         significance=significance,
         total_variants=db.total_variants(
-            significance=significance,
+            significance1=significance,
             min_stars1=int_arg('min_stars1'),
             min_stars2=int_arg('min_stars1'),
             standardized_method1=request.args.get('method1'),
@@ -838,7 +838,7 @@ def variants_by_significance(significance = None):
             original_terms=request.args.get('original_terms'),
         ),
         total_variants_by_submitter=db.total_variants_by_submitter(
-            significance=significance,
+            significance1=significance,
             min_stars1=int_arg('min_stars1'),
             min_stars2=int_arg('min_stars1'),
             standardized_method1=request.args.get('method1'),
@@ -847,14 +847,14 @@ def variants_by_significance(significance = None):
             original_terms=request.args.get('original_terms'),
         ),
         total_variants_by_gene=db.total_variants_by_gene(
-            significance=significance,
+            significance1=significance,
             min_stars=int_arg('min_stars1'),
             standardized_method=request.args.get('method1'),
             min_conflict_level=int_arg('min_conflict_level'),
             original_terms=request.args.get('original_terms'),
         ),
         total_variants_by_condition=db.total_variants_by_condition(
-            significance=significance,
+            significance1=significance,
             min_stars=int_arg('min_stars1'),
             standardized_method=request.args.get('method1'),
             min_conflict_level=int_arg('min_conflict_level'),
