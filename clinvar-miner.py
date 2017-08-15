@@ -707,6 +707,141 @@ def total_submissions_by_method():
         ),
     )
 
+@app.route('/variants-by-condition')
+@app.route('/variants-by-condition/<superescaped:condition_name>')
+@app.route('/variants-by-condition/<superescaped:condition_name>/significance/<superescaped:significance>')
+@app.route('/variants-by-condition/<superescaped:condition_name>/gene/<superescaped:gene>/<superescaped:significance>')
+@app.route('/variants-by-condition/<superescaped:condition_name>/submitter/<int:submitter_id>/<superescaped:significance>')
+def variants_by_condition(significance = None, condition_name = None, gene = None, submitter_id = None):
+    db = DB()
+
+    if condition_name == None:
+        return render_template(
+            'variants-by-condition.html',
+            total_variants_by_condition=db.total_variants_by_condition(
+                min_stars=int_arg('min_stars1'),
+                standardized_method=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+            ),
+        )
+
+    condition_info = db.condition_info(condition_name)
+    if not condition_info:
+        abort(404)
+
+    if significance == None and gene == None and submitter_id == None:
+        breakdown_by_gene_and_significance, significances = get_breakdown_by_gene_and_significance(
+            db.total_variants_by_gene_and_significance(
+                condition_name=condition_name,
+                min_stars=int_arg('min_stars1'),
+                standardized_method=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+                original_terms=request.args.get('original_terms'),
+            )
+        )
+
+        breakdown_by_submitter_and_significance, significances = get_breakdown_by_submitter_and_significance(
+            db.total_variants_by_submitter_and_significance(
+                condition_name=condition_name,
+                min_stars=int_arg('min_stars1'),
+                standardized_method=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+                original_terms=request.args.get('original_terms'),
+            )
+        )
+
+        return render_template(
+            'variants-by-condition--condition.html',
+            condition_info=condition_info,
+            overview=get_significance_overview(
+                db.total_variants_by_significance(
+                    condition_name=condition_name,
+                    min_stars=int_arg('min_stars1'),
+                    standardized_method=request.args.get('method1'),
+                    min_conflict_level=min(1, int_arg('min_conflict_level')),
+                    original_terms=request.args.get('original_terms'),
+                )
+            ),
+            significances=significances,
+            breakdown_by_gene_and_significance=breakdown_by_gene_and_significance,
+            breakdown_by_submitter_and_significance=breakdown_by_submitter_and_significance,
+            variants=db.variants(
+                condition1_name=condition_name,
+                min_stars1=int_arg('min_stars1'),
+                min_stars2=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                standardized_method2=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+            ),
+        )
+
+    if not db.is_significance(significance):
+        abort(404)
+
+    if gene == None and submitter_id == None:
+        return render_template(
+            'variants-by-condition--condition-significance.html',
+            condition_info=condition_info,
+            significance=significance,
+            variants=db.variants(
+                condition1_name=condition_name,
+                significance1=significance,
+                min_stars1=int_arg('min_stars1'),
+                min_stars2=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                standardized_method2=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+                original_terms=request.args.get('original_terms'),
+            ),
+        )
+
+    if gene:
+        if gene == 'intergenic':
+            gene = ''
+        elif not db.is_gene(gene):
+            abort(404)
+
+        return render_template(
+            'variants-by-condition--condition-gene-significance.html',
+            condition_info=condition_info,
+            gene=gene,
+            significance=significance,
+            variants=db.variants(
+                gene=gene,
+                condition1_name=condition_name,
+                significance1=significance,
+                min_stars1=int_arg('min_stars1'),
+                min_stars2=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                standardized_method2=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+                original_terms=request.args.get('original_terms'),
+            ),
+        )
+
+    if submitter_id:
+        submitter_info = db.submitter_info(submitter_id)
+        if not submitter_info:
+            abort(404)
+
+        return render_template(
+            'variants-by-condition--condition-submitter-significance.html',
+            condition_info=condition_info,
+            submitter_info=submitter_info,
+            significance=significance,
+            variants=db.variants(
+                condition1_name=condition_name,
+                submitter1_id=submitter_id,
+                significance1=significance,
+                min_stars1=int_arg('min_stars1'),
+                min_stars2=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                standardized_method2=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+                original_terms=request.args.get('original_terms'),
+            ),
+        )
+
 @app.route('/variants-by-gene')
 @app.route('/variants-by-gene/<superescaped:gene>')
 @app.route('/variants-by-gene/<superescaped:gene>/significance/<superescaped:significance>')
@@ -1020,141 +1155,6 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
 
         return render_template(
             'variants-by-submitter--submitter-condition-significance.html',
-            condition_info=condition_info,
-            submitter_info=submitter_info,
-            significance=significance,
-            variants=db.variants(
-                condition1_name=condition_name,
-                submitter1_id=submitter_id,
-                significance1=significance,
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                standardized_method1=request.args.get('method1'),
-                standardized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                original_terms=request.args.get('original_terms'),
-            ),
-        )
-
-@app.route('/variants-by-condition')
-@app.route('/variants-by-condition/<superescaped:condition_name>')
-@app.route('/variants-by-condition/<superescaped:condition_name>/significance/<superescaped:significance>')
-@app.route('/variants-by-condition/<superescaped:condition_name>/gene/<superescaped:gene>/<superescaped:significance>')
-@app.route('/variants-by-condition/<superescaped:condition_name>/submitter/<int:submitter_id>/<superescaped:significance>')
-def variants_by_condition(significance = None, condition_name = None, gene = None, submitter_id = None):
-    db = DB()
-
-    if condition_name == None:
-        return render_template(
-            'variants-by-condition.html',
-            total_variants_by_condition=db.total_variants_by_condition(
-                min_stars=int_arg('min_stars1'),
-                standardized_method=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-            ),
-        )
-
-    condition_info = db.condition_info(condition_name)
-    if not condition_info:
-        abort(404)
-
-    if significance == None and gene == None and submitter_id == None:
-        breakdown_by_gene_and_significance, significances = get_breakdown_by_gene_and_significance(
-            db.total_variants_by_gene_and_significance(
-                condition_name=condition_name,
-                min_stars=int_arg('min_stars1'),
-                standardized_method=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                original_terms=request.args.get('original_terms'),
-            )
-        )
-
-        breakdown_by_submitter_and_significance, significances = get_breakdown_by_submitter_and_significance(
-            db.total_variants_by_submitter_and_significance(
-                condition_name=condition_name,
-                min_stars=int_arg('min_stars1'),
-                standardized_method=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                original_terms=request.args.get('original_terms'),
-            )
-        )
-
-        return render_template(
-            'variants-by-condition--condition.html',
-            condition_info=condition_info,
-            overview=get_significance_overview(
-                db.total_variants_by_significance(
-                    condition_name=condition_name,
-                    min_stars=int_arg('min_stars1'),
-                    standardized_method=request.args.get('method1'),
-                    min_conflict_level=min(1, int_arg('min_conflict_level')),
-                    original_terms=request.args.get('original_terms'),
-                )
-            ),
-            significances=significances,
-            breakdown_by_gene_and_significance=breakdown_by_gene_and_significance,
-            breakdown_by_submitter_and_significance=breakdown_by_submitter_and_significance,
-            variants=db.variants(
-                condition1_name=condition_name,
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                standardized_method1=request.args.get('method1'),
-                standardized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-            ),
-        )
-
-    if not db.is_significance(significance):
-        abort(404)
-
-    if gene == None and submitter_id == None:
-        return render_template(
-            'variants-by-condition--condition-significance.html',
-            condition_info=condition_info,
-            significance=significance,
-            variants=db.variants(
-                condition1_name=condition_name,
-                significance1=significance,
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                standardized_method1=request.args.get('method1'),
-                standardized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                original_terms=request.args.get('original_terms'),
-            ),
-        )
-
-    if gene:
-        if gene == 'intergenic':
-            gene = ''
-        elif not db.is_gene(gene):
-            abort(404)
-
-        return render_template(
-            'variants-by-condition--condition-gene-significance.html',
-            condition_info=condition_info,
-            gene=gene,
-            significance=significance,
-            variants=db.variants(
-                gene=gene,
-                condition1_name=condition_name,
-                significance1=significance,
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                standardized_method1=request.args.get('method1'),
-                standardized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                original_terms=request.args.get('original_terms'),
-            ),
-        )
-
-    if submitter_id:
-        submitter_info = db.submitter_info(submitter_id)
-        if not submitter_info:
-            abort(404)
-
-        return render_template(
-            'variants-by-condition--condition-submitter-significance.html',
             condition_info=condition_info,
             submitter_info=submitter_info,
             significance=significance,
