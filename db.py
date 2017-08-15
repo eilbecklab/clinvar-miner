@@ -14,7 +14,7 @@ class DB():
                 [country_code]
             ))[0][0]
         except IndexError:
-            return country_code
+            return None
 
     def is_gene(self, gene):
         return bool(list(self.cursor.execute(
@@ -24,6 +24,11 @@ class DB():
     def is_condition_name(self, condition_name):
         return bool(list(self.cursor.execute(
             'SELECT 1 FROM current_submissions WHERE condition_name=? LIMIT 1', [condition_name]
+        )))
+
+    def is_significance(self, significance):
+        return bool(list(self.cursor.execute(
+            'SELECT 1 FROM current_submissions WHERE significance=? LIMIT 1', [significance]
         )))
 
     def is_variant_name(self, variant_name):
@@ -99,7 +104,7 @@ class DB():
             ))[0]
             return {'id': row[0], 'name': row[1], 'country_name': row[2]}
         except IndexError:
-            return {'id': submitter_id, 'name': str(submitter_id)}
+            return None
 
     def submitter_primary_method(self, submitter_id):
         return list(
@@ -318,21 +323,18 @@ class DB():
 
         query += ' GROUP BY submitter1_id ORDER BY submitter1_name'
 
-        try:
-            return list(map(
-                dict,
-                self.cursor.execute(
-                    query,
-                    {
-                        'country_code': country_code,
-                        'min_stars': min_stars,
-                        'standardized_method': standardized_method,
-                        'min_conflict_level': min_conflict_level,
-                    }
-                )
-            ))
-        except OperationalError:
-            return []
+        return list(map(
+            dict,
+            self.cursor.execute(
+                query,
+                {
+                    'country_code': country_code,
+                    'min_stars': min_stars,
+                    'standardized_method': standardized_method,
+                    'min_conflict_level': min_conflict_level,
+                }
+            )
+        ))
 
     def total_variants(self, submitter1_id = None, submitter2_id = None, significance1 = None, min_stars1 = 0,
                        min_stars2 = 0, standardized_method1 = None, standardized_method2 = None,
@@ -670,19 +672,23 @@ class DB():
 
     def condition_info(self, condition_name):
         try:
+            #prefer a row that links the condition name to a condition ID
             row = list(self.cursor.execute('''
-                SELECT condition_db, condition_id FROM current_submissions
-                WHERE condition_name=? AND condition_id!='' LIMIT 1
+                SELECT condition_db, condition_id FROM current_submissions WHERE condition_name=?
+                GROUP BY condition_id=='' ORDER BY condition_id=='' LIMIT 1
             ''', [condition_name]))[0]
             return {'db': row[0], 'id': row[1], 'name': condition_name}
         except IndexError:
-            return {'db': '', 'id': '', 'name': condition_name}
+            return None
 
     def variant_info(self, variant_name):
-        row = list(self.cursor.execute(
-            'SELECT variant_id, variant_rsid FROM current_submissions WHERE variant_name=? LIMIT 1', [variant_name]
-        ))[0]
-        return {'id': row[0], 'name': variant_name, 'rsid': row[1]}
+        try:
+            row = list(self.cursor.execute(
+                'SELECT variant_id, variant_rsid FROM current_submissions WHERE variant_name=? LIMIT 1', [variant_name]
+            ))[0]
+            return {'id': row[0], 'name': variant_name, 'rsid': row[1]}
+        except IndexError:
+            return None
 
     def variant_name_from_rcv(self, rcv):
         try:

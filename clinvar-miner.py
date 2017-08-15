@@ -360,6 +360,9 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
             submitter2_significances=submitter2_significances,
         )
 
+    if not db.is_significance(significance1) or not db.is_significance(significance2):
+        abort(404)
+
     return render_template(
         'conflicting-variants-by-significance--2significances.html',
         significance1=significance1,
@@ -393,6 +396,10 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
                 min_conflict_level=1,
             ),
         )
+
+    submitter1_info = db.submitter_info(submitter1_id)
+    if not submitter1_info:
+        abort(404)
 
     if submitter2_id == None:
         total_conflicting_variants_by_submitter = db.total_variants_by_submitter(
@@ -444,7 +451,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
 
         return render_template(
             'conflicting-variants-by-submitter--1submitter.html',
-            submitter1_info=db.submitter_info(submitter1_id),
+            submitter1_info=submitter1_info,
             submitter1_primary_method=db.submitter_primary_method(submitter1_id),
             submitter2_info={'id': 0, 'name': 'All submitters'},
             overview=get_conflict_overview(
@@ -481,6 +488,8 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
         submitter2_info = {'id': 0, 'name': 'any other submitter'}
     else:
         submitter2_info = db.submitter_info(submitter2_id)
+        if not submitter2_info:
+            abort(404)
 
     if not significance1:
         breakdown, submitter1_significances, submitter2_significances = get_conflict_breakdown(
@@ -497,7 +506,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
 
         return render_template(
             'conflicting-variants-by-submitter--2submitters.html',
-            submitter1_info=db.submitter_info(submitter1_id),
+            submitter1_info=submitter1_info,
             submitter2_info=submitter2_info,
             overview=get_conflict_overview(
                 db.total_conflicting_variants_by_conflict_level(
@@ -531,9 +540,12 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             ),
         )
 
+    if not db.is_significance(significance1) or not db.is_significance(significance2):
+        abort(404)
+
     return render_template(
         'conflicting-variants-by-submitter--2significances.html',
-        submitter1_info=db.submitter_info(submitter1_id),
+        submitter1_info=submitter1_info,
         submitter2_info=submitter2_info,
         significance1=significance1,
         significance2=significance2,
@@ -599,7 +611,7 @@ def search():
     return redirect('https://www.google.com/#q=site:' + urllib.parse.quote(request.url_root + ' ' + query, safe=''))
 
 @app.route('/significance-terms')
-def significance_terms(term = None):
+def significance_terms():
     db = DB()
 
     return render_template(
@@ -612,6 +624,10 @@ def significance_terms(term = None):
 @app.route('/submissions-by-variant/<superescaped:variant_name>')
 def submissions_by_variant(variant_name):
     db = DB()
+
+    variant_info = db.variant_info(variant_name)
+    if not variant_info:
+        abort(404)
 
     return render_template(
         'submissions-by-variant--variant.html',
@@ -640,9 +656,13 @@ def total_submissions_by_country(country_code = None):
             ),
         )
 
+    country_name = db.country_name(country_code)
+    if country_name == None:
+        abort(404)
+
     return render_template(
         'total-submissions-by-country--country.html',
-        country_name=db.country_name(country_code),
+        country_name=country_name,
         total_submissions_by_submitter=db.total_submissions_by_submitter(
             country_code=country_code,
             min_stars=int_arg('min_stars1'),
@@ -707,6 +727,8 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
 
     if gene == 'intergenic':
         gene = ''
+    elif not db.is_gene(gene):
+        abort(404)
 
     if significance == None and submitter_id == None and condition_name == None:
         breakdown_by_condition_and_significance, significances = get_breakdown_by_condition_and_significance(
@@ -754,6 +776,9 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
             ),
         )
 
+    if not db.is_significance(significance):
+        abort(404)
+
     if submitter_id == None and condition_name == None:
         return render_template(
             'variants-by-gene--gene-significance.html',
@@ -772,10 +797,14 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
         )
 
     if submitter_id:
+        submitter_info = db.submitter_info(submitter_id)
+        if not submitter_info:
+            abort(404)
+
         return render_template(
             'variants-by-gene--gene-submitter-significance.html',
             gene=gene,
-            submitter_info=db.submitter_info(submitter_id),
+            submitter_info=submitter_info,
             significance=significance,
             variants=db.variants(
                 gene=gene,
@@ -791,10 +820,14 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
         )
 
     if condition_name:
+        condition_info = db.condition_info(condition_name)
+        if not condition_info:
+            abort(404)
+
         return render_template(
             'variants-by-gene--gene-condition-significance.html',
             gene=gene,
-            condition_info=db.condition_info(condition_name),
+            condition_info=condition_info,
             significance=significance,
             variants=db.variants(
                 gene=gene,
@@ -824,6 +857,9 @@ def variants_by_significance(significance = None):
                 original_terms=request.args.get('original_terms'),
             ),
         )
+
+    if not db.is_significance(significance):
+        abort(404)
 
     return render_template(
         'variants-by-significance--significance.html',
@@ -882,6 +918,10 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
             ),
         )
 
+    submitter_info = db.submitter_info(submitter_id)
+    if not submitter_info:
+        abort(404)
+
     if significance == None and gene == None and condition_name == None:
         breakdown_by_gene_and_significance, significances = get_breakdown_by_gene_and_significance(
             db.total_variants_by_gene_and_significance(
@@ -905,7 +945,7 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
 
         return render_template(
             'variants-by-submitter--submitter.html',
-            submitter_info=db.submitter_info(submitter_id),
+            submitter_info=submitter_info,
             submitter_primary_method=db.submitter_primary_method(submitter_id),
             overview=get_significance_overview(
                 db.total_variants_by_significance(
@@ -929,10 +969,13 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
             ),
         )
 
+    if not db.is_significance(significance):
+        abort(404)
+
     if gene == None and condition_name == None:
         return render_template(
             'variants-by-submitter--submitter-significance.html',
-            submitter_info=db.submitter_info(submitter_id),
+            submitter_info=submitter_info,
             significance=significance,
             variants=db.variants(
                 submitter1_id=submitter_id,
@@ -949,11 +992,13 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
     if gene:
         if gene == 'intergenic':
             gene = ''
+        elif not db.is_gene(gene):
+            abort(404)
 
         return render_template(
             'variants-by-submitter--submitter-gene-significance.html',
             gene=gene,
-            submitter_info=db.submitter_info(submitter_id),
+            submitter_info=submitter_info,
             significance=significance,
             variants=db.variants(
                 gene=gene,
@@ -969,10 +1014,14 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
         )
 
     if condition_name:
+        condition_info = db.condition_info(condition_name)
+        if not condition_info:
+            abort(404)
+
         return render_template(
             'variants-by-submitter--submitter-condition-significance.html',
-            condition_info=db.condition_info(condition_name),
-            submitter_info=db.submitter_info(submitter_id),
+            condition_info=condition_info,
+            submitter_info=submitter_info,
             significance=significance,
             variants=db.variants(
                 condition1_name=condition_name,
@@ -1005,6 +1054,10 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
             ),
         )
 
+    condition_info = db.condition_info(condition_name)
+    if not condition_info:
+        abort(404)
+
     if significance == None and gene == None and submitter_id == None:
         breakdown_by_gene_and_significance, significances = get_breakdown_by_gene_and_significance(
             db.total_variants_by_gene_and_significance(
@@ -1028,7 +1081,7 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
 
         return render_template(
             'variants-by-condition--condition.html',
-            condition_info=db.condition_info(condition_name),
+            condition_info=condition_info,
             overview=get_significance_overview(
                 db.total_variants_by_significance(
                     condition_name=condition_name,
@@ -1051,10 +1104,13 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
             ),
         )
 
+    if not db.is_significance(significance):
+        abort(404)
+
     if gene == None and submitter_id == None:
         return render_template(
             'variants-by-condition--condition-significance.html',
-            condition_info=db.condition_info(condition_name),
+            condition_info=condition_info,
             significance=significance,
             variants=db.variants(
                 condition1_name=condition_name,
@@ -1071,10 +1127,12 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
     if gene:
         if gene == 'intergenic':
             gene = ''
+        elif not db.is_gene(gene):
+            abort(404)
 
         return render_template(
             'variants-by-condition--condition-gene-significance.html',
-            condition_info=db.condition_info(condition_name),
+            condition_info=condition_info,
             gene=gene,
             significance=significance,
             variants=db.variants(
@@ -1091,10 +1149,14 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
         )
 
     if submitter_id:
+        submitter_info = db.submitter_info(submitter_id)
+        if not submitter_info:
+            abort(404)
+
         return render_template(
             'variants-by-condition--condition-submitter-significance.html',
-            condition_info=db.condition_info(condition_name),
-            submitter_info=db.submitter_info(submitter_id),
+            condition_info=condition_info,
+            submitter_info=submitter_info,
             significance=significance,
             variants=db.variants(
                 condition1_name=condition_name,
