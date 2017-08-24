@@ -245,7 +245,7 @@ def template_functions():
         tagline = '<div><small style="font-size:medium">'
         if 'country_name' in submitter_info:
             tagline += 'Location: ' + submitter_info['country_name'] + ' &mdash; '
-        tagline += 'Primary submission method: ' + submitter_primary_method
+        tagline += 'Primary collection method: ' + submitter_primary_method
         tagline += '</small></div>'
         return tagline
 
