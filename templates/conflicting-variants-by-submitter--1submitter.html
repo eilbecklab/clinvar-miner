@@ -23,6 +23,7 @@
             <thead>
                 <tr>
                     <th>Submitter</th>
+                    <th>Variants with no conflict</th>
                     <th>Variants with a synonymous conflict<br/>(e.g. benign vs non-pathogenic)</th>
                     <th>Variants with a confidence conflict<br/>(e.g. benign vs likely benign)</th>
                     <th>Variants with a benign vs uncertain conflict</th>
@@ -35,7 +36,7 @@
                 {% for submitter2_id, row in summary.items() %}
                     <tr>
                         <th>{{ submitter_link(submitter2_id, row['name'])|safe }}</th>
-                        {% for i in range(1, 6) %}
+                        {% for i in range(0, 6) %}
                             {% if row[i] %}
                                 <td class="highlight">{{ row[i] }}</td>
                             {% else %}
@@ -44,7 +45,7 @@
                         {% endfor %}
                         <td class="highlight">
                             <a href="conflicting-variants-by-submitter/{{ submitter1_info['id'] }}/{{ submitter2_id }}{{ request|querysuffix }}">
-                                {{ row['total'] }}
+                                {{ row['any_conflict'] }}
                             </a>
                         </td>
                     </tr>
