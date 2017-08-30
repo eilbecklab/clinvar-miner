@@ -151,6 +151,29 @@ class DB():
             )
         ))
 
+    def total_conflicting_variants_by_gene_and_conflict_level(self, min_stars = 0, standardized_method = None):
+        query = '''
+            SELECT gene, conflict_level, COUNT(DISTINCT variant_name) AS count
+            FROM current_comparisons
+            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=1
+        '''
+
+        if standardized_method:
+            query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
+
+        query += ' GROUP BY submitter2_id, conflict_level'
+
+        return list(map(
+            dict,
+            self.cursor.execute(
+                query,
+                {
+                    'min_stars': min_stars,
+                    'standardized_method': standardized_method,
+                }
+            )
+        ))
+
     def total_conflicting_variants_by_significance_and_significance(self, submitter1_id = None, submitter2_id = None,
                                                                     min_stars1 = 0, min_stars2 = 0,
                                                                     standardized_method1 = None,
@@ -380,14 +403,14 @@ class DB():
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
 
-        if standardized_method:
-            query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
-
         if significance1:
             if original_terms:
                 query += ' AND significance1=:significance1'
             else:
                 query += ' AND standardized_significance1=:significance1'
+
+        if standardized_method:
+            query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
         query += ' GROUP BY gene ORDER BY gene'
 

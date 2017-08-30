@@ -150,6 +150,37 @@ def get_conflict_breakdown(total_conflicting_variants_by_significance_and_signif
 
     return breakdown, submitter1_significances, submitter2_significances
 
+def get_conflict_summary_by_gene(total_variants_by_gene, total_conflicting_variants_by_gene,
+                                 total_conflicting_variants_by_gene_and_conflict_level):
+        summary = OrderedDict()
+
+        for row in total_conflicting_variants_by_gene:
+            gene = row['gene']
+            count = row['count']
+            summary[gene] = {
+                0: 0,
+                1: 0,
+                2: 0,
+                3: 0,
+                4: 0,
+                5: 0,
+                'any_conflict': count,
+            }
+
+        for row in total_variants_by_gene:
+            gene = row['gene']
+            if gene in summary: #some genes have no conflicts at all
+                count = row['count']
+                summary[gene][0] = count - summary[gene]['any_conflict']
+
+        for row in total_conflicting_variants_by_gene_and_conflict_level:
+            gene = row['gene']
+            conflict_level = row['conflict_level']
+            count = row['count']
+            summary[gene][conflict_level] = count
+
+        return summary
+
 def get_conflict_summary_by_submitter(total_variants_by_submitter, total_conflicting_variants_by_submitter,
                                       total_conflicting_variants_by_submitter_and_conflict_level):
         summary = OrderedDict()
@@ -348,6 +379,29 @@ def cache_set(response):
         response.freeze()
         cache.set(request.url, response, timeout=ttl)
     return response
+
+@app.route('/conflicting-variants-by-gene')
+def conflicting_variants_by_gene():
+    db = DB()
+
+    return render_template(
+        'conflicting-variants-by-gene.html',
+        summary=get_conflict_summary_by_gene(
+            db.total_variants_by_gene(
+                min_stars=int_arg('min_stars1'),
+                standardized_method=request.args.get('method1'),
+            ),
+            db.total_variants_by_gene(
+                min_stars=int_arg('min_stars1'),
+                standardized_method=request.args.get('method1'),
+                min_conflict_level=1,
+            ),
+            db.total_conflicting_variants_by_gene_and_conflict_level(
+                min_stars=int_arg('min_stars1'),
+                standardized_method=request.args.get('method1'),
+            ),
+        ),
+    )
 
 @app.route('/conflicting-variants-by-significance')
 @app.route('/conflicting-variants-by-significance/<superescaped:significance1>/<superescaped:significance2>')
