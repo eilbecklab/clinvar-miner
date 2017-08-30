@@ -758,7 +758,7 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
                     condition_name=condition_name,
                     min_stars=int_arg('min_stars1'),
                     standardized_method=request.args.get('method1'),
-                    min_conflict_level=min(1, int_arg('min_conflict_level')),
+                    min_conflict_level=int_arg('min_conflict_level'),
                     original_terms=request.args.get('original_terms'),
                 )
             ),
@@ -894,7 +894,7 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
                     gene=gene,
                     min_stars=int_arg('min_stars1'),
                     standardized_method=request.args.get('method1'),
-                    min_conflict_level=min(1, int_arg('min_conflict_level')),
+                    min_conflict_level=int_arg('min_conflict_level'),
                     original_terms=request.args.get('original_terms'),
                 )
             ),
@@ -1087,7 +1087,7 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
                     submitter_id=submitter_id,
                     min_stars=int_arg('min_stars1'),
                     standardized_method=request.args.get('method1'),
-                    min_conflict_level=min(1, int_arg('min_conflict_level')),
+                    min_conflict_level=int_arg('min_conflict_level'),
                     original_terms=request.args.get('original_terms'),
                 )
             ),
