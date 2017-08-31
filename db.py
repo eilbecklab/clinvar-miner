@@ -189,7 +189,7 @@ class DB():
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
-        query += ' GROUP BY submitter2_id, conflict_level'
+        query += ' GROUP BY gene, conflict_level'
 
         return list(map(
             dict,
