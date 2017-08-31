@@ -114,6 +114,34 @@ class DB():
             ''', [submitter_id])
         )[0][0]
 
+    def total_conflicting_variants_by_condition_and_conflict_level(self, min_stars = 0, standardized_method = None):
+        query = '''
+            SELECT
+                condition1_db AS condition_db,
+                condition1_id AS condition_id,
+                condition1_name AS condition_name,
+                conflict_level,
+                COUNT(DISTINCT variant_name) AS count
+            FROM current_comparisons
+            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=1
+        '''
+
+        if standardized_method:
+            query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
+
+        query += ' GROUP BY condition_name, conflict_level'
+
+        return list(map(
+            dict,
+            self.cursor.execute(
+                query,
+                {
+                    'min_stars': min_stars,
+                    'standardized_method': standardized_method,
+                }
+            )
+        ))
+
     def total_conflicting_variants_by_conflict_level(self, submitter1_id = None, submitter2_id = None, min_stars1 = 0,
                                                      min_stars2 = 0, standardized_method1 = None,
                                                      standardized_method2 = None):

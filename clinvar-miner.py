@@ -150,6 +150,39 @@ def get_conflict_breakdown(total_conflicting_variants_by_significance_and_signif
 
     return breakdown, submitter1_significances, submitter2_significances
 
+def get_conflict_summary_by_condition(total_variants_by_condition, total_conflicting_variants_by_condition,
+                                 total_conflicting_variants_by_condition_and_conflict_level):
+        summary = OrderedDict()
+
+        for row in total_conflicting_variants_by_condition:
+            condition_name = row['condition_name']
+            count = row['count']
+            summary[condition_name] = {
+                'db': row['condition_db'],
+                'id': row['condition_id'],
+                0: 0,
+                1: 0,
+                2: 0,
+                3: 0,
+                4: 0,
+                5: 0,
+                'any_conflict': count,
+            }
+
+        for row in total_variants_by_condition:
+            condition_name = row['condition_name']
+            if condition_name in summary: #some conditions have no conflicts at all
+                count = row['count']
+                summary[condition_name][0] = count - summary[condition_name]['any_conflict']
+
+        for row in total_conflicting_variants_by_condition_and_conflict_level:
+            condition_name = row['condition_name']
+            conflict_level = row['conflict_level']
+            count = row['count']
+            summary[condition_name][conflict_level] = count
+
+        return summary
+
 def get_conflict_summary_by_gene(total_variants_by_gene, total_conflicting_variants_by_gene,
                                  total_conflicting_variants_by_gene_and_conflict_level):
         summary = OrderedDict()
@@ -379,6 +412,29 @@ def cache_set(response):
         response.freeze()
         cache.set(request.url, response, timeout=ttl)
     return response
+
+@app.route('/conflicting-variants-by-condition')
+def conflicting_variants_by_condition():
+    db = DB()
+
+    return render_template(
+        'conflicting-variants-by-condition.html',
+        summary=get_conflict_summary_by_condition(
+            db.total_variants_by_condition(
+                min_stars=int_arg('min_stars1'),
+                standardized_method=request.args.get('method1'),
+            ),
+            db.total_variants_by_condition(
+                min_stars=int_arg('min_stars1'),
+                standardized_method=request.args.get('method1'),
+                min_conflict_level=1,
+            ),
+            db.total_conflicting_variants_by_condition_and_conflict_level(
+                min_stars=int_arg('min_stars1'),
+                standardized_method=request.args.get('method1'),
+            ),
+        ),
+    )
 
 @app.route('/conflicting-variants-by-gene')
 def conflicting_variants_by_gene():
