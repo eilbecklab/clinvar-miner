@@ -7,7 +7,7 @@
         {% set min_conflict_level_filter = True %}
         {% include 'include/filter.html' %}
     {% endwith %}
-    <p>Total conditions: {{ total_variants_by_conditions|length }}</p>
+    <p>Total conditions: {{ total_variants_by_condition|length }}</p>
     {% if total_variants_by_condition %}
         <table class="simple-numeric sortable table">
             <thead>
