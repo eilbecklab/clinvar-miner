@@ -437,25 +437,103 @@ def conflicting_variants_by_condition():
     )
 
 @app.route('/conflicting-variants-by-gene')
-def conflicting_variants_by_gene():
+@app.route('/conflicting-variants-by-gene/<superescaped:gene>')
+@app.route('/conflicting-variants-by-gene/<superescaped:gene>/<superescaped:significance1>/<superescaped:significance2>')
+def conflicting_variants_by_gene(gene = None, significance1 = None, significance2 = None):
     db = DB()
 
-    return render_template(
-        'conflicting-variants-by-gene.html',
-        summary=get_conflict_summary_by_gene(
-            db.total_variants_by_gene(
-                min_stars=int_arg('min_stars1'),
-                standardized_method=request.args.get('method1'),
+    if not gene:
+        return render_template(
+            'conflicting-variants-by-gene.html',
+            summary=get_conflict_summary_by_gene(
+                db.total_variants_by_gene(
+                    min_stars1=int_arg('min_stars1'),
+                    standardized_method1=request.args.get('method1'),
+                    min_stars2=int_arg('min_stars2'),
+                    standardized_method2=request.args.get('method2'),
+                ),
+                db.total_variants_by_gene(
+                    min_stars1=int_arg('min_stars1'),
+                    standardized_method1=request.args.get('method1'),
+                    min_stars2=int_arg('min_stars2'),
+                    standardized_method2=request.args.get('method2'),
+                    min_conflict_level=1,
+                ),
+                db.total_conflicting_variants_by_gene_and_conflict_level(
+                    min_stars1=int_arg('min_stars1'),
+                    standardized_method1=request.args.get('method1'),
+                    min_stars2=int_arg('min_stars2'),
+                    standardized_method2=request.args.get('method2'),
+                ),
             ),
-            db.total_variants_by_gene(
-                min_stars=int_arg('min_stars1'),
-                standardized_method=request.args.get('method1'),
+        )
+
+    if not significance1:
+        if gene == 'intergenic':
+            gene = ''
+        elif not db.is_gene(gene):
+            abort(404)
+
+        breakdown, submitter1_significances, submitter2_significances = get_conflict_breakdown(
+            db.total_conflicting_variants_by_significance_and_significance(
+                gene=gene,
+                min_stars1=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                min_stars2=int_arg('min_stars2'),
+                standardized_method2=request.args.get('method2'),
+                original_terms=request.args.get('original_terms'),
+            )
+        )
+
+        return render_template(
+            'conflicting-variants-by-gene--gene.html',
+            gene=gene,
+            overview=get_conflict_overview(
+                db.total_conflicting_variants_by_conflict_level(
+                    gene=gene,
+                    min_stars1=int_arg('min_stars1'),
+                    standardized_method1=request.args.get('method1'),
+                    min_stars2=int_arg('min_stars2'),
+                    standardized_method2=request.args.get('method2'),
+                ),
+            ),
+            total_variants=db.total_variants(
+                gene=gene,
+                min_stars1=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                min_stars2=int_arg('min_stars2'),
+                standardized_method2=request.args.get('method2'),
+            ),
+            variants=db.variants(
+                gene=gene,
+                min_stars1=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                min_stars2=int_arg('min_stars2'),
+                standardized_method2=request.args.get('method2'),
                 min_conflict_level=1,
             ),
-            db.total_conflicting_variants_by_gene_and_conflict_level(
-                min_stars=int_arg('min_stars1'),
-                standardized_method=request.args.get('method1'),
-            ),
+            breakdown=breakdown,
+            submitter1_significances=submitter1_significances,
+            submitter2_significances=submitter2_significances,
+        )
+
+    if not db.is_significance(significance1) or not db.is_significance(significance2):
+        abort(404)
+
+    return render_template(
+        'conflicting-variants-by-gene--2significances.html',
+        gene=gene,
+        significance1=significance1,
+        significance2=significance2,
+        variants=db.variants(
+            gene=gene,
+            significance1=significance1,
+            significance2=significance2,
+            min_stars1=int_arg('min_stars1'),
+            standardized_method1=request.args.get('method1'),
+            min_stars2=int_arg('min_stars2'),
+            standardized_method2=request.args.get('method2'),
+            original_terms=request.args.get('original_terms'),
         ),
     )
 
@@ -998,8 +1076,10 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
         return render_template(
             'variants-by-gene.html',
             total_variants_by_gene=db.total_variants_by_gene(
-                min_stars=int_arg('min_stars1'),
-                standardized_method=request.args.get('method1'),
+                min_stars1=int_arg('min_stars1'),
+                min_stars2=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
             ),
         )
@@ -1163,8 +1243,10 @@ def variants_by_significance(significance = None):
         ),
         total_variants_by_gene=db.total_variants_by_gene(
             significance1=significance,
-            min_stars=int_arg('min_stars1'),
-            standardized_method=request.args.get('method1'),
+            min_stars1=int_arg('min_stars1'),
+            min_stars2=int_arg('min_stars1'),
+            standardized_method1=request.args.get('method1'),
+            standardized_method2=request.args.get('method1'),
             min_conflict_level=int_arg('min_conflict_level'),
             original_terms=request.args.get('original_terms'),
         ),

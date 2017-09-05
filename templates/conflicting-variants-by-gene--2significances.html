@@ -1,0 +1,20 @@
+{% extends 'extend/skin.html' %}
+{% set title = 'Conflicting variants in gene ' + gene + ' reported as ' + significance1 + ' and ' + significance2 %}
+{% block title %}
+    Conflicting variants in gene {{ gene|genelink|safe }} reported as {{ significance1 }} and {{ significance2 }}
+{% endblock %}
+{% block content %}
+    {% with %}
+        {% set review_status1_label = 'Submission 1 (' + significance1 + ') minimum review status' %}
+        {% set method1_label = 'Submission 1 (' + significance1 + ') method' %}
+        {% set review_status2_label = 'Submission 2 (' + significance2 + ') minimum review status' %}
+        {% set method2_label = 'Submission 2 (' + significance2 + ') method' %}
+        {% set original_terms_filter = True %}
+        {% set original_terms_disabled = True %}
+        {% include 'include/filter.html' %}
+    {% endwith %}
+    <p>Total conflicting variants: {{ variants|length }}</p>
+    {% if variants %}
+        {% include 'include/variants.html' %}
+    {% endif %}
+{% endblock %}
