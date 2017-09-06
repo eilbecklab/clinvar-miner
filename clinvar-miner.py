@@ -379,7 +379,7 @@ def template_functions():
         ret = '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + str(variant_id) + '/">' + break_punctuation(variant_name) + '</a>'
 
         if variant_rsid:
-            ret += ' / <a class="external" href="https://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=' + variant_rsid + '">' + variant_rsid + '</a>'
+            ret += ' (<a class="external" href="https://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=' + variant_rsid + '">' + variant_rsid + '</a>)'
 
         return ret
 
@@ -818,9 +818,17 @@ def search():
     if variant_name:
         return redirect(request.script_root + '/submissions-by-variant/' + super_escape(variant_name))
 
+    #an rsID always uniquely identifies a gene even if it doesn't uniquely identify a variant
+    gene = db.gene_from_rsid(query.lower())
+    if gene != None:
+        if gene == '':
+            return redirect(request.script_root + '/variants-by-gene/intergenic')
+        else:
+            return redirect(request.script_root + '/variants-by-gene/' + super_escape(gene))
+
     #gene
     if db.is_gene(query.upper()):
-        return redirect(request.script_root + '/variants-by-gene/' + query.upper())
+        return redirect(request.script_root + '/variants-by-gene/' + super_escape(query.upper()))
     if query.lower() == 'intergenic':
         return redirect(request.script_root + '/variants-by-gene/intergenic')
 

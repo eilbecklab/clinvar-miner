@@ -16,6 +16,14 @@ class DB():
         except IndexError:
             return None
 
+    def gene_from_rsid(self, rsid):
+        try:
+            return list(self.cursor.execute(
+                'SELECT DISTINCT gene FROM current_submissions WHERE variant_rsid=? LIMIT 1', [rsid]
+            ))[0][0]
+        except IndexError:
+            return None
+
     def is_gene(self, gene):
         return bool(list(self.cursor.execute(
             'SELECT 1 FROM current_submissions WHERE gene=? LIMIT 1', [gene]
@@ -768,12 +776,10 @@ class DB():
             return None
 
     def variant_name_from_rsid(self, rsid):
-        try:
-            return list(self.cursor.execute(
-                'SELECT variant_name FROM current_submissions WHERE variant_rsid=? LIMIT 1', [rsid]
-            ))[0][0]
-        except IndexError:
-            return None
+        rows = list(self.cursor.execute(
+            'SELECT DISTINCT variant_name FROM current_submissions WHERE variant_rsid=?', [rsid]
+        ))
+        return rows[0][0] if len(rows) == 1 else None
 
     def variant_name_from_scv(self, scv):
         try:
