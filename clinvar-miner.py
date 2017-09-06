@@ -13,12 +13,14 @@ from flask import render_template
 from flask import request
 from hashlib import sha256
 from os import environ
-from werkzeug.contrib.cache import SimpleCache
+from werkzeug.contrib.cache import FileSystemCache
+from werkzeug.contrib.cache import NullCache
 from werkzeug.routing import BaseConverter
 
 app = Flask(__name__)
-cache = SimpleCache()
-ttl = float(environ.get('TTL', 'inf'))
+ttl = float(environ.get('TTL', 0)) #zero means infinity to the FileSystemCache
+cache = FileSystemCache('/tmp/clinvar-miner', threshold=1000000) if ttl >= 0 else NullCache()
+cache.clear() #delete the cache when the webserver is restarted
 
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
@@ -404,7 +406,7 @@ def cache_get():
 
 @app.after_request
 def cache_set(response):
-    if (not cache.has(request.url) and ttl > 0 and response.status_code == 200 and not response.direct_passthrough and
+    if (ttl >= 0 and not cache.has(request.url) and response.status_code == 200 and not response.direct_passthrough and
             'gzip' in request.accept_encodings):
         response.set_data(gzip.compress(response.get_data()))
         response.set_etag(sha256(response.get_data()).hexdigest())
