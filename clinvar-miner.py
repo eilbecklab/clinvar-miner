@@ -53,6 +53,31 @@ def break_punctuation(text):
         .replace('-', '-<wbr/>')
     )
 
+def get_breakdown_by_condition_and_significance(total_variants_by_condition_and_significance):
+    breakdown = {}
+    significances = set()
+
+    for row in total_variants_by_condition_and_significance:
+        condition_db = row['condition_db']
+        condition_id = row['condition_id']
+        condition_name = row['condition_name']
+        significance = row['significance']
+        count = row['count']
+
+        if not condition_name in breakdown:
+            breakdown[condition_name] = {'db': condition_db, 'id': condition_id, 'counts': {}}
+        breakdown[condition_name]['counts'][significance] = count
+
+        significances.add(significance)
+
+    #sort alphabetically to be consistent if there are two or more unranked significance terms
+    significances = sorted(significances)
+
+    #sort by rank
+    significances = sorted(significances, key=significance_rank)
+
+    return breakdown, significances
+
 def get_breakdown_by_gene_and_significance(total_variants_by_gene_and_significance):
     breakdown = {}
     significances = set()
@@ -89,31 +114,6 @@ def get_breakdown_by_submitter_and_significance(total_variants_by_submitter_and_
         if not submitter_id in breakdown:
             breakdown[submitter_id] = {'name': submitter_name, 'counts': {}}
         breakdown[submitter_id]['counts'][significance] = count
-
-        significances.add(significance)
-
-    #sort alphabetically to be consistent if there are two or more unranked significance terms
-    significances = sorted(significances)
-
-    #sort by rank
-    significances = sorted(significances, key=significance_rank)
-
-    return breakdown, significances
-
-def get_breakdown_by_condition_and_significance(total_variants_by_condition_and_significance):
-    breakdown = {}
-    significances = set()
-
-    for row in total_variants_by_condition_and_significance:
-        condition_db = row['condition_db']
-        condition_id = row['condition_id']
-        condition_name = row['condition_name']
-        significance = row['significance']
-        count = row['count']
-
-        if not condition_name in breakdown:
-            breakdown[condition_name] = {'db': condition_db, 'id': condition_id, 'counts': {}}
-        breakdown[condition_name]['counts'][significance] = count
 
         significances.add(significance)
 

@@ -450,6 +450,89 @@ class DB():
             )
         )[0][0]
 
+    def total_variants_by_condition(self, significance1 = None, min_stars = 0, standardized_method = None,
+                                    min_conflict_level = 0, original_terms = False):
+        query = '''
+            SELECT
+                condition1_db AS condition_db, condition1_id AS condition_id, condition1_name AS condition_name,
+                COUNT(DISTINCT variant_name) AS count
+            FROM current_comparisons
+            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
+        '''
+
+        if significance1:
+            if original_terms:
+                query += ' AND significance1=:significance1'
+            else:
+                query += ' AND standardized_significance1=:significance1'
+
+        if standardized_method:
+            query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
+
+        query += ' GROUP BY condition_name ORDER BY condition_name'
+
+        return list(map(
+            dict,
+            self.cursor.execute(
+                query,
+                {
+                    'significance1': significance1,
+                    'min_stars': min_stars,
+                    'standardized_method': standardized_method,
+                    'min_conflict_level': min_conflict_level
+                }
+            )
+        ))
+
+    def total_variants_by_condition_and_significance(self, gene = None, submitter_id = None, min_stars = 0,
+                                                     standardized_method = None, min_conflict_level = 0,
+                                                     original_terms = False):
+        query = '''
+            SELECT
+                condition1_db AS condition_db,
+                condition1_id AS condition_id,
+                condition1_name AS condition_name,
+                COUNT(DISTINCT variant_name) AS count
+        '''
+
+        if original_terms:
+            query += ', significance1 AS significance'
+        else:
+            query += ', standardized_significance1 AS significance'
+
+        query += '''
+            FROM current_comparisons
+            WHERE
+                star_level1>=:min_stars AND
+                star_level2>=:min_stars AND
+                conflict_level>=:min_conflict_level
+        '''
+
+        if gene != None:
+            query += ' AND gene=:gene'
+
+        if submitter_id:
+            query += ' AND submitter1_id=:submitter_id'
+
+        if standardized_method:
+            query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
+
+        query += ' GROUP BY condition_name, significance ORDER BY condition_name'
+
+        return list(map(
+            dict,
+            self.cursor.execute(
+                query,
+                {
+                    'gene': gene,
+                    'submitter_id': submitter_id,
+                    'min_stars': min_stars,
+                    'standardized_method': standardized_method,
+                    'min_conflict_level': min_conflict_level
+                }
+            )
+        ))
+
     def total_variants_by_gene(self, significance1 = None, min_stars1 = 0, min_stars2 = 0, standardized_method1 = None,
                                standardized_method2 = None, min_conflict_level = 0, original_terms = False):
         query = '''
@@ -657,89 +740,6 @@ class DB():
                 {
                     'gene': gene,
                     'condition_name': condition_name,
-                    'min_stars': min_stars,
-                    'standardized_method': standardized_method,
-                    'min_conflict_level': min_conflict_level
-                }
-            )
-        ))
-
-    def total_variants_by_condition(self, significance1 = None, min_stars = 0, standardized_method = None,
-                                    min_conflict_level = 0, original_terms = False):
-        query = '''
-            SELECT
-                condition1_db AS condition_db, condition1_id AS condition_id, condition1_name AS condition_name,
-                COUNT(DISTINCT variant_name) AS count
-            FROM current_comparisons
-            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
-        '''
-
-        if significance1:
-            if original_terms:
-                query += ' AND significance1=:significance1'
-            else:
-                query += ' AND standardized_significance1=:significance1'
-
-        if standardized_method:
-            query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
-
-        query += ' GROUP BY condition_name ORDER BY condition_name'
-
-        return list(map(
-            dict,
-            self.cursor.execute(
-                query,
-                {
-                    'significance1': significance1,
-                    'min_stars': min_stars,
-                    'standardized_method': standardized_method,
-                    'min_conflict_level': min_conflict_level
-                }
-            )
-        ))
-
-    def total_variants_by_condition_and_significance(self, gene = None, submitter_id = None, min_stars = 0,
-                                                     standardized_method = None, min_conflict_level = 0,
-                                                     original_terms = False):
-        query = '''
-            SELECT
-                condition1_db AS condition_db,
-                condition1_id AS condition_id,
-                condition1_name AS condition_name,
-                COUNT(DISTINCT variant_name) AS count
-        '''
-
-        if original_terms:
-            query += ', significance1 AS significance'
-        else:
-            query += ', standardized_significance1 AS significance'
-
-        query += '''
-            FROM current_comparisons
-            WHERE
-                star_level1>=:min_stars AND
-                star_level2>=:min_stars AND
-                conflict_level>=:min_conflict_level
-        '''
-
-        if gene != None:
-            query += ' AND gene=:gene'
-
-        if submitter_id:
-            query += ' AND submitter1_id=:submitter_id'
-
-        if standardized_method:
-            query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
-
-        query += ' GROUP BY condition_name, significance ORDER BY condition_name'
-
-        return list(map(
-            dict,
-            self.cursor.execute(
-                query,
-                {
-                    'gene': gene,
-                    'submitter_id': submitter_id,
                     'min_stars': min_stars,
                     'standardized_method': standardized_method,
                     'min_conflict_level': min_conflict_level
