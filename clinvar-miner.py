@@ -53,21 +53,27 @@ def break_punctuation(text):
         .replace('-', '-<wbr/>')
     )
 
-def get_breakdown_by_condition_and_significance(total_variants_by_condition_and_significance):
+def get_breakdown_by_condition_and_significance(total_variants_by_condition,
+                                                total_variants_by_condition_and_significance):
     breakdown = {}
     significances = set()
 
-    for row in total_variants_by_condition_and_significance:
+    for row in total_variants_by_condition:
         condition_db = row['condition_db']
         condition_id = row['condition_id']
         condition_name = row['condition_name']
-        significance = row['significance']
         count = row['count']
 
         if not condition_name in breakdown:
             breakdown[condition_name] = {'db': condition_db, 'id': condition_id, 'counts': {}}
-        breakdown[condition_name]['counts'][significance] = count
+        breakdown[condition_name]['counts']['total'] = count
 
+    for row in total_variants_by_condition_and_significance:
+        condition_name = row['condition_name']
+        significance = row['significance']
+        count = row['count']
+
+        breakdown[condition_name]['counts'][significance] = count
         significances.add(significance)
 
     #sort alphabetically to be consistent if there are two or more unranked significance terms
@@ -78,19 +84,26 @@ def get_breakdown_by_condition_and_significance(total_variants_by_condition_and_
 
     return breakdown, significances
 
-def get_breakdown_by_gene_and_significance(total_variants_by_gene_and_significance):
+def get_breakdown_by_gene_and_significance(total_variants_by_gene,
+                                           total_variants_by_gene_and_significance):
     breakdown = {}
     significances = set()
+
+    for row in total_variants_by_gene:
+        gene = row['gene']
+        count = row['count']
+
+        if not gene in breakdown:
+            breakdown[gene] = {}
+
+        breakdown[gene]['total'] = count
 
     for row in total_variants_by_gene_and_significance:
         gene = row['gene']
         significance = row['significance']
         count = row['count']
 
-        if not gene in breakdown:
-            breakdown[gene] = {}
         breakdown[gene][significance] = count
-
         significances.add(significance)
 
     #sort alphabetically to be consistent if there are two or more unranked significance terms
@@ -101,20 +114,26 @@ def get_breakdown_by_gene_and_significance(total_variants_by_gene_and_significan
 
     return breakdown, significances
 
-def get_breakdown_by_submitter_and_significance(total_variants_by_submitter_and_significance):
+def get_breakdown_by_submitter_and_significance(total_variants_by_submitter,
+                                                total_variants_by_submitter_and_significance):
     breakdown = {}
     significances = set()
 
-    for row in total_variants_by_submitter_and_significance:
+    for row in total_variants_by_submitter:
         submitter_id = row['submitter_id']
         submitter_name = row['submitter_name']
-        significance = row['significance']
         count = row['count']
 
         if not submitter_id in breakdown:
             breakdown[submitter_id] = {'name': submitter_name, 'counts': {}}
-        breakdown[submitter_id]['counts'][significance] = count
+        breakdown[submitter_id]['counts']['total'] = count
 
+    for row in total_variants_by_submitter_and_significance:
+        submitter_id = row['submitter_id']
+        significance = row['significance']
+        count = row['count']
+
+        breakdown[submitter_id]['counts'][significance] = count
         significances.add(significance)
 
     #sort alphabetically to be consistent if there are two or more unranked significance terms
@@ -963,6 +982,15 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
 
     if significance == None and gene == None and submitter_id == None:
         breakdown_by_gene_and_significance, significances = get_breakdown_by_gene_and_significance(
+            db.total_variants_by_gene(
+                condition1_name=condition_name,
+                min_stars1=int_arg('min_stars1'),
+                min_stars2=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                standardized_method2=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+                original_terms=request.args.get('original_terms'),
+            ),
             db.total_variants_by_gene_and_significance(
                 condition_name=condition_name,
                 min_stars=int_arg('min_stars1'),
@@ -973,6 +1001,15 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
         )
 
         breakdown_by_submitter_and_significance, significances = get_breakdown_by_submitter_and_significance(
+            db.total_variants_by_submitter(
+                condition1_name=condition_name,
+                min_stars1=int_arg('min_stars1'),
+                min_stars2=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                standardized_method2=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+                original_terms=request.args.get('original_terms'),
+            ),
             db.total_variants_by_submitter_and_significance(
                 condition_name=condition_name,
                 min_stars=int_arg('min_stars1'),
@@ -1101,6 +1138,13 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
 
     if significance == None and submitter_id == None and condition_name == None:
         breakdown_by_condition_and_significance, significances = get_breakdown_by_condition_and_significance(
+            db.total_variants_by_condition(
+                gene=gene,
+                min_stars=int_arg('min_stars1'),
+                standardized_method=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+                original_terms=request.args.get('original_terms'),
+            ),
             db.total_variants_by_condition_and_significance(
                 gene=gene,
                 min_stars=int_arg('min_stars1'),
@@ -1111,6 +1155,15 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
         )
 
         breakdown_by_submitter_and_significance, significances = get_breakdown_by_submitter_and_significance(
+            db.total_variants_by_submitter(
+                gene=gene,
+                min_stars1=int_arg('min_stars1'),
+                min_stars2=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                standardized_method2=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+                original_terms=request.args.get('original_terms'),
+            ),
             db.total_variants_by_submitter_and_significance(
                 gene=gene,
                 min_stars=int_arg('min_stars1'),
@@ -1295,6 +1348,15 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
 
     if significance == None and gene == None and condition_name == None:
         breakdown_by_gene_and_significance, significances = get_breakdown_by_gene_and_significance(
+            db.total_variants_by_gene(
+                submitter1_id=submitter_id,
+                min_stars1=int_arg('min_stars1'),
+                min_stars2=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                standardized_method2=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+                original_terms=request.args.get('original_terms'),
+            ),
             db.total_variants_by_gene_and_significance(
                 submitter_id=submitter_id,
                 min_stars=int_arg('min_stars1'),
@@ -1305,6 +1367,13 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
         )
 
         breakdown_by_condition_and_significance, significances = get_breakdown_by_condition_and_significance(
+            db.total_variants_by_condition(
+                submitter1_id=submitter_id,
+                min_stars=int_arg('min_stars1'),
+                standardized_method=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+                original_terms=request.args.get('original_terms'),
+            ),
             db.total_variants_by_condition_and_significance(
                 submitter_id=submitter_id,
                 min_stars=int_arg('min_stars1'),

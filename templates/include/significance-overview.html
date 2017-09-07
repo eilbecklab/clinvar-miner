@@ -4,6 +4,7 @@
             {% for significance in overview %}
                 <th>{{ significance }}</th>
             {% endfor %}
+            <th>total</th>
         </tr>
     </thead>
     <tbody>
@@ -19,6 +20,11 @@
                     <td>0</td>
                 {% endif %}
             {% endfor %}
+            {% if variants %}
+                <td class="highlight">{{ variants|length }}</td>
+            {% else %}
+                <td>0</td>
+            {% endif %}
         </tr>
     </tbody>
 </table>

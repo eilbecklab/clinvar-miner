@@ -450,8 +450,8 @@ class DB():
             )
         )[0][0]
 
-    def total_variants_by_condition(self, significance1 = None, min_stars = 0, standardized_method = None,
-                                    min_conflict_level = 0, original_terms = False):
+    def total_variants_by_condition(self, gene = None, significance1 = None, submitter1_id = 0, min_stars = 0,
+                                    standardized_method = None, min_conflict_level = 0, original_terms = False):
         query = '''
             SELECT
                 condition1_db AS condition_db, condition1_id AS condition_id, condition1_name AS condition_name,
@@ -459,6 +459,12 @@ class DB():
             FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
+
+        if gene != None:
+            query += ' AND gene=:gene'
+
+        if submitter1_id:
+            query += ' AND submitter1_id=:submitter1_id'
 
         if significance1:
             if original_terms:
@@ -476,6 +482,8 @@ class DB():
             self.cursor.execute(
                 query,
                 {
+                    'gene': gene,
+                    'submitter1_id': submitter1_id,
                     'significance1': significance1,
                     'min_stars': min_stars,
                     'standardized_method': standardized_method,
@@ -489,8 +497,6 @@ class DB():
                                                      original_terms = False):
         query = '''
             SELECT
-                condition1_db AS condition_db,
-                condition1_id AS condition_id,
                 condition1_name AS condition_name,
                 COUNT(DISTINCT variant_name) AS count
         '''
@@ -533,12 +539,19 @@ class DB():
             )
         ))
 
-    def total_variants_by_gene(self, significance1 = None, min_stars1 = 0, min_stars2 = 0, standardized_method1 = None,
-                               standardized_method2 = None, min_conflict_level = 0, original_terms = False):
+    def total_variants_by_gene(self, condition1_name = None, submitter1_id = 0, significance1 = None, min_stars1 = 0,
+                               min_stars2 = 0, standardized_method1 = None, standardized_method2 = None,
+                               min_conflict_level = 0, original_terms = False):
         query = '''
             SELECT gene, COUNT(DISTINCT variant_name) AS count FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
+
+        if condition1_name:
+            query += ' AND condition1_name=:condition1_name'
+
+        if submitter1_id:
+            query += ' AND submitter1_id=:submitter1_id'
 
         if significance1:
             if original_terms:
@@ -559,6 +572,8 @@ class DB():
             self.cursor.execute(
                 query,
                 {
+                    'condition1_name': condition1_name,
+                    'submitter1_id': submitter1_id,
                     'significance1': significance1,
                     'min_stars1': min_stars1,
                     'standardized_method1': standardized_method1,
@@ -652,9 +667,9 @@ class DB():
             )
         ))
 
-    def total_variants_by_submitter(self, submitter1_id = None, significance1 = None, min_stars1 = 0, min_stars2 = 0,
-                                    standardized_method1 = None, standardized_method2 = None, min_conflict_level = 0,
-                                    original_terms = False):
+    def total_variants_by_submitter(self, gene = None, condition1_name = None, submitter1_id = None,
+                                    significance1 = None, min_stars1 = 0, min_stars2 = 0, standardized_method1 = None,
+                                    standardized_method2 = None, min_conflict_level = 0, original_terms = False):
         if submitter1_id:
             query = 'SELECT submitter2_id AS submitter_id, submitter2_name AS submitter_name'
         else:
@@ -665,6 +680,12 @@ class DB():
             FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
+
+        if gene:
+            query += ' AND gene=:gene'
+
+        if condition1_name:
+            query += ' AND condition1_name=:condition1_name'
 
         if submitter1_id:
             query += ' AND submitter1_id=:submitter1_id'
@@ -688,6 +709,8 @@ class DB():
             self.cursor.execute(
                 query,
                 {
+                    'gene': gene,
+                    'condition1_name': condition1_name,
                     'submitter1_id': submitter1_id,
                     'significance1': significance1,
                     'min_stars1': min_stars1,
@@ -705,7 +728,6 @@ class DB():
         query = '''
             SELECT
                 submitter1_id AS submitter_id,
-                submitter1_name AS submitter_name,
                 COUNT(DISTINCT variant_name) AS count
         '''
 

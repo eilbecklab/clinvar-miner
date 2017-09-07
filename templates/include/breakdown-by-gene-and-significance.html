@@ -6,6 +6,7 @@
             {% for significance in significances %}
                 <th>{{ significance }}</th>
             {% endfor %}
+            <th>total</th>
         </tr>
     </thead>
     <tbody>
@@ -23,6 +24,7 @@
                         <td>0</td>
                     {% endif %}
                 {% endfor %}
+                <td class="highlight">{{ breakdown_by_gene_and_significance[gene]['total'] }}</td>
             </tr>
         {% endfor %}
     </tbody>

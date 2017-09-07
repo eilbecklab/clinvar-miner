@@ -6,6 +6,7 @@
             {% for significance in significances %}
                 <th>{{ significance }}</th>
             {% endfor %}
+            <th>total</th>
         </tr>
     </thead>
     <tbody>
@@ -23,6 +24,9 @@
                         <td>0</td>
                     {% endif %}
                 {% endfor %}
+                <td class="highlight">
+                    {{ breakdown_by_condition_and_significance[condition_name]['counts']['total'] }}
+                </td>
             </tr>
         {% endfor %}
     </tbody>
