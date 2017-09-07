@@ -154,100 +154,100 @@ def get_conflict_breakdown(total_conflicting_variants_by_significance_and_signif
 
 def get_conflict_summary_by_condition(total_variants_by_condition, total_conflicting_variants_by_condition,
                                  total_conflicting_variants_by_condition_and_conflict_level):
-        summary = OrderedDict()
+    summary = OrderedDict()
 
-        for row in total_conflicting_variants_by_condition:
-            condition_name = row['condition_name']
+    for row in total_conflicting_variants_by_condition:
+        condition_name = row['condition_name']
+        count = row['count']
+        summary[condition_name] = {
+            'db': row['condition_db'],
+            'id': row['condition_id'],
+            0: 0,
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0,
+            'any_conflict': count,
+        }
+
+    for row in total_variants_by_condition:
+        condition_name = row['condition_name']
+        if condition_name in summary: #some conditions have no conflicts at all
             count = row['count']
-            summary[condition_name] = {
-                'db': row['condition_db'],
-                'id': row['condition_id'],
-                0: 0,
-                1: 0,
-                2: 0,
-                3: 0,
-                4: 0,
-                5: 0,
-                'any_conflict': count,
-            }
+            summary[condition_name][0] = count - summary[condition_name]['any_conflict']
 
-        for row in total_variants_by_condition:
-            condition_name = row['condition_name']
-            if condition_name in summary: #some conditions have no conflicts at all
-                count = row['count']
-                summary[condition_name][0] = count - summary[condition_name]['any_conflict']
+    for row in total_conflicting_variants_by_condition_and_conflict_level:
+        condition_name = row['condition_name']
+        conflict_level = row['conflict_level']
+        count = row['count']
+        summary[condition_name][conflict_level] = count
 
-        for row in total_conflicting_variants_by_condition_and_conflict_level:
-            condition_name = row['condition_name']
-            conflict_level = row['conflict_level']
-            count = row['count']
-            summary[condition_name][conflict_level] = count
-
-        return summary
+    return summary
 
 def get_conflict_summary_by_gene(total_variants_by_gene, total_conflicting_variants_by_gene,
                                  total_conflicting_variants_by_gene_and_conflict_level):
-        summary = OrderedDict()
+    summary = OrderedDict()
 
-        for row in total_conflicting_variants_by_gene:
-            gene = row['gene']
+    for row in total_conflicting_variants_by_gene:
+        gene = row['gene']
+        count = row['count']
+        summary[gene] = {
+            0: 0,
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0,
+            'any_conflict': count,
+        }
+
+    for row in total_variants_by_gene:
+        gene = row['gene']
+        if gene in summary: #some genes have no conflicts at all
             count = row['count']
-            summary[gene] = {
-                0: 0,
-                1: 0,
-                2: 0,
-                3: 0,
-                4: 0,
-                5: 0,
-                'any_conflict': count,
-            }
+            summary[gene][0] = count - summary[gene]['any_conflict']
 
-        for row in total_variants_by_gene:
-            gene = row['gene']
-            if gene in summary: #some genes have no conflicts at all
-                count = row['count']
-                summary[gene][0] = count - summary[gene]['any_conflict']
+    for row in total_conflicting_variants_by_gene_and_conflict_level:
+        gene = row['gene']
+        conflict_level = row['conflict_level']
+        count = row['count']
+        summary[gene][conflict_level] = count
 
-        for row in total_conflicting_variants_by_gene_and_conflict_level:
-            gene = row['gene']
-            conflict_level = row['conflict_level']
-            count = row['count']
-            summary[gene][conflict_level] = count
-
-        return summary
+    return summary
 
 def get_conflict_summary_by_submitter(total_variants_by_submitter, total_conflicting_variants_by_submitter,
                                       total_conflicting_variants_by_submitter_and_conflict_level):
-        summary = OrderedDict()
+    summary = OrderedDict()
 
-        for row in total_conflicting_variants_by_submitter:
-            submitter_id = row['submitter_id']
-            submitter_name = row['submitter_name']
+    for row in total_conflicting_variants_by_submitter:
+        submitter_id = row['submitter_id']
+        submitter_name = row['submitter_name']
+        count = row['count']
+        summary[submitter_id] = {
+            'name': submitter_name,
+            0: 0,
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0,
+            'any_conflict': count,
+        }
+
+    for row in total_variants_by_submitter:
+        submitter_id = row['submitter_id']
+        if submitter_id in summary: #some submitters have no conflicts with anyone
             count = row['count']
-            summary[submitter_id] = {
-                'name': submitter_name,
-                0: 0,
-                1: 0,
-                2: 0,
-                3: 0,
-                4: 0,
-                5: 0,
-                'any_conflict': count,
-            }
+            summary[submitter_id][0] = count - summary[submitter_id]['any_conflict']
 
-        for row in total_variants_by_submitter:
-            submitter_id = row['submitter_id']
-            if submitter_id in summary: #some submitters have no conflicts with anyone
-                count = row['count']
-                summary[submitter_id][0] = count - summary[submitter_id]['any_conflict']
+    for row in total_conflicting_variants_by_submitter_and_conflict_level:
+        submitter_id = row['submitter_id']
+        conflict_level = row['conflict_level']
+        count = row['count']
+        summary[submitter_id][conflict_level] = count
 
-        for row in total_conflicting_variants_by_submitter_and_conflict_level:
-            submitter_id = row['submitter_id']
-            conflict_level = row['conflict_level']
-            count = row['count']
-            summary[submitter_id][conflict_level] = count
-
-        return summary
+    return summary
 
 def get_conflict_overview(total_conflicting_variants_by_conflict_level):
     overview = {
