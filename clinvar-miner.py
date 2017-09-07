@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import gzip
+import re
 import urllib
 from collections import OrderedDict
 from datetime import datetime
@@ -41,17 +42,6 @@ nonstandard_significance_term_map = dict(map(
     lambda line: line[0:-1].split('\t'),
     open('nonstandard_significance_terms.tsv')
 ))
-
-def break_punctuation(text):
-    #provide additional line breaking opportunities
-    return (text
-        .replace('(', '<wbr/>(')
-        .replace(')', ')<wbr/>')
-        .replace(',', ',<wbr/>')
-        .replace('.', '.<wbr/>')
-        .replace(':', '<wbr/>:<wbr/>')
-        .replace('-', '-<wbr/>')
-    )
 
 def get_breakdown_by_condition_and_significance(total_variants_by_condition,
                                                 total_variants_by_condition_and_significance):
@@ -332,6 +322,20 @@ def significance_rank(significance):
         rank = len(significance_ranks) - 2.5 #insert after everything but "other" and "not provided"
     return rank
 
+@app.template_filter('extrabreaks')
+def extra_breaks(text):
+    #provide additional line breaking opportunities
+    ret = (text
+        .replace('(', '<wbr/>(')
+        .replace(')', ')<wbr/>')
+        .replace(',', ',<wbr/>')
+        .replace('.', '.<wbr/>')
+        .replace(':', '<wbr/>:<wbr/>')
+        .replace('-', '-<wbr/>')
+    )
+    ret = re.sub(r'([a-z])([A-Z])', r'\1<wbr/>\2', ret) #camelCase
+    return ret
+
 @app.template_filter('genelink')
 def gene_link(gene):
     return '<a class="external" href="https://ghr.nlm.nih.gov/gene/' + gene + '">' + gene + '</a>' if gene else ''
@@ -357,7 +361,7 @@ def template_functions():
     def submitter_link(submitter_id, submitter_name):
         if submitter_id == 0:
             return submitter_name
-        return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + str(submitter_id) + '/">' + break_punctuation(submitter_name) + '</a>'
+        return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + str(submitter_id) + '/">' + extra_breaks(submitter_name) + '</a>'
 
     def submitter_tagline(submitter_info, submitter_primary_method):
         tagline = '<div><small style="font-size:medium">'
@@ -395,7 +399,7 @@ def template_functions():
         if variant_id == 0:
             return variant_name
 
-        ret = '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + str(variant_id) + '/">' + break_punctuation(variant_name) + '</a>'
+        ret = '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + str(variant_id) + '/">' + extra_breaks(variant_name) + '</a>'
 
         if variant_rsid:
             ret += ' (<a class="external" href="https://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=' + variant_rsid + '">' + variant_rsid + '</a>)'
