@@ -45,11 +45,11 @@
 }
 
 .sortable th.headerSortDown::after {
-    content: ' ▲';
+    content: '\a0▲';
 }
 
 .sortable th.headerSortUp::after {
-    content: ' ▼';
+    content: '\a0▼';
 }
 
 .summary td {
