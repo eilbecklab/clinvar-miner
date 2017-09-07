@@ -56,12 +56,10 @@ class DB():
             ''')
         ))
 
-    def submissions(self, gene = None, variant_name = None, min_stars = 0, standardized_method = None,
-                    min_conflict_level = 0):
+    def submissions(self, variant_name = None, min_stars = 0, standardized_method = None, min_conflict_level = 0):
         query = '''
             SELECT
                 variant_name,
-                gene,
                 submitter1_id AS submitter_id,
                 submitter1_name AS submitter_name,
                 rcv1 AS rcv,
@@ -78,9 +76,6 @@ class DB():
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
 
-        if gene != None:
-            query += ' AND gene=:gene'
-
         if variant_name:
             query += ' AND variant_name=:variant_name'
 
@@ -94,7 +89,6 @@ class DB():
             self.cursor.execute(
                 query,
                 {
-                    'gene': gene,
                     'variant_name': variant_name,
                     'min_stars': min_stars,
                     'standardized_method': standardized_method,
