@@ -52,7 +52,7 @@ class DB():
             dict,
             self.cursor.execute('''
                 SELECT significance, MIN(date) AS first_seen, MAX(date) AS last_seen FROM submissions
-                GROUP BY significance ORDER BY significance
+                GROUP BY significance ORDER BY first_seen DESC
             ''')
         ))
 
@@ -167,7 +167,7 @@ class DB():
         if standardized_method2:
             query += ' AND standardized_method2=:standardized_method2'
 
-        query += ' GROUP BY conflict_level ORDER BY conflict_level'
+        query += ' GROUP BY conflict_level'
 
         return list(map(
             dict,
@@ -320,7 +320,7 @@ class DB():
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
-        query += ' GROUP BY country_code ORDER BY country_name'
+        query += ' GROUP BY country_code ORDER BY count DESC'
 
         return list(map(
             dict,
@@ -342,7 +342,7 @@ class DB():
                     SELECT method1 AS method, COUNT(DISTINCT scv1) AS count
                     FROM current_comparisons
                     WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
-                    GROUP BY method ORDER BY method
+                    GROUP BY method ORDER BY count DESC
                 ''',
                 {
                     'min_stars': min_stars,
@@ -383,7 +383,7 @@ class DB():
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method'
 
-        query += ' GROUP BY submitter1_id ORDER BY submitter1_name'
+        query += ' GROUP BY submitter1_id ORDER BY count DESC'
 
         return list(map(
             dict,
@@ -469,7 +469,7 @@ class DB():
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
-        query += ' GROUP BY condition_name ORDER BY condition_name'
+        query += ' GROUP BY condition_name ORDER BY count DESC'
 
         return list(map(
             dict,
@@ -517,7 +517,7 @@ class DB():
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
-        query += ' GROUP BY condition_name, significance ORDER BY condition_name'
+        query += ' GROUP BY condition_name, significance'
 
         return list(map(
             dict,
@@ -559,7 +559,7 @@ class DB():
         if standardized_method2:
             query += ' AND standardized_method2=:standardized_method'
 
-        query += ' GROUP BY gene ORDER BY gene'
+        query += ' GROUP BY gene ORDER BY count DESC'
 
         return list(map(
             dict,
@@ -602,7 +602,7 @@ class DB():
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
-        query += ' GROUP BY gene, significance ORDER BY gene, significance'
+        query += ' GROUP BY gene, significance'
 
         return list(map(
             dict,
@@ -644,7 +644,7 @@ class DB():
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
-        query += ' GROUP BY significance ORDER BY significance'
+        query += ' GROUP BY significance ORDER BY count DESC'
 
         return list(map(
             dict,
@@ -696,7 +696,7 @@ class DB():
         if standardized_method2:
             query += ' AND standardized_method2=:standardized_method2'
 
-        query += ' GROUP BY submitter_id ORDER BY submitter_name'
+        query += ' GROUP BY submitter_id ORDER BY count DESC'
 
         return list(map(
             dict,
@@ -747,7 +747,7 @@ class DB():
         if standardized_method:
             query += ' AND standardized_method1=:standardized_method AND standardized_method2=:standardized_method'
 
-        query += ' GROUP BY submitter_id, significance ORDER BY submitter1_name'
+        query += ' GROUP BY submitter_id, significance'
 
         return list(map(
             dict,

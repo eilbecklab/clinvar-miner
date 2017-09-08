@@ -44,11 +44,11 @@
     cursor: pointer;
 }
 
-.sortable th.headerSortDown::after {
+.sortable th.asc::after {
     content: '\a0▲';
 }
 
-.sortable th.headerSortUp::after {
+.sortable th.desc::after {
     content: '\a0▼';
 }
 

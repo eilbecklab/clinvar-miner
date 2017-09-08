@@ -40,7 +40,11 @@
             </div>
         </div>
         <script>
-            $('.sortable').tablesorter({sortList: [[0, 0]]});
+            $('.sortable').tablesorter({
+                /* the default class names are backwards */
+                cssAsc: 'desc',
+                cssDesc: 'asc',
+            });
         </script>
     </body>
 </html>

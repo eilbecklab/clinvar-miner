@@ -45,7 +45,7 @@ nonstandard_significance_term_map = dict(map(
 
 def get_breakdown_by_condition_and_significance(total_variants_by_condition,
                                                 total_variants_by_condition_and_significance):
-    breakdown = {}
+    breakdown = OrderedDict()
     significances = set()
 
     for row in total_variants_by_condition:
@@ -76,7 +76,7 @@ def get_breakdown_by_condition_and_significance(total_variants_by_condition,
 
 def get_breakdown_by_gene_and_significance(total_variants_by_gene,
                                            total_variants_by_gene_and_significance):
-    breakdown = {}
+    breakdown = OrderedDict()
     significances = set()
 
     for row in total_variants_by_gene:
@@ -106,7 +106,7 @@ def get_breakdown_by_gene_and_significance(total_variants_by_gene,
 
 def get_breakdown_by_submitter_and_significance(total_variants_by_submitter,
                                                 total_variants_by_submitter_and_significance):
-    breakdown = {}
+    breakdown = OrderedDict()
     significances = set()
 
     for row in total_variants_by_submitter:
