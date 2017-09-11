@@ -19,12 +19,12 @@
             <tbody>
                 {% for row in total_variants_by_gene %}
                     <tr>
+                        <td>{{ row['gene']|genelink|safe or '\u200Bintergenic' }}</td>
                         <td>
                             <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}{{ request|querysuffix }}">
-                                {{ row['gene'] or '\u200Bintergenic' }}
+                                {{ row['count'] }}
                             </a>
                         </td>
-                        <td>{{ row['count'] }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

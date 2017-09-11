@@ -19,12 +19,12 @@
             <tbody>
                 {% for row in total_variants_by_submitter %}
                     <tr>
+                        <td>{{ submitter_link(row['submitter_id'], row['submitter_name'])|safe }}</td>
                         <td>
                             <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ request|querysuffix }}">
-                                {{ row['submitter_name'] }}
+                                {{ row['count'] }}
                             </a>
                         </td>
-                        <td>{{ row['count'] }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
