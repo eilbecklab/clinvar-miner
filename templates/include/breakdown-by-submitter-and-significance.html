@@ -25,7 +25,9 @@
                     {% endif %}
                 {% endfor %}
                 <td class="highlight">
-                    {{ breakdown_by_submitter_and_significance[submitter_id]['counts']['total'] }}
+                    <a href="{{ request.base_url }}/submitter/{{ submitter_id }}{{ request|querysuffix }}">
+                        {{ breakdown_by_submitter_and_significance[submitter_id]['counts']['total'] }}
+                    </a>
                 </td>
             </tr>
         {% endfor %}

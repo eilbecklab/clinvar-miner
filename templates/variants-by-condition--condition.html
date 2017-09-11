@@ -12,9 +12,8 @@
         {% include 'include/filter.html' %}
     {% endwith %}
     {% include 'include/significance-overview.html' %}
-    {% if variants %}
+    {% if total_variants %}
         {% include 'include/breakdown-by-gene-and-significance.html' %}
         {% include 'include/breakdown-by-submitter-and-significance.html' %}
-        {% include 'include/all-variants.html' %}
     {% endif %}
 {% endblock %}

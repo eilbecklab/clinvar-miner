@@ -964,8 +964,11 @@ def total_submissions_by_method():
 
 @app.route('/variants-by-condition')
 @app.route('/variants-by-condition/<superescaped:condition_name>')
+@app.route('/variants-by-condition/<superescaped:condition_name>/significance/any', defaults={'significance': ''})
 @app.route('/variants-by-condition/<superescaped:condition_name>/significance/<superescaped:significance>')
+@app.route('/variants-by-condition/<superescaped:condition_name>/gene/<superescaped:gene>', defaults={'significance': ''})
 @app.route('/variants-by-condition/<superescaped:condition_name>/gene/<superescaped:gene>/<superescaped:significance>')
+@app.route('/variants-by-condition/<superescaped:condition_name>/submitter/<int:submitter_id>', defaults={'significance': ''})
 @app.route('/variants-by-condition/<superescaped:condition_name>/submitter/<int:submitter_id>/<superescaped:significance>')
 def variants_by_condition(significance = None, condition_name = None, gene = None, submitter_id = None):
     db = DB()
@@ -1038,7 +1041,7 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
             significances=significances,
             breakdown_by_gene_and_significance=breakdown_by_gene_and_significance,
             breakdown_by_submitter_and_significance=breakdown_by_submitter_and_significance,
-            variants=db.variants(
+            total_variants=db.total_variants(
                 condition1_name=condition_name,
                 min_stars1=int_arg('min_stars1'),
                 min_stars2=int_arg('min_stars1'),
@@ -1048,7 +1051,7 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
             ),
         )
 
-    if not db.is_significance(significance):
+    if significance and not db.is_significance(significance):
         abort(404)
 
     if gene == None and submitter_id == None:
@@ -1117,8 +1120,11 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
 
 @app.route('/variants-by-gene')
 @app.route('/variants-by-gene/<superescaped:gene>')
+@app.route('/variants-by-gene/<superescaped:gene>/significance/any', defaults={'significance': ''})
 @app.route('/variants-by-gene/<superescaped:gene>/significance/<superescaped:significance>')
+@app.route('/variants-by-gene/<superescaped:gene>/submitter/<int:submitter_id>', defaults={'significance': ''})
 @app.route('/variants-by-gene/<superescaped:gene>/submitter/<int:submitter_id>/<superescaped:significance>')
+@app.route('/variants-by-gene/<superescaped:gene>/condition/<superescaped:condition_name>', defaults={'significance': ''})
 @app.route('/variants-by-gene/<superescaped:gene>/condition/<superescaped:condition_name>/<superescaped:significance>')
 def variants_by_gene(gene = None, significance = None, submitter_id = None, condition_name = None):
     db = DB()
@@ -1192,7 +1198,7 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
             significances=significances,
             breakdown_by_condition_and_significance=breakdown_by_condition_and_significance,
             breakdown_by_submitter_and_significance=breakdown_by_submitter_and_significance,
-            variants=db.variants(
+            total_variants=db.total_variants(
                 gene=gene,
                 min_stars1=int_arg('min_stars1'),
                 min_stars2=int_arg('min_stars1'),
@@ -1202,7 +1208,7 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
             ),
         )
 
-    if not db.is_significance(significance):
+    if significance and not db.is_significance(significance):
         abort(404)
 
     if submitter_id == None and condition_name == None:
@@ -1328,8 +1334,11 @@ def variants_by_significance(significance = None):
 
 @app.route('/variants-by-submitter')
 @app.route('/variants-by-submitter/<int:submitter_id>')
+@app.route('/variants-by-submitter/<int:submitter_id>/significance/any', defaults={'significance': ''})
 @app.route('/variants-by-submitter/<int:submitter_id>/significance/<superescaped:significance>')
+@app.route('/variants-by-submitter/<int:submitter_id>/gene/<superescaped:gene>', defaults={'significance': ''})
 @app.route('/variants-by-submitter/<int:submitter_id>/gene/<superescaped:gene>/<superescaped:significance>')
+@app.route('/variants-by-submitter/<int:submitter_id>/condition/<superescaped:condition_name>', defaults={'significance': ''})
 @app.route('/variants-by-submitter/<int:submitter_id>/condition/<superescaped:condition_name>/<superescaped:significance>')
 def variants_by_submitter(submitter_id = None, significance = None, gene = None, condition_name = None):
     db = DB()
@@ -1403,7 +1412,7 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
             significances=significances,
             breakdown_by_gene_and_significance=breakdown_by_gene_and_significance,
             breakdown_by_condition_and_significance=breakdown_by_condition_and_significance,
-            variants=db.variants(
+            total_variants=db.total_variants(
                 submitter1_id=submitter_id,
                 min_stars1=int_arg('min_stars1'),
                 min_stars2=int_arg('min_stars1'),
@@ -1413,7 +1422,7 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
             ),
         )
 
-    if not db.is_significance(significance):
+    if significance and not db.is_significance(significance):
         abort(404)
 
     if gene == None and condition_name == None:

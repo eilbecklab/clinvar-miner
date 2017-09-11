@@ -398,9 +398,9 @@ class DB():
             )
         ))
 
-    def total_variants(self, gene = None, submitter1_id = None, submitter2_id = None, significance1 = None,
-                       min_stars1 = 0, min_stars2 = 0, standardized_method1 = None, standardized_method2 = None,
-                       min_conflict_level = 0, original_terms = False):
+    def total_variants(self, gene = None, condition1_name = None, submitter1_id = None, submitter2_id = None,
+                       significance1 = None, min_stars1 = 0, min_stars2 = 0, standardized_method1 = None,
+                       standardized_method2 = None, min_conflict_level = 0, original_terms = False):
         query = '''
             SELECT COUNT(DISTINCT variant_name) FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
@@ -408,6 +408,9 @@ class DB():
 
         if gene:
             query += ' AND gene=:gene'
+
+        if condition1_name:
+            query += ' AND condition1_name=:condition1_name'
 
         if submitter1_id:
             query += ' AND submitter1_id=:submitter1_id'
@@ -432,6 +435,7 @@ class DB():
                 query,
                 {
                     'gene': gene,
+                    'condition1_name': condition1_name,
                     'submitter1_id': submitter1_id,
                     'submitter2_id': submitter2_id,
                     'significance1': significance1,

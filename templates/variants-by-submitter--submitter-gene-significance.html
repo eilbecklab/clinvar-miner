@@ -1,15 +1,33 @@
 {% extends 'extend/variants.html' %}
 {% if gene %}
-    {% set title = 'Variants in gene ' + gene + ' reported as ' + significance + ' by ' + submitter_info['name'] %}
+    {% if significance %}
+        {% set title = 'List of variants in gene ' + gene + ' reported as ' + significance + ' by ' + submitter_info['name'] %}
+    {% else %}
+        {% set title = 'List of variants in gene ' + gene + ' reported as ' + significance + ' by ' + submitter_info['name'] %}
+    {% endif %}
 {% else %}
-    {% set title = 'Intergenic variants reported as ' + significance + ' by ' + submitter_info['name'] %}
+    {% if significance %}
+        {% set title = 'List of intergenic variants reported as ' + significance + ' by ' + submitter_info['name'] %}
+    {% else %}
+        {% set title = 'List of intergenic variants reported by ' + submitter_info['name'] %}
+    {% endif %}
 {% endif %}
 {% block title %}
     {% if gene %}
-        Variants in gene {{ gene|genelink|safe }} reported as {{ significance }} by
-        {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+        {% if significance %}
+            List of variants in gene {{ gene|genelink|safe }} reported as {{ significance }} by
+            {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+        {% else %}
+            List of variants in gene {{ gene|genelink|safe }} reported by
+            {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+        {% endif %}
     {% else %}
-        Intergenic variants reported as {{ significance }} by
-        {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+        {% if significance %}
+            List of intergenic variants reported as {{ significance }} by
+            {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+        {% else %}
+            List of intergenic variants reported by
+            {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+        {% endif %}
     {% endif %}
 {% endblock %}

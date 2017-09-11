@@ -1,5 +1,5 @@
 {% extends 'extend/skin.html' %}
-{% set title = 'Variants from ' + submitter_info['name'] %}
+{% set title = 'Variants reported by ' + submitter_info['name'] %}
 {% block title %}
     Variants from {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
     {{ submitter_tagline(submitter_info, submitter_primary_method)|safe }}
@@ -13,9 +13,8 @@
         {% include 'include/filter.html' %}
     {% endwith %}
     {% include 'include/significance-overview.html' %}
-    {% if variants %}
+    {% if total_variants %}
         {% include 'include/breakdown-by-gene-and-significance.html' %}
         {% include 'include/breakdown-by-condition-and-significance.html' %}
-        {% include 'include/all-variants.html' %}
     {% endif %}
 {% endblock %}

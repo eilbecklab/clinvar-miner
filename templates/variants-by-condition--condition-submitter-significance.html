@@ -1,7 +1,17 @@
 {% extends 'extend/variants.html' %}
-{% set title = 'Variants reported as ' + significance + ' for ' + condition_info['name'] + ' by ' + submitter_info['name'] %}
+{% if significance %}
+    {% set title = 'List of variants reported as ' + significance + ' for ' + condition_info['name'] + ' by ' + submitter_info['name'] %}
+{% else %}
+    {% set title = 'List of variants studied for ' + condition_info['name'] + ' by ' + submitter_info['name'] %}
+{% endif %}
 {% block title %}
-    Variants reported as {{ significance }} for
-    {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }} by
-    {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+    {% if significance %}
+        List of variants reported as {{ significance }} for
+        {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }} by
+        {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+    {% else %}
+        List of variants studied for
+        {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }} by
+        {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+    {% endif %}
 {% endblock %}

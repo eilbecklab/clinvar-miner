@@ -20,9 +20,8 @@
         {% include 'include/filter.html' %}
     {% endwith %}
     {% include 'include/significance-overview.html' %}
-    {% if variants %}
+    {% if significances %}
         {% include 'include/breakdown-by-condition-and-significance.html' %}
         {% include 'include/breakdown-by-submitter-and-significance.html' %}
-        {% include 'include/all-variants.html' %}
     {% endif %}
 {% endblock %}

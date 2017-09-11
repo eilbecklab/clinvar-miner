@@ -25,7 +25,9 @@
                     {% endif %}
                 {% endfor %}
                 <td class="highlight">
-                    {{ breakdown_by_condition_and_significance[condition_name]['counts']['total'] }}
+                    <a href="{{ request.base_url }}/condition/{{ condition_name|superescaped }}{{ request|querysuffix }}">
+                        {{ breakdown_by_condition_and_significance[condition_name]['counts']['total'] }}
+                    </a>
                 </td>
             </tr>
         {% endfor %}
