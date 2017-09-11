@@ -554,10 +554,10 @@ class DB():
                 query += ' AND standardized_significance1=:significance1'
 
         if standardized_method1:
-            query += ' AND standardized_method1=:standardized_method'
+            query += ' AND standardized_method1=:standardized_method1'
 
         if standardized_method2:
-            query += ' AND standardized_method2=:standardized_method'
+            query += ' AND standardized_method2=:standardized_method2'
 
         query += ' GROUP BY gene ORDER BY count DESC'
 
