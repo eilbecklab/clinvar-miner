@@ -275,8 +275,14 @@ class DB():
     def total_conflicting_variants_by_submitter_and_conflict_level(self, submitter1_id = None, min_stars1 = 0,
                                                                    min_stars2 = 0, standardized_method1 = None,
                                                                    standardized_method2 = None):
-        query = '''
-            SELECT submitter2_id AS submitter_id, conflict_level, COUNT(DISTINCT variant_name) AS count
+
+        if submitter1_id:
+            query = 'SELECT submitter2_id AS submitter_id'
+        else:
+            query = 'SELECT submitter1_id AS submitter_id'
+
+        query += '''
+            , conflict_level, COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=1
         '''
