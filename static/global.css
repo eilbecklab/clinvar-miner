@@ -107,3 +107,7 @@
 *:hover > .internal {
     display: inline;
 }
+
+form > .table > tbody > tr > td {
+    vertical-align: middle;
+}

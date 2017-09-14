@@ -1,37 +1,41 @@
 <form action="{{ request.base_url }}" autocomplete="off" method="get">
     <table class="table" style="width:auto">
-        {% if review_status1_label %}
-            {% with %}
-                {% set label = review_status1_label %}
-                {% set name = 'min_stars1' %}
-                {% include 'include/min-stars-filter.html' %}
-            {% endwith %}
-        {% endif %}
-        {% if method1_label %}
-            {% with %}
-                {% set label = method1_label %}
-                {% set name = 'method1' %}
-                {% include 'include/method-filter.html' %}
-            {% endwith %}
-        {% endif %}
-        {% if review_status2_label %}
-            {% with %}
-                {% set label = review_status2_label %}
-                {% set name = 'min_stars2' %}
-                {% include 'include/min-stars-filter.html' %}
-            {% endwith %}
-        {% endif %}
-        {% if method2_label %}
-            {% with %}
-                {% set label = method2_label %}
-                {% set name = 'method2' %}
-                {% include 'include/method-filter.html' %}
-            {% endwith %}
-        {% endif %}
+        <tr>
+            {% if review_status1_label %}
+                {% with %}
+                    {% set label = review_status1_label %}
+                    {% set name = 'min_stars1' %}
+                    {% include 'include/min-stars-filter.html' %}
+                {% endwith %}
+            {% endif %}
+            {% if review_status2_label %}
+                {% with %}
+                    {% set label = review_status2_label %}
+                    {% set name = 'min_stars2' %}
+                    {% include 'include/min-stars-filter.html' %}
+                {% endwith %}
+            {% endif %}
+        </tr>
+        <tr>
+            {% if method1_label %}
+                {% with %}
+                    {% set label = method1_label %}
+                    {% set name = 'method1' %}
+                    {% include 'include/method-filter.html' %}
+                {% endwith %}
+            {% endif %}
+            {% if method2_label %}
+                {% with %}
+                    {% set label = method2_label %}
+                    {% set name = 'method2' %}
+                    {% include 'include/method-filter.html' %}
+                {% endwith %}
+            {% endif %}
+        </tr>
         {% if min_conflict_level_filter %}
             <tr>
                 <td>Minimum conflict level:</td>
-                <td>
+                <td colspan="3">
                     <select name="min_conflict_level">
                         <option></option>
                         <option {% if request.args.get('min_conflict_level') == '1' %}selected="selected"{% endif %} value="1">
@@ -55,7 +59,7 @@
         {% endif %}
         {% if original_terms_filter %}
             <tr>
-                <td colspan="2">
+                <td colspan="4">
                     <label>
                         <input
                             {% if request.args.get('original_terms') %} checked="checked" {% endif %}
@@ -73,7 +77,7 @@
             </tr>
         {% endif %}
         <tr>
-            <td colspan="2"><input type="submit" value="Apply filters"/></td>
+            <td colspan="4"><input type="submit" value="Apply filters"/></td>
         </tr>
     </table>
 </form>
