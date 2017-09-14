@@ -45,7 +45,7 @@ class DB():
         )))
 
     def max_date(self):
-        return list(self.cursor.execute('SELECT MAX(date) FROM submissions'))[0][0]
+        return list(self.cursor.execute('SELECT date FROM current_submissions LIMIT 1'))[0][0]
 
     def significance_term_info(self):
         return list(map(

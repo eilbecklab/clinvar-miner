@@ -10,10 +10,6 @@ import csv
 import re
 import sqlite3
 
-if len(argv) < 2:
-    print('Usage: ./import-clinvar-xml.py ClinVarFullRelease_<year>-<month>.xml ...')
-    exit()
-
 nonstandard_significance_term_map = dict(map(
     lambda line: line[0:-1].split('\t'),
     open('nonstandard_significance_terms.tsv')
@@ -66,6 +62,10 @@ def create_tables():
         )
     ''')
 
+    cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON submissions (date)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS variant_name_index ON submissions (variant_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS significance_index ON submissions (significance)')
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS comparisons (
             date TEXT,
@@ -106,55 +106,10 @@ def create_tables():
         )
     ''')
 
-    cursor.execute('''
-        CREATE VIEW IF NOT EXISTS current_submissions AS
-        SELECT * FROM submissions WHERE date=(
-            SELECT MAX(date) FROM submissions
-        )
-    ''')
-
-    cursor.execute('''
-        CREATE VIEW IF NOT EXISTS current_comparisons AS
-        SELECT * FROM comparisons WHERE date=(
-            SELECT MAX(date) FROM submissions
-        )
-    ''')
-
-    cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON submissions (date)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS variant_name_index ON submissions (variant_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS variant_rsid_index ON submissions (variant_rsid)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS gene_index ON submissions (gene)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS rcv_index ON submissions (rcv)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS scv_index ON submissions (scv)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS submitter_id_index ON submissions (submitter_id)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS submitter_name_index ON submissions (submitter_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS submitter_country_code_index ON submissions (submitter_country_code)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS significance_index ON submissions (significance)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS condition_id_index ON submissions (condition_id)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS condition_name_index ON submissions (condition_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS method_index ON submissions (method)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method_index ON submissions (standardized_method)')
-
     cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON comparisons (date)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS variant_name_index ON comparisons (variant_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS gene_index ON comparisons (gene)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS submitter1_id_index ON comparisons (submitter1_id)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS submitter1_name_index ON comparisons (submitter1_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS submitter1_country_code_index ON comparisons (submitter1_country_code)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS submitter1_country_name_index ON comparisons (submitter1_country_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS scv1_index ON comparisons(scv1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS significance1_index ON comparisons (significance1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS standardized_significance1_index ON comparisons (standardized_significance1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS star_level1_index ON comparisons (star_level1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS condition1_name_index ON comparisons (condition1_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS method1_index ON comparisons (method1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method1_index ON comparisons (standardized_method1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS submitter2_id_index ON comparisons (submitter2_id)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS submitter2_name_index ON comparisons (submitter2_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS significance2_index ON comparisons (significance2)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS standardized_significance2_index ON comparisons (standardized_significance2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS star_level2_index ON comparisons (star_level2)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method2_index ON comparisons (standardized_method2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS conflict_level_index ON comparisons (conflict_level)')
 
 def import_file(filename):
@@ -332,6 +287,11 @@ def import_file(filename):
     db.commit()
     db.close()
 
-create_tables()
-for filename in argv[1:]:
-    import_file(filename)
+if __name__ == '__main__':
+    if len(argv) < 2:
+        print('Usage: ./import-clinvar-xml.py ClinVarFullRelease_<year>-<month>.xml ...')
+        exit()
+
+    create_tables()
+    for filename in argv[1:]:
+        import_file(filename)
