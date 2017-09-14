@@ -107,6 +107,7 @@ def create_tables():
     ''')
 
     cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON comparisons (date)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS scv1_index ON comparisons (scv1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS star_level1_index ON comparisons (star_level1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method1_index ON comparisons (standardized_method1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS star_level2_index ON comparisons (star_level2)')
