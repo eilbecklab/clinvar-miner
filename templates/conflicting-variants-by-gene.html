@@ -24,19 +24,19 @@
                 </tr>
             </thead>
             <tbody>
-                {% for gene, row in summary.items() %}
+                {% for gene, gene_summary in summary.items() %}
                     <tr>
                         <th>{{ gene|genelink|safe or '\u200Bintergenic' }}</th>
                         {% for i in range(0, 6) %}
-                            {% if row[i] %}
-                                <td class="highlight">{{ row[i] }}</td>
+                            {% if i in gene_summary %}
+                                <td class="highlight">{{ gene_summary[i] }}</td>
                             {% else %}
                                 <td>0</td>
                             {% endif %}
                         {% endfor %}
                         <td class="highlight">
                             <a href="conflicting-variants-by-gene/{{ gene }}{{ request|querysuffix }}">
-                                {{ row['any_conflict'] }}
+                                {{ gene_summary['any_conflict'] }}
                             </a>
                         </td>
                     </tr>

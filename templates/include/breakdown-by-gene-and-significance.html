@@ -14,7 +14,7 @@
             <tr>
                 <th>{{ gene|genelink|safe or '\u200Bintergenic' }}</th>
                 {% for significance in significances %}
-                    {% if breakdown_by_gene_and_significance[gene][significance] %}
+                    {% if significance in breakdown_by_gene_and_significance[gene] %}
                         <td class="highlight">
                             <a href="{{ request.base_url }}/gene/{{ gene|superescaped or 'intergenic' }}/{{ significance|superescaped }}{{ request|querysuffix }}">
                                 {{ breakdown_by_gene_and_significance[gene][significance] }}

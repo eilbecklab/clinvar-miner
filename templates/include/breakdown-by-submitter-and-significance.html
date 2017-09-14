@@ -14,7 +14,7 @@
             <tr>
                 <th>{{ submitter_link(submitter_id, breakdown_by_submitter_and_significance[submitter_id]['name'])|safe }}</th>
                 {% for significance in significances %}
-                    {% if breakdown_by_submitter_and_significance[submitter_id]['counts'][significance] %}
+                    {% if significance in breakdown_by_submitter_and_significance[submitter_id]['counts'] %}
                         <td class="highlight">
                             <a href="{{ request.base_url }}/submitter/{{ submitter_id }}/{{ significance|superescaped }}{{ request|querysuffix }}">
                                 {{ breakdown_by_submitter_and_significance[submitter_id]['counts'][significance] }}

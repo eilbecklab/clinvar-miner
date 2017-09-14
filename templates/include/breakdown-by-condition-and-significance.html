@@ -14,7 +14,7 @@
             <tr>
                 <th>{{ condition_link(breakdown_by_condition_and_significance[condition_name]['db'], breakdown_by_condition_and_significance[condition_name]['id'], condition_name)|safe }}</th>
                 {% for significance in significances %}
-                    {% if breakdown_by_condition_and_significance[condition_name]['counts'][significance] %}
+                    {% if significance in breakdown_by_condition_and_significance[condition_name]['counts'] %}
                         <td class="highlight">
                             <a href="{{ request.base_url }}/condition/{{ condition_name|superescaped }}/{{ significance|superescaped }}{{ request|querysuffix }}">
                                 {{ breakdown_by_condition_and_significance[condition_name]['counts'][significance] }}

@@ -22,17 +22,17 @@
                 </tr>
             </thead>
             <tbody>
-                {% for condition_name, row in summary.items() %}
+                {% for condition_name, condition_summary in summary.items() %}
                     <tr>
-                        <th>{{ condition_link(row['db'], row['id'], condition_name)|safe }}</th>
+                        <th>{{ condition_link(condition_summary['db'], condition_summary['id'], condition_name)|safe }}</th>
                         {% for i in range(0, 6) %}
-                            {% if row[i] %}
-                                <td class="highlight">{{ row[i] }}</td>
+                            {% if i in condition_summary %}
+                                <td class="highlight">{{ condition_summary[i] }}</td>
                             {% else %}
                                 <td>0</td>
                             {% endif %}
                         {% endfor %}
-                        <td class="highlight">{{ row['any_conflict'] }}</td>
+                        <td class="highlight">{{ condition_summary['any_conflict'] }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

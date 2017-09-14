@@ -33,19 +33,19 @@
                 </tr>
             </thead>
             <tbody>
-                {% for submitter2_id, row in summary.items() %}
+                {% for submitter2_id, submitter2_summary in summary.items() %}
                     <tr>
-                        <th>{{ submitter_link(submitter2_id, row['name'])|safe }}</th>
+                        <th>{{ submitter_link(submitter2_id, submitter2_summary['name'])|safe }}</th>
                         {% for i in range(0, 6) %}
-                            {% if row[i] %}
-                                <td class="highlight">{{ row[i] }}</td>
+                            {% if i in submitter2_summary %}
+                                <td class="highlight">{{ submitter2_summary[i] }}</td>
                             {% else %}
                                 <td>0</td>
                             {% endif %}
                         {% endfor %}
                         <td class="highlight">
                             <a href="conflicting-variants-by-submitter/{{ submitter1_info['id'] }}/{{ submitter2_id }}{{ request|querysuffix }}">
-                                {{ row['any_conflict'] }}
+                                {{ submitter2_summary['any_conflict'] }}
                             </a>
                         </td>
                     </tr>

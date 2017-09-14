@@ -171,12 +171,6 @@ def get_conflict_summary_by_condition(total_variants_by_condition, total_conflic
         summary[condition_name] = {
             'db': row['condition_db'],
             'id': row['condition_id'],
-            0: 0,
-            1: 0,
-            2: 0,
-            3: 0,
-            4: 0,
-            5: 0,
             'any_conflict': count,
         }
 
@@ -202,12 +196,6 @@ def get_conflict_summary_by_gene(total_variants_by_gene, total_conflicting_varia
         gene = row['gene']
         count = row['count']
         summary[gene] = {
-            0: 0,
-            1: 0,
-            2: 0,
-            3: 0,
-            4: 0,
-            5: 0,
             'any_conflict': count,
         }
 
@@ -235,12 +223,6 @@ def get_conflict_summary_by_submitter(total_variants_by_submitter, total_conflic
         count = row['count']
         summary[submitter_id] = {
             'name': submitter_name,
-            0: 0,
-            1: 0,
-            2: 0,
-            3: 0,
-            4: 0,
-            5: 0,
             'any_conflict': count,
         }
 
@@ -259,13 +241,7 @@ def get_conflict_summary_by_submitter(total_variants_by_submitter, total_conflic
     return summary
 
 def get_conflict_overview(total_conflicting_variants_by_conflict_level):
-    overview = {
-        1: 0,
-        2: 0,
-        3: 0,
-        4: 0,
-        5: 0,
-    }
+    overview = {}
 
     for row in total_conflicting_variants_by_conflict_level:
         conflict_level = row['conflict_level']
@@ -288,8 +264,10 @@ def get_significance_overview(total_variants_by_significance):
         count = row['count']
         overview[significance] = count
 
-    #significances from the database query are already sorted alphabetically
-    #sort the finished list by rank
+    #sort alphabetically to be consistent if there are two or more unranked significance terms
+    overview = OrderedDict(sorted(overview.items(), key=lambda pair: pair[0]))
+
+    #sort by rank
     overview = OrderedDict(sorted(overview.items(), key=lambda pair: significance_rank(pair[0])))
 
     return overview

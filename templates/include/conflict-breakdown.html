@@ -30,7 +30,7 @@
         <tr>
             <th>{{ significance1 }}</th>
             {% for significance2 in submitter2_significances %}
-                {% if breakdown[significance1].get(significance2, 0) > 0 %}
+                {% if significance2 in breakdown[significance1] %}
                     <td class="highlight">
                         {% if link_base %}
                             <a href="{{ link_base }}/{{ significance1|superescaped }}/{{ significance2|superescaped }}{{ request|querysuffix }}">
