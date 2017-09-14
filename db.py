@@ -97,6 +97,14 @@ class DB():
             )
         ))
 
+    def submitter_id_from_name(self, submitter_name):
+        try:
+            return list(self.cursor.execute(
+                'SELECT submitter_id FROM current_submissions WHERE submitter_name=? LIMIT 1', [submitter_name]
+            ))[0][0]
+        except IndexError:
+            return None
+
     def submitter_info(self, submitter_id):
         try:
             row = list(self.cursor.execute('''

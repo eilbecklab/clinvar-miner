@@ -863,6 +863,11 @@ def search():
     if db.is_condition_name(query):
         return redirect(request.script_root + '/variants-by-condition/' + super_escape(query))
 
+    #submitter
+    submitter_id = db.submitter_id_from_name(query)
+    if submitter_id:
+        return redirect(request.script_root + '/variants-by-submitter/' + str(submitter_id))
+
     return redirect('https://www.google.com/#q=site:' + urllib.parse.quote(request.url_root + ' ' + query, safe=''))
 
 @app.route('/significance-terms')
