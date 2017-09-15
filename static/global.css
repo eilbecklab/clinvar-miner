@@ -32,6 +32,18 @@
     background-color: #FFEEAA;
 }
 
+.panel {
+    display: inline-block;
+    margin-top: 2em;
+    margin-right: 4em;
+    margin-bottom: 4em;
+    vertical-align: top;
+}
+
+.panel-heading {
+    font-weight: bold;
+}
+
 .simple-numeric {
     width: auto;
 }

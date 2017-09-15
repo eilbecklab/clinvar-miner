@@ -14,7 +14,7 @@
     <meta name="google-site-verification" content="Yua3q7_WAK_AYNpW4QPr7G-slC_9dexqiqeBQ3p8IaU"/>
 {% endblock %}
 {% block content %}
-    <p>Welcome to the <b>ClinVar Miner</b> website!</p>
+    <h1>Welcome to the ClinVar Miner website!</h1>
 
     <p>
         The content on this site is current as of {{ max_date.strftime('%B %Y') }}. At that time,
@@ -22,17 +22,52 @@
         {{ '{:,}'.format(total_submissions) }} submissions on {{ '{:,}'.format(total_variants) }} variants.
     </p>
 
-    <div class="navlinks">
-        <a href="total-submissions-by-method">Total submissions by method</a>
-        <a href="total-submissions-by-country">Total submissions by country</a>
-        <a href="conflicting-variants-by-significance">Conflicting variants by significance</a>
-        <a href="conflicting-variants-by-gene">Conflicting variants by gene</a>
-        <a href="conflicting-variants-by-condition">Conflicting variants by condition</a>
-        <a href="conflicting-variants-by-submitter">Conflicting variants by submitter</a>
-        <a href="variants-by-significance">Variants by significance</a>
-        <a href="variants-by-gene">Variants by gene</a>
-        <a href="variants-by-condition">Variants by condition</a>
-        <a href="variants-by-submitter">Variants by submitter</a>
-        <a href="significance-terms">Significance terms</a>
-    </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">Data exploration</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <a href="variants-by-significance">Variants by significance</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="variants-by-gene">Variants by gene</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="variants-by-condition">Variants by condition</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="variants-by-submitter">Variants by submitter</a>
+                </li>
+            </ul>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">Conflict exploration</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <a href="conflicting-variants-by-significance">Conflicting variants by significance</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="conflicting-variants-by-gene">Conflicting variants by gene</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="conflicting-variants-by-condition">Conflicting variants by condition</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="conflicting-variants-by-submitter">Conflicting variants by submitter</a>
+                </li>
+            </ul>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">High-level trends</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <a href="total-submissions-by-method">Total submissions by method</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="total-submissions-by-country">Total submissions by country</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="significance-terms">Significance terms</a>
+                </li>
+            </ul>
+        </div>
 {% endblock %}
