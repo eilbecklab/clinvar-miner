@@ -8,6 +8,7 @@
         {% set method2_label = 'Collection method of the other submitter\'s submission' %}
         {% include 'include/filter.html' %}
     {% endwith %}
+    {% include 'include/conflict-counting-note.html' %}
     <p>Total submitters with conflicts: {{ summary|length }}</p>
     {% if summary %}
         <table class="sortable summary table table-bordered table-striped">

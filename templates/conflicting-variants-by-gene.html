@@ -8,6 +8,7 @@
         {% set method2_label = 'Submission 2 collection method' %}
         {% include 'include/filter.html' %}
     {% endwith %}
+    {% include 'include/conflict-counting-note.html' %}
     <p>Total genes with conflicts: {{ summary|length }}</p>
     {% if summary %}
         <table class="sortable summary table table-bordered table-striped">

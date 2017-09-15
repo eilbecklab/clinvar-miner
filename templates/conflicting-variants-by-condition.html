@@ -6,6 +6,7 @@
         {% set method1_label = 'Collection method' %}
         {% include 'include/filter.html' %}
     {% endwith %}
+    {% include 'include/conflict-counting-note.html' %}
     <p>Total conditions with conflicts: {{ summary|length }}</p>
     {% if summary %}
         <table class="sortable summary table table-bordered table-striped">
