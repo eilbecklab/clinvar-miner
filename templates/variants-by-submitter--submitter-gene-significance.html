@@ -1,18 +1,5 @@
 {% extends 'extend/variants.html' %}
-{% if gene %}
-    {% if significance %}
-        {% set title = 'List of variants in gene ' + gene + ' reported as ' + significance + ' by ' + submitter_info['name'] %}
-    {% else %}
-        {% set title = 'List of variants in gene ' + gene + ' reported as ' + significance + ' by ' + submitter_info['name'] %}
-    {% endif %}
-{% else %}
-    {% if significance %}
-        {% set title = 'List of intergenic variants reported as ' + significance + ' by ' + submitter_info['name'] %}
-    {% else %}
-        {% set title = 'List of intergenic variants reported by ' + submitter_info['name'] %}
-    {% endif %}
-{% endif %}
-{% block title %}
+{% set title %}
     {% if gene %}
         {% if significance %}
             List of variants in gene {{ gene|genelink|safe }} reported as {{ significance }} by
@@ -30,4 +17,4 @@
             {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
         {% endif %}
     {% endif %}
-{% endblock %}
+{% endset %}

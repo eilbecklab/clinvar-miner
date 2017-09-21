@@ -3,10 +3,9 @@
     <head>
         <title>
             {% if title %}
-                {{ title }} - ClinVar Miner
-            {% else %}
-                ClinVar Miner
+                {{ title|striptags }} -
             {% endif %}
+            ClinVar Miner
         </title>
 
         <base href="{{ request.url_root }}"/>
@@ -35,7 +34,10 @@
         </table>
         <div style="display:flex">
             <div class="container">
-                <h1>{% block title %}{{ title }}{% endblock %}</h1>
+                {% if title %}
+                    <h1>{{ title }}</h1>
+                    {% block tagline %}{% endblock %}
+                {% endif %}
                 <div id="content">{% block content %}{% endblock %}</div>
             </div>
         </div>

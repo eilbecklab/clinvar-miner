@@ -1,16 +1,11 @@
 {% extends 'extend/skin.html' %}
-{% if gene %}
-    {% set title = 'Variants in gene ' + gene %}
-{% else %}
-    {% set title = 'Intergenic variants' %}
-{% endif %}
-{% block title %}
+{% set title %}
     {% if gene %}
         Variants in gene {{ gene|genelink|safe }}
     {% else %}
         Intergenic variants
     {% endif %}
-{% endblock %}
+{% endset %}
 {% block content %}
     {% with %}
         {% set review_status1_label = 'Minimum submission review status' %}

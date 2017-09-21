@@ -1,10 +1,5 @@
 {% extends 'extend/variants.html' %}
-{% if significance %}
-    {% set title = 'List of variants reported as ' + significance + ' by ' + submitter_info['name'] %}
-{% else %}
-    {% set title = 'List of variants reported by ' + submitter_info['name'] %}
-{% endif %}
-{% block title %}
+{% set title %}
     {% if significance %}
         List of variants reported as {{ significance }} by
         {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
@@ -12,4 +7,4 @@
         List of variants reported by
         {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
     {% endif %}
-{% endblock %}
+{% endset %}

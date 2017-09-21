@@ -1,10 +1,5 @@
 {% extends 'extend/variants.html' %}
-{% if significance %}
-    {% set title = 'List of variants reported as ' + significance + ' for ' + condition_info['name'] %}
-{% else %}
-    {% set title = 'List of variants studied for ' + condition_info['name'] %}
-{% endif %}
-{% block title %}
+{% set title %}
     {% if significance %}
         List of variants reported as {{ significance }} for
         {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
@@ -12,4 +7,4 @@
         List of variants studied for
         {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
     {% endif %}
-{% endblock %}
+{% endset %}

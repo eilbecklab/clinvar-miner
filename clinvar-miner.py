@@ -342,11 +342,11 @@ def template_functions():
         return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + str(submitter_id) + '/">' + extra_breaks(submitter_name) + '</a>'
 
     def submitter_tagline(submitter_info, submitter_primary_method):
-        tagline = '<div><small style="font-size:medium">'
+        tagline = '<div class="tagline">'
         if 'country_name' in submitter_info:
             tagline += 'Location: ' + submitter_info['country_name'] + ' &mdash; '
         tagline += 'Primary collection method: ' + submitter_primary_method
-        tagline += '</small></div>'
+        tagline += '</div>'
         return tagline
 
     def condition_link(condition_db, condition_id, condition_name):

@@ -1,9 +1,8 @@
 {% extends 'extend/skin.html' %}
-{% set title = 'Conflicting variants between ' + submitter1_info['name'] + ' and ' + submitter2_info['name'] %}
-{% block title %}
+{% set title %}
     Conflicting variants between {{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }} and
     {{ submitter_link(submitter2_info['id'], submitter2_info['name'])|safe }}
-{% endblock %}
+{% endset %}
 {% block content %}
     {% with %}
         {% set review_status1_label = 'Minimum review status of the submission from ' + submitter1_info['name'] %}

@@ -1,18 +1,5 @@
 {% extends 'extend/variants.html' %}
-{% if gene %}
-    {% if significance %}
-        {% set title = 'List of variants in gene ' + gene + ' reported as ' + significance %}
-    {% else %}
-        {% set title = 'List of variants in gene ' + gene %}
-    {% endif %}
-{% else %}
-    {% if significance %}
-        {% set title = 'List of intergenic variants reported as ' + significance %}
-    {% else %}
-        {% set title = 'List of intergenic variants' %}
-    {% endif %}
-{% endif %}
-{% block title %}
+{% set title %}
     {% if gene %}
         {% if significance %}
             List of variants in gene {{ gene|genelink|safe }} reported as {{ significance }}
@@ -26,4 +13,4 @@
             List of intergenic variants
         {% endif %}
     {% endif %}
-{% endblock %}
+{% endset %}

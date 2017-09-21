@@ -1,7 +1,8 @@
 {% extends 'extend/skin.html' %}
-{% set title = 'Variants reported by ' + submitter_info['name'] %}
-{% block title %}
+{% set title %}
     Variants from {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
+{% endset %}
+{% block tagline %}
     {{ submitter_tagline(submitter_info, submitter_primary_method)|safe }}
 {% endblock %}
 {% block content %}

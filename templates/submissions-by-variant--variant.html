@@ -1,11 +1,10 @@
 {% extends 'extend/skin.html' %}
-{% set title = 'Submissions for variant ' + variant_info['name'] %}
+{% set title %}
+    Submissions for variant {{ variant_link(variant_info['id'], variant_info['name'], variant_info['rsid'])|safe }}
+{% endset %}
 {% block head %}
     <script src="static/jquery-3.1.1.js" type="application/javascript"></script>
     <script src="static/jquery.tablesorter.js" type="application/javascript"></script>
-{% endblock %}
-{% block title %}
-    Submissions for variant {{ variant_link(variant_info['id'], variant_info['name'], variant_info['rsid'])|safe }}
 {% endblock %}
 {% block content %}
     {% with %}

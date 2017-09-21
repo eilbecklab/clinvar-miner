@@ -1,18 +1,5 @@
 {% extends 'extend/variants.html' %}
-{% if gene %}
-    {% if significance %}
-        {% set title = 'List of variants in gene ' + gene + ' reported as ' + significance + ' for ' + condition_info['name'] %}
-    {% else %}
-        {% set title = 'List of variants in gene ' + gene + ' studied for ' + condition_info['name'] %}
-    {% endif %}
-{% else %}
-    {% if significance %}
-        {% set title = 'List of intergenic variants reported as ' + significance + ' for ' + condition_info['name'] %}
-    {% else %}
-        {% set title = 'List of intergenic variants studied for ' + condition_info['name'] %}
-    {% endif %}
-{% endif %}
-{% block title %}
+{% set title %}
     {% if gene %}
         {% if significance %}
             List of variants in gene {{ gene|genelink|safe }} reported as {{ significance }} for
@@ -30,4 +17,4 @@
             {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
         {% endif %}
     {% endif %}
-{% endblock %}
+{% endset %}

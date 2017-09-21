@@ -1,7 +1,8 @@
 {% extends 'extend/skin.html' %}
-{% set title = 'Conflicting variants with ' + submitter1_info['name'] %}
-{% block title %}
+{% set title %}
     Conflicting variants with {{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }}
+{% endset %}
+{% block tagline %}
     {{ submitter_tagline(submitter1_info, submitter1_primary_method)|safe }}
 {% endblock %}
 {% block content %}

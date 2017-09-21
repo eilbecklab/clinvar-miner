@@ -68,6 +68,12 @@
     text-align: right;
 }
 
+.tagline {
+    color: #777;
+    font-size: medium;
+    margin-bottom: 10px;
+}
+
 #top-stripe {
     /* adapted from http://variantexplorer.org/img/clingen-bg.jpg */
     background: url(clingen-stripe.png);
