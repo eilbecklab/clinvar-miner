@@ -2,7 +2,6 @@
 
 import gzip
 import re
-import urllib
 from collections import OrderedDict
 from datetime import datetime
 from db import DB
@@ -14,6 +13,7 @@ from flask import render_template
 from flask import request
 from hashlib import sha256
 from os import environ
+from urllib.parse import urlparse, quote
 from werkzeug.contrib.cache import FileSystemCache
 from werkzeug.contrib.cache import NullCache
 from werkzeug.routing import BaseConverter
@@ -34,7 +34,7 @@ class SuperEscapedConverter(BaseConverter):
 
     @staticmethod
     def to_url(value):
-        return urllib.parse.quote(value).replace('/', '%252F')
+        return quote(value).replace('/', '%252F')
 
 app.url_map.converters['superescaped'] = SuperEscapedConverter
 
@@ -846,7 +846,8 @@ def search():
     if submitter_id:
         return redirect(request.script_root + '/variants-by-submitter/' + str(submitter_id))
 
-    return redirect('https://www.google.com/#q=site:' + urllib.parse.quote(request.url_root + ' ' + query, safe=''))
+    keywords = urlparse(request.url_root)[1] + ' ' + query
+    return redirect('https://www.google.com/search?q=site:' + quote(keywords, safe=''))
 
 @app.route('/significance-terms')
 def significance_terms():
