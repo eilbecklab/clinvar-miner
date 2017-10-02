@@ -6,7 +6,7 @@
         {% set method1_label = 'Collection method of the submitter\'s submission' %}
         {% set review_status2_label = 'Minimum review status of the other submitter\'s submission' %}
         {% set method2_label = 'Collection method of the other submitter\'s submission' %}
-        {% include 'include/filter.html' %}
+        {% include 'include/filter-form.html' %}
     {% endwith %}
     {% include 'include/conflict-counting-note.html' %}
     <p>Total submitters with conflicts: {{ summary|length }}</p>

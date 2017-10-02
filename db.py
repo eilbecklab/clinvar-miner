@@ -8,8 +8,12 @@ class DB():
         self.cursor = self.db.cursor()
 
     def and_equals(self, column, value):
-        self.query += ' AND ' + column + '=:' + column
-        self.parameters[column] = value
+        if type(value) == list:
+            self.query += ' AND ' + column + ' IN (' + ','.join([':' + column + str(i) for i in range(0, len(value))]) + ')'
+            self.parameters.update([(column + str(i), value[i]) for i in range(0, len(value))])
+        else:
+            self.query += ' AND ' + column + '=:' + column
+            self.parameters[column] = value
 
     def rows(self):
         return list(map(dict, self.cursor.execute(self.query, self.parameters)))
@@ -412,7 +416,8 @@ class DB():
         return self.value()
 
     def total_variants_by_condition(self, gene = None, significance1 = None, submitter1_id = 0, min_stars = 0,
-                                    standardized_method = None, min_conflict_level = 0, original_terms = False):
+                                    standardized_method = None, min_conflict_level = 0, original_terms = False,
+                                    condition_names = None):
         self.query = '''
             SELECT
                 condition1_db AS condition_db, condition1_id AS condition_id, condition1_name AS condition_name,
@@ -441,6 +446,9 @@ class DB():
         if standardized_method:
             self.and_equals('standardized_method1', standardized_method)
             self.and_equals('standardized_method2', standardized_method)
+
+        if condition_names:
+            self.and_equals('condition_name', condition_names)
 
         self.query += ' GROUP BY condition_name ORDER BY count DESC'
 
@@ -485,7 +493,7 @@ class DB():
 
     def total_variants_by_gene(self, condition1_name = None, submitter1_id = 0, significance1 = None, min_stars1 = 0,
                                min_stars2 = 0, standardized_method1 = None, standardized_method2 = None,
-                               min_conflict_level = 0, original_terms = False):
+                               min_conflict_level = 0, original_terms = False, genes = None):
         self.query = '''
             SELECT gene, COUNT(DISTINCT variant_name) AS count FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
@@ -514,6 +522,9 @@ class DB():
 
         if standardized_method2:
             self.and_equals('standardized_method2', standardized_method2)
+
+        if genes:
+            self.and_equals('gene', genes)
 
         self.query += ' GROUP BY gene ORDER BY count DESC'
 
@@ -591,7 +602,8 @@ class DB():
 
     def total_variants_by_submitter(self, gene = None, condition1_name = None, submitter1_id = None,
                                     significance1 = None, min_stars1 = 0, min_stars2 = 0, standardized_method1 = None,
-                                    standardized_method2 = None, min_conflict_level = 0, original_terms = False):
+                                    standardized_method2 = None, min_conflict_level = 0, original_terms = False,
+                                    submitter_ids = None):
         if submitter1_id:
             self.query = 'SELECT submitter2_id AS submitter_id, submitter2_name AS submitter_name'
         else:
@@ -629,6 +641,9 @@ class DB():
 
         if standardized_method2:
             self.and_equals('standardized_method2', standardized_method2)
+
+        if submitter_ids:
+            self.and_equals('submitter_id', submitter_ids)
 
         self.query += ' GROUP BY submitter_id ORDER BY count DESC'
 

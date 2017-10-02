@@ -1,33 +1,51 @@
 {% extends 'extend/skin.html' %}
 {% set title = 'Variants by submitter' %}
 {% block content %}
-    {% with %}
-        {% set review_status1_label = 'Minimum submission review status' %}
-        {% set method1_label = 'Collection method' %}
-        {% set min_conflict_level_filter = True %}
-        {% include 'include/filter.html' %}
-    {% endwith %}
-    <p>Total submitters: {{ total_variants_by_submitter|length }}</p>
-    {% if total_variants_by_submitter %}
-        <table class="simple-numeric sortable table">
-            <thead>
-                <tr>
-                    <th>Submitter</th>
-                    <th class="desc">Variants</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in total_variants_by_submitter %}
-                    <tr>
-                        <td>{{ submitter_link(row['submitter_id'], row['submitter_name'])|safe }}</td>
-                        <td>
-                            <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ request|querysuffix }}">
-                                {{ row['count'] }}
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
+    <form action="" autocomplete="off">
+        {% with %}
+            {% set review_status1_label = 'Minimum submission review status' %}
+            {% set method1_label = 'Collection method' %}
+            {% set min_conflict_level_filter = True %}
+            {% include 'include/filter.html' %}
+        {% endwith %}
+        <table class="totals">
+            <tr>
+                <td>Total submitters: {{ total_variants_by_submitter|length }}</td>
+                <td>Total variants: {{ total_variants }}</td>
+            </tr>
         </table>
-    {% endif %}
+        {% if total_variants %}
+            <table class="simple-numeric sortable table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Submitter</th>
+                        <th class="desc">Variants</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in total_variants_by_submitter %}
+                        <tr>
+                            <td>
+                                <input
+                                    {% if row['submitter_id']|string in request.args.getlist('submitters') %}
+                                        checked="checked"
+                                    {% endif %}
+                                    name="submitters"
+                                    type="checkbox"
+                                    value="{{ row['submitter_id'] }}"
+                                />
+                            </td>
+                            <td>{{ submitter_link(row['submitter_id'], row['submitter_name'])|safe }}</td>
+                            <td>
+                                <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ request|querysuffix }}">
+                                    {{ row['count'] }}
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </form>
 {% endblock %}

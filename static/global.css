@@ -48,6 +48,14 @@
     width: auto;
 }
 
+.simple-numeric input[type=checkbox] {
+    visibility: hidden;
+}
+
+.simple-numeric td:hover input[type=checkbox], .simple-numeric input[type=checkbox]:checked {
+    visibility: visible;
+}
+
 .simple-numeric td:last-child {
     text-align: right;
 }
@@ -72,6 +80,14 @@
     color: #777;
     font-size: medium;
     margin-bottom: 10px;
+}
+
+.totals {
+    margin-bottom: 10px;
+}
+
+.totals td {
+    padding: 8px;
 }
 
 #top-stripe {

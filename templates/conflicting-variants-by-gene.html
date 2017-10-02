@@ -6,7 +6,7 @@
         {% set method1_label = 'Submission 1 collection method' %}
         {% set review_status2_label = 'Submission 2 minimum review status' %}
         {% set method2_label = 'Submission 2 collection method' %}
-        {% include 'include/filter.html' %}
+        {% include 'include/filter-form.html' %}
     {% endwith %}
     {% include 'include/conflict-counting-note.html' %}
     <p>Total genes with conflicts: {{ summary|length }}</p>

@@ -12,7 +12,7 @@
         {% set review_status2_label = 'Minimum review status of the other submission' %}
         {% set method2_label = 'Collection method of the other submission' %}
         {% set original_terms_filter = True %}
-        {% include 'include/filter.html' %}
+        {% include 'include/filter-form.html' %}
     {% endwith %}
     {% with %}
         {% set total_conflicting_variants = variants|length %}

@@ -4,7 +4,7 @@
     {% with %}
         {% set review_status1_label = 'Minimum review status' %}
         {% set method1_label = 'Collection method' %}
-        {% include 'include/filter.html' %}
+        {% include 'include/filter-form.html' %}
     {% endwith %}
     {% include 'include/conflict-counting-note.html' %}
     <p>Total conditions with conflicts: {{ summary|length }}</p>

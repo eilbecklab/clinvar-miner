@@ -42,10 +42,13 @@
             </div>
         </div>
         <script>
-            $('.sortable').tablesorter({
-                /* the default class names are backwards */
-                cssAsc: 'desc',
-                cssDesc: 'asc',
+            $('table.sortable').each(function() {
+                $(this).tablesorter({
+                    /* the default class names are backwards */
+                    cssAsc: 'desc',
+                    cssDesc: 'asc',
+                    headers: {0: {sorter: !!$(this).find('th')[0].textContent}},
+                });
             });
         </script>
     </body>

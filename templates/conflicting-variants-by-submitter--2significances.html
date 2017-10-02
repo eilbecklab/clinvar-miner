@@ -12,7 +12,7 @@
         {% set method2_label = 'Collection method of the other submission' %}
         {% set original_terms_filter = True %}
         {% set original_terms_disabled = True %}
-        {% include 'include/filter.html' %}
+        {% include 'include/filter-form.html' %}
     {% endwith %}
     <p>Total conflicting variants: {{ variants|length }}</p>
     {% if variants %}

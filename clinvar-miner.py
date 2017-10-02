@@ -279,6 +279,9 @@ def int_arg(name, default = 0):
     except ValueError:
         abort(400)
 
+def list_arg(name):
+    return list(request.args.getlist(name)) or None
+
 def significance_rank(significance):
     significance_ranks = [
         'pathogenic',
@@ -320,7 +323,15 @@ def gene_link(gene):
 
 @app.template_filter('querysuffix')
 def query_suffix(request):
-    return '?' + request.query_string.decode('utf-8') if request.query_string else ''
+    if not request.args:
+        return ''
+
+    args = []
+    for key in request.args:
+        value = request.args.get(key)
+        if key not in ['genes', 'conditions', 'submitters'] and value:
+            args.append(quote(key, safe='') + '=' + quote(request.args[key], safe=''))
+    return '?' + '&'.join(args) if args else ''
 
 @app.template_filter('rcvlink')
 def rcv_link(rcv):
@@ -964,6 +975,15 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
+                condition_names=list_arg('conditions'),
+            ),
+            total_variants=db.total_variants(
+                min_stars1=int_arg('min_stars1'),
+                min_stars2=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                standardized_method2=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+                condition1_name=list_arg('conditions'),
             ),
         )
 
@@ -1122,6 +1142,15 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
                 standardized_method1=request.args.get('method1'),
                 standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
+                genes=list_arg('genes'),
+            ),
+            total_variants=db.total_variants(
+                min_stars1=int_arg('min_stars1'),
+                min_stars2=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                standardized_method2=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+                gene=list_arg('genes'),
             ),
         )
 
@@ -1336,6 +1365,15 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
                 standardized_method1=request.args.get('method1'),
                 standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
+                submitter_ids=list_arg('submitters'),
+            ),
+            total_variants=db.total_variants(
+                min_stars1=int_arg('min_stars1'),
+                min_stars2=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                standardized_method2=request.args.get('method1'),
+                min_conflict_level=int_arg('min_conflict_level'),
+                submitter1_id=list_arg('submitters'),
             ),
         )
 

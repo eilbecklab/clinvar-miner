@@ -1,33 +1,49 @@
 {% extends 'extend/skin.html' %}
 {% set title = 'Variants by gene' %}
 {% block content %}
-    {% with %}
-        {% set review_status1_label = 'Minimum review status' %}
-        {% set method1_label = 'Collection method' %}
-        {% set min_conflict_level_filter = True %}
-        {% include 'include/filter.html' %}
-    {% endwith %}
-    <p>Total genes: {{ total_variants_by_gene|length }}</p>
-    {% if total_variants_by_gene %}
-        <table class="simple-numeric sortable table">
-            <thead>
-                <tr>
-                    <th>Gene</th>
-                    <th class="desc">Variants</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in total_variants_by_gene %}
-                    <tr>
-                        <td>{{ row['gene']|genelink|safe or '\u200Bintergenic' }}</td>
-                        <td>
-                            <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}{{ request|querysuffix }}">
-                                {{ row['count'] }}
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
+    <form action="" autocomplete="off">
+        {% with %}
+            {% set review_status1_label = 'Minimum review status' %}
+            {% set method1_label = 'Collection method' %}
+            {% set min_conflict_level_filter = True %}
+            {% include 'include/filter.html' %}
+        {% endwith %}
+        <table class="totals">
+            <tr>
+                <td>Total genes: {{ total_variants_by_gene|length }}</td>
+                <td>Total variants: {{ total_variants }}</td>
+            </tr>
         </table>
-    {% endif %}
+        {% if total_variants %}
+            <table class="simple-numeric sortable table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Gene</th>
+                        <th class="desc">Variants</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in total_variants_by_gene %}
+                        <tr>
+                            <td>
+                                <input
+                                    {% if row['gene'] in request.args.getlist('genes') %}checked="checked"{% endif %}
+                                    name="genes"
+                                    type="checkbox"
+                                    value="{{ row['gene'] }}"
+                                />
+                            </td>
+                            <td>{{ row['gene']|genelink|safe or '\u200Bintergenic' }}</td>
+                            <td>
+                                <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}{{ request|querysuffix }}">
+                                    {{ row['count'] }}
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </form>
 {% endblock %}

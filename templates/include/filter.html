@@ -1,83 +1,81 @@
-<form action="{{ request.base_url }}" autocomplete="off" method="get">
-    <table class="table" style="width:auto">
-        <tr>
-            {% if review_status1_label %}
-                {% with %}
-                    {% set label = review_status1_label %}
-                    {% set name = 'min_stars1' %}
-                    {% include 'include/min-stars-filter.html' %}
-                {% endwith %}
-            {% endif %}
-            {% if review_status2_label %}
-                {% with %}
-                    {% set label = review_status2_label %}
-                    {% set name = 'min_stars2' %}
-                    {% include 'include/min-stars-filter.html' %}
-                {% endwith %}
-            {% endif %}
-        </tr>
-        <tr>
-            {% if method1_label %}
-                {% with %}
-                    {% set label = method1_label %}
-                    {% set name = 'method1' %}
-                    {% include 'include/method-filter.html' %}
-                {% endwith %}
-            {% endif %}
-            {% if method2_label %}
-                {% with %}
-                    {% set label = method2_label %}
-                    {% set name = 'method2' %}
-                    {% include 'include/method-filter.html' %}
-                {% endwith %}
-            {% endif %}
-        </tr>
-        {% if min_conflict_level_filter %}
-            <tr>
-                <td>Minimum conflict level:</td>
-                <td colspan="3">
-                    <select name="min_conflict_level">
-                        <option></option>
-                        <option {% if request.args.get('min_conflict_level') == '1' %}selected="selected"{% endif %} value="1">
-                            synonymous terms (e.g. benign vs non-pathogenic)
-                        </option>
-                        <option {% if request.args.get('min_conflict_level') == '2' %}selected="selected"{% endif %} value="2">
-                            confidence difference (e.g. benign vs likely benign)
-                        </option>
-                        <option {% if request.args.get('min_conflict_level') == '3' %}selected="selected"{% endif %} value="3">
-                            benign or likely benign vs uncertain significance
-                        </option>
-                        <option {% if request.args.get('min_conflict_level') == '4' %}selected="selected"{% endif %} value="4">
-                            category difference (e.g. benign vs affects)
-                        </option>
-                        <option {% if request.args.get('min_conflict_level') == '5' %}selected="selected"{% endif %} value="5">
-                            clinically significant difference (e.g. benign vs pathogenic)
-                        </option>
-                    </select>
-                </td>
-            </tr>
+<table class="table" style="width:auto">
+    <tr>
+        {% if review_status1_label %}
+            {% with %}
+                {% set label = review_status1_label %}
+                {% set name = 'min_stars1' %}
+                {% include 'include/min-stars-filter.html' %}
+            {% endwith %}
         {% endif %}
-        {% if original_terms_filter %}
-            <tr>
-                <td colspan="4">
-                    <label>
-                        <input
-                            {% if request.args.get('original_terms') %} checked="checked" {% endif %}
-                            {% if original_terms_disabled %} disabled="disabled" {% endif %}
-                            name="original_terms"
-                            type="checkbox"
-                            value="1"
-                        />
-                        {% if request.args.get('original_terms') and original_terms_disabled %}
-                            <input type="hidden" name="original_terms" value="1"/>
-                        {% endif %}
-                        Show significances as they were submitted (without aggregation into standard terms)
-                    </label>
-                </td>
-            </tr>
+        {% if review_status2_label %}
+            {% with %}
+                {% set label = review_status2_label %}
+                {% set name = 'min_stars2' %}
+                {% include 'include/min-stars-filter.html' %}
+            {% endwith %}
         {% endif %}
+    </tr>
+    <tr>
+        {% if method1_label %}
+            {% with %}
+                {% set label = method1_label %}
+                {% set name = 'method1' %}
+                {% include 'include/method-filter.html' %}
+            {% endwith %}
+        {% endif %}
+        {% if method2_label %}
+            {% with %}
+                {% set label = method2_label %}
+                {% set name = 'method2' %}
+                {% include 'include/method-filter.html' %}
+            {% endwith %}
+        {% endif %}
+    </tr>
+    {% if min_conflict_level_filter %}
         <tr>
-            <td colspan="4"><input type="submit" value="Apply filters"/></td>
+            <td>Minimum conflict level:</td>
+            <td colspan="3">
+                <select name="min_conflict_level">
+                    <option></option>
+                    <option {% if request.args.get('min_conflict_level') == '1' %}selected="selected"{% endif %} value="1">
+                        synonymous terms (e.g. benign vs non-pathogenic)
+                    </option>
+                    <option {% if request.args.get('min_conflict_level') == '2' %}selected="selected"{% endif %} value="2">
+                        confidence difference (e.g. benign vs likely benign)
+                    </option>
+                    <option {% if request.args.get('min_conflict_level') == '3' %}selected="selected"{% endif %} value="3">
+                        benign or likely benign vs uncertain significance
+                    </option>
+                    <option {% if request.args.get('min_conflict_level') == '4' %}selected="selected"{% endif %} value="4">
+                        category difference (e.g. benign vs affects)
+                    </option>
+                    <option {% if request.args.get('min_conflict_level') == '5' %}selected="selected"{% endif %} value="5">
+                        clinically significant difference (e.g. benign vs pathogenic)
+                    </option>
+                </select>
+            </td>
         </tr>
-    </table>
-</form>
+    {% endif %}
+    {% if original_terms_filter %}
+        <tr>
+            <td colspan="4">
+                <label>
+                    <input
+                        {% if request.args.get('original_terms') %} checked="checked" {% endif %}
+                        {% if original_terms_disabled %} disabled="disabled" {% endif %}
+                        name="original_terms"
+                        type="checkbox"
+                        value="1"
+                    />
+                    {% if request.args.get('original_terms') and original_terms_disabled %}
+                        <input type="hidden" name="original_terms" value="1"/>
+                    {% endif %}
+                    Show significances as they were submitted (without aggregation into standard terms)
+                </label>
+            </td>
+        </tr>
+    {% endif %}
+    <tr>
+        <td colspan="4"><input type="submit" value="Apply filters"/></td>
+    </tr>
+</table>

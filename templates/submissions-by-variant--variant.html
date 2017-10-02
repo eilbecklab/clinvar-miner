@@ -11,7 +11,7 @@
         {% set review_status1_label = 'Minimum review status' %}
         {% set method1_label = 'Collection method' %}
         {% set min_conflict_level_filter = True %}
-        {% include 'include/filter.html' %}
+        {% include 'include/filter-form.html' %}
     {% endwith %}
     <p>Total submissions: {{ submissions|length }}</p>
     {% if submissions %}

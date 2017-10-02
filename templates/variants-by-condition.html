@@ -1,35 +1,53 @@
 {% extends 'extend/skin.html' %}
 {% set title = 'Variants by condition' %}
 {% block content %}
-    {% with %}
-        {% set review_status1_label = 'Minimum submission review status' %}
-        {% set method1_label = 'Collection method' %}
-        {% set min_conflict_level_filter = True %}
-        {% include 'include/filter.html' %}
-    {% endwith %}
-    <p>Total conditions: {{ total_variants_by_condition|length }}</p>
-    {% if total_variants_by_condition %}
-        <table class="simple-numeric sortable table">
-            <thead>
-                <tr>
-                    <th>Condition</th>
-                    <th class="desc">Variants</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in total_variants_by_condition %}
-                    <tr>
-                        <td>
-                            {{ condition_link(row['condition_db'], row['condition_id'], row['condition_name'])|safe }}
-                        </td>
-                        <td>
-                            <a href="variants-by-condition/{{ row['condition_name']|superescaped }}{{ request|querysuffix }}">
-                                {{ row['count'] }}
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
+    <form action="" autocomplete="off">
+        {% with %}
+            {% set review_status1_label = 'Minimum submission review status' %}
+            {% set method1_label = 'Collection method' %}
+            {% set min_conflict_level_filter = True %}
+            {% include 'include/filter.html' %}
+        {% endwith %}
+        <table class="totals">
+            <tr>
+                <td>Total conditions: {{ total_variants_by_condition|length }}</td>
+                <td>Total variants: {{ total_variants }}</td>
+            </tr>
         </table>
-    {% endif %}
+        {% if total_variants %}
+            <table class="simple-numeric sortable table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Condition</th>
+                        <th class="desc">Variants</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in total_variants_by_condition %}
+                        <tr>
+                            <td>
+                                <input
+                                    {% if row['condition_name']|string in request.args.getlist('conditions') %}
+                                        checked="checked"
+                                    {% endif %}
+                                    name="conditions"
+                                    type="checkbox"
+                                    value="{{ row['condition_name'] }}"
+                                />
+                            </td>
+                            <td>
+                                {{ condition_link(row['condition_db'], row['condition_id'], row['condition_name'])|safe }}
+                            </td>
+                            <td>
+                                <a href="variants-by-condition/{{ row['condition_name']|superescaped }}{{ request|querysuffix }}">
+                                    {{ row['count'] }}
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </form>
 {% endblock %}
