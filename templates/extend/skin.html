@@ -47,7 +47,7 @@
                     /* the default class names are backwards */
                     cssAsc: 'desc',
                     cssDesc: 'asc',
-                    headers: {0: {sorter: !!$(this).find('th')[0].textContent}},
+                    headers: {0: {sorter: !$(this).hasClass('filterable')}},
                 });
             });
         </script>

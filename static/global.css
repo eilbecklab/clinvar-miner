@@ -24,6 +24,10 @@
     padding-right: 1.1em;
 }
 
+.filterable td:first-child {
+    text-align: center;
+}
+
 .internal {
     display: none;
 }
@@ -46,14 +50,6 @@
 
 .simple-numeric {
     width: auto;
-}
-
-.simple-numeric input[type=checkbox] {
-    visibility: hidden;
-}
-
-.simple-numeric td:hover input[type=checkbox], .simple-numeric input[type=checkbox]:checked {
-    visibility: visible;
 }
 
 .simple-numeric td:last-child {
