@@ -433,19 +433,46 @@ def conflicting_variants_by_condition():
 
     return render_template(
         'conflicting-variants-by-condition.html',
+        overview=get_conflict_overview(
+            db.total_conflicting_variants_by_conflict_level(
+                min_stars1=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                min_stars2=int_arg('min_stars2'),
+                standardized_method2=request.args.get('method2'),
+                condition1_name=list_arg('conditions'),
+            ),
+        ),
+        total_variants=db.total_variants(
+            min_stars1=int_arg('min_stars1'),
+            standardized_method1=request.args.get('method1'),
+            min_stars2=int_arg('min_stars2'),
+            standardized_method2=request.args.get('method2'),
+            condition1_name=list_arg('conditions'),
+        ),
+        total_conflicting_variants=db.total_variants(
+            min_stars1=int_arg('min_stars1'),
+            standardized_method1=request.args.get('method1'),
+            min_stars2=int_arg('min_stars2'),
+            standardized_method2=request.args.get('method2'),
+            min_conflict_level=1,
+            condition1_name=list_arg('conditions'),
+        ),
         summary=get_conflict_summary_by_condition(
             db.total_variants_by_condition(
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
+                condition_names=list_arg('conditions'),
             ),
             db.total_variants_by_condition(
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
                 min_conflict_level=1,
+                condition_names=list_arg('conditions'),
             ),
             db.total_conflicting_variants_by_condition_and_conflict_level(
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
+                condition_names=list_arg('conditions'),
             ),
         ),
     )
@@ -459,12 +486,37 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
     if not gene:
         return render_template(
             'conflicting-variants-by-gene.html',
+            overview=get_conflict_overview(
+                db.total_conflicting_variants_by_conflict_level(
+                    min_stars1=int_arg('min_stars1'),
+                    standardized_method1=request.args.get('method1'),
+                    min_stars2=int_arg('min_stars2'),
+                    standardized_method2=request.args.get('method2'),
+                    gene=list_arg('genes'),
+                ),
+            ),
+            total_variants=db.total_variants(
+                min_stars1=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                min_stars2=int_arg('min_stars2'),
+                standardized_method2=request.args.get('method2'),
+                gene=list_arg('genes'),
+            ),
+            total_conflicting_variants=db.total_variants(
+                min_stars1=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                min_stars2=int_arg('min_stars2'),
+                standardized_method2=request.args.get('method2'),
+                min_conflict_level=1,
+                gene=list_arg('genes'),
+            ),
             summary=get_conflict_summary_by_gene(
                 db.total_variants_by_gene(
                     min_stars1=int_arg('min_stars1'),
                     standardized_method1=request.args.get('method1'),
                     min_stars2=int_arg('min_stars2'),
                     standardized_method2=request.args.get('method2'),
+                    genes=list_arg('genes'),
                 ),
                 db.total_variants_by_gene(
                     min_stars1=int_arg('min_stars1'),
@@ -472,12 +524,14 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
                     min_stars2=int_arg('min_stars2'),
                     standardized_method2=request.args.get('method2'),
                     min_conflict_level=1,
+                    genes=list_arg('genes'),
                 ),
                 db.total_conflicting_variants_by_gene_and_conflict_level(
                     min_stars1=int_arg('min_stars1'),
                     standardized_method1=request.args.get('method1'),
                     min_stars2=int_arg('min_stars2'),
                     standardized_method2=request.args.get('method2'),
+                    genes=list_arg('genes'),
                 ),
             ),
         )
@@ -623,12 +677,37 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
     if submitter1_id == None:
         return render_template(
             'conflicting-variants-by-submitter.html',
+            overview=get_conflict_overview(
+                db.total_conflicting_variants_by_conflict_level(
+                    min_stars1=int_arg('min_stars1'),
+                    standardized_method1=request.args.get('method1'),
+                    min_stars2=int_arg('min_stars2'),
+                    standardized_method2=request.args.get('method2'),
+                    submitter1_id=list_arg('submitters'),
+                ),
+            ),
+            total_variants=db.total_variants(
+                min_stars1=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                min_stars2=int_arg('min_stars2'),
+                standardized_method2=request.args.get('method2'),
+                submitter1_id=list_arg('submitters'),
+            ),
+            total_conflicting_variants=db.total_variants(
+                min_stars1=int_arg('min_stars1'),
+                standardized_method1=request.args.get('method1'),
+                min_stars2=int_arg('min_stars2'),
+                standardized_method2=request.args.get('method2'),
+                min_conflict_level=1,
+                submitter1_id=list_arg('submitters'),
+            ),
             summary=get_conflict_summary_by_submitter(
                 db.total_variants_by_submitter(
                     min_stars1=int_arg('min_stars1'),
                     standardized_method1=request.args.get('method1'),
                     min_stars2=int_arg('min_stars2'),
                     standardized_method2=request.args.get('method2'),
+                    submitter_ids=list_arg('submitters'),
                 ),
                 db.total_variants_by_submitter(
                     min_stars1=int_arg('min_stars1'),
@@ -636,12 +715,14 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
                     min_stars2=int_arg('min_stars2'),
                     standardized_method2=request.args.get('method2'),
                     min_conflict_level=1,
+                    submitter_ids=list_arg('submitters'),
                 ),
                 db.total_conflicting_variants_by_submitter_and_conflict_level(
                     min_stars1=int_arg('min_stars1'),
                     standardized_method1=request.args.get('method1'),
                     min_stars2=int_arg('min_stars2'),
                     standardized_method2=request.args.get('method2'),
+                    submitter_ids=list_arg('submitters'),
                 ),
             ),
         )

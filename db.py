@@ -133,7 +133,8 @@ class DB():
             ''', [submitter_id])
         )[0][0]
 
-    def total_conflicting_variants_by_condition_and_conflict_level(self, min_stars = 0, standardized_method = None):
+    def total_conflicting_variants_by_condition_and_conflict_level(self, min_stars = 0, standardized_method = None,
+                                                                   condition_names = None):
         self.query = '''
             SELECT
                 condition1_db AS condition_db,
@@ -153,13 +154,16 @@ class DB():
             self.and_equals('standardized_method1', standardized_method)
             self.and_equals('standardized_method2', standardized_method)
 
+        if condition_names:
+            self.and_equals('condition_name', condition_names)
+
         self.query += ' GROUP BY condition_name, conflict_level'
 
         return list(map(dict, self.cursor.execute(self.query, self.parameters)))
 
-    def total_conflicting_variants_by_conflict_level(self, gene = None, submitter1_id = None, submitter2_id = None,
-                                                     min_stars1 = 0, min_stars2 = 0, standardized_method1 = None,
-                                                     standardized_method2 = None):
+    def total_conflicting_variants_by_conflict_level(self, gene = None, condition1_name = None, submitter1_id = None,
+                                                     submitter2_id = None, min_stars1 = 0, min_stars2 = 0,
+                                                     standardized_method1 = None, standardized_method2 = None):
         self.query = '''
             SELECT conflict_level, COUNT(DISTINCT variant_name) AS count FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=1
@@ -172,6 +176,9 @@ class DB():
 
         if gene:
             self.and_equals('gene', gene)
+
+        if condition1_name:
+            self.and_equals('condition1_name', condition1_name)
 
         if submitter1_id:
             self.and_equals('submitter1_id', submitter1_id)
@@ -190,7 +197,8 @@ class DB():
         return self.rows()
 
     def total_conflicting_variants_by_gene_and_conflict_level(self, min_stars1 = 0, min_stars2 = 0,
-                                                              standardized_method1 = None, standardized_method2 = None):
+                                                              standardized_method1 = None, standardized_method2 = None,
+                                                              genes = None):
         self.query = '''
             SELECT gene, conflict_level, COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
@@ -207,6 +215,9 @@ class DB():
 
         if standardized_method2:
             self.and_equals('standardized_method2', standardized_method2)
+
+        if genes:
+            self.and_equals('gene', genes)
 
         self.query += ' GROUP BY gene, conflict_level'
 
@@ -255,7 +266,7 @@ class DB():
 
     def total_conflicting_variants_by_submitter_and_conflict_level(self, submitter1_id = None, min_stars1 = 0,
                                                                    min_stars2 = 0, standardized_method1 = None,
-                                                                   standardized_method2 = None):
+                                                                   standardized_method2 = None, submitter_ids = None):
 
         if submitter1_id:
             self.query = 'SELECT submitter2_id AS submitter_id'
@@ -281,6 +292,9 @@ class DB():
 
         if standardized_method2:
             self.and_equals('standardized_method2', standardized_method2)
+
+        if submitter_ids:
+            self.and_equals('submitter_id', submitter_ids)
 
         self.query += ' GROUP BY submitter_id, conflict_level'
 

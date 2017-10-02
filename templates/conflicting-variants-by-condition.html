@@ -1,42 +1,57 @@
 {% extends 'extend/skin.html' %}
 {% set title = 'Conflicting variants by condition' %}
 {% block content %}
-    {% with %}
-        {% set review_status1_label = 'Minimum review status' %}
-        {% set method1_label = 'Collection method' %}
-        {% include 'include/filter-form.html' %}
-    {% endwith %}
-    {% include 'include/conflict-counting-note.html' %}
-    <p>Total conditions with conflicts: {{ summary|length }}</p>
-    {% if summary %}
-        <table class="sortable summary table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Condition</th>
-                    <th>Variants with no conflict</th>
-                    <th>Variants with a synonymous conflict<br/>(e.g. benign vs non-pathogenic)</th>
-                    <th>Variants with a confidence conflict<br/>(e.g. benign vs likely benign)</th>
-                    <th>Variants with a benign vs uncertain conflict</th>
-                    <th>Variants with a category conflict<br/>(e.g. benign vs affects)</th>
-                    <th>Variants with a clinically significant conflict<br/>(e.g. benign vs pathogenic)</th>
-                    <th class="desc">Variants with any kind of conflict</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for condition_name, condition_summary in summary.items() %}
+    <form action="" autocomplete="off">
+        {% with %}
+            {% set review_status1_label = 'Minimum review status' %}
+            {% set method1_label = 'Collection method' %}
+            {% include 'include/filter.html' %}
+        {% endwith %}
+        {% include 'include/conflict-overview.html' %}
+        <p>Total conditions with conflicts: {{ summary|length }}</p>
+        {% if summary %}
+            <table class="filterable sortable summary table table-bordered table-striped">
+                <thead>
                     <tr>
-                        <th>{{ condition_link(condition_summary['db'], condition_summary['id'], condition_name)|safe }}</th>
-                        {% for i in range(0, 6) %}
-                            {% if i in condition_summary %}
-                                <td class="highlight">{{ condition_summary[i] }}</td>
-                            {% else %}
-                                <td>0</td>
-                            {% endif %}
-                        {% endfor %}
-                        <td class="highlight">{{ condition_summary['any_conflict'] }}</td>
+                        <th>Filter</th>
+                        <th>Condition</th>
+                        <th>Variants with no conflict</th>
+                        <th>Variants with a synonymous conflict<br/>(e.g. benign vs non-pathogenic)</th>
+                        <th>Variants with a confidence conflict<br/>(e.g. benign vs likely benign)</th>
+                        <th>Variants with a benign vs uncertain conflict</th>
+                        <th>Variants with a category conflict<br/>(e.g. benign vs affects)</th>
+                        <th>Variants with a clinically significant conflict<br/>(e.g. benign vs pathogenic)</th>
+                        <th class="desc">Variants with any kind of conflict</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+                </thead>
+                <tbody>
+                    {% for condition_name, condition_summary in summary.items() %}
+                        <tr>
+                            <td>
+                                <input
+                                    {% if condition_name in request.args.getlist('conditions') %}
+                                        checked="checked"
+                                    {% endif %}
+                                    name="conditions"
+                                    type="checkbox"
+                                    value="{{ condition_name }}"
+                                />
+                            </td>
+                            <th>
+                                {{ condition_link(condition_summary['db'], condition_summary['id'], condition_name)|safe }}
+                            </th>
+                            {% for i in range(0, 6) %}
+                                {% if i in condition_summary %}
+                                    <td class="highlight">{{ condition_summary[i] }}</td>
+                                {% else %}
+                                    <td>0</td>
+                                {% endif %}
+                            {% endfor %}
+                            <td class="highlight">{{ condition_summary['any_conflict'] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </form>
 {% endblock %}
