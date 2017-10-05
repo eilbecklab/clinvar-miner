@@ -278,11 +278,6 @@ def significance_rank(significance):
         'uncertain significance',
         'likely benign',
         'benign',
-        'risk allele',
-        'assocation',
-        'protective allele',
-        'drug response',
-        'confers sensitivity',
         'other',
         'not provided',
     ]
