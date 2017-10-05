@@ -264,7 +264,11 @@ def import_file(filename):
             t2.star_level,
             t2.standardized_method,
             CASE
-                WHEN t1.standardized_significance=t2.standardized_significance AND t1.significance!=t2.significance THEN 1
+                WHEN t1.significance=t2.significance THEN 0
+
+                WHEN t1.standardized_significance=t2.standardized_significance THEN 1
+
+                WHEN t1.standardized_significance="not provided" OR t2.standardized_significance="not provided" THEN 0
 
                 WHEN t1.standardized_significance="benign" AND t2.standardized_significance="likely benign" THEN 2
                 WHEN t1.standardized_significance="likely benign" AND t2.standardized_significance="benign" THEN 2
@@ -277,9 +281,7 @@ def import_file(filename):
                 WHEN t1.standardized_significance IN ("benign", "likely benign", "uncertain significance") AND t2.standardized_significance IN ("pathogenic", "likely pathogenic") THEN 5
                 WHEN t1.standardized_significance IN ("pathogenic", "likely pathogenic") AND t2.standardized_significance IN ("benign", "likely benign", "uncertain significance") THEN 5
 
-                WHEN t1.standardized_significance!=t2.standardized_significance THEN 4
-
-                ELSE 0
+                ELSE 4
             END AS conflict_level
         FROM submissions t1 INNER JOIN submissions t2
         ON t1.date=? AND t1.date=t2.date AND t1.variant_name=t2.variant_name
