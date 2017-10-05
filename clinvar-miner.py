@@ -136,11 +136,12 @@ def get_conflict_breakdown(total_conflicting_variants_by_significance_and_signif
     for row in total_conflicting_variants_by_significance_and_significance:
         significance1 = row['significance1']
         significance2 = row['significance2']
+        conflict_level = row['conflict_level']
         count = row['count']
 
         if not significance1 in breakdown:
             breakdown[significance1] = {}
-        breakdown[significance1][significance2] = count
+        breakdown[significance1][significance2] = {'level': conflict_level, 'count': count}
 
         submitter1_significances.add(significance1)
         submitter2_significances.add(significance2)
@@ -286,6 +287,17 @@ def significance_rank(significance):
     except ValueError:
         rank = len(significance_ranks) - 2.5 #insert after everything but "other" and "not provided"
     return rank
+
+@app.template_filter('conflictlevel')
+def conflict_level_string(conflict_level):
+    return [
+        'no conflict',
+        'synonymous conflict',
+        'confidence conflict',
+        'benign vs uncertain conflict',
+        'category conflict',
+        'clinically significant conflict',
+    ][conflict_level]
 
 @app.template_filter('extrabreaks')
 def extra_breaks(text):

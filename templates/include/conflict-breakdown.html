@@ -31,13 +31,13 @@
             <th>{{ significance1 }}</th>
             {% for significance2 in submitter2_significances %}
                 {% if significance2 in breakdown[significance1] %}
-                    <td class="highlight">
+                    <td class="highlight" title="{{ breakdown[significance1][significance2]['level']|conflictlevel }}">
                         {% if link_base %}
                             <a href="{{ link_base }}/{{ significance1|superescaped }}/{{ significance2|superescaped }}{{ request|querysuffix }}">
-                                {{ breakdown[significance1][significance2] }}
+                                {{ breakdown[significance1][significance2]['count'] }}
                             </a>
                         {% else %}
-                            {{ breakdown[significance1][significance2] }}
+                            {{ breakdown[significance1][significance2]['count'] }}
                         {% endif %}
                     </td>
                 {% else %}

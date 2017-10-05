@@ -228,7 +228,7 @@ class DB():
         else:
             self.query = 'SELECT standardized_significance1 AS significance1, standardized_significance2 AS significance2'
 
-        self.query += ', COUNT(DISTINCT variant_name) AS count FROM current_comparisons'
+        self.query += ', conflict_level, COUNT(DISTINCT variant_name) AS count FROM current_comparisons'
 
         self.query += ' WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=1'
 
