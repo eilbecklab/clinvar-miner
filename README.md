@@ -28,8 +28,8 @@
    WSGIApplicationGroup %{GLOBAL}
    ```
 
-7. To update ClinVar Miner, repeat steps 3 and 4 and run `make latest` after
-   each month's ClinVar release.
+7. To update ClinVar Miner after each month's ClinVar release, repeat steps 3
+   and 4 and then run `make latest`.
 
 ## License
 This program is free software: you can redistribute it and/or modify it under
