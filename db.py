@@ -136,12 +136,7 @@ class DB():
     def total_conflicting_variants_by_condition_and_conflict_level(self, min_stars = 0, standardized_method = None,
                                                                    condition_names = None):
         self.query = '''
-            SELECT
-                condition1_db AS condition_db,
-                condition1_id AS condition_id,
-                condition1_name AS condition_name,
-                conflict_level,
-                COUNT(DISTINCT variant_name) AS count
+            SELECT condition1_name AS condition_name, conflict_level, COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=1
         '''
@@ -434,7 +429,9 @@ class DB():
                                     condition_names = None):
         self.query = '''
             SELECT
-                condition1_db AS condition_db, condition1_id AS condition_id, condition1_name AS condition_name,
+                condition1_db AS condition_db,
+                condition1_id AS condition_id,
+                condition1_name AS condition_name,
                 COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
@@ -471,11 +468,7 @@ class DB():
     def total_variants_by_condition_and_significance(self, gene = None, submitter_id = None, min_stars = 0,
                                                      standardized_method = None, min_conflict_level = 0,
                                                      original_terms = False):
-        self.query = '''
-            SELECT
-                condition1_name AS condition_name,
-                COUNT(DISTINCT variant_name) AS count
-        '''
+        self.query = 'SELECT condition1_name AS condition_name, COUNT(DISTINCT variant_name) AS count'
 
         if original_terms:
             self.query += ', significance1 AS significance'

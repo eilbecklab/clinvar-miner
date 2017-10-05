@@ -12,7 +12,11 @@
     <tbody>
         {% for submitter_id in breakdown_by_submitter_and_significance %}
             <tr>
-                <th>{{ submitter_link(submitter_id, breakdown_by_submitter_and_significance[submitter_id]['name'])|safe }}</th>
+                <th>
+                    <a href="{{ request.base_url }}/submitter/{{ submitter_id }}{{ request|querysuffix }}">
+                        {{ breakdown_by_submitter_and_significance[submitter_id]['name'] }}
+                    </a>
+                </th>
                 {% for significance in significances %}
                     {% if significance in breakdown_by_submitter_and_significance[submitter_id]['counts'] %}
                         <td class="highlight">

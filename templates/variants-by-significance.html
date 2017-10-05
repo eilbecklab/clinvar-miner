@@ -24,7 +24,11 @@
             <tbody>
                 {% for row in total_variants_by_significance %}
                     <tr>
-                        <td>{{ row['significance'] }}</td>
+                        <td>
+                            <a href="variants-by-significance/{{ row['significance']|superescaped }}{{ request|querysuffix }}">
+                                {{ row['significance'] }}
+                            </a>
+                        </td>
                         <td>
                             <a href="variants-by-significance/{{ row['significance']|superescaped }}{{ request|querysuffix }}">
                                 {{ row['count'] }}

@@ -39,7 +39,11 @@
                                     value="{{ submitter_id }}"
                                 />
                             </td>
-                            <th>{{ submitter_link(submitter_id, submitter_summary['name'])|safe }}</th>
+                            <th>
+                                <a href="conflicting-variants-by-submitter/{{ submitter_id }}{{ request|querysuffix }}">
+                                    {{ submitter_summary['name'] }}
+                                </a>
+                            </th>
                             {% for i in range(0, 6) %}
                                 {% if i in submitter_summary %}
                                     <td class="highlight">{{ submitter_summary[i] }}</td>

@@ -23,7 +23,9 @@
             <tbody>
                 {% for row in total_submissions_by_submitter %}
                     <tr>
-                        <td>{{ submitter_link(row['submitter_id'], row['submitter_name'])|safe }}</td>
+                        <td>
+                            <a href="variants-by-submitter/{{ row['submitter_id']}}">{{ row['submitter_name'] }}</a>
+                        </td>
                         <td>
                             <a href="variants-by-submitter/{{ row['submitter_id']}}">{{ row['count'] }}</a>
                         </td>

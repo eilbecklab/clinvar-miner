@@ -23,7 +23,11 @@
             <tbody>
                 {% for row in total_variants_by_submitter %}
                     <tr>
-                        <td>{{ submitter_link(row['submitter_id'], row['submitter_name'])|safe }}</td>
+                        <td>
+                            <a href="variants-by-submitter/{{ row['submitter_id'] }}/significance/{{ significance|superescaped }}{{ request|querysuffix }}">
+                                {{ row['submitter_name'] }}
+                            </a>
+                        </td>
                         <td>
                             <a href="variants-by-submitter/{{ row['submitter_id'] }}/significance/{{ significance|superescaped }}{{ request|querysuffix }}">
                                 {{ row['count'] }}
@@ -45,7 +49,11 @@
             <tbody>
                 {% for row in total_variants_by_condition %}
                     <tr>
-                        <td>{{ condition_link(row['condition_db'], row['condition_id'], row['condition_name'])|safe }}</td>
+                        <td>
+                            <a href="variants-by-condition/{{ row['condition_name']|superescaped }}/significance/{{ significance|superescaped }}{{ request|querysuffix }}">
+                                {{ row['condition_name'] }}
+                            </a>
+                        </td>
                         <td>
                             <a href="variants-by-condition/{{ row['condition_name']|superescaped }}/significance/{{ significance|superescaped }}{{ request|querysuffix }}">
                                 {{ row['count'] }}
@@ -67,7 +75,11 @@
             <tbody>
                 {% for row in total_variants_by_gene %}
                     <tr>
-                        <td>{{ row['gene']|genelink|safe or '\u200Bintergenic' }}</td>
+                        <td>
+                            <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}/significance/{{ significance|superescaped }}{{ request|querysuffix }}">
+                                {{ row['gene'] or '\u200Bintergenic' }}
+                            </a>
+                        </td>
                         <td>
                             <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}/significance/{{ significance|superescaped }}{{ request|querysuffix }}">
                                 {{ row['count'] }}

@@ -34,7 +34,11 @@
                                     value="{{ row['gene'] }}"
                                 />
                             </td>
-                            <td>{{ row['gene']|genelink|safe or '\u200Bintergenic' }}</td>
+                            <td>
+                                <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}{{ request|querysuffix }}">
+                                    {{ row['gene'] or '\u200Bintergenic' }}
+                                </a>
+                            </td>
                             <td>
                                 <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}{{ request|querysuffix }}">
                                     {{ row['count'] }}

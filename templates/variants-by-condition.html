@@ -37,7 +37,9 @@
                                 />
                             </td>
                             <td>
-                                {{ condition_link(row['condition_db'], row['condition_id'], row['condition_name'])|safe }}
+                                <a href="variants-by-condition/{{ row['condition_name']|superescaped }}{{ request|querysuffix }}">
+                                    {{ row['condition_name'] }}
+                                </a>
                             </td>
                             <td>
                                 <a href="variants-by-condition/{{ row['condition_name']|superescaped }}{{ request|querysuffix }}">

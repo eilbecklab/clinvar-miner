@@ -36,7 +36,11 @@
             <tbody>
                 {% for submitter2_id, submitter2_summary in summary.items() %}
                     <tr>
-                        <th>{{ submitter_link(submitter2_id, submitter2_summary['name'])|safe }}</th>
+                        <th>
+                            <a href="conflicting-variants-by-submitter/{{ submitter1_info['id'] }}/{{ submitter2_id }}{{ request|querysuffix }}">
+                                {{ submitter2_summary['name'] }}
+                            </a>
+                        </th>
                         {% for i in range(0, 6) %}
                             {% if i in submitter2_summary %}
                                 <td class="highlight">{{ submitter2_summary[i] }}</td>

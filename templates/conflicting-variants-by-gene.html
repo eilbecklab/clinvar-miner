@@ -39,7 +39,11 @@
                                     value="{{ gene }}"
                                 />
                             </td>
-                            <th>{{ gene|genelink|safe or '\u200Bintergenic' }}</th>
+                            <th>
+                                <a href="conflicting-variants-by-gene/{{ gene }}{{ request|querysuffix }}">
+                                    {{ gene or '\u200Bintergenic' }}
+                                </a>
+                            </th>
                             {% for i in range(0, 6) %}
                                 {% if i in gene_summary %}
                                     <td class="highlight">{{ gene_summary[i] }}</td>

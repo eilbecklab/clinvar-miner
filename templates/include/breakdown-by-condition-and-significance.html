@@ -12,12 +12,16 @@
     <tbody>
         {% for condition_name in breakdown_by_condition_and_significance %}
             <tr>
-                <th>{{ condition_link(breakdown_by_condition_and_significance[condition_name]['db'], breakdown_by_condition_and_significance[condition_name]['id'], condition_name)|safe }}</th>
+                <th>
+                    <a href="{{ request.base_url }}/condition/{{ condition_name|superescaped }}{{ request|querysuffix }}">
+                        {{ condition_name }}
+                    </a>
+                </th>
                 {% for significance in significances %}
-                    {% if significance in breakdown_by_condition_and_significance[condition_name]['counts'] %}
+                    {% if significance in breakdown_by_condition_and_significance[condition_name] %}
                         <td class="highlight">
                             <a href="{{ request.base_url }}/condition/{{ condition_name|superescaped }}/{{ significance|superescaped }}{{ request|querysuffix }}">
-                                {{ breakdown_by_condition_and_significance[condition_name]['counts'][significance] }}
+                                {{ breakdown_by_condition_and_significance[condition_name][significance] }}
                             </a>
                         </td>
                     {% else %}
@@ -26,7 +30,7 @@
                 {% endfor %}
                 <td class="highlight">
                     <a href="{{ request.base_url }}/condition/{{ condition_name|superescaped }}{{ request|querysuffix }}">
-                        {{ breakdown_by_condition_and_significance[condition_name]['counts']['total'] }}
+                        {{ breakdown_by_condition_and_significance[condition_name]['total'] }}
                     </a>
                 </td>
             </tr>

@@ -49,21 +49,17 @@ def get_breakdown_by_condition_and_significance(total_variants_by_condition,
     significances = set()
 
     for row in total_variants_by_condition:
-        condition_db = row['condition_db']
-        condition_id = row['condition_id']
         condition_name = row['condition_name']
         count = row['count']
 
-        if not condition_name in breakdown:
-            breakdown[condition_name] = {'db': condition_db, 'id': condition_id, 'counts': {}}
-        breakdown[condition_name]['counts']['total'] = count
+        breakdown[condition_name] = {'total': count}
 
     for row in total_variants_by_condition_and_significance:
         condition_name = row['condition_name']
         significance = row['significance']
         count = row['count']
 
-        breakdown[condition_name]['counts'][significance] = count
+        breakdown[condition_name][significance] = count
         significances.add(significance)
 
     #sort alphabetically to be consistent if there are two or more unranked significance terms
@@ -83,10 +79,7 @@ def get_breakdown_by_gene_and_significance(total_variants_by_gene,
         gene = row['gene']
         count = row['count']
 
-        if not gene in breakdown:
-            breakdown[gene] = {}
-
-        breakdown[gene]['total'] = count
+        breakdown[gene] = {'total': count}
 
     for row in total_variants_by_gene_and_significance:
         gene = row['gene']
@@ -114,9 +107,10 @@ def get_breakdown_by_submitter_and_significance(total_variants_by_submitter,
         submitter_name = row['submitter_name']
         count = row['count']
 
-        if not submitter_id in breakdown:
-            breakdown[submitter_id] = {'name': submitter_name, 'counts': {}}
-        breakdown[submitter_id]['counts']['total'] = count
+        breakdown[submitter_id] = {
+            'name': submitter_name,
+            'counts': {'total': count}
+        }
 
     for row in total_variants_by_submitter_and_significance:
         submitter_id = row['submitter_id']
@@ -162,7 +156,7 @@ def get_conflict_breakdown(total_conflicting_variants_by_significance_and_signif
     return breakdown, submitter1_significances, submitter2_significances
 
 def get_conflict_summary_by_condition(total_variants_by_condition, total_conflicting_variants_by_condition,
-                                 total_conflicting_variants_by_condition_and_conflict_level):
+                                      total_conflicting_variants_by_condition_and_conflict_level):
     summary = OrderedDict()
 
     for row in total_conflicting_variants_by_condition:
@@ -195,9 +189,7 @@ def get_conflict_summary_by_gene(total_variants_by_gene, total_conflicting_varia
     for row in total_conflicting_variants_by_gene:
         gene = row['gene']
         count = row['count']
-        summary[gene] = {
-            'any_conflict': count,
-        }
+        summary[gene] = {'any_conflict': count}
 
     for row in total_variants_by_gene:
         gene = row['gene']
@@ -221,10 +213,7 @@ def get_conflict_summary_by_submitter(total_variants_by_submitter, total_conflic
         submitter_id = row['submitter_id']
         submitter_name = row['submitter_name']
         count = row['count']
-        summary[submitter_id] = {
-            'name': submitter_name,
-            'any_conflict': count,
-        }
+        summary[submitter_id] = {'name': submitter_name, 'any_conflict': count}
 
     for row in total_variants_by_submitter:
         submitter_id = row['submitter_id']

@@ -36,7 +36,11 @@
                                     value="{{ row['submitter_id'] }}"
                                 />
                             </td>
-                            <td>{{ submitter_link(row['submitter_id'], row['submitter_name'])|safe }}</td>
+                            <td>
+                                <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ request|querysuffix }}">
+                                    {{ row['submitter_name'] }}
+                                </a>
+                            </td>
                             <td>
                                 <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ request|querysuffix }}">
                                     {{ row['count'] }}
