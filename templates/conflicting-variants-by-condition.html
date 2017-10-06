@@ -42,7 +42,7 @@
                             </th>
                             {% for i in range(0, 6) %}
                                 {% if i in condition_summary %}
-                                    <td class="highlight">{{ condition_summary[i] }}</td>
+                                    <td class="level{{ i }}-conflict">{{ condition_summary[i] }}</td>
                                 {% else %}
                                     <td>0</td>
                                 {% endif %}

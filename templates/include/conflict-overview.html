@@ -18,13 +18,13 @@
     <tbody>
         <tr>
             {% if total_variants - total_conflicting_variants %}
-                <td class="highlight">{{ total_variants - total_conflicting_variants }}</td>
+                <td class="level0-conflict">{{ total_variants - total_conflicting_variants }}</td>
             {% else %}
                 <td>0</td>
             {% endif %}
             {% for i in range(1, 6) %}
                 {% if i in overview %}
-                    <td class="highlight">{{ overview[i] }}</td>
+                    <td class="level{{ i }}-conflict">{{ overview[i] }}</td>
                 {% else %}
                     <td>0</td>
                 {% endif %}

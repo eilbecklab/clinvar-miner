@@ -7,6 +7,10 @@
     background-color: lightblue !important;
 }
 
+.breakdown td a, .summary td a {
+    color: #337AFF !important;
+}
+
 .breakdown thead tr th, .summary thead tr th {
     vertical-align: top;
 }
@@ -34,6 +38,30 @@
 
 .highlight {
     background-color: #FFEEAA;
+}
+
+.level0-conflict {
+    background-color: #AAFFAA;
+}
+
+.level1-conflict {
+    background-color: #BFF7AA;
+}
+
+.level2-conflict {
+    background-color: #D1EEAA;
+}
+
+.level3-conflict {
+    background-color: #E2E6AA;
+}
+
+.level4-conflict {
+    background-color: #F1DDAA;
+}
+
+.level5-conflict {
+    background-color: #FFD4AA;
 }
 
 .panel {
