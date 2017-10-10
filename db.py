@@ -66,7 +66,7 @@ class DB():
             dict,
             self.cursor.execute('''
                 SELECT significance, MIN(date) AS first_seen, MAX(date) AS last_seen FROM submissions
-                GROUP BY significance ORDER BY first_seen DESC
+                GROUP BY significance ORDER BY last_seen DESC, first_seen DESC
             ''')
         ))
 
