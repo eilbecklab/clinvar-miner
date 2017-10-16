@@ -41,15 +41,6 @@
                 <div id="content">{% block content %}{% endblock %}</div>
             </div>
         </div>
-        <script>
-            $('table.sortable').each(function() {
-                $(this).tablesorter({
-                    /* the default class names are backwards */
-                    cssAsc: 'desc',
-                    cssDesc: 'asc',
-                    headers: $(this).hasClass('filterable') ? {0: {sorter: false}} : undefined,
-                });
-            });
-        </script>
+        <script src="static/global.js" type="application/javascript"></script>
     </body>
 </html>
