@@ -62,9 +62,9 @@ def create_tables():
         )
     ''')
 
-    cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON submissions (date)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS variant_name_index ON submissions (variant_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS significance_index ON submissions (significance)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submissions__date ON submissions (date)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submissions__variant_name ON submissions (variant_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submissions__significance ON submissions (significance)')
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS comparisons (
@@ -106,12 +106,12 @@ def create_tables():
         )
     ''')
 
-    cursor.execute('CREATE INDEX IF NOT EXISTS date_index ON comparisons (date)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS scv1_index ON comparisons (scv1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS star_level1_index ON comparisons (star_level1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS standardized_method1_index ON comparisons (standardized_method1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS star_level2_index ON comparisons (star_level2)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS conflict_level_index ON comparisons (conflict_level)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__date ON comparisons (date)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__scv1 ON comparisons (scv1)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__star_level1 ON comparisons (star_level1)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__standardized_method1 ON comparisons (standardized_method1)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__star_level2 ON comparisons (star_level2)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__conflict_level ON comparisons (conflict_level)')
 
 def import_file(filename):
     matches = re.fullmatch(r'ClinVarFullRelease_(\d\d\d\d-\d\d).xml', basename(filename))
