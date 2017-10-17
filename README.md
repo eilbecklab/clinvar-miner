@@ -26,6 +26,8 @@
    WSGIProcessGroup wsgi
    WSGIScriptAlias /clinvar-miner /var/www/clinvar-miner/clinvar-miner.wsgi
    WSGIApplicationGroup %{GLOBAL}
+   LimitRequestLine 1000000
+   LimitRequestFieldSize 1000000
    ```
 
 7. To update ClinVar Miner after each month's ClinVar release, repeat steps 3

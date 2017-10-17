@@ -9,8 +9,17 @@ class DB():
 
     def and_equals(self, column, value):
         if type(value) == list:
-            self.query += ' AND ' + column + ' IN (' + ','.join([':' + column + str(i) for i in range(0, len(value))]) + ')'
-            self.parameters.update([(column + str(i), value[i]) for i in range(0, len(value))])
+            if not value:
+                return
+            db_types = {
+                int: 'INTEGER',
+                str: 'TEXT',
+            }
+            self.cursor.execute('DROP TABLE IF EXISTS ' + column) #the same connection may perform multiple queries
+            self.cursor.execute('CREATE TEMP TABLE ' + column + ' (value ' + db_types[type(value[0])] + ')')
+            self.cursor.execute('CREATE INDEX ' + column + '__value ON ' + column + ' (value)')
+            self.cursor.executemany('INSERT INTO ' + column + ' VALUES (?)', map(lambda value: [value], value))
+            self.query += ' AND ' + column + ' IN (SELECT value FROM ' + column + ')'
         else:
             self.query += ' AND ' + column + '=:' + column
             self.parameters[column] = value
