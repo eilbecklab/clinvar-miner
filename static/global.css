@@ -29,7 +29,11 @@
 }
 
 .filterable td:first-child {
-    text-align: center;
+    text-align: center !important;
+}
+
+.filterable td:nth-child(2) {
+    text-align: left;
 }
 
 .internal {
@@ -80,7 +84,11 @@
     width: auto;
 }
 
-.simple-numeric td:last-child {
+.simple-numeric td:first-child {
+    text-align: left;
+}
+
+.simple-numeric td {
     text-align: right;
 }
 

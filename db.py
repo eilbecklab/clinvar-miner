@@ -441,6 +441,8 @@ class DB():
                 condition1_db AS condition_db,
                 condition1_id AS condition_id,
                 condition1_name AS condition_name,
+                COUNT(DISTINCT gene) AS gene_count,
+                COUNT(DISTINCT submitter1_id) AS submitter_count,
                 COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
@@ -511,7 +513,12 @@ class DB():
                                min_stars2 = 0, standardized_method1 = None, standardized_method2 = None,
                                min_conflict_level = 0, original_terms = False, genes = None):
         self.query = '''
-            SELECT gene, COUNT(DISTINCT variant_name) AS count FROM current_comparisons
+            SELECT
+                gene,
+                COUNT(DISTINCT condition1_name) AS condition_count,
+                COUNT(DISTINCT submitter1_id) AS submitter_count,
+                COUNT(DISTINCT variant_name) AS count
+            FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
@@ -590,6 +597,9 @@ class DB():
             self.query += ', standardized_significance1 AS significance'
 
         self.query += '''
+            , COUNT(DISTINCT gene) AS gene_count
+            , COUNT(DISTINCT condition1_name) AS condition_count
+            , COUNT(DISTINCT submitter1_id) AS submitter_count
             FROM current_comparisons
             WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
@@ -626,6 +636,8 @@ class DB():
             self.query = 'SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name'
 
         self.query += '''
+            , COUNT(DISTINCT gene) AS gene_count
+            , COUNT(DISTINCT condition1_name) AS condition_count
             , COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level

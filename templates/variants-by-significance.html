@@ -19,6 +19,9 @@
                 <tr>
                     <th>Submission significance</th>
                     <th class="desc">Variants</th>
+                    <th>Genes</th>
+                    <th>Conditions</th>
+                    <th>Submitters</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,6 +35,21 @@
                         <td>
                             <a href="variants-by-significance/{{ row['significance']|superescaped }}{{ request|querysuffix }}">
                                 {{ row['count'] }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="variants-by-significance/{{ row['significance']|superescaped }}{{ request|querysuffix }}#breakdown-by-gene">
+                                {{ row['gene_count'] }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="variants-by-significance/{{ row['significance']|superescaped }}{{ request|querysuffix }}#breakdown-by-condition">
+                                {{ row['condition_count'] }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="variants-by-significance/{{ row['significance']|superescaped }}{{ request|querysuffix }}#breakdown-by-submitter">
+                                {{ row['submitter_count'] }}
                             </a>
                         </td>
                     </tr>

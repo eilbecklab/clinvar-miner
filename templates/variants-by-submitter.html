@@ -21,6 +21,8 @@
                         <th>Filter</th>
                         <th>Submitter</th>
                         <th class="desc">Variants</th>
+                        <th>Genes</th>
+                        <th>Conditions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -44,6 +46,16 @@
                             <td>
                                 <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ request|querysuffix }}">
                                     {{ row['count'] }}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ request|querysuffix }}#gene-and-significance-breakdown">
+                                    {{ row['gene_count'] }}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ request|querysuffix }}#condition-and-significance-breakdown">
+                                    {{ row['condition_count'] }}
                                 </a>
                             </td>
                         </tr>
