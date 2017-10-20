@@ -79,7 +79,7 @@ class DB():
             ''')
         ))
 
-    def submissions(self, variant_name = None, min_stars = 0, standardized_method = None, min_conflict_level = 0):
+    def submissions(self, variant_name = None, min_stars = 0, standardized_method = None, min_conflict_level = -1):
         self.query = '''
             SELECT
                 variant_name,
@@ -313,7 +313,7 @@ class DB():
     def total_submissions(self):
         return list(self.cursor.execute('SELECT COUNT(*) FROM current_submissions'))[0][0]
 
-    def total_submissions_by_country(self, min_stars = 0, standardized_method = None, min_conflict_level = 0):
+    def total_submissions_by_country(self, min_stars = 0, standardized_method = None, min_conflict_level = -1):
         self.query = '''
             SELECT
                 submitter1_country_code AS country_code,
@@ -336,7 +336,7 @@ class DB():
 
         return self.rows()
 
-    def total_submissions_by_method(self, min_stars = 0, min_conflict_level = 0):
+    def total_submissions_by_method(self, min_stars = 0, min_conflict_level = -1):
         return list(map(
             dict,
             self.cursor.execute(
@@ -353,7 +353,7 @@ class DB():
             )
         ))
 
-    def total_submissions_by_standardized_method_over_time(self, min_stars = 0, min_conflict_level = 0):
+    def total_submissions_by_standardized_method_over_time(self, min_stars = 0, min_conflict_level = -1):
         return list(map(
             dict,
             self.cursor.execute(
@@ -371,7 +371,7 @@ class DB():
         ))
 
     def total_submissions_by_submitter(self, country_code = None, min_stars = 0, standardized_method = None,
-                                       min_conflict_level = 0):
+                                       min_conflict_level = -1):
         self.query = '''
             SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name, COUNT(DISTINCT scv1) AS count
             FROM current_comparisons
@@ -395,7 +395,7 @@ class DB():
 
     def total_variants(self, gene = None, condition1_name = None, submitter1_id = None, submitter2_id = None,
                        significance1 = None, min_stars1 = 0, min_stars2 = 0, standardized_method1 = None,
-                       standardized_method2 = None, min_conflict_level = 0, original_terms = False):
+                       standardized_method2 = None, min_conflict_level = -1, original_terms = False):
         self.query = '''
             SELECT COUNT(DISTINCT variant_name) FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
@@ -434,7 +434,7 @@ class DB():
         return self.value()
 
     def total_variants_by_condition(self, gene = None, significance1 = None, submitter1_id = 0, min_stars = 0,
-                                    standardized_method = None, min_conflict_level = 0, original_terms = False,
+                                    standardized_method = None, min_conflict_level = -1, original_terms = False,
                                     condition_names = None):
         self.query = '''
             SELECT
@@ -477,7 +477,7 @@ class DB():
         return list(map(dict, self.cursor.execute(self.query, self.parameters)))
 
     def total_variants_by_condition_and_significance(self, gene = None, submitter_id = None, min_stars = 0,
-                                                     standardized_method = None, min_conflict_level = 0,
+                                                     standardized_method = None, min_conflict_level = -1,
                                                      original_terms = False):
         self.query = 'SELECT condition1_name AS condition_name, COUNT(DISTINCT variant_name) AS count'
 
@@ -511,7 +511,7 @@ class DB():
 
     def total_variants_by_gene(self, condition1_name = None, submitter1_id = 0, significance1 = None, min_stars1 = 0,
                                min_stars2 = 0, standardized_method1 = None, standardized_method2 = None,
-                               min_conflict_level = 0, original_terms = False, genes = None):
+                               min_conflict_level = -1, original_terms = False, genes = None):
         self.query = '''
             SELECT
                 gene,
@@ -554,7 +554,7 @@ class DB():
         return self.rows()
 
     def total_variants_by_gene_and_significance(self, condition_name = None, submitter_id = None, min_stars = 0,
-                                                standardized_method = None, min_conflict_level = 0,
+                                                standardized_method = None, min_conflict_level = -1,
                                                 original_terms = False):
         self.query = 'SELECT gene, COUNT(DISTINCT variant_name) AS count'
 
@@ -588,7 +588,7 @@ class DB():
         return self.rows()
 
     def total_variants_by_significance(self, gene = None, condition_name = None, submitter_id = None, min_stars = 0,
-                                       standardized_method = None, min_conflict_level = 0, original_terms = False):
+                                       standardized_method = None, min_conflict_level = -1, original_terms = False):
         self.query = 'SELECT COUNT(DISTINCT variant_name) AS count'
 
         if original_terms:
@@ -628,7 +628,7 @@ class DB():
 
     def total_variants_by_submitter(self, gene = None, condition1_name = None, submitter1_id = None,
                                     significance1 = None, min_stars1 = 0, min_stars2 = 0, standardized_method1 = None,
-                                    standardized_method2 = None, min_conflict_level = 0, original_terms = False,
+                                    standardized_method2 = None, min_conflict_level = -1, original_terms = False,
                                     submitter_ids = None):
         if submitter1_id:
             self.query = 'SELECT submitter2_id AS submitter_id, submitter2_name AS submitter_name'
@@ -678,7 +678,7 @@ class DB():
         return self.rows()
 
     def total_variants_by_submitter_and_significance(self, gene = None, condition_name = None, min_stars = 0,
-                                                     standardized_method = None, min_conflict_level = 0,
+                                                     standardized_method = None, min_conflict_level = -1,
                                                      original_terms = False):
         self.query = 'SELECT submitter1_id AS submitter_id, COUNT(DISTINCT variant_name) AS count'
 

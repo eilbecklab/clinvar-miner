@@ -262,7 +262,7 @@ def get_significance_overview(total_variants_by_significance):
 
     return overview
 
-def int_arg(name, default = 0):
+def int_arg(name, default = -1):
     arg = request.args.get(name)
     try:
         return int(arg) if arg else default

@@ -1,15 +1,16 @@
 <p>
     If a variant has more than two submissions, it may have multiple conflicts and therefore be counted in more than one
-    conflict column. If this is the case, the total number of variants (i.e. the sum of the "Variants with no conflict"
-    and "Variants with any kind of conflict" cells) will be less than the sum of the middle cells.
+    conflict column. If this is the case, the total number of variants that have at least two submissions (i.e. the sum
+    of the "Variants with no conflicts" and "Variants with any kind of conflict" cells) will
+    be less than the sum of the middle cells.
 </p>
 <table class="breakdown table table-bordered table-striped">
     <thead>
         <tr>
-            <th>Variants with no conflict</th>
+            <th>Variants with no conflicts</th>
             <th>Variants with a synonymous conflict<br/>(e.g. benign vs non-pathogenic)</th>
             <th>Variants with a confidence conflict<br/>(e.g. benign vs likely benign)</th>
-            <th>Variants with a benign vs uncertain conflict</th>
+            <th>Variants with a benign or likely benign vs uncertain conflict</th>
             <th>Variants with a category conflict<br/>(e.g. benign vs affects)</th>
             <th>Variants with a clinically significant conflict<br/>(e.g. benign vs pathogenic)</th>
             <th>Variants with any kind of conflict</th>

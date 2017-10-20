@@ -264,6 +264,8 @@ def import_file(filename):
             t2.star_level,
             t2.standardized_method,
             CASE
+                WHEN t1.scv=t2.scv THEN -1
+
                 WHEN t1.significance=t2.significance THEN 0
 
                 WHEN t1.standardized_significance=t2.standardized_significance THEN 1
