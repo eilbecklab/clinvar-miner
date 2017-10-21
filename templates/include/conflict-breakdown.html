@@ -36,7 +36,7 @@
                         title="{{ breakdown[significance1][significance2]['level']|conflictlevel }}"
                     />
                         {% if link_base %}
-                            <a href="{{ link_base }}/{{ significance1|superescaped }}/{{ significance2|superescaped }}{{ request|querysuffix }}">
+                            <a href="{{ link_base }}/{{ significance1|superescaped }}/{{ significance2|superescaped }}{{ query_suffix('original_terms') }}">
                                 {{ breakdown[significance1][significance2]['count'] }}
                             </a>
                         {% else %}

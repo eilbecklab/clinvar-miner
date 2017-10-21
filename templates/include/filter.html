@@ -1,12 +1,10 @@
 <table class="table" style="width:auto">
     <tr>
-        {% if review_status1_label %}
-            {% with %}
-                {% set label = review_status1_label %}
-                {% set name = 'min_stars1' %}
-                {% include 'include/min-stars-filter.html' %}
-            {% endwith %}
-        {% endif %}
+        {% with %}
+            {% set label = review_status1_label %}
+            {% set name = 'min_stars1' %}
+            {% include 'include/min-stars-filter.html' %}
+        {% endwith %}
         {% if review_status2_label %}
             {% with %}
                 {% set label = review_status2_label %}

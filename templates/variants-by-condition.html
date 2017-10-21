@@ -39,22 +39,22 @@
                                 />
                             </td>
                             <td>
-                                <a href="variants-by-condition/{{ row['condition_name']|superescaped }}{{ request|querysuffix }}">
+                                <a href="variants-by-condition/{{ row['condition_name']|superescaped }}{{ query_suffix('min_conflict_level') }}">
                                     {{ row['condition_name'] }}
                                 </a>
                             </td>
                             <td>
-                                <a href="variants-by-condition/{{ row['condition_name']|superescaped }}{{ request|querysuffix }}">
+                                <a href="variants-by-condition/{{ row['condition_name']|superescaped }}{{ query_suffix('min_conflict_level') }}">
                                     {{ row['count'] }}
                                 </a>
                             </td>
                             <td>
-                                <a href="variants-by-condition/{{ row['condition_name']|superescaped }}{{ request|querysuffix }}#gene-and-significance-breakdown">
+                                <a href="variants-by-condition/{{ row['condition_name']|superescaped }}{{ query_suffix('min_conflict_level') }}#gene-and-significance-breakdown">
                                     {{ row['gene_count'] }}
                                 </a>
                             </td>
                             <td>
-                                <a href="variants-by-condition/{{ row['condition_name']|superescaped }}{{ request|querysuffix }}#submitter-and-significance-breakdown">
+                                <a href="variants-by-condition/{{ row['condition_name']|superescaped }}{{ query_suffix('min_conflict_level') }}#submitter-and-significance-breakdown">
                                     {{ row['submitter_count'] }}
                                 </a>
                             </td>

@@ -50,7 +50,7 @@
                 {% for row in total_submissions_by_country %}
                     <tr>
                         <td>
-                            <a href="total-submissions-by-country/{{ row['country_code'] }}{{ request|querysuffix }}">
+                            <a href="total-submissions-by-country/{{ row['country_code'] }}{{ query_suffix('min_conflict_level') }}">
                                 {{ row['country_name'] or '\u200B' }}
                             </a>
                         </td>

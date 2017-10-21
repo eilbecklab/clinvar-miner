@@ -24,10 +24,10 @@
                 {% for row in total_submissions_by_submitter %}
                     <tr>
                         <td>
-                            <a href="variants-by-submitter/{{ row['submitter_id']}}">{{ row['submitter_name'] }}</a>
+                            <a href="variants-by-submitter/{{ row['submitter_id']}}{{ query_suffix('min_conflict_level') }}">{{ row['submitter_name'] }}</a>
                         </td>
                         <td>
-                            <a href="variants-by-submitter/{{ row['submitter_id']}}">{{ row['count'] }}</a>
+                            <a href="variants-by-submitter/{{ row['submitter_id']}}{{ query_suffix('min_conflict_level') }}">{{ row['count'] }}</a>
                         </td>
                     </tr>
                 {% endfor %}

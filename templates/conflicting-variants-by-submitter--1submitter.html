@@ -35,7 +35,7 @@
                 {% for submitter2_id, submitter2_summary in summary.items() %}
                     <tr>
                         <th>
-                            <a href="conflicting-variants-by-submitter/{{ submitter1_info['id'] }}/{{ submitter2_id }}{{ request|querysuffix }}">
+                            <a href="conflicting-variants-by-submitter/{{ submitter1_info['id'] }}/{{ submitter2_id }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
                                 {{ submitter2_summary['name'] }}
                             </a>
                         </th>
@@ -59,7 +59,7 @@
                             {% endif %}
                         {% endfor %}
                         <td class="highlight">
-                            <a href="conflicting-variants-by-submitter/{{ submitter1_info['id'] }}/{{ submitter2_id }}{{ request|querysuffix }}">
+                            <a href="conflicting-variants-by-submitter/{{ submitter1_info['id'] }}/{{ submitter2_id }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
                                 {{ submitter2_summary['any_conflict'] }}
                             </a>
                         </td>

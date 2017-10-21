@@ -38,7 +38,7 @@
                                 />
                             </td>
                             <th>
-                                <a href="conflicting-variants-by-gene/{{ gene }}{{ request|querysuffix }}">
+                                <a href="conflicting-variants-by-gene/{{ gene }}{{ query_suffix('min_conflict_level') }}">
                                     {{ gene or '\u200Bintergenic' }}
                                 </a>
                             </th>
@@ -62,7 +62,7 @@
                                 {% endif %}
                             {% endfor %}
                             <td class="highlight">
-                                <a href="conflicting-variants-by-gene/{{ gene }}{{ request|querysuffix }}">
+                                <a href="conflicting-variants-by-gene/{{ gene }}{{ query_suffix('min_conflict_level') }}">
                                     {{ gene_summary['any_conflict'] }}
                                 </a>
                             </td>

@@ -16,7 +16,7 @@
             {% for significance, count in overview.items() %}
                 {% if count %}
                     <td class="highlight">
-                        <a href="{{ request.base_url }}/significance/{{ significance|superescaped }}{{ request|querysuffix }}">
+                        <a href="{{ request.base_url }}/significance/{{ significance|superescaped }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
                             {{ count }}
                         </a>
                     </td>
@@ -26,7 +26,7 @@
             {% endfor %}
             {% if total_variants %}
                 <td class="highlight">
-                    <a href="{{ request.base_url }}/significance/any{{ request|querysuffix }}">
+                    <a href="{{ request.base_url }}/significance/any{{ query_suffix('min_conflict_level') }}">
                         {{ total_variants }}
                     </a>
                 </td>

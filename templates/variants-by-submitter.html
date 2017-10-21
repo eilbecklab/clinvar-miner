@@ -39,22 +39,22 @@
                                 />
                             </td>
                             <td>
-                                <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ request|querysuffix }}">
+                                <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
                                     {{ row['submitter_name'] }}
                                 </a>
                             </td>
                             <td>
-                                <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ request|querysuffix }}">
+                                <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
                                     {{ row['count'] }}
                                 </a>
                             </td>
                             <td>
-                                <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ request|querysuffix }}#gene-and-significance-breakdown">
+                                <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ query_suffix('min_conflict_level', 'original_terms') }}#gene-and-significance-breakdown">
                                     {{ row['gene_count'] }}
                                 </a>
                             </td>
                             <td>
-                                <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ request|querysuffix }}#condition-and-significance-breakdown">
+                                <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ query_suffix('min_conflict_level', 'original_terms') }}#condition-and-significance-breakdown">
                                     {{ row['condition_count'] }}
                                 </a>
                             </td>

@@ -338,18 +338,6 @@ def extra_breaks(text):
 def gene_link(gene):
     return '<a class="external" href="https://ghr.nlm.nih.gov/gene/' + gene + '">' + gene + '</a>' if gene else ''
 
-@app.template_filter('querysuffix')
-def query_suffix(request):
-    if not request.args:
-        return ''
-
-    args = []
-    for key in request.args:
-        value = request.args.get(key)
-        if key not in ['genes', 'conditions', 'submitters'] and value:
-            args.append(quote(key, safe='') + '=' + quote(request.args[key], safe=''))
-    return '?' + '&'.join(args) if args else ''
-
 @app.template_filter('rcvlink')
 def rcv_link(rcv):
     return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/' + rcv + '/">' + rcv + '</a>'
@@ -401,6 +389,24 @@ def template_functions():
         else:
             return condition_name
 
+    def query_suffix(*extra_allowed_params):
+        if not request.args:
+            return ''
+
+        always_allowed_params = [
+            'min_stars1',
+            'min_stars2',
+            'method1',
+            'method2'
+        ]
+
+        args = []
+        for key in request.args:
+            value = request.args.get(key)
+            if (key in always_allowed_params or key in extra_allowed_params) and value:
+                args.append(quote(key, safe='') + '=' + quote(request.args[key], safe=''))
+        return '?' + '&'.join(args) if args else ''
+
     def variant_link(variant_id, variant_name, variant_rsid):
         if variant_id == 0:
             return variant_name
@@ -418,6 +424,7 @@ def template_functions():
         'submitter_link': submitter_link,
         'submitter_tagline': submitter_tagline,
         'condition_link': condition_link,
+        'query_suffix': query_suffix,
         'variant_link': variant_link,
     }
 
