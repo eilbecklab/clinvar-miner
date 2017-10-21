@@ -348,23 +348,6 @@ def super_escape(path):
 
 @app.context_processor
 def template_functions():
-    def h2(text):
-        section_id = text.lower().replace(' ', '-')
-        return '<h2 id="' + section_id + '">' + text + ' <a class="internal" href="' + request.url + '#' + section_id + '">#</a></h2>'
-
-    def submitter_link(submitter_id, submitter_name):
-        if submitter_id == 0:
-            return submitter_name
-        return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + str(submitter_id) + '/">' + extra_breaks(submitter_name) + '</a>'
-
-    def submitter_tagline(submitter_info, submitter_primary_method):
-        tagline = '<div class="tagline">'
-        if 'country_name' in submitter_info:
-            tagline += 'Location: ' + submitter_info['country_name'] + ' &mdash; '
-        tagline += 'Primary collection method: ' + submitter_primary_method
-        tagline += '</div>'
-        return tagline
-
     def condition_link(condition_db, condition_id, condition_name):
         #find and order DB names and examples with:
         #SELECT condition_db, condition_id, COUNT(*) FROM current_submissions GROUP BY condition_db ORDER BY COUNT(*) DESC
@@ -388,6 +371,23 @@ def template_functions():
             return '<a class="external" href="' + url + '">' + condition_name + '</a>'
         else:
             return condition_name
+
+    def h2(text):
+        section_id = text.lower().replace(' ', '-')
+        return '<h2 id="' + section_id + '">' + text + ' <a class="internal" href="' + request.url + '#' + section_id + '">#</a></h2>'
+
+    def submitter_link(submitter_id, submitter_name):
+        if submitter_id == 0:
+            return submitter_name
+        return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + str(submitter_id) + '/">' + extra_breaks(submitter_name) + '</a>'
+
+    def submitter_tagline(submitter_info, submitter_primary_method):
+        tagline = '<div class="tagline">'
+        if 'country_name' in submitter_info:
+            tagline += 'Location: ' + submitter_info['country_name'] + ' &mdash; '
+        tagline += 'Primary collection method: ' + submitter_primary_method
+        tagline += '</div>'
+        return tagline
 
     def query_suffix(*extra_allowed_params):
         if not request.args:
