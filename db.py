@@ -143,15 +143,16 @@ class DB():
         )[0][0]
 
     def total_conflicting_variants_by_condition_and_conflict_level(self, min_stars = 0, standardized_method = None,
-                                                                   condition_names = None):
+                                                                   min_conflict_level = 1, condition_names = None):
         self.query = '''
             SELECT condition1_name AS condition_name, conflict_level, COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
-            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=1
+            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
         '''
 
         self.parameters = {
             'min_stars': min_stars,
+            'min_conflict_level': max(1, min_conflict_level),
         }
 
         if standardized_method:
@@ -167,15 +168,17 @@ class DB():
 
     def total_conflicting_variants_by_conflict_level(self, gene = None, condition1_name = None, submitter1_id = None,
                                                      submitter2_id = None, min_stars1 = 0, min_stars2 = 0,
-                                                     standardized_method1 = None, standardized_method2 = None):
+                                                     standardized_method1 = None, standardized_method2 = None,
+                                                     min_conflict_level = 1):
         self.query = '''
             SELECT conflict_level, COUNT(DISTINCT variant_name) AS count FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=1
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
         self.parameters = {
             'min_stars1': min_stars1,
             'min_stars2': min_stars2,
+            'min_conflict_level': max(1, min_conflict_level),
         }
 
         if gene:
@@ -202,16 +205,17 @@ class DB():
 
     def total_conflicting_variants_by_gene_and_conflict_level(self, min_stars1 = 0, min_stars2 = 0,
                                                               standardized_method1 = None, standardized_method2 = None,
-                                                              genes = None):
+                                                              min_conflict_level = 1, genes = None):
         self.query = '''
             SELECT gene, conflict_level, COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=1
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
         self.parameters = {
             'min_stars1': min_stars1,
             'min_stars2': min_stars2,
+            'min_conflict_level': max(1, min_conflict_level),
         }
 
         if standardized_method1:
@@ -231,19 +235,24 @@ class DB():
                                                                     submitter2_id = None, min_stars1 = 0,
                                                                     min_stars2 = 0, standardized_method1 = None,
                                                                     standardized_method2 = None,
-                                                                    original_terms = False):
+                                                                    min_conflict_level = 1, original_terms = False):
         if original_terms:
             self.query = 'SELECT significance1, significance2'
         else:
-            self.query = 'SELECT standardized_significance1 AS significance1, standardized_significance2 AS significance2'
+            self.query = '''
+                SELECT standardized_significance1 AS significance1, standardized_significance2 AS significance2
+            '''
 
         self.query += ', conflict_level, COUNT(DISTINCT variant_name) AS count FROM current_comparisons'
 
-        self.query += ' WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=1'
+        self.query += '''
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+        '''
 
         self.parameters = {
             'min_stars1': min_stars1,
             'min_stars2': min_stars2,
+            'min_conflict_level': max(1, min_conflict_level),
         }
 
         if gene:
@@ -270,7 +279,8 @@ class DB():
 
     def total_conflicting_variants_by_submitter_and_conflict_level(self, submitter1_id = None, min_stars1 = 0,
                                                                    min_stars2 = 0, standardized_method1 = None,
-                                                                   standardized_method2 = None, submitter_ids = None):
+                                                                   standardized_method2 = None, submitter_ids = None,
+                                                                   min_conflict_level = 1):
 
         if submitter1_id:
             self.query = 'SELECT submitter2_id AS submitter_id'
@@ -280,12 +290,13 @@ class DB():
         self.query += '''
             , conflict_level, COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=1
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
         self.parameters = {
             'min_stars1': min_stars1,
             'min_stars2': min_stars2,
+            'min_conflict_level': max(1, min_conflict_level),
         }
 
         if submitter1_id:

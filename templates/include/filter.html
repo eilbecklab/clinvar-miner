@@ -37,12 +37,14 @@
             <td colspan="3">
                 <select name="min_conflict_level">
                     <option></option>
-                    <option {% if request.args.get('min_conflict_level') == '0' %}selected="selected"{% endif %} value="0">
-                        multiple submissions, potential for conflict
-                    </option>
-                    <option {% if request.args.get('min_conflict_level') == '1' %}selected="selected"{% endif %} value="1">
-                        synonymous conflict (e.g. benign vs non-pathogenic)
-                    </option>
+                    {% if min_conflict_level_filter != 'high_only' %}
+                        <option {% if request.args.get('min_conflict_level') == '0' %}selected="selected"{% endif %} value="0">
+                            multiple submissions, potential for conflict
+                        </option>
+                        <option {% if request.args.get('min_conflict_level') == '1' %}selected="selected"{% endif %} value="1">
+                            synonymous conflict (e.g. benign vs non-pathogenic)
+                        </option>
+                    {% endif %}
                     <option {% if request.args.get('min_conflict_level') == '2' %}selected="selected"{% endif %} value="2">
                         confidence conflict (e.g. benign vs likely benign)
                     </option>

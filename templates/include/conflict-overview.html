@@ -1,33 +1,36 @@
+{% set min_conflict_level = int_arg('min_conflict_level') %}
 <p>
     If a variant has more than two submissions, it may have multiple conflicts and therefore be counted in more than one
-    conflict column. If this is the case, the total number of variants that have at least two submissions (i.e. the sum
-    of the "Variants with no conflicts" and "Variants with any kind of conflict" cells) will
-    be less than the sum of the middle cells.
+    conflict column. If this is the case, the "Variants with any kind of conflict" cell will be less than the sum of
+    the conflicting variants cells to its left.
 </p>
 <table class="breakdown table table-bordered table-striped">
     <thead>
         <tr>
-            <th>Variants with no conflicts</th>
-            <th>Variants with a synonymous conflict<br/>(e.g. benign vs non-pathogenic)</th>
-            <th>Variants with a confidence conflict<br/>(e.g. benign vs likely benign)</th>
-            <th>Variants with a benign or likely benign vs uncertain conflict</th>
-            <th>Variants with a category conflict<br/>(e.g. benign vs affects)</th>
-            <th>Variants with a clinically significant conflict<br/>(e.g. benign vs pathogenic)</th>
-            <th>Variants with any kind of conflict</th>
+            {% with sorted = False %}
+                {% include 'include/conflict-headers.html' %}
+            {% endwith %}
         </tr>
     </thead>
     <tbody>
         <tr>
-            {% if total_variants - total_conflicting_variants %}
-                <td class="level0-conflict">{{ total_variants - total_conflicting_variants }}</td>
+            {% if total_variants - total_potentially_conflicting_variants %}
+                <td class="level0-conflict">{{ total_variants - total_potentially_conflicting_variants }}</td>
+            {% else %}
+                <td>0</td>
+            {% endif %}
+            {% if total_potentially_conflicting_variants - total_conflicting_variants %}
+                <td class="level0-conflict">{{ total_potentially_conflicting_variants - total_conflicting_variants }}</td>
             {% else %}
                 <td>0</td>
             {% endif %}
             {% for i in range(1, 6) %}
-                {% if i in overview %}
-                    <td class="level{{ i }}-conflict">{{ overview[i] }}</td>
-                {% else %}
-                    <td>0</td>
+                {% if min_conflict_level <= i %}
+                    {% if i in overview %}
+                        <td class="level{{ i }}-conflict">{{ overview[i] }}</td>
+                    {% else %}
+                        <td>0</td>
+                    {% endif %}
                 {% endif %}
             {% endfor %}
             {% if total_conflicting_variants %}
