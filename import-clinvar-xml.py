@@ -267,10 +267,9 @@ def import_file(filename):
                 WHEN t1.scv=t2.scv THEN -1
 
                 WHEN t1.significance=t2.significance THEN 0
+                WHEN t1.standardized_significance="not provided" OR t2.standardized_significance="not provided" THEN 0
 
                 WHEN t1.standardized_significance=t2.standardized_significance THEN 1
-
-                WHEN t1.standardized_significance="not provided" OR t2.standardized_significance="not provided" THEN 0
 
                 WHEN t1.standardized_significance="benign" AND t2.standardized_significance="likely benign" THEN 2
                 WHEN t1.standardized_significance="likely benign" AND t2.standardized_significance="benign" THEN 2
