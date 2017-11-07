@@ -4,8 +4,10 @@
 {% block content %}
     <form action="" autocomplete="off">
         {% with %}
-            {% set review_status1_label = 'Minimum review status' %}
-            {% set method1_label = 'Collection method' %}
+            {% set review_status1_label = 'Submission 1 minimum review status' %}
+            {% set method1_label = 'Submission 1 collection method' %}
+            {% set review_status2_label = 'Submission 2 minimum review status' %}
+            {% set method2_label = 'Submission 2 collection method' %}
             {% set min_conflict_level_filter = 'high_only' %}
             {% include 'include/filter.html' %}
         {% endwith %}
