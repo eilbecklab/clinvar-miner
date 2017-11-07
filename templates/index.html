@@ -14,10 +14,10 @@
     <meta name="google-site-verification" content="Yua3q7_WAK_AYNpW4QPr7G-slC_9dexqiqeBQ3p8IaU"/>
 {% endblock %}
 {% block content %}
-    <h1>Welcome to the ClinVar Miner website!</h1>
+    <h1>Welcome to ClinVar Miner!</h1>
 
     <p>
-        The content on this site is current as of {{ max_date.strftime('%B %Y') }}. At that time,
+        The content on this website is current as of {{ max_date.strftime('%B %Y') }}. At that time,
         <a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/">ClinVar</a> had
         {{ '{:,}'.format(total_submissions) }} submissions on {{ '{:,}'.format(total_variants) }} variants.
     </p>
@@ -86,5 +86,8 @@
         NHGRI's <a class="external" href="https://www.clinicalgenome.org/">ClinGen</a> Resources (grants U41
         HG006834-01A1 to Heidi Rehm and U01 HG007437-01 to Jonathan Berg). Use of the NCBI logo represents use of NCBI
         data but does not constitute an approval or endorsement of this application.
+        <a class="external" href="https://github.com/eilbecklab/clinvar-miner">Source code is available on GitHub</a>
+        under the
+        <a class="external" href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License</a>.
     </p>
 {% endblock %}
