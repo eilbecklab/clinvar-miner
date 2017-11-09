@@ -60,7 +60,7 @@ with urlopen('https://www.ncbi.nlm.nih.gov/clinvar/docs/submitter_list/') as f:
 
 stdout.write('Downloading information about ' + str(len(submitter_ids)) + ' submitters...\n')
 
-for count, scraped_info in enumerate(Pool(64).imap(scrape_info, submitter_ids)):
+for count, scraped_info in enumerate(Pool(32).imap(scrape_info, submitter_ids)):
     submitter_id = scraped_info[0]
     if submitter_id in submitter_info:
         for i in range(0, 2):
