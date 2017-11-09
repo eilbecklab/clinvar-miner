@@ -1,6 +1,10 @@
 {% extends 'extend/skin.html' %}
 {% set title %}
-    Conflicting variants in gene {{ gene|genelink|safe }} reported as {{ significance1 }} and {{ significance2 }}
+    {% if gene %}
+        Conflicting variants in gene {{ gene|genelink|safe }} reported as {{ significance1 }} and {{ significance2 }}
+    {% else %}
+        Conflicting intergenic variants reported as {{ significance1 }} and {{ significance2 }}
+    {% endif %}
 {% endset %}
 {% block content %}
     {% with %}

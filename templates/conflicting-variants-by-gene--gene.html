@@ -1,6 +1,10 @@
 {% extends 'extend/skin.html' %}
 {% set title %}
-    Conflicting variants in gene {{ gene|genelink|safe }}
+    {% if gene %}
+        Conflicting variants in gene {{ gene|genelink|safe }}
+    {% else %}
+        Conflicting intergenic variants
+    {% endif %}
 {% endset %}
 {% block content %}
     {% with %}
@@ -18,7 +22,7 @@
     {% endwith %}
     {% if variants %}
         {% with %}
-            {% set link_base = 'conflicting-variants-by-gene/' + gene|superescaped %}
+            {% set link_base = request.base_url %}
             {% include 'include/conflict-breakdown.html' %}
         {% endwith %}
         {% include 'include/all-conflicting-variants.html' %}

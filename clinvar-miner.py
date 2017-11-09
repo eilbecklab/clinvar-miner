@@ -595,12 +595,12 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
             ),
         )
 
-    if not significance1:
-        if gene == 'intergenic':
-            gene = ''
-        elif not db.is_gene(gene):
-            abort(404)
+    if gene == 'intergenic':
+        gene = ''
+    elif not db.is_gene(gene):
+        abort(404)
 
+    if not significance1:
         breakdown, submitter1_significances, submitter2_significances = get_conflict_breakdown(
             db.total_conflicting_variants_by_significance_and_significance(
                 gene=gene,
