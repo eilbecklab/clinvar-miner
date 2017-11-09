@@ -1,13 +1,12 @@
 {% extends 'extend/skin.html' %}
 {% block head %}
     <style type="text/css">
-        .navlinks {
-            width: 400px;
+        #logos a {
+            text-decoration: none;
         }
 
-        .navlinks a {
-            display: block;
-            padding: 10px 0;
+        #logos img {
+            margin-left: 15px;
         }
     </style>
 
@@ -71,14 +70,18 @@
                 </li>
             </ul>
         </div>
-        <br/>
-        <a href="https://medicine.utah.edu/dbmi/" style="text-decoration:none">
-            <!-- logo copyright University of Utah, all rights reserved -->
-            <img alt="Health - University of Utah" src="static/u-health.svg" width="244" height="64"/>
-        </a>
-        <a href="https://www.ncbi.nlm.nih.gov/">
-            <img alt="powered by NCBI" src="static/ncbi.png" style="margin-left:15px" width="153" height="72"/>
-        </a>
+        <div id="logos">
+            <a href="https://medicine.utah.edu/dbmi/">
+                <!-- logo copyright University of Utah, all rights reserved -->
+                <img alt="Health - University of Utah" src="static/u-health.svg" width="244" height="64"/>
+            </a>
+            <a href="https://www.ncbi.nlm.nih.gov/">
+                <img alt="powered by NCBI" src="static/ncbi.png" width="153" height="72"/>
+            </a>
+            <a href="https://www.clinicalgenome.org/">
+                <img alt="ClinGen Clinical Genome Resource" src="static/clingen-logo.png" width="95" height="72"/>
+            </a>
+        </div>
     </div>
     <p style="margin-top:2em">
         ClinVar Miner was developed by Alex Henrie in the
