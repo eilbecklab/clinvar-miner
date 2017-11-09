@@ -1,2 +1,6 @@
 {{ h2('All conflicting variants')|safe }}
+<div class="totals">
+    <div>Total variants: {{ variants|length }}</div>
+    <div>{{ 'variant-table'|selectlink|safe }}</div>
+</div>
 {% include 'include/variants.html' %}

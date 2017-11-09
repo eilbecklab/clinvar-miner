@@ -25,7 +25,11 @@
             lineGraph(data, 'Submissions', 50000);
         </script>
         {{ h2('Current submissions')|safe }}
-        <table class="simple-numeric sortable table">
+        <div class="totals">
+            <div>Total methods: {{ total_submissions_by_method|length }}</div>
+            <div>{{ 'method-table'|selectlink|safe }}</div>
+        </div>
+        <table class="simple-numeric sortable table" id="method-table">
             <thead>
                 <tr>
                     <th>Method</th>

@@ -8,14 +8,15 @@
             {% set min_conflict_level_filter = True %}
             {% include 'include/filter.html' %}
         {% endwith %}
-        <table class="totals">
-            <tr>
-                <td>Total submitters: {{ total_variants_by_submitter|length }}</td>
-                <td>Total variants: {{ total_variants }}</td>
-            </tr>
-        </table>
+        <div class="totals">
+            <div>Total submitters: {{ total_variants_by_submitter|length }}</div>
+            <div>Total variants: {{ total_variants }}</div>
+            {% if total_variants %}
+                <div>{{ 'submitter-table'|selectlink|safe }}</div>
+            {% endif %}
+        </div>
         {% if total_variants %}
-            <table class="filterable simple-numeric sortable table">
+            <table class="filterable simple-numeric sortable table" id="submitter-table">
                 <thead>
                     <tr>
                         <th>Filter</th>

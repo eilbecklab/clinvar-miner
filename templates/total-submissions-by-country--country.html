@@ -11,9 +11,14 @@
         {% set min_conflict_level_filter = True %}
         {% include 'include/filter-form.html' %}
     {% endwith %}
-    <p>Total submitters: {{ total_submissions_by_submitter|length }}</p>
+    <div class="totals">
+        <div>Total submitters: {{ total_submissions_by_submitter|length }}</div>
+        {% if total_submissions_by_submitter %}
+            <div>{{ 'submitter-table'|selectlink|safe }}</div>
+        {% endif %}
+    </div>
     {% if total_submissions_by_submitter %}
-        <table class="simple-numeric sortable table">
+        <table class="simple-numeric sortable table" id="submitter-table">
             <thead>
                 <tr>
                     <th>Submitter</th>

@@ -12,9 +12,14 @@
             {% include 'include/filter.html' %}
         {% endwith %}
         {% include 'include/conflict-overview.html' %}
-        <p>Total genes with conflicts: {{ summary|length }}</p>
+        <div class="totals">
+            <div>Total genes with conflicts: {{ summary|length }}</div>
+            {% if summary %}
+                <div>{{ 'gene-table'|selectlink|safe }}</div>
+            {% endif %}
+        </div>
         {% if summary %}
-            <table class="filterable sortable summary table table-bordered table-striped">
+            <table class="filterable sortable summary table table-bordered table-striped" id="gene-table">
                 <thead>
                     <tr>
                         <th>Filter</th>

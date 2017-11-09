@@ -342,6 +342,10 @@ def gene_link(gene):
 def rcv_link(rcv):
     return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/' + rcv + '/">' + rcv + '</a>'
 
+@app.template_filter('selectlink')
+def select_link(element_id):
+    return '<a href="javascript:selectElement(\'' + element_id + '\')">Select table for copying</a>'
+
 @app.template_filter('superescaped')
 def super_escape(path):
     return SuperEscapedConverter.to_url(path)

@@ -37,9 +37,14 @@
                 .attr('fill', function(d) { return color(totals[d.id] ? Math.log10(totals[d.id]) : 0); });
         });
     </script>
-    <p>Total countries: {{ total_submissions_by_country|length }}</p>
+    <div class="totals">
+        <div>Total countries: {{ total_submissions_by_country|length }}</div>
+        {% if total_submissions_by_country %}
+            <div>{{ 'country-table'|selectlink|safe }}</div>
+        {% endif %}
+    </div>
     {% if total_submissions_by_country %}
-        <table class="simple-numeric sortable table">
+        <table class="simple-numeric sortable table" id="country-table">
             <thead>
                 <tr>
                     <th>Country</th>

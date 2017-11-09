@@ -119,8 +119,9 @@
     margin-bottom: 10px;
 }
 
-.totals td {
-    padding: 8px;
+.totals div {
+    display: inline-block;
+    margin-right: 20px;
 }
 
 #top-stripe {

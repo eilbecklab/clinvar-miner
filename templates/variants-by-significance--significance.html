@@ -12,8 +12,11 @@
     <p>Total variants: {{ total_variants }}</p>
     {% if total_variants %}
         {{ h2('Breakdown by submitter')|safe }}
-        <p>Total submitters: {{ total_variants_by_submitter|length }}</p>
-        <table class="simple-numeric sortable table">
+        <div class="totals">
+            <div>Total submitters: {{ total_variants_by_submitter|length }}</div>
+            <div>{{ 'submitter-table'|selectlink|safe }}</div>
+        </div>
+        <table class="simple-numeric sortable table" id="submitter-table">
             <thead>
                 <tr>
                     <th>Submitter</th>
@@ -38,8 +41,11 @@
             </tbody>
         </table>
         {{ h2('Breakdown by condition')|safe }}
-        <p>Total conditions: {{ total_variants_by_condition|length }}</p>
-        <table class="simple-numeric sortable table">
+        <div class="totals">
+            <div>Total conditions: {{ total_variants_by_condition|length }}</div>
+            <div>{{ 'condition-table'|selectlink|safe }}</div>
+        </div>
+        <table class="simple-numeric sortable table" id="condition-table">
             <thead>
                 <tr>
                     <th>Condition</th>
@@ -64,8 +70,11 @@
             </tbody>
         </table>
         {{ h2('Breakdown by gene')|safe }}
-        <p>Total genes: {{ total_variants_by_gene|length }}</p>
-        <table class="simple-numeric sortable table">
+        <div class="totals">
+            <div>Total genes: {{ total_variants_by_gene|length }}</div>
+            <div>{{ 'gene-table'|selectlink|safe }}</div>
+        </div>
+        <table class="simple-numeric sortable table" id="gene-table">
             <thead>
                 <tr>
                     <th>Gene</th>

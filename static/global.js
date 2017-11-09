@@ -1,3 +1,11 @@
+function selectElement(elementId) {
+    var selection = window.getSelection();
+    var range = document.createRange();
+    range.selectNodeContents(document.getElementById(elementId))
+    selection.removeAllRanges();
+    selection.addRange(range);
+}
+
 $('table.sortable').each(function() {
     var headers;
 

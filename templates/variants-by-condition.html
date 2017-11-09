@@ -8,14 +8,15 @@
             {% set min_conflict_level_filter = True %}
             {% include 'include/filter.html' %}
         {% endwith %}
-        <table class="totals">
-            <tr>
-                <td>Total conditions: {{ total_variants_by_condition|length }}</td>
-                <td>Total variants: {{ total_variants }}</td>
-            </tr>
-        </table>
+        <div class="totals">
+            <div>Total conditions: {{ total_variants_by_condition|length }}</div>
+            <div>Total variants: {{ total_variants }}</div>
+            {% if total_variants %}
+                <div>{{ 'condition-table'|selectlink|safe }}</div>
+            {% endif %}
+        </div>
         {% if total_variants %}
-            <table class="filterable simple-numeric sortable table">
+            <table class="filterable simple-numeric sortable table" id="condition-table">
                 <thead>
                     <tr>
                         <th>Filter</th>
