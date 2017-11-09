@@ -160,10 +160,20 @@ def import_file(filename):
             for gene_el in measure_el.findall('./MeasureRelationship/Symbol/ElementValue[@Type="Preferred"]'):
                 if gene_el != None:
                     genes.add(gene_el.text)
+        genes = list(genes)
         if len(genes) == 1:
-            gene = list(genes)[0]
+            gene = genes[0]
         else:
-            gene = ''
+            #replace antisense genes with sense genes
+            for i, gene in enumerate(genes):
+                if re.fullmatch('.+-AS[1-9]', gene):
+                    genes[i] = gene[:-len('-AS1')]
+            genes = set(genes)
+            #see if that got us down to a single gene
+            if len(genes) == 1:
+                gene = list(genes)[0]
+            else:
+                gene = '' #call it intergenic
 
         trait_name_els = reference_assertion_el.findall('./TraitSet/Trait/Name/ElementValue[@Type="Preferred"]')
         if trait_name_els:
