@@ -153,10 +153,13 @@ def import_file(filename):
                 variant_rsid = 'rs' + rsid_el.attrib['ID']
 
         genes = set()
+        #loop through each individual variant in the compound variant
         for measure_el in measure_els:
-            gene_el = measure_el.find('./MeasureRelationship/Symbol/ElementValue[@Type="Preferred"]')
-            if gene_el != None:
-                genes.add(gene_el.text)
+            #loop through each gene that corresponds to that variant
+            #sometimes a single variant falls into multiple genes (e.g. TTN and TTN-AS1)
+            for gene_el in measure_el.findall('./MeasureRelationship/Symbol/ElementValue[@Type="Preferred"]'):
+                if gene_el != None:
+                    genes.add(gene_el.text)
         if len(genes) == 1:
             gene = list(genes)[0]
         else:
