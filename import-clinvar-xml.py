@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from collections import OrderedDict
-from itertools import combinations
 from os.path import basename
 from pycountry import countries
 from sys import argv
