@@ -17,14 +17,14 @@
         {% for condition_name in breakdown_by_condition_and_significance %}
             <tr>
                 <th>
-                    <a href="{{ request.base_url }}/condition/{{ condition_name|superescaped }}{{ query_suffix('min_conflict_level') }}">
+                    <a href="{{ request.base_url }}/condition/{{ condition_name|superescaped }}{{ query_suffix('min_conflict_level', 'gene_type') }}">
                         {{ condition_name }}
                     </a>
                 </th>
                 {% for significance in significances %}
                     {% if significance in breakdown_by_condition_and_significance[condition_name] %}
                         <td class="highlight">
-                            <a href="{{ request.base_url }}/condition/{{ condition_name|superescaped }}/{{ significance|superescaped }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
+                            <a href="{{ request.base_url }}/condition/{{ condition_name|superescaped }}/{{ significance|superescaped }}{{ query_suffix('min_conflict_level', 'gene_type', 'original_terms') }}">
                                 {{ breakdown_by_condition_and_significance[condition_name][significance] }}
                             </a>
                         </td>
@@ -33,7 +33,7 @@
                     {% endif %}
                 {% endfor %}
                 <td class="highlight">
-                    <a href="{{ request.base_url }}/condition/{{ condition_name|superescaped }}{{ query_suffix('min_conflict_level') }}">
+                    <a href="{{ request.base_url }}/condition/{{ condition_name|superescaped }}{{ query_suffix('min_conflict_level', 'gene_type') }}">
                         {{ breakdown_by_condition_and_significance[condition_name]['total'] }}
                     </a>
                 </td>

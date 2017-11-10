@@ -38,6 +38,7 @@ cursor.execute('''
 
 cursor.execute('CREATE INDEX IF NOT EXISTS current_comparisons__variant_name ON current_comparisons (variant_name)')
 cursor.execute('CREATE INDEX IF NOT EXISTS current_comparisons__gene ON current_comparisons (gene)')
+cursor.execute('CREATE INDEX IF NOT EXISTS current_comparisons__gene_type ON current_comparisons (gene_type)')
 cursor.execute('CREATE INDEX IF NOT EXISTS current_comparisons__submitter1_id ON current_comparisons (submitter1_id)')
 cursor.execute('CREATE INDEX IF NOT EXISTS current_comparisons__submitter1_name ON current_comparisons (submitter1_name)')
 cursor.execute('CREATE INDEX IF NOT EXISTS current_comparisons__submitter1_country_code ON current_comparisons (submitter1_country_code)')

@@ -6,10 +6,11 @@
             {% set review_status1_label = 'Minimum review status' %}
             {% set method1_label = 'Collection method' %}
             {% set min_conflict_level_filter = True %}
+            {% set gene_type_filter = True %}
             {% include 'include/filter.html' %}
         {% endwith %}
         <div class="totals">
-            <div>Total genes: {{ total_variants_by_gene|length }}</div>
+            <div>Total genes and gene combinations: {{ total_variants_by_gene|length }}</div>
             <div>Total variants: {{ total_variants }}</div>
             {% if total_variants %}
                 <div>{{ 'gene-table'|tabledownloadlink|safe }}</div>
@@ -20,7 +21,7 @@
                 <thead>
                     <tr>
                         <th>Filter</th>
-                        <th>Gene</th>
+                        <th>Gene or gene combination</th>
                         <th class="desc">Variants</th>
                         <th>Conditions</th>
                         <th>Submitters</th>
@@ -38,22 +39,22 @@
                                 />
                             </td>
                             <td>
-                                <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}{{ query_suffix('min_conflict_level') }}">
+                                <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}{{ query_suffix('min_conflict_level', 'gene_type') }}">
                                     {{ row['gene'] or '\u200Bintergenic' }}
                                 </a>
                             </td>
                             <td>
-                                <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}{{ query_suffix('min_conflict_level') }}">
+                                <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}{{ query_suffix('min_conflict_level', 'gene_type') }}">
                                     {{ row['count'] }}
                                 </a>
                             </td>
                             <td>
-                                <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}{{ query_suffix('min_conflict_level') }}#condition-and-significance-breakdown">
+                                <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}{{ query_suffix('min_conflict_level', 'gene_type') }}#condition-and-significance-breakdown">
                                     {{ row['condition_count'] }}
                                 </a>
                             </td>
                             <td>
-                                <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}{{ query_suffix('min_conflict_level') }}#submitter-and-significance-breakdown">
+                                <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}{{ query_suffix('min_conflict_level', 'gene_type') }}#submitter-and-significance-breakdown">
                                     {{ row['submitter_count'] }}
                                 </a>
                             </td>

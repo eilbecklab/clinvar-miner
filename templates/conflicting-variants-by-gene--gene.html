@@ -1,9 +1,11 @@
 {% extends 'extend/skin.html' %}
 {% set title %}
-    {% if gene %}
-        Conflicting variants in gene {{ gene|genelink|safe }}
-    {% else %}
+    {% if gene_info['type'] == 0 %}
         Conflicting intergenic variants
+    {% elif gene_info['type'] == 1 %}
+        Conflicting variants in gene {{ gene_info['name']|genelink|safe }}
+    {% else %}
+        Conflicting variants in gene combination {{ gene_info['name'] }}
     {% endif %}
 {% endset %}
 {% block content %}
@@ -13,6 +15,8 @@
         {% set review_status2_label = 'X axis minimum submission review status' %}
         {% set method2_label = 'X axis collection method' %}
         {% set min_conflict_level_filter = 'high_only' %}
+        {% set gene_type_filter = True %}
+        {% set gene_type_disabled = True %}
         {% set original_terms_filter = True %}
         {% include 'include/filter-form.html' %}
     {% endwith %}

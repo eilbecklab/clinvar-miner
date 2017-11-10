@@ -59,6 +59,28 @@
             </td>
         </tr>
     {% endif %}
+    {% if gene_type_filter %}
+        <tr>
+            <td>Gene type:</td>
+            <td>
+                <select name="gene_type" {% if gene_type_disabled %}disabled="disabled"{% endif %}>
+                    <option></option>
+                    <option {% if request.args.get('gene_type') == '0' %}selected="selected"{% endif %} value="0">
+                        intergenic
+                    </option>
+                    <option {% if request.args.get('gene_type') == '1' %}selected="selected"{% endif %} value="1">
+                        single gene
+                    </option>
+                    <option {% if request.args.get('gene_type') == '2' %}selected="selected"{% endif %} value="2">
+                        multiple genes because genes overlap
+                    </option>
+                    <option {% if request.args.get('gene_type') == '3' %}selected="selected"{% endif %} value="3">
+                        multiple genes because variant is large
+                    </option>
+                </select>
+            </td>
+        </tr>
+    {% endif %}
     {% if original_terms_filter %}
         <tr>
             <td colspan="4">

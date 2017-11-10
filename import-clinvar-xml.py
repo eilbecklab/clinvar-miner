@@ -40,6 +40,7 @@ def create_tables():
             variant_name TEXT,
             variant_rsid TEXT,
             gene TEXT,
+            gene_type INTEGER,
             submitter_id INTEGER,
             submitter_name TEXT,
             submitter_country_code TEXT,
@@ -72,6 +73,7 @@ def create_tables():
             variant_name TEXT,
             variant_rsid TEXT,
             gene TEXT,
+            gene_type INTEGER,
 
             submitter1_id INTEGER,
             submitter1_name TEXT,
@@ -152,27 +154,36 @@ def import_file(filename):
                 variant_rsid = 'rs' + rsid_el.attrib['ID']
 
         genes = set()
+        genes_overlap = True
+        first_variant_gene_count = 0
+
         #loop through each individual variant in the compound variant
-        for measure_el in measure_els:
-            #loop through each gene that corresponds to that variant
-            #sometimes a single variant falls into multiple genes (e.g. TTN and TTN-AS1)
-            for gene_el in measure_el.findall('./MeasureRelationship/Symbol/ElementValue[@Type="Preferred"]'):
-                if gene_el != None:
-                    genes.add(gene_el.text)
-        genes = list(genes)
-        if len(genes) == 1:
-            gene = genes[0]
+        for i, measure_el in enumerate(measure_els):
+            #loop through each gene that that variant falls into
+            for relationship_el in measure_el.findall('./MeasureRelationship'):
+                if relationship_el.attrib['Type'] != 'within multiple genes by overlap':
+                    genes_overlap = False
+
+                for gene_el in relationship_el.findall('./Symbol/ElementValue[@Type="Preferred"]'):
+                    if gene_el != None:
+                        genes.add(gene_el.text)
+
+            #if a second or third variant was in a different gene, the variants are not in a single overlapping segment
+            if i == 0:
+                first_variant_gene_count = len(genes)
+            elif len(genes) > first_variant_gene_count:
+                genes_overlap = False
+
+        if len(genes) == 0:
+            gene_type = 0 #intergenic
+        elif len(genes) == 1:
+            gene_type = 1 #single gene
+        elif genes_overlap:
+            gene_type = 2 #multiple genes because genes overlap
         else:
-            #replace antisense genes with sense genes
-            for i, gene in enumerate(genes):
-                if re.fullmatch('.+-AS[1-9]', gene):
-                    genes[i] = gene[:-len('-AS1')]
-            genes = set(genes)
-            #see if that got us down to a single gene
-            if len(genes) == 1:
-                gene = list(genes)[0]
-            else:
-                gene = '' #call it intergenic
+            gene_type = 3 #multiple genes because variant is large
+
+        gene = ', '.join(sorted(genes))
 
         trait_name_els = reference_assertion_el.findall('./TraitSet/Trait/Name/ElementValue[@Type="Preferred"]')
         if trait_name_els:
@@ -234,6 +245,7 @@ def import_file(filename):
                 variant_name,
                 variant_rsid,
                 gene,
+                gene_type,
                 submitter_id,
                 submitter_name,
                 submitter_country_code,

@@ -538,6 +538,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
                     min_stars2=int_arg('min_stars2'),
                     standardized_method2=request.args.get('method2'),
                     min_conflict_level=int_arg('min_conflict_level'),
+                    gene_type=int_arg('gene_type'),
                     gene=list_arg('genes'),
                 ),
             ),
@@ -546,6 +547,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
                 standardized_method1=request.args.get('method1'),
                 min_stars2=int_arg('min_stars2'),
                 standardized_method2=request.args.get('method2'),
+                gene_type=int_arg('gene_type'),
                 gene=list_arg('genes'),
             ),
             total_potentially_conflicting_variants=db.total_variants(
@@ -554,6 +556,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
                 min_stars2=int_arg('min_stars2'),
                 standardized_method2=request.args.get('method2'),
                 min_conflict_level=0,
+                gene_type=int_arg('gene_type'),
                 gene=list_arg('genes'),
             ),
             total_conflicting_variants=db.total_variants(
@@ -562,6 +565,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
                 min_stars2=int_arg('min_stars2'),
                 standardized_method2=request.args.get('method2'),
                 min_conflict_level=max(1, int_arg('min_conflict_level')),
+                gene_type=int_arg('gene_type'),
                 gene=list_arg('genes'),
             ),
             summary=get_conflict_summary_by_gene(
@@ -570,6 +574,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
                     standardized_method1=request.args.get('method1'),
                     min_stars2=int_arg('min_stars2'),
                     standardized_method2=request.args.get('method2'),
+                    gene_type=int_arg('gene_type'),
                     genes=list_arg('genes'),
                 ),
                 db.total_variants_by_gene(
@@ -578,6 +583,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
                     min_stars2=int_arg('min_stars2'),
                     standardized_method2=request.args.get('method2'),
                     min_conflict_level=0,
+                    gene_type=int_arg('gene_type'),
                     genes=list_arg('genes'),
                 ),
                 db.total_variants_by_gene(
@@ -586,6 +592,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
                     min_stars2=int_arg('min_stars2'),
                     standardized_method2=request.args.get('method2'),
                     min_conflict_level=max(1, int_arg('min_conflict_level')),
+                    gene_type=int_arg('gene_type'),
                     genes=list_arg('genes'),
                 ),
                 db.total_conflicting_variants_by_gene_and_conflict_level(
@@ -594,6 +601,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
                     min_stars2=int_arg('min_stars2'),
                     standardized_method2=request.args.get('method2'),
                     min_conflict_level=int_arg('min_conflict_level'),
+                    gene_type=int_arg('gene_type'),
                     genes=list_arg('genes'),
                 ),
             ),
@@ -601,7 +609,8 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
 
     if gene == 'intergenic':
         gene = ''
-    elif not db.is_gene(gene):
+    gene_info = db.gene_info(gene)
+    if not gene_info:
         abort(404)
 
     if not significance1:
@@ -612,13 +621,14 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
                 standardized_method1=request.args.get('method1'),
                 min_stars2=int_arg('min_stars2'),
                 standardized_method2=request.args.get('method2'),
+                gene_type=int_arg('gene_type'),
                 original_terms=request.args.get('original_terms'),
             )
         )
 
         return render_template(
             'conflicting-variants-by-gene--gene.html',
-            gene=gene,
+            gene_info=gene_info,
             overview=get_conflict_overview(
                 db.total_conflicting_variants_by_conflict_level(
                     gene=gene,
@@ -626,6 +636,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
                     standardized_method1=request.args.get('method1'),
                     min_stars2=int_arg('min_stars2'),
                     standardized_method2=request.args.get('method2'),
+                    gene_type=int_arg('gene_type'),
                 ),
             ),
             total_variants=db.total_variants(
@@ -634,6 +645,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
                 standardized_method1=request.args.get('method1'),
                 min_stars2=int_arg('min_stars2'),
                 standardized_method2=request.args.get('method2'),
+                gene_type=int_arg('gene_type'),
             ),
             total_potentially_conflicting_variants=db.total_variants(
                 gene=gene,
@@ -642,6 +654,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
                 min_stars2=int_arg('min_stars2'),
                 min_conflict_level=0,
                 standardized_method2=request.args.get('method2'),
+                gene_type=int_arg('gene_type'),
             ),
             variants=db.variants(
                 gene=gene,
@@ -650,6 +663,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
                 min_stars2=int_arg('min_stars2'),
                 standardized_method2=request.args.get('method2'),
                 min_conflict_level=max(1, int_arg('min_conflict_level')),
+                gene_type=int_arg('gene_type'),
             ),
             breakdown=breakdown,
             submitter1_significances=submitter1_significances,
@@ -661,7 +675,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
 
     return render_template(
         'conflicting-variants-by-gene--2significances.html',
-        gene=gene,
+        gene_info=gene_info,
         significance1=significance1,
         significance2=significance2,
         variants=db.variants(
@@ -672,6 +686,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
             standardized_method1=request.args.get('method1'),
             min_stars2=int_arg('min_stars2'),
             standardized_method2=request.args.get('method2'),
+            gene_type=int_arg('gene_type'),
             original_terms=request.args.get('original_terms'),
         ),
     )
@@ -1358,6 +1373,7 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
                 standardized_method1=request.args.get('method1'),
                 standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
+                gene_type=int_arg('gene_type'),
                 genes=list_arg('genes'),
             ),
             total_variants=db.total_variants(
@@ -1366,13 +1382,15 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
                 standardized_method1=request.args.get('method1'),
                 standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
+                gene_type=int_arg('gene_type'),
                 gene=list_arg('genes'),
             ),
         )
 
     if gene == 'intergenic':
         gene = ''
-    elif not db.is_gene(gene):
+    gene_info = db.gene_info(gene)
+    if not gene_info:
         abort(404)
 
     if significance == None and submitter_id == None and condition_name == None:
@@ -1382,6 +1400,7 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
+                gene_type=int_arg('gene_type'),
                 original_terms=request.args.get('original_terms'),
             ),
             db.total_variants_by_condition_and_significance(
@@ -1389,6 +1408,7 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
+                gene_type=int_arg('gene_type'),
                 original_terms=request.args.get('original_terms'),
             )
         )
@@ -1401,6 +1421,7 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
                 standardized_method1=request.args.get('method1'),
                 standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
+                gene_type=int_arg('gene_type'),
                 original_terms=request.args.get('original_terms'),
             ),
             db.total_variants_by_submitter_and_significance(
@@ -1408,19 +1429,21 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
                 min_stars=int_arg('min_stars1'),
                 standardized_method=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
+                gene_type=int_arg('gene_type'),
                 original_terms=request.args.get('original_terms'),
             )
         )
 
         return render_template(
             'variants-by-gene--gene.html',
-            gene=gene,
+            gene_info=gene_info,
             overview=get_significance_overview(
                 db.total_variants_by_significance(
                     gene=gene,
                     min_stars=int_arg('min_stars1'),
                     standardized_method=request.args.get('method1'),
                     min_conflict_level=int_arg('min_conflict_level'),
+                    gene_type=int_arg('gene_type'),
                     original_terms=request.args.get('original_terms'),
                 )
             ),
@@ -1434,6 +1457,7 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
                 standardized_method1=request.args.get('method1'),
                 standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
+                gene_type=int_arg('gene_type'),
             ),
         )
 
@@ -1443,7 +1467,7 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
     if submitter_id == None and condition_name == None:
         return render_template(
             'variants-by-gene--gene-significance.html',
-            gene=gene,
+            gene_info=gene_info,
             significance=significance,
             variants=db.variants(
                 gene=gene,
@@ -1453,6 +1477,7 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
                 standardized_method1=request.args.get('method1'),
                 standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
+                gene_type=int_arg('gene_type'),
                 original_terms=request.args.get('original_terms'),
             ),
         )
@@ -1464,7 +1489,7 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
 
         return render_template(
             'variants-by-gene--gene-submitter-significance.html',
-            gene=gene,
+            gene_info=gene_info,
             submitter_info=submitter_info,
             significance=significance,
             variants=db.variants(
@@ -1476,6 +1501,7 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
                 standardized_method1=request.args.get('method1'),
                 standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
+                gene_type=int_arg('gene_type'),
                 original_terms=request.args.get('original_terms'),
             ),
         )
@@ -1487,7 +1513,7 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
 
         return render_template(
             'variants-by-gene--gene-condition-significance.html',
-            gene=gene,
+            gene_info=gene_info,
             condition_info=condition_info,
             significance=significance,
             variants=db.variants(
@@ -1499,6 +1525,7 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
                 standardized_method1=request.args.get('method1'),
                 standardized_method2=request.args.get('method1'),
                 min_conflict_level=int_arg('min_conflict_level'),
+                gene_type=int_arg('gene_type'),
                 original_terms=request.args.get('original_terms'),
             ),
         )

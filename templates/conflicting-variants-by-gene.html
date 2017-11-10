@@ -9,11 +9,12 @@
             {% set review_status2_label = 'Submission 2 minimum review status' %}
             {% set method2_label = 'Submission 2 collection method' %}
             {% set min_conflict_level_filter = 'high_only' %}
+            {% set gene_type_filter = True %}
             {% include 'include/filter.html' %}
         {% endwith %}
         {% include 'include/conflict-overview.html' %}
         <div class="totals">
-            <div>Total genes with conflicts: {{ summary|length }}</div>
+            <div>Total genes or gene combinations with conflicts: {{ summary|length }}</div>
             {% if summary %}
                 <div>{{ 'gene-table'|tabledownloadlink|safe }}</div>
             {% endif %}
@@ -23,7 +24,7 @@
                 <thead>
                     <tr>
                         <th>Filter</th>
-                        <th>Gene</th>
+                        <th>Gene or gene combination</th>
                         {% with sorted = True %}
                             {% include 'include/conflict-headers.html' %}
                         {% endwith %}
@@ -43,7 +44,7 @@
                                 />
                             </td>
                             <th>
-                                <a href="conflicting-variants-by-gene/{{ gene or 'intergenic' }}{{ query_suffix('min_conflict_level') }}">
+                                <a href="conflicting-variants-by-gene/{{ gene or 'intergenic' }}{{ query_suffix('min_conflict_level', 'gene_type') }}">
                                     {{ gene or '\u200Bintergenic' }}
                                 </a>
                             </th>
@@ -67,7 +68,7 @@
                                 {% endif %}
                             {% endfor %}
                             <td class="highlight">
-                                <a href="conflicting-variants-by-gene/{{ gene }}{{ query_suffix('min_conflict_level') }}">
+                                <a href="conflicting-variants-by-gene/{{ gene }}{{ query_suffix('min_conflict_level', 'gene_type') }}">
                                     {{ gene_summary['any_conflict'] }}
                                 </a>
                             </td>

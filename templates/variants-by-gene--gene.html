@@ -1,9 +1,11 @@
 {% extends 'extend/skin.html' %}
 {% set title %}
-    {% if gene %}
-        Variants in gene {{ gene|genelink|safe }}
-    {% else %}
+    {% if gene_info['type'] == 0 %}
         Intergenic variants
+    {% elif gene_info['type'] == 1 %}
+        Variants in gene {{ gene_info['name']|genelink|safe }}
+    {% else %}
+        Variants in gene combination {{ gene_info['name'] }}
     {% endif %}
 {% endset %}
 {% block content %}
@@ -11,6 +13,8 @@
         {% set review_status1_label = 'Minimum submission review status' %}
         {% set method1_label = 'Collection method' %}
         {% set min_conflict_level_filter = True %}
+        {% set gene_type_filter = True %}
+        {% set gene_type_disabled = True %}
         {% set original_terms_filter = True %}
         {% include 'include/filter-form.html' %}
     {% endwith %}
