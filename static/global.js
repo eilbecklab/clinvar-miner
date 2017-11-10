@@ -1,9 +1,21 @@
-function selectElement(elementId) {
-    var selection = window.getSelection();
-    var range = document.createRange();
-    range.selectNodeContents(document.getElementById(elementId))
-    selection.removeAllRanges();
-    selection.addRange(range);
+function downloadTableAsCsv(tableId) {
+    var table = document.getElementById(tableId);
+    var firstMeaningfulColumn = table.classList.contains('filterable') ? 1 : 0;
+    var csvText = ''
+    for (sectionEl of table.children) { //the table must have <thead> and <tbody> elements
+        for (rowEl of sectionEl.children) {
+            cells = [];
+            for (i = firstMeaningfulColumn; i < rowEl.children.length; i++) {
+                cells.push('"' + rowEl.children[i].textContent.trim().replace('"', '""') + '"');
+            }
+            csvText += cells.join(',') + '\n';
+        }
+    }
+    var link = document.createElement('a');
+    link.href = 'data:text/csv,' + encodeURI(csvText);
+    console.log(link.href);
+    link.download = tableId + '.csv';
+    link.dispatchEvent(new MouseEvent('click')); //the regular click function only works if the link is in the document
 }
 
 $('table.sortable').each(function() {

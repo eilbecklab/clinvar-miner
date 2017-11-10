@@ -15,7 +15,7 @@
     <div class="totals">
         <div>Total significance terms: {{ total_variants_by_significance|length }}</div>
         {% if total_variants_by_significance %}
-            <div>{{ 'significance-table'|selectlink|safe }}</div>
+            <div>{{ 'significance-table'|tabledownloadlink|safe }}</div>
         {% endif %}
     </div>
     {% if total_variants_by_significance %}

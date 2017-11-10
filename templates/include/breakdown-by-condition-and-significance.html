@@ -1,7 +1,7 @@
 {{ h2('Condition and significance breakdown')|safe }}
 <div class="totals">
     <div>Total conditions: {{ breakdown_by_condition_and_significance|length }}</div>
-    <div>{{ 'condition-table'|selectlink|safe }}</div>
+    <div>{{ 'condition-table'|tabledownloadlink|safe }}</div>
 </div>
 <table class="breakdown sortable table table-bordered table-striped" id="condition-table">
     <thead>

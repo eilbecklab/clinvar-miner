@@ -1,7 +1,7 @@
 {{ h2('Gene and significance breakdown')|safe }}
 <div class="totals">
     <div>Total genes: {{ breakdown_by_gene_and_significance|length }}</div>
-    <div>{{ 'gene-table'|selectlink|safe }}</div>
+    <div>{{ 'gene-table'|tabledownloadlink|safe }}</div>
 </div>
 <table class="breakdown sortable table table-bordered table-striped" id="gene-table">
     <thead>

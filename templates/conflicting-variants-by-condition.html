@@ -15,7 +15,7 @@
         <div class="totals">
             <div>Total conditions with conflicts: {{ summary|length }}</div>
             {% if summary %}
-                <div>{{ 'condition-table'|selectlink|safe }}</div>
+                <div>{{ 'condition-table'|tabledownloadlink|safe }}</div>
             {% endif %}
         </div>
         {% if summary %}

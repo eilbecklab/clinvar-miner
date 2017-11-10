@@ -11,7 +11,7 @@
     <div class="totals">
         <div>Total variants: {{ variants|length }}</div>
         {% if variants %}
-            <div>{{ 'variant-table'|selectlink|safe }}</div>
+            <div>{{ 'variant-table'|tabledownloadlink|safe }}</div>
         {% endif %}
     </div>
     {% if variants %}

@@ -40,7 +40,7 @@
     <div class="totals">
         <div>Total countries: {{ total_submissions_by_country|length }}</div>
         {% if total_submissions_by_country %}
-            <div>{{ 'country-table'|selectlink|safe }}</div>
+            <div>{{ 'country-table'|tabledownloadlink|safe }}</div>
         {% endif %}
     </div>
     {% if total_submissions_by_country %}

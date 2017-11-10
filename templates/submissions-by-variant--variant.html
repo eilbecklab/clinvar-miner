@@ -16,7 +16,7 @@
     <div class="totals">
         <div>Total submissions: {{ submissions|length }}</div>
         {% if submissions %}
-            <div>{{ 'submission-table'|selectlink|safe }}</div>
+            <div>{{ 'submission-table'|tabledownloadlink|safe }}</div>
         {% endif %}
     </div>
     {% if submissions %}

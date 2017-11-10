@@ -12,7 +12,7 @@
             <div>Total genes: {{ total_variants_by_gene|length }}</div>
             <div>Total variants: {{ total_variants }}</div>
             {% if total_variants %}
-                <div>{{ 'gene-table'|selectlink|safe }}</div>
+                <div>{{ 'gene-table'|tabledownloadlink|safe }}</div>
             {% endif %}
         </div>
         {% if total_variants %}

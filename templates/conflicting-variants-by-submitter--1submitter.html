@@ -24,7 +24,7 @@
         {{ h2('Submitter to submitter summary')|safe }}
         <div class="totals">
             <div>Total submitters: {{ variants|length }}</div>
-            <div>{{ 'submitter-table'|selectlink|safe }}</div>
+            <div>{{ 'submitter-table'|tabledownloadlink|safe }}</div>
         </div>
         <table class="sortable summary table table-bordered table-striped" id="submitter-table">
             <thead>

@@ -1,7 +1,7 @@
 {{ h2('Submitter and significance breakdown')|safe }}
 <div class="totals">
     <div>Total submitters: {{ breakdown_by_submitter_and_significance|length }}</div>
-    <div>{{ 'submitter-table'|selectlink|safe }}</div>
+    <div>{{ 'submitter-table'|tabledownloadlink|safe }}</div>
 </div>
 <table class="breakdown sortable table table-bordered table-striped" id="submitter-table">
     <thead>

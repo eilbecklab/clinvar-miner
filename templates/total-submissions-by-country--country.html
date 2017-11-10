@@ -14,7 +14,7 @@
     <div class="totals">
         <div>Total submitters: {{ total_submissions_by_submitter|length }}</div>
         {% if total_submissions_by_submitter %}
-            <div>{{ 'submitter-table'|selectlink|safe }}</div>
+            <div>{{ 'submitter-table'|tabledownloadlink|safe }}</div>
         {% endif %}
     </div>
     {% if total_submissions_by_submitter %}
