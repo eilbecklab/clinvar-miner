@@ -188,7 +188,7 @@ class DB():
             'min_conflict_level': max(1, min_conflict_level),
         }
 
-        if gene:
+        if gene != None:
             self.and_equals('gene', gene)
 
         if condition1_name:
@@ -271,7 +271,7 @@ class DB():
             'min_conflict_level': max(1, min_conflict_level),
         }
 
-        if gene:
+        if gene != None:
             self.and_equals('gene', gene)
 
         if submitter1_id:
@@ -657,7 +657,7 @@ class DB():
             'min_conflict_level': min_conflict_level,
         }
 
-        if gene:
+        if gene != None:
             self.and_equals('gene', gene)
 
         if condition_name:
