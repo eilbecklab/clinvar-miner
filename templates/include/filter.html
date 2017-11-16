@@ -66,7 +66,7 @@
                 <select name="gene_type" {% if gene_type_disabled %}disabled="disabled"{% endif %}>
                     <option></option>
                     <option {% if request.args.get('gene_type') == '0' %}selected="selected"{% endif %} value="0">
-                        intergenic
+                        intergenic or near gene
                     </option>
                     <option {% if request.args.get('gene_type') == '1' %}selected="selected"{% endif %} value="1">
                         single gene
