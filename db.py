@@ -27,9 +27,14 @@ class DB():
     def gene_info(self, gene):
         try:
             row = list(self.cursor.execute('SELECT gene_type FROM current_submissions WHERE gene=? LIMIT 1', [gene]))[0]
-            return {'name': gene, 'type': row[0]}
+            ret = {'name': gene, 'type': row[0]}
         except IndexError:
             return None
+        ret['see_also'] = list(map(
+            lambda row: row[0],
+            self.cursor.execute('SELECT see_also FROM gene_links WHERE gene=?', [gene])
+        ))
+        return ret
 
     def rows(self):
         return list(map(dict, self.cursor.execute(self.query, self.parameters)))

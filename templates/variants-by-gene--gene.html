@@ -8,6 +8,9 @@
         Variants in gene combination {{ gene_info['name'] }}
     {% endif %}
 {% endset %}
+{% block tagline %}
+    {{ gene_tagline(gene_info, '/variants-by-gene')|safe }}
+{% endblock %}
 {% block content %}
     {% with %}
         {% set review_status1_label = 'Minimum submission review status' %}

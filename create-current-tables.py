@@ -56,5 +56,26 @@ cursor.execute('CREATE INDEX IF NOT EXISTS current_comparisons__star_level2 ON c
 cursor.execute('CREATE INDEX IF NOT EXISTS current_comparisons__standardized_method2 ON current_comparisons (standardized_method2)')
 cursor.execute('CREATE INDEX IF NOT EXISTS current_comparisons__conflict_level ON current_comparisons (conflict_level)')
 
+cursor.execute('DROP TABLE IF EXISTS gene_links')
+
+cursor.execute('CREATE TABLE gene_links (gene TEXT, see_also TEXT)')
+
+gene_combinations = list(map(
+    lambda row: row[0],
+    cursor.execute('SELECT DISTINCT gene FROM current_submissions WHERE gene_type=2')
+))
+for gene_combination in gene_combinations:
+    for individual_gene in gene_combination.split(', '):
+        is_gene = bool(list(cursor.execute(
+            'SELECT 1 FROM current_submissions WHERE gene=? LIMIT 1', [individual_gene]
+        )))
+        if is_gene:
+            cursor.executemany(
+                'INSERT INTO gene_links VALUES (?,?)',
+                [[gene_combination, individual_gene], [individual_gene, gene_combination]]
+            )
+
+cursor.execute('CREATE INDEX gene_links__gene ON gene_links (gene)')
+
 db.commit()
 db.close()

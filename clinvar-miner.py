@@ -376,6 +376,16 @@ def template_functions():
         else:
             return condition_name
 
+    def gene_tagline(gene_info, link_base):
+        if not gene_info['see_also']:
+            return ''
+        tagline = '<div class="tagline">See also: <ul>'
+        for gene in gene_info['see_also']:
+            href = link_base + '/' + super_escape(gene) + query_suffix(request, 'min_conflict_level')
+            tagline += '<li><a href="' + href + '">' + gene + '</a></li>'
+        tagline += '</ul></div>'
+        return tagline
+
     def h2(text):
         section_id = text.lower().replace(' ', '-')
         return '<h2 id="' + section_id + '">' + text + ' <a class="internal" href="' + request.url + '#' + section_id + '">#</a></h2>'
@@ -423,6 +433,7 @@ def template_functions():
         return ret
 
     return {
+        'gene_tagline': gene_tagline,
         'h2': h2,
         'int_arg': int_arg,
         'submitter_link': submitter_link,

@@ -115,6 +115,16 @@
     margin-bottom: 10px;
 }
 
+.tagline li {
+    display: inline;
+    margin-left: 2ex;
+}
+
+.tagline ul {
+    display: inline;
+    padding-left: 0;
+}
+
 .totals {
     margin-bottom: 10px;
 }
