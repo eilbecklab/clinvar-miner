@@ -153,51 +153,40 @@ def import_file(filename):
             if rsid_el != None:
                 variant_rsid = 'rs' + rsid_el.attrib['ID']
 
-        in_genes = set()
-        near_genes = set()
-        genes_overlap = True
-        first_variant_gene_count = 0
+        genes = set()
+        small_variant = True
+        first_variant_genes = None
 
         #loop through each individual variant in the compound variant
         for i, measure_el in enumerate(measure_els):
             #loop through each gene associated with the variant
+            variant_genes = set()
             for relationship_el in measure_el.findall('./MeasureRelationship'):
-                relationship_type = relationship_el.attrib['Type']
-                in_gene = (relationship_type not in (
-                    'asserted, but not computed',
-                    'near gene, downstream',
-                    'near gene, upstream',
-                ))
-
-                if in_gene and relationship_type != 'within multiple genes by overlap':
-                    genes_overlap = False
+                if relationship_el.attrib['Type'] == 'genes overlapped by variant':
+                    small_variant = False #probably a large deletion
 
                 gene_el = relationship_el.find('./Symbol/ElementValue[@Type="Preferred"]')
                 if gene_el != None:
-                    if in_gene:
-                        in_genes.add(gene_el.text)
-                    else:
-                        near_genes.add(gene_el.text)
+                    variant_genes.add(gene_el.text)
 
-            #if a second or third variant was in a different gene, the variants are not in a single overlapping segment
+            #if the compound variant is small, each individual variant should be annotated with the same genes
             if i == 0:
-                first_variant_gene_count = len(in_genes)
-            elif len(in_genes) > first_variant_gene_count:
-                genes_overlap = False
+                first_variant_genes = variant_genes
+            elif variant_genes != first_variant_genes:
+                small_variant = False
 
-        if len(in_genes) == 0:
+            genes |= variant_genes
+
+        if len(genes) == 0:
             gene_type = 0 #intergenic
-        elif len(in_genes) == 1:
-            gene_type = 1 #single gene
-        elif genes_overlap:
-            gene_type = 2 #multiple genes because genes overlap
+        elif len(genes) == 1:
+            gene_type = 1 #in or near a single gene
+        elif small_variant:
+            gene_type = 2 #multiple genes because genes are close or overlap
         else:
             gene_type = 3 #multiple genes because variant is large
 
-        if gene_type == 0:
-            gene = ', '.join(sorted(near_genes))
-        else:
-            gene = ', '.join(sorted(in_genes))
+        gene = ', '.join(sorted(genes))
 
         trait_name_els = reference_assertion_el.findall('./TraitSet/Trait/Name/ElementValue[@Type="Preferred"]')
         if trait_name_els:
