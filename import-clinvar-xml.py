@@ -158,7 +158,7 @@ def get_submissions(date, set_xml):
                 small_variant = False #probably a large deletion
 
             gene_el = relationship_el.find('./Symbol/ElementValue[@Type="Preferred"]')
-            if gene_el != None:
+            if gene_el != None and gene_el.text: #blank in old versions
                 variant_genes.add(gene_el.text)
 
         #if the compound variant is small, each individual variant should be annotated with the same genes
