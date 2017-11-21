@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from collections import OrderedDict
+from copy import copy
 from functools import partial
 from mmap import mmap
 from multiprocessing import Pool
@@ -162,7 +163,7 @@ def get_submissions(date, set_xml):
 
         #if the compound variant is small, each individual variant should be annotated with the same genes
         if i == 0:
-            first_variant_genes = variant_genes
+            first_variant_genes = copy(variant_genes)
         elif variant_genes != first_variant_genes:
             small_variant = False
 
