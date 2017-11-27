@@ -91,7 +91,7 @@ class DB():
             ''')
         ))
 
-    def submissions(self, variant_name = None, min_stars = 0, standardized_method = None, min_conflict_level = -1):
+    def submissions(self, **kwargs):
         self.query = '''
             SELECT
                 variant_name,
@@ -112,16 +112,16 @@ class DB():
         '''
 
         self.parameters = {
-            'min_stars': min_stars,
-            'min_conflict_level': min_conflict_level,
+            'min_stars': kwargs.get('min_stars', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
         }
 
-        if variant_name:
-            self.and_equals('variant_name', variant_name)
+        if kwargs.get('variant_name'):
+            self.and_equals('variant_name', kwargs['variant_name'])
 
-        if standardized_method:
-            self.and_equals('standardized_method1', standardized_method)
-            self.and_equals('standardized_method2', standardized_method)
+        if kwargs.get('standardized_method'):
+            self.and_equals('standardized_method1', kwargs['standardized_method'])
+            self.and_equals('standardized_method2', kwargs['standardized_method'])
 
         self.query += ' GROUP BY scv1 ORDER BY submitter_name'
 
@@ -154,8 +154,7 @@ class DB():
             ''', [submitter_id])
         )[0][0]
 
-    def total_conflicting_variants_by_condition_and_conflict_level(self, min_stars = 0, standardized_method = None,
-                                                                   min_conflict_level = 1, condition_names = None):
+    def total_conflicting_variants_by_condition_and_conflict_level(self, **kwargs):
         self.query = '''
             SELECT condition1_name AS condition_name, conflict_level, COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
@@ -163,65 +162,60 @@ class DB():
         '''
 
         self.parameters = {
-            'min_stars': min_stars,
-            'min_conflict_level': max(1, min_conflict_level),
+            'min_stars': kwargs.get('min_stars', 0),
+            'min_conflict_level': max(1, kwargs.get('min_conflict_level', 1)),
         }
 
-        if standardized_method:
-            self.and_equals('standardized_method1', standardized_method)
-            self.and_equals('standardized_method2', standardized_method)
+        if kwargs.get('standardized_method'):
+            self.and_equals('standardized_method1', kwargs['standardized_method'])
+            self.and_equals('standardized_method2', kwargs['standardized_method'])
 
-        if condition_names:
-            self.and_equals('condition_name', condition_names)
+        if kwargs.get('condition_names'):
+            self.and_equals('condition_name', kwargs['condition_names'])
 
         self.query += ' GROUP BY condition_name, conflict_level'
 
         return list(map(dict, self.cursor.execute(self.query, self.parameters)))
 
-    def total_conflicting_variants_by_conflict_level(self, gene = None, condition1_name = None, submitter1_id = None,
-                                                     submitter2_id = None, min_stars1 = 0, min_stars2 = 0,
-                                                     standardized_method1 = None, standardized_method2 = None,
-                                                     gene_type = -1, min_conflict_level = 1):
+    def total_conflicting_variants_by_conflict_level(self, **kwargs):
         self.query = '''
             SELECT conflict_level, COUNT(DISTINCT variant_name) AS count FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
         self.parameters = {
-            'min_stars1': min_stars1,
-            'min_stars2': min_stars2,
-            'min_conflict_level': max(1, min_conflict_level),
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
+            'min_conflict_level': max(1, kwargs.get('min_conflict_level', 1)),
         }
 
-        if gene != None:
-            self.and_equals('gene', gene)
+        if kwargs.get('gene') != None:
+            self.and_equals('gene', kwargs['gene'])
 
-        if condition1_name:
-            self.and_equals('condition1_name', condition1_name)
+        if kwargs.get('condition1_name'):
+            self.and_equals('condition1_name', kwargs['condition1_name'])
 
-        if submitter1_id:
-            self.and_equals('submitter1_id', submitter1_id)
+        if kwargs.get('submitter1_id'):
+            self.and_equals('submitter1_id', kwargs['submitter1_id'])
 
-        if submitter2_id:
-            self.and_equals('submitter2_id', submitter2_id)
+        if kwargs.get('submitter2_id'):
+            self.and_equals('submitter2_id', kwargs['submitter2_id'])
 
-        if standardized_method1:
-            self.and_equals('standardized_method1', standardized_method1)
+        if kwargs.get('standardized_method1'):
+            self.and_equals('standardized_method1', kwargs['standardized_method1'])
 
-        if standardized_method2:
-            self.and_equals('standardized_method2', standardized_method2)
+        if kwargs.get('standardized_method2'):
+            self.and_equals('standardized_method2', kwargs['standardized_method2'])
 
-        if gene_type != -1:
+        if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = gene_type
+            self.parameters['gene_type'] = kwargs['gene_type']
 
         self.query += ' GROUP BY conflict_level'
 
         return self.rows()
 
-    def total_conflicting_variants_by_gene_and_conflict_level(self, min_stars1 = 0, min_stars2 = 0,
-                                                              standardized_method1 = None, standardized_method2 = None,
-                                                              min_conflict_level = 1, gene_type = -1, genes = None):
+    def total_conflicting_variants_by_gene_and_conflict_level(self, **kwargs):
         self.query = '''
             SELECT gene, conflict_level, COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
@@ -229,35 +223,30 @@ class DB():
         '''
 
         self.parameters = {
-            'min_stars1': min_stars1,
-            'min_stars2': min_stars2,
-            'min_conflict_level': max(1, min_conflict_level),
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
+            'min_conflict_level': max(1, kwargs.get('min_conflict_level', 1)),
         }
 
-        if standardized_method1:
-            self.and_equals('standardized_method1', standardized_method1)
+        if kwargs.get('standardized_method1'):
+            self.and_equals('standardized_method1', kwargs['standardized_method1'])
 
-        if standardized_method2:
-            self.and_equals('standardized_method2', standardized_method2)
+        if kwargs.get('standardized_method2'):
+            self.and_equals('standardized_method2', kwargs['standardized_method2'])
 
-        if gene_type != -1:
+        if kwargs.get('gene_type') != -1:
             self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = gene_type
+            self.parameters['gene_type'] = kwargs['gene_type']
 
-        if genes:
-            self.and_equals('gene', genes)
+        if kwargs.get('genes'):
+            self.and_equals('gene', kwargs['genes'])
 
         self.query += ' GROUP BY gene, conflict_level'
 
         return list(map(dict, self.cursor.execute(self.query, self.parameters)))
 
-    def total_conflicting_variants_by_significance_and_significance(self, gene = None, submitter1_id = None,
-                                                                    submitter2_id = None, min_stars1 = 0,
-                                                                    min_stars2 = 0, standardized_method1 = None,
-                                                                    standardized_method2 = None,
-                                                                    min_conflict_level = 1, gene_type = -1,
-                                                                    original_terms = False):
-        if original_terms:
+    def total_conflicting_variants_by_significance_and_significance(self, **kwargs):
+        if kwargs.get('original_terms'):
             self.query = 'SELECT significance1, significance2'
         else:
             self.query = '''
@@ -271,43 +260,39 @@ class DB():
         '''
 
         self.parameters = {
-            'min_stars1': min_stars1,
-            'min_stars2': min_stars2,
-            'min_conflict_level': max(1, min_conflict_level),
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
+            'min_conflict_level': max(1, kwargs.get('min_conflict_level', 1)),
         }
 
-        if gene != None:
-            self.and_equals('gene', gene)
+        if kwargs.get('gene') != None:
+            self.and_equals('gene', kwargs['gene'])
 
-        if submitter1_id:
-            self.and_equals('submitter1_id', submitter1_id)
+        if kwargs.get('submitter1_id'):
+            self.and_equals('submitter1_id', kwargs['submitter1_id'])
 
-        if submitter2_id:
-            self.and_equals('submitter2_id', submitter2_id)
+        if kwargs.get('submitter2_id'):
+            self.and_equals('submitter2_id', kwargs['submitter2_id'])
 
-        if standardized_method1:
-            self.and_equals('standardized_method1', standardized_method1)
+        if kwargs.get('standardized_method1'):
+            self.and_equals('standardized_method1', kwargs['standardized_method1'])
 
-        if standardized_method2:
-            self.and_equals('standardized_method2', standardized_method2)
+        if kwargs.get('standardized_method2'):
+            self.and_equals('standardized_method2', kwargs['standardized_method2'])
 
-        if gene_type != -1:
+        if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = gene_type
+            self.parameters['gene_type'] = kwargs['gene_type']
 
-        if original_terms:
+        if kwargs.get('original_terms'):
             self.query += ' GROUP BY significance1, significance2'
         else:
             self.query += ' GROUP BY standardized_significance1, standardized_significance2'
 
         return self.rows()
 
-    def total_conflicting_variants_by_submitter_and_conflict_level(self, submitter1_id = None, min_stars1 = 0,
-                                                                   min_stars2 = 0, standardized_method1 = None,
-                                                                   standardized_method2 = None, submitter_ids = None,
-                                                                   min_conflict_level = 1):
-
-        if submitter1_id:
+    def total_conflicting_variants_by_submitter_and_conflict_level(self, **kwargs):
+        if kwargs.get('submitter1_id'):
             self.query = 'SELECT submitter2_id AS submitter_id'
         else:
             self.query = 'SELECT submitter1_id AS submitter_id'
@@ -319,22 +304,22 @@ class DB():
         '''
 
         self.parameters = {
-            'min_stars1': min_stars1,
-            'min_stars2': min_stars2,
-            'min_conflict_level': max(1, min_conflict_level),
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
+            'min_conflict_level': max(1, kwargs.get('min_conflict_level', 1)),
         }
 
-        if submitter1_id:
-            self.and_equals('submitter1_id', submitter1_id)
+        if kwargs.get('submitter1_id'):
+            self.and_equals('submitter1_id', kwargs['submitter1_id'])
 
-        if standardized_method1:
-            self.and_equals('standardized_method1', standardized_method1)
+        if kwargs.get('standardized_method1'):
+            self.and_equals('standardized_method1', kwargs['standardized_method1'])
 
-        if standardized_method2:
-            self.and_equals('standardized_method2', standardized_method2)
+        if kwargs.get('standardized_method2'):
+            self.and_equals('standardized_method2', kwargs['standardized_method2'])
 
-        if submitter_ids:
-            self.and_equals('submitter_id', submitter_ids)
+        if kwargs.get('submitter_ids'):
+            self.and_equals('submitter_id', kwargs['submitter_ids'])
 
         self.query += ' GROUP BY submitter_id, conflict_level'
 
@@ -349,7 +334,7 @@ class DB():
     def total_submissions(self):
         return list(self.cursor.execute('SELECT COUNT(*) FROM current_submissions'))[0][0]
 
-    def total_submissions_by_country(self, min_stars = 0, standardized_method = None, min_conflict_level = -1):
+    def total_submissions_by_country(self, **kwargs):
         self.query = '''
             SELECT
                 submitter1_country_code AS country_code,
@@ -360,19 +345,19 @@ class DB():
         '''
 
         self.parameters = {
-            'min_stars': min_stars,
-            'min_conflict_level': min_conflict_level,
+            'min_stars': kwargs.get('min_stars', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
         }
 
-        if standardized_method:
-            self.and_equals('standardized_method1', standardized_method)
-            self.and_equals('standardized_method2', standardized_method)
+        if kwargs.get('standardized_method'):
+            self.and_equals('standardized_method1', kwargs['standardized_method'])
+            self.and_equals('standardized_method2', kwargs['standardized_method'])
 
         self.query += ' GROUP BY country_code ORDER BY count DESC'
 
         return self.rows()
 
-    def total_submissions_by_method(self, min_stars = 0, min_conflict_level = -1):
+    def total_submissions_by_method(self, **kwargs):
         return list(map(
             dict,
             self.cursor.execute(
@@ -383,13 +368,13 @@ class DB():
                     GROUP BY method ORDER BY count DESC
                 ''',
                 {
-                    'min_stars': min_stars,
-                    'min_conflict_level': min_conflict_level,
+                    'min_stars': kwargs.get('min_stars', 0),
+                    'min_conflict_level': kwargs.get('min_conflict_level', -1),
                 }
             )
         ))
 
-    def total_submissions_by_standardized_method_over_time(self, min_stars = 0, min_conflict_level = -1):
+    def total_submissions_by_standardized_method_over_time(self, **kwargs):
         return list(map(
             dict,
             self.cursor.execute(
@@ -400,14 +385,13 @@ class DB():
                     GROUP BY date, standardized_method ORDER BY date, count DESC
                 ''',
                 {
-                    'min_stars': min_stars,
-                    'min_conflict_level': min_conflict_level,
+                    'min_stars': kwargs.get('min_stars', 0),
+                    'min_conflict_level': kwargs.get('min_conflict_level', -1),
                 }
             )
         ))
 
-    def total_submissions_by_submitter(self, country_code = None, min_stars = 0, standardized_method = None,
-                                       min_conflict_level = -1):
+    def total_submissions_by_submitter(self, **kwargs):
         self.query = '''
             SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name, COUNT(DISTINCT scv1) AS count
             FROM current_comparisons
@@ -415,67 +399,63 @@ class DB():
         '''
 
         self.parameters = {
-            'min_stars': min_stars,
-            'min_conflict_level': min_conflict_level,
+            'min_stars': kwargs.get('min_stars', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
         }
 
-        if country_code != None:
-            self.and_equals('submitter1_country_code', country_code)
+        if kwargs.get('country_code'):
+            self.and_equals('submitter1_country_code', kwargs['country_code'])
 
-        if standardized_method:
-            self.and_equals('standardized_method1', standardized_method)
+        if kwargs.get('standardized_method'):
+            self.and_equals('standardized_method1', kwargs['standardized_method'])
 
         self.query += ' GROUP BY submitter1_id ORDER BY count DESC'
 
         return self.rows()
 
-    def total_variants(self, gene = None, condition1_name = None, submitter1_id = None, submitter2_id = None,
-                       significance1 = None, min_stars1 = 0, min_stars2 = 0, standardized_method1 = None,
-                       standardized_method2 = None, min_conflict_level = -1, gene_type = -1, original_terms = False):
+    def total_variants(self, **kwargs):
         self.query = '''
             SELECT COUNT(DISTINCT variant_name) FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
         self.parameters = {
-            'min_stars1': min_stars1,
-            'min_stars2': min_stars2,
-            'min_conflict_level': min_conflict_level,
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
         }
 
-        if gene != None:
-            self.and_equals('gene', gene)
+        if kwargs.get('gene') != None:
+            self.and_equals('gene', kwargs['gene'])
 
-        if condition1_name:
-            self.and_equals('condition1_name', condition1_name)
+        if kwargs.get('condition1_name'):
+            self.and_equals('condition1_name', kwargs['condition1_name'])
 
-        if submitter1_id:
-            self.and_equals('submitter1_id', submitter1_id)
+        if kwargs.get('submitter1_id'):
+            self.and_equals('submitter1_id', kwargs['submitter1_id'])
 
-        if submitter2_id:
-            self.and_equals('submitter2_id', submitter2_id)
+        if kwargs.get('submitter2_id'):
+            self.and_equals('submitter2_id', kwargs['submitter2_id'])
 
-        if significance1:
-            if original_terms:
-                self.and_equals('significance1', significance1)
+        if kwargs.get('significance1'):
+            if kwargs.get('original_terms'):
+                self.and_equals('significance1', kwargs['significance1'])
             else:
-                self.and_equals('standardized_significance1', significance1)
+                self.and_equals('standardized_significance1', kwargs['significance1'])
 
-        if standardized_method1:
-            self.and_equals('standardized_method1', standardized_method1)
+        if kwargs.get('standardized_method1'):
+            self.and_equals('standardized_method1', kwargs['standardized_method1'])
 
-        if standardized_method2:
-            self.and_equals('standardized_method2', standardized_method2)
+        if kwargs.get('standardized_method2'):
+            self.and_equals('standardized_method2', kwargs['standardized_method2'])
 
-        if gene_type != -1:
+        if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = gene_type
+            self.parameters['gene_type'] = kwargs['gene_type']
 
         return self.value()
 
-    def total_variants_by_condition(self, gene = None, significance1 = None, submitter1_id = 0, min_stars = 0,
-                                    standardized_method = None, min_conflict_level = -1, gene_type = -1,
-                                    original_terms = False, condition_names = None):
+    def total_variants_by_condition(self, **kwargs):
         self.query = '''
             SELECT
                 condition1_db AS condition_db,
@@ -489,43 +469,41 @@ class DB():
         '''
 
         self.parameters = {
-            'min_stars': min_stars,
-            'min_conflict_level': min_conflict_level,
+            'min_stars': kwargs.get('min_stars', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
         }
 
-        if gene != None:
-            self.and_equals('gene', gene)
+        if kwargs.get('gene') != None:
+            self.and_equals('gene', kwargs['gene'])
 
-        if submitter1_id:
-            self.and_equals('submitter1_id', submitter1_id)
+        if kwargs.get('submitter1_id'):
+            self.and_equals('submitter1_id', kwargs['submitter1_id'])
 
-        if significance1:
-            if original_terms:
-                self.and_equals('significance1', significance1)
+        if kwargs.get('significance1'):
+            if kwargs.get('original_terms'):
+                self.and_equals('significance1', kwargs['significance1'])
             else:
-                self.and_equals('standardized_significance1', significance1)
+                self.and_equals('standardized_significance1', kwargs['significance1'])
 
-        if standardized_method:
-            self.and_equals('standardized_method1', standardized_method)
-            self.and_equals('standardized_method2', standardized_method)
+        if kwargs.get('standardized_method'):
+            self.and_equals('standardized_method1', kwargs['standardized_method'])
+            self.and_equals('standardized_method2', kwargs['standardized_method'])
 
-        if gene_type != -1:
+        if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = gene_type
+            self.parameters['gene_type'] = kwargs['gene_type']
 
-        if condition_names:
-            self.and_equals('condition_name', condition_names)
+        if kwargs.get('condition_names'):
+            self.and_equals('condition_name', kwargs['condition_names'])
 
         self.query += ' GROUP BY condition_name ORDER BY count DESC'
 
         return list(map(dict, self.cursor.execute(self.query, self.parameters)))
 
-    def total_variants_by_condition_and_significance(self, gene = None, submitter_id = None, min_stars = 0,
-                                                     standardized_method = None, min_conflict_level = -1,
-                                                     gene_type = -1, original_terms = False):
+    def total_variants_by_condition_and_significance(self, **kwargs):
         self.query = 'SELECT condition1_name AS condition_name, COUNT(DISTINCT variant_name) AS count'
 
-        if original_terms:
+        if kwargs.get('original_terms'):
             self.query += ', significance1 AS significance'
         else:
             self.query += ', standardized_significance1 AS significance'
@@ -536,30 +514,28 @@ class DB():
         '''
 
         self.parameters = {
-            'min_stars': min_stars,
-            'min_conflict_level': min_conflict_level,
+            'min_stars': kwargs.get('min_stars', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
         }
 
-        if gene != None:
-            self.and_equals('gene', gene)
+        if kwargs.get('gene') != None:
+            self.and_equals('gene', kwargs['gene'])
 
-        if submitter_id:
-            self.and_equals('submitter1_id', submitter_id)
+        if kwargs.get('submitter_id'):
+            self.and_equals('submitter1_id', kwargs['submitter_id'])
 
-        if standardized_method:
-            self.and_equals('standardized_method1', standardized_method)
+        if kwargs.get('standardized_method'):
+            self.and_equals('standardized_method1', kwargs['standardized_method'])
 
-        if gene_type != -1:
+        if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = gene_type
+            self.parameters['gene_type'] = kwargs['gene_type']
 
         self.query += ' GROUP BY condition_name, significance'
 
         return self.rows()
 
-    def total_variants_by_gene(self, condition1_name = None, submitter1_id = 0, significance1 = None, min_stars1 = 0,
-                               min_stars2 = 0, standardized_method1 = None, standardized_method2 = None,
-                               min_conflict_level = -1, gene_type = -1, original_terms = False, genes = None):
+    def total_variants_by_gene(self, **kwargs):
         self.query = '''
             SELECT
                 gene,
@@ -571,46 +547,44 @@ class DB():
         '''
 
         self.parameters = {
-            'min_stars1': min_stars1,
-            'min_stars2': min_stars2,
-            'min_conflict_level': min_conflict_level,
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
         }
 
-        if condition1_name:
-            self.and_equals('condition1_name', condition1_name)
+        if kwargs.get('condition1_name'):
+            self.and_equals('condition1_name', kwargs['condition1_name'])
 
-        if submitter1_id:
-            self.and_equals('submitter1_id', submitter1_id)
+        if kwargs.get('submitter1_id'):
+            self.and_equals('submitter1_id', kwargs['submitter1_id'])
 
-        if significance1:
-            if original_terms:
-                self.and_equals('significance1', significance1)
+        if kwargs.get('significance1'):
+            if kwargs.get('original_terms'):
+                self.and_equals('significance1', kwargs['significance1'])
             else:
-                self.and_equals('standardized_significance1', significance1)
+                self.and_equals('standardized_significance1', kwargs['significance1'])
 
-        if standardized_method1:
-            self.and_equals('standardized_method1', standardized_method1)
+        if kwargs.get('standardized_method1'):
+            self.and_equals('standardized_method1', kwargs['standardized_method1'])
 
-        if standardized_method2:
-            self.and_equals('standardized_method2', standardized_method2)
+        if kwargs.get('standardized_method2'):
+            self.and_equals('standardized_method2', kwargs['standardized_method2'])
 
-        if gene_type != -1:
+        if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = gene_type
+            self.parameters['gene_type'] = kwargs['gene_type']
 
-        if genes:
-            self.and_equals('gene', genes)
+        if kwargs.get('genes'):
+            self.and_equals('gene', kwargs['genes'])
 
         self.query += ' GROUP BY gene ORDER BY count DESC'
 
         return self.rows()
 
-    def total_variants_by_gene_and_significance(self, condition_name = None, submitter_id = None, min_stars = 0,
-                                                standardized_method = None, min_conflict_level = -1,
-                                                original_terms = False):
+    def total_variants_by_gene_and_significance(self, **kwargs):
         self.query = 'SELECT gene, COUNT(DISTINCT variant_name) AS count'
 
-        if original_terms:
+        if kwargs.get('original_terms'):
             self.query += ', significance1 AS significance'
         else:
             self.query += ', standardized_significance1 AS significance'
@@ -621,30 +595,28 @@ class DB():
         '''
 
         self.parameters = {
-            'min_stars': min_stars,
-            'min_conflict_level': min_conflict_level,
+            'min_stars': kwargs.get('min_stars', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
         }
 
-        if condition_name:
-            self.and_equals('condition1_name', condition_name)
+        if kwargs.get('condition_name'):
+            self.and_equals('condition1_name', kwargs['condition_name'])
 
-        if submitter_id:
-            self.and_equals('submitter1_id', submitter_id)
+        if kwargs.get('submitter_id'):
+            self.and_equals('submitter1_id', kwargs['submitter_id'])
 
-        if standardized_method:
-            self.and_equals('standardized_method1', standardized_method)
-            self.and_equals('standardized_method2', standardized_method)
+        if kwargs.get('standardized_method'):
+            self.and_equals('standardized_method1', kwargs['standardized_method'])
+            self.and_equals('standardized_method2', kwargs['standardized_method'])
 
         self.query += ' GROUP BY gene, significance'
 
         return self.rows()
 
-    def total_variants_by_significance(self, gene = None, condition_name = None, submitter_id = None, min_stars = 0,
-                                       standardized_method = None, min_conflict_level = -1, gene_type = -1,
-                                       original_terms = False):
+    def total_variants_by_significance(self, **kwargs):
         self.query = 'SELECT COUNT(DISTINCT variant_name) AS count'
 
-        if original_terms:
+        if kwargs.get('original_terms'):
             self.query += ', significance1 AS significance'
         else:
             self.query += ', standardized_significance1 AS significance'
@@ -658,36 +630,33 @@ class DB():
         '''
 
         self.parameters = {
-            'min_stars': min_stars,
-            'min_conflict_level': min_conflict_level,
+            'min_stars': kwargs.get('min_stars', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
         }
 
-        if gene != None:
-            self.and_equals('gene', gene)
+        if kwargs.get('gene') != None:
+            self.and_equals('gene', kwargs['gene'])
 
-        if condition_name:
-            self.and_equals('condition1_name', condition_name)
+        if kwargs.get('condition_name'):
+            self.and_equals('condition1_name', kwargs['condition_name'])
 
-        if submitter_id:
-            self.and_equals('submitter1_id', submitter_id)
+        if kwargs.get('submitter_id'):
+            self.and_equals('submitter1_id', kwargs['submitter_id'])
 
-        if standardized_method:
-            self.and_equals('standardized_method1', standardized_method)
-            self.and_equals('standardized_method2', standardized_method)
+        if kwargs.get('standardized_method'):
+            self.and_equals('standardized_method1', kwargs['standardized_method'])
+            self.and_equals('standardized_method2', kwargs['standardized_method'])
 
-        if gene_type != -1:
+        if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = gene_type
+            self.parameters['gene_type'] = kwargs['gene_type']
 
         self.query += ' GROUP BY significance ORDER BY count DESC'
 
         return self.rows()
 
-    def total_variants_by_submitter(self, gene = None, condition1_name = None, submitter1_id = None,
-                                    significance1 = None, min_stars1 = 0, min_stars2 = 0, standardized_method1 = None,
-                                    standardized_method2 = None, min_conflict_level = -1, gene_type = -1,
-                                    original_terms = False, submitter_ids = None):
-        if submitter1_id:
+    def total_variants_by_submitter(self, **kwargs):
+        if kwargs.get('submitter1_id'):
             self.query = 'SELECT submitter2_id AS submitter_id, submitter2_name AS submitter_name'
         else:
             self.query = 'SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name'
@@ -701,49 +670,47 @@ class DB():
         '''
 
         self.parameters = {
-            'min_stars1': min_stars1,
-            'min_stars2': min_stars2,
-            'min_conflict_level': min_conflict_level,
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
         }
 
-        if gene != None:
-            self.and_equals('gene', gene)
+        if kwargs.get('gene') != None:
+            self.and_equals('gene', kwargs['gene'])
 
-        if condition1_name:
-            self.and_equals('condition1_name', condition1_name)
+        if kwargs.get('condition1_name'):
+            self.and_equals('condition1_name', kwargs['condition1_name'])
 
-        if submitter1_id:
-            self.and_equals('submitter1_id', submitter1_id)
+        if kwargs.get('submitter1_id'):
+            self.and_equals('submitter1_id', kwargs['submitter1_id'])
 
-        if significance1:
-            if original_terms:
-                self.and_equals('significance1', significance1)
+        if kwargs.get('significance1'):
+            if kwargs.get('original_terms'):
+                self.and_equals('significance1', kwargs['significance1'])
             else:
-                self.and_equals('standardized_significance1', significance1)
+                self.and_equals('standardized_significance1', kwargs['significance1'])
 
-        if standardized_method1:
-            self.and_equals('standardized_method1', standardized_method1)
+        if kwargs.get('standardized_method1'):
+            self.and_equals('standardized_method1', kwargs['standardized_method1'])
 
-        if standardized_method2:
-            self.and_equals('standardized_method2', standardized_method2)
+        if kwargs.get('standardized_method2'):
+            self.and_equals('standardized_method2', kwargs['standardized_method2'])
 
-        if gene_type != -1:
+        if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = gene_type
+            self.parameters['gene_type'] = kwargs['gene_type']
 
-        if submitter_ids:
-            self.and_equals('submitter_id', submitter_ids)
+        if kwargs.get('submitter_ids'):
+            self.and_equals('submitter_id', kwargs['submitter_ids'])
 
         self.query += ' GROUP BY submitter_id ORDER BY count DESC'
 
         return self.rows()
 
-    def total_variants_by_submitter_and_significance(self, gene = None, condition_name = None, min_stars = 0,
-                                                     standardized_method = None, min_conflict_level = -1,
-                                                     gene_type = -1, original_terms = False):
+    def total_variants_by_submitter_and_significance(self, **kwargs):
         self.query = 'SELECT submitter1_id AS submitter_id, COUNT(DISTINCT variant_name) AS count'
 
-        if original_terms:
+        if kwargs.get('original_terms'):
             self.query += ', significance1 AS significance'
         else:
             self.query += ', standardized_significance1 AS significance'
@@ -754,23 +721,23 @@ class DB():
         '''
 
         self.parameters = {
-            'min_stars': min_stars,
-            'min_conflict_level': min_conflict_level,
+            'min_stars': kwargs.get('min_stars', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
         }
 
-        if gene != None:
-            self.and_equals('gene', gene)
+        if kwargs.get('gene') != None:
+            self.and_equals('gene', kwargs['gene'])
 
-        if condition_name:
-            self.and_equals('condition1_name', condition_name)
+        if kwargs.get('condition_name'):
+            self.and_equals('condition1_name', kwargs['condition_name'])
 
-        if standardized_method:
-            self.and_equals('standardized_method1', standardized_method)
-            self.and_equals('standardized_method2', standardized_method)
+        if kwargs.get('standardized_method'):
+            self.and_equals('standardized_method1', kwargs['standardized_method'])
+            self.and_equals('standardized_method2', kwargs['standardized_method'])
 
-        if gene_type != -1:
+        if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = gene_type
+            self.parameters['gene_type'] = kwargs['gene_type']
 
         self.query += ' GROUP BY submitter_id, significance'
 
@@ -818,54 +785,51 @@ class DB():
         except IndexError:
             return None
 
-    def variants(self, gene = None, condition1_name = None, submitter1_id = None, submitter2_id = None,
-                 significance1 = None, significance2 = None, min_stars1 = 0, min_stars2 = 0,
-                 standardized_method1 = None, standardized_method2 = None, min_conflict_level = 1,
-                 gene_type = -1, original_terms = False):
+    def variants(self, **kwargs):
         self.query = '''
             SELECT DISTINCT variant_name, variant_rsid FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
         self.parameters = {
-            'min_stars1': min_stars1,
-            'min_stars2': min_stars2,
-            'min_conflict_level': min_conflict_level,
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
         }
 
-        if gene != None:
-            self.and_equals('gene', gene)
+        if kwargs.get('gene') != None:
+            self.and_equals('gene', kwargs.get('gene'))
 
-        if condition1_name:
-            self.and_equals('condition1_name', condition1_name)
+        if kwargs.get('condition1_name'):
+            self.and_equals('condition1_name', kwargs['condition1_name'])
 
-        if submitter1_id:
-            self.and_equals('submitter1_id', submitter1_id)
+        if kwargs.get('submitter1_id'):
+            self.and_equals('submitter1_id', kwargs['submitter1_id'])
 
-        if submitter2_id:
-            self.and_equals('submitter2_id', submitter2_id)
+        if kwargs.get('submitter2_id'):
+            self.and_equals('submitter2_id', kwargs['submitter2_id'])
 
-        if significance1:
-            if original_terms:
-                self.and_equals('significance1', significance1)
+        if kwargs.get('significance1'):
+            if kwargs.get('original_terms'):
+                self.and_equals('significance1', kwargs['significance1'])
             else:
-                self.and_equals('standardized_significance1', significance1)
+                self.and_equals('standardized_significance1', kwargs['significance1'])
 
-        if significance2:
-            if original_terms:
-                self.and_equals('significance2', significance2)
+        if kwargs.get('significance2'):
+            if kwargs.get('original_terms'):
+                self.and_equals('significance2', kwargs['significance2'])
             else:
-                self.and_equals('standardized_significance2', significance2)
+                self.and_equals('standardized_significance2', kwargs['significance2'])
 
-        if standardized_method1:
-            self.and_equals('standardized_method1', standardized_method1)
+        if kwargs.get('standardized_method1'):
+            self.and_equals('standardized_method1', kwargs['standardized_method1'])
 
-        if standardized_method2:
-            self.and_equals('standardized_method2', standardized_method2)
+        if kwargs.get('standardized_method2'):
+            self.and_equals('standardized_method2', kwargs['standardized_method2'])
 
-        if gene_type != -1:
+        if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = gene_type
+            self.parameters['gene_type'] = kwargs['gene_type']
 
         self.query += ' ORDER BY variant_name'
 
