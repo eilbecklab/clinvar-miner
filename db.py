@@ -803,7 +803,7 @@ class DB():
     @promise
     def variants(self, **kwargs):
         self.query = '''
-            SELECT DISTINCT variant_name, variant_rsid FROM current_comparisons
+            SELECT variant_name, variant_rsid FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
@@ -847,6 +847,6 @@ class DB():
             self.query += ' AND gene_type=:gene_type'
             self.parameters['gene_type'] = kwargs['gene_type']
 
-        self.query += ' ORDER BY variant_name'
+        self.query += ' GROUP BY variant_name ORDER BY variant_name'
 
         return self.rows()
