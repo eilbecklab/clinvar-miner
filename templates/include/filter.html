@@ -5,20 +5,20 @@
             {% set name = 'min_stars1' %}
             {% include 'include/min-stars-filter.html' %}
         {% endwith %}
-        {% if review_status2_label %}
-            {% with %}
-                {% set label = review_status2_label %}
-                {% set name = 'min_stars2' %}
-                {% include 'include/min-stars-filter.html' %}
-            {% endwith %}
-        {% endif %}
-    </tr>
-    <tr>
         {% if method1_label %}
             {% with %}
                 {% set label = method1_label %}
                 {% set name = 'method1' %}
                 {% include 'include/method-filter.html' %}
+            {% endwith %}
+        {% endif %}
+    </tr>
+    <tr>
+        {% if review_status2_label %}
+            {% with %}
+                {% set label = review_status2_label %}
+                {% set name = 'min_stars2' %}
+                {% include 'include/min-stars-filter.html' %}
             {% endwith %}
         {% endif %}
         {% if method2_label %}
@@ -62,7 +62,7 @@
     {% if gene_type_filter %}
         <tr>
             <td>Gene type:</td>
-            <td>
+            <td colspan="3">
                 <select name="gene_type">
                     <option></option>
                     <option {% if request.args.get('gene_type') == '1' %}selected="selected"{% endif %} value="1">
