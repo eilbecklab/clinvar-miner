@@ -171,20 +171,23 @@ class DB():
         self.query = '''
             SELECT condition1_name AS condition_name, conflict_level, COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
-            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
         self.parameters = {
-            'min_stars': kwargs.get('min_stars', 0),
-            'min_conflict_level': max(1, kwargs.get('min_conflict_level', 1)),
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', 1),
         }
 
-        if kwargs.get('normalized_method'):
-            self.and_equals('normalized_method1', kwargs['normalized_method'])
-            self.and_equals('normalized_method2', kwargs['normalized_method'])
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
 
-        if kwargs.get('condition_names'):
-            self.and_equals('condition_name', kwargs['condition_names'])
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
+
+        if kwargs.get('condition1_name'):
+            self.and_equals('condition1_name', kwargs['condition1_name'])
 
         self.query += ' GROUP BY condition_name, conflict_level'
 
@@ -200,7 +203,7 @@ class DB():
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
-            'min_conflict_level': max(1, kwargs.get('min_conflict_level', 1)),
+            'min_conflict_level': kwargs.get('min_conflict_level', 1),
         }
 
         if kwargs.get('gene') != None:
@@ -240,7 +243,7 @@ class DB():
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
-            'min_conflict_level': max(1, kwargs.get('min_conflict_level', 1)),
+            'min_conflict_level': kwargs.get('min_conflict_level', 1),
         }
 
         if kwargs.get('normalized_method1'):
@@ -253,8 +256,8 @@ class DB():
             self.query += ' AND gene_type=:gene_type'
             self.parameters['gene_type'] = kwargs['gene_type']
 
-        if kwargs.get('genes'):
-            self.and_equals('gene', kwargs['genes'])
+        if kwargs.get('gene'):
+            self.and_equals('gene', kwargs['gene'])
 
         self.query += ' GROUP BY gene, conflict_level'
 
@@ -278,7 +281,7 @@ class DB():
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
-            'min_conflict_level': max(1, kwargs.get('min_conflict_level', 1)),
+            'min_conflict_level': kwargs.get('min_conflict_level', 1),
         }
 
         if kwargs.get('gene') != None:
@@ -323,7 +326,7 @@ class DB():
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
-            'min_conflict_level': max(1, kwargs.get('min_conflict_level', 1)),
+            'min_conflict_level': kwargs.get('min_conflict_level', 1),
         }
 
         if kwargs.get('submitter1_id'):
@@ -485,11 +488,12 @@ class DB():
                 COUNT(DISTINCT submitter1_id) AS submitter_count,
                 COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
-            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
         self.parameters = {
-            'min_stars': kwargs.get('min_stars', 0),
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
         }
 
@@ -505,16 +509,18 @@ class DB():
             else:
                 self.and_equals('normalized_significance1', kwargs['significance1'])
 
-        if kwargs.get('normalized_method'):
-            self.and_equals('normalized_method1', kwargs['normalized_method'])
-            self.and_equals('normalized_method2', kwargs['normalized_method'])
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
+
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
             self.parameters['gene_type'] = kwargs['gene_type']
 
-        if kwargs.get('condition_names'):
-            self.and_equals('condition_name', kwargs['condition_names'])
+        if kwargs.get('condition1_name'):
+            self.and_equals('condition1_name', kwargs['condition1_name'])
 
         self.query += ' GROUP BY condition_name ORDER BY count DESC'
 
@@ -531,22 +537,26 @@ class DB():
 
         self.query += '''
             FROM current_comparisons
-            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
         self.parameters = {
-            'min_stars': kwargs.get('min_stars', 0),
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
         }
 
         if kwargs.get('gene') != None:
             self.and_equals('gene', kwargs['gene'])
 
-        if kwargs.get('submitter_id'):
-            self.and_equals('submitter1_id', kwargs['submitter_id'])
+        if kwargs.get('submitter1_id'):
+            self.and_equals('submitter1_id', kwargs['submitter1_id'])
 
-        if kwargs.get('normalized_method'):
-            self.and_equals('normalized_method1', kwargs['normalized_method'])
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
+
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
@@ -596,8 +606,8 @@ class DB():
             self.query += ' AND gene_type=:gene_type'
             self.parameters['gene_type'] = kwargs['gene_type']
 
-        if kwargs.get('genes'):
-            self.and_equals('gene', kwargs['genes'])
+        if kwargs.get('gene'):
+            self.and_equals('gene', kwargs['gene'])
 
         self.query += ' GROUP BY gene ORDER BY count DESC'
 
@@ -614,23 +624,26 @@ class DB():
 
         self.query += '''
             FROM current_comparisons
-            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
         self.parameters = {
-            'min_stars': kwargs.get('min_stars', 0),
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
         }
 
-        if kwargs.get('condition_name'):
-            self.and_equals('condition1_name', kwargs['condition_name'])
+        if kwargs.get('condition1_name'):
+            self.and_equals('condition1_name', kwargs['condition1_name'])
 
-        if kwargs.get('submitter_id'):
-            self.and_equals('submitter1_id', kwargs['submitter_id'])
+        if kwargs.get('submitter1_id'):
+            self.and_equals('submitter1_id', kwargs['submitter1_id'])
 
-        if kwargs.get('normalized_method'):
-            self.and_equals('normalized_method1', kwargs['normalized_method'])
-            self.and_equals('normalized_method2', kwargs['normalized_method'])
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
+
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         self.query += ' GROUP BY gene, significance'
 
@@ -650,26 +663,29 @@ class DB():
             , COUNT(DISTINCT condition1_name) AS condition_count
             , COUNT(DISTINCT submitter1_id) AS submitter_count
             FROM current_comparisons
-            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
         self.parameters = {
-            'min_stars': kwargs.get('min_stars', 0),
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
         }
 
         if kwargs.get('gene') != None:
             self.and_equals('gene', kwargs['gene'])
 
-        if kwargs.get('condition_name'):
-            self.and_equals('condition1_name', kwargs['condition_name'])
+        if kwargs.get('condition1_name'):
+            self.and_equals('condition1_name', kwargs['condition1_name'])
 
-        if kwargs.get('submitter_id'):
-            self.and_equals('submitter1_id', kwargs['submitter_id'])
+        if kwargs.get('submitter1_id'):
+            self.and_equals('submitter1_id', kwargs['submitter1_id'])
 
-        if kwargs.get('normalized_method'):
-            self.and_equals('normalized_method1', kwargs['normalized_method'])
-            self.and_equals('normalized_method2', kwargs['normalized_method'])
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
+
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
@@ -743,23 +759,26 @@ class DB():
 
         self.query += '''
             FROM current_comparisons
-            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
         self.parameters = {
-            'min_stars': kwargs.get('min_stars', 0),
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
         }
 
         if kwargs.get('gene') != None:
             self.and_equals('gene', kwargs['gene'])
 
-        if kwargs.get('condition_name'):
-            self.and_equals('condition1_name', kwargs['condition_name'])
+        if kwargs.get('condition1_name'):
+            self.and_equals('condition1_name', kwargs['condition1_name'])
 
-        if kwargs.get('normalized_method'):
-            self.and_equals('normalized_method1', kwargs['normalized_method'])
-            self.and_equals('normalized_method2', kwargs['normalized_method'])
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
+
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'

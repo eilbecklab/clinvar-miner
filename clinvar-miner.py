@@ -474,64 +474,49 @@ def cache_set(response):
 
 @app.route('/conflicting-variants-by-condition')
 def conflicting_variants_by_condition():
+    args = {
+        'min_stars1': int_arg('min_stars1'),
+        'normalized_method1': request.args.get('method1'),
+        'min_stars2': int_arg('min_stars2'),
+        'normalized_method2': request.args.get('method2'),
+        'condition1_name': list_arg('conditions'),
+    }
+    min_conflict_level = max(1, int_arg('min_conflict_level'))
+
     return render_template_async(
         'conflicting-variants-by-condition.html',
         overview=get_conflict_overview(
             DB().total_conflicting_variants_by_conflict_level(
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                condition1_name=list_arg('conditions'),
+                min_conflict_level=min_conflict_level,
+                **args
             ),
         ),
         total_variants=DB().total_variants(
-            min_stars1=int_arg('min_stars1'),
-            normalized_method1=request.args.get('method1'),
-            min_stars2=int_arg('min_stars2'),
-            normalized_method2=request.args.get('method2'),
-            condition1_name=list_arg('conditions'),
+            **args
         ),
         total_potentially_conflicting_variants=DB().total_variants(
-            min_stars1=int_arg('min_stars1'),
-            normalized_method1=request.args.get('method1'),
-            min_stars2=int_arg('min_stars2'),
-            normalized_method2=request.args.get('method2'),
             min_conflict_level=0,
-            condition1_name=list_arg('conditions'),
+            **args
         ),
         total_conflicting_variants=DB().total_variants(
-            min_stars1=int_arg('min_stars1'),
-            normalized_method1=request.args.get('method1'),
-            min_stars2=int_arg('min_stars2'),
-            normalized_method2=request.args.get('method2'),
-            min_conflict_level=max(1, int_arg('min_conflict_level')),
-            condition1_name=list_arg('conditions'),
+            min_conflict_level=min_conflict_level,
+            **args
         ),
         summary=get_conflict_summary_by_condition(
             DB().total_variants_by_condition(
-                min_stars=int_arg('min_stars1'),
-                normalized_method=request.args.get('method1'),
-                condition_names=list_arg('conditions'),
+                **args
             ),
             DB().total_variants_by_condition(
-                min_stars=int_arg('min_stars1'),
-                normalized_method=request.args.get('method1'),
                 min_conflict_level=0,
-                condition_names=list_arg('conditions'),
+                **args
             ),
             DB().total_variants_by_condition(
-                min_stars=int_arg('min_stars1'),
-                normalized_method=request.args.get('method1'),
-                min_conflict_level=max(1, int_arg('min_conflict_level')),
-                condition_names=list_arg('conditions'),
+                min_conflict_level=min_conflict_level,
+                **args
             ),
             DB().total_conflicting_variants_by_condition_and_conflict_level(
-                min_stars=int_arg('min_stars1'),
-                normalized_method=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                condition_names=list_arg('conditions'),
+                min_conflict_level=min_conflict_level,
+                **args
             ),
         ),
     )
@@ -540,81 +525,51 @@ def conflicting_variants_by_condition():
 @app.route('/conflicting-variants-by-gene/<superescaped:gene>')
 @app.route('/conflicting-variants-by-gene/<superescaped:gene>/<superescaped:significance1>/<superescaped:significance2>')
 def conflicting_variants_by_gene(gene = None, significance1 = None, significance2 = None):
+    args = {
+        'min_stars1': int_arg('min_stars1'),
+        'normalized_method1': request.args.get('method1'),
+        'min_stars2': int_arg('min_stars2'),
+        'normalized_method2': request.args.get('method2'),
+        'gene_type': int_arg('gene_type'),
+    }
+    min_conflict_level = max(1, int_arg('min_conflict_level'))
+
     if not gene:
+        args['gene'] = list_arg('genes')
         return render_template_async(
             'conflicting-variants-by-gene.html',
             overview=get_conflict_overview(
                 DB().total_conflicting_variants_by_conflict_level(
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    gene_type=int_arg('gene_type'),
-                    gene=list_arg('genes'),
+                    min_conflict_level=min_conflict_level,
+                    **args
                 ),
             ),
             total_variants=DB().total_variants(
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
-                gene_type=int_arg('gene_type'),
-                gene=list_arg('genes'),
+                **args
             ),
             total_potentially_conflicting_variants=DB().total_variants(
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
                 min_conflict_level=0,
-                gene_type=int_arg('gene_type'),
-                gene=list_arg('genes'),
+                **args
             ),
             total_conflicting_variants=DB().total_variants(
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
-                min_conflict_level=max(1, int_arg('min_conflict_level')),
-                gene_type=int_arg('gene_type'),
-                gene=list_arg('genes'),
+                min_conflict_level=min_conflict_level,
+                **args
             ),
             summary=get_conflict_summary_by_gene(
                 DB().total_variants_by_gene(
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
-                    gene_type=int_arg('gene_type'),
-                    genes=list_arg('genes'),
+                    **args
                 ),
                 DB().total_variants_by_gene(
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
                     min_conflict_level=0,
-                    gene_type=int_arg('gene_type'),
-                    genes=list_arg('genes'),
+                    **args
                 ),
                 DB().total_variants_by_gene(
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
-                    min_conflict_level=max(1, int_arg('min_conflict_level')),
-                    gene_type=int_arg('gene_type'),
-                    genes=list_arg('genes'),
+                    min_conflict_level=min_conflict_level,
+                    **args
                 ),
                 DB().total_conflicting_variants_by_gene_and_conflict_level(
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    gene_type=int_arg('gene_type'),
-                    genes=list_arg('genes'),
+                    min_conflict_level=min_conflict_level,
+                    **args
                 ),
             ),
         )
@@ -624,6 +579,8 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
     gene_info = DB().gene_info(gene)
     if not gene_info:
         abort(404)
+    args['gene'] = gene
+    args['original_terms'] = request.args.get('original_terms')
 
     if not significance1:
         return render_template_async(
@@ -631,116 +588,77 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
             gene_info=gene_info,
             overview=get_conflict_overview(
                 DB().total_conflicting_variants_by_conflict_level(
-                    gene=gene,
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
-                    gene_type=int_arg('gene_type'),
+                    min_conflict_level=min_conflict_level,
+                    **args
                 ),
             ),
             total_variants=DB().total_variants(
-                gene=gene,
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
-                gene_type=int_arg('gene_type'),
+                **args
             ),
             total_potentially_conflicting_variants=DB().total_variants(
-                gene=gene,
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
                 min_conflict_level=0,
-                normalized_method2=request.args.get('method2'),
-                gene_type=int_arg('gene_type'),
+                **args
             ),
             variants=DB().variants(
-                gene=gene,
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
-                min_conflict_level=max(1, int_arg('min_conflict_level')),
-                gene_type=int_arg('gene_type'),
+                min_conflict_level=min_conflict_level,
+                **args
             ),
             breakdown=get_conflict_breakdown(
                 DB().total_conflicting_variants_by_significance_and_significance(
-                    gene=gene,
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
-                    gene_type=int_arg('gene_type'),
-                    original_terms=request.args.get('original_terms'),
+                    min_conflict_level=min_conflict_level,
+                    **args
                 )
             ),
         )
 
     if not DB().is_significance(significance1) or not DB().is_significance(significance2):
         abort(404)
+    args['significance1'] = significance1
+    args['significance2'] = significance2
 
     return render_template_async(
         'conflicting-variants-by-gene--2significances.html',
         gene_info=gene_info,
         significance1=significance1,
         significance2=significance2,
-        variants=DB().variants(
-            gene=gene,
-            significance1=significance1,
-            significance2=significance2,
-            min_stars1=int_arg('min_stars1'),
-            normalized_method1=request.args.get('method1'),
-            min_stars2=int_arg('min_stars2'),
-            normalized_method2=request.args.get('method2'),
-            gene_type=int_arg('gene_type'),
-            original_terms=request.args.get('original_terms'),
-        ),
+        variants=DB().variants(**args),
     )
 
 @app.route('/conflicting-variants-by-significance')
 @app.route('/conflicting-variants-by-significance/<superescaped:significance1>/<superescaped:significance2>')
 def conflicting_variants_by_significance(significance1 = None, significance2 = None):
+    args = {
+        'min_stars1': int_arg('min_stars1'),
+        'normalized_method1': request.args.get('method1'),
+        'min_stars2': int_arg('min_stars2'),
+        'normalized_method2': request.args.get('method2'),
+        'original_terms': request.args.get('original_terms'),
+    }
+    min_conflict_level = max(1, int_arg('min_conflict_level'))
+
     if not significance2:
         return render_template_async(
             'conflicting-variants-by-significance.html',
             overview=get_conflict_overview(
                 DB().total_conflicting_variants_by_conflict_level(
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
+                    **args
                 ),
             ),
             total_variants=DB().total_variants(
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
+                **args
             ),
             total_potentially_conflicting_variants=DB().total_variants(
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
                 min_conflict_level=0,
+                **args
             ),
             total_conflicting_variants=DB().total_variants(
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
-                min_conflict_level=max(1, int_arg('min_conflict_level')),
+                min_conflict_level=min_conflict_level,
+                **args
             ),
             breakdown=get_conflict_breakdown(
                 DB().total_conflicting_variants_by_significance_and_significance(
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
-                    original_terms=request.args.get('original_terms'),
-                    min_conflict_level=int_arg('min_conflict_level'),
+                    min_conflict_level=min_conflict_level,
+                    **args
                 )
             )
         )
@@ -755,11 +673,7 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
         variants=DB().variants(
             significance1=significance1,
             significance2=significance2,
-            min_stars1=int_arg('min_stars1'),
-            normalized_method1=request.args.get('method1'),
-            min_stars2=int_arg('min_stars2'),
-            normalized_method2=request.args.get('method2'),
-            original_terms=request.args.get('original_terms'),
+            **args
         ),
     )
 
@@ -768,73 +682,50 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
 @app.route('/conflicting-variants-by-submitter/<int:submitter1_id>/<int:submitter2_id>')
 @app.route('/conflicting-variants-by-submitter/<int:submitter1_id>/<int:submitter2_id>/<superescaped:significance1>/<superescaped:significance2>')
 def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None):
+    args = {
+        'min_stars1': int_arg('min_stars1'),
+        'normalized_method1': request.args.get('method1'),
+        'min_stars2': int_arg('min_stars2'),
+        'normalized_method2': request.args.get('method2'),
+    }
+    min_conflict_level = max(1, int_arg('min_conflict_level'))
+
     if submitter1_id == None:
+        args['submitter1_id'] = list_arg('submitters')
         return render_template_async(
             'conflicting-variants-by-submitter.html',
             overview=get_conflict_overview(
                 DB().total_conflicting_variants_by_conflict_level(
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    submitter1_id=list_arg('submitters'),
+                    min_conflict_level=min_conflict_level,
+                    **args
                 ),
             ),
             total_variants=DB().total_variants(
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
-                submitter1_id=list_arg('submitters'),
+                **args
             ),
             total_potentially_conflicting_variants=DB().total_variants(
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
                 min_conflict_level=0,
-                submitter1_id=list_arg('submitters'),
+                **args
             ),
             total_conflicting_variants=DB().total_variants(
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
-                min_conflict_level=max(1, int_arg('min_conflict_level')),
-                submitter1_id=list_arg('submitters'),
+                min_conflict_level=min_conflict_level,
+                **args
             ),
             summary=get_conflict_summary_by_submitter(
                 DB().total_variants_by_submitter(
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
-                    submitter_ids=list_arg('submitters'),
+                    **args
                 ),
                 DB().total_variants_by_submitter(
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
                     min_conflict_level=0,
-                    submitter_ids=list_arg('submitters'),
+                    **args
                 ),
                 DB().total_variants_by_submitter(
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
-                    min_conflict_level=max(1, int_arg('min_conflict_level')),
-                    submitter_ids=list_arg('submitters'),
+                    min_conflict_level=min_conflict_level,
+                    **args
                 ),
                 DB().total_conflicting_variants_by_submitter_and_conflict_level(
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    submitter_ids=list_arg('submitters'),
+                    min_conflict_level=min_conflict_level,
+                    **args
                 ),
             ),
         )
@@ -842,6 +733,8 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
     submitter1_info = DB().submitter_info(submitter1_id)
     if not submitter1_info:
         abort(404)
+    args['submitter1_id'] = submitter1_id
+    args['original_terms'] = request.args.get('original_terms')
 
     if submitter2_id == None:
         return render_template_async(
@@ -851,88 +744,47 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             submitter2_info={'id': 0, 'name': 'All submitters'},
             overview=get_conflict_overview(
                 DB().total_conflicting_variants_by_conflict_level(
-                    submitter1_id=submitter1_id,
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
-                    min_conflict_level=int_arg('min_conflict_level'),
+                    min_conflict_level=min_conflict_level,
+                    **args
                 ),
             ),
             total_variants=DB().total_variants(
-                submitter1_id=submitter1_id,
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
+                **args
             ),
             total_potentially_conflicting_variants=DB().total_variants(
-                submitter1_id=submitter1_id,
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
                 min_conflict_level=0,
+                **args
             ),
             total_conflicting_variants=DB().total_variants(
-                submitter1_id=submitter1_id,
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
-                min_conflict_level=max(1, int_arg('min_conflict_level')),
+                min_conflict_level=min_conflict_level,
+                **args
             ),
             summary=get_conflict_summary_by_submitter(
                 DB().total_variants_by_submitter(
-                    submitter1_id=submitter1_id,
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
+                    **args
                 ),
                 DB().total_variants_by_submitter(
-                    submitter1_id=submitter1_id,
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
                     min_conflict_level=0,
+                    **args
                 ),
                 DB().total_variants_by_submitter(
-                    submitter1_id=submitter1_id,
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
-                    min_conflict_level=max(1, int_arg('min_conflict_level')),
+                    min_conflict_level=min_conflict_level,
+                    **args
                 ),
                 DB().total_conflicting_variants_by_submitter_and_conflict_level(
-                    submitter1_id=submitter1_id,
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
-                    min_conflict_level=int_arg('min_conflict_level'),
+                    min_conflict_level=min_conflict_level,
+                    **args
                 ),
             ),
             breakdown=get_conflict_breakdown(
                 DB().total_conflicting_variants_by_significance_and_significance(
-                    submitter1_id=submitter1_id,
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    original_terms=request.args.get('original_terms'),
+                    min_conflict_level=min_conflict_level,
+                    **args
                 )
             ),
             variants=DB().variants(
-                submitter1_id=submitter1_id,
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
-                min_conflict_level=max(1, int_arg('min_conflict_level')),
+                min_conflict_level=min_conflict_level,
+                **args
             ),
         )
 
@@ -942,6 +794,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
         submitter2_info = DB().submitter_info(submitter2_id)
         if not submitter2_info:
             abort(404)
+    args['submitter2_id'] = submitter2_id
 
     if not significance1:
         return render_template_async(
@@ -950,52 +803,26 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             submitter2_info=submitter2_info,
             overview=get_conflict_overview(
                 DB().total_conflicting_variants_by_conflict_level(
-                    submitter1_id=submitter1_id,
-                    submitter2_id=submitter2_id,
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
-                    min_conflict_level=int_arg('min_conflict_level'),
+                    min_conflict_level=min_conflict_level,
+                    **args
                 ),
             ),
             total_variants=DB().total_variants(
-                submitter1_id=submitter1_id,
-                submitter2_id=submitter2_id,
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
+                **args
             ),
             total_potentially_conflicting_variants=DB().total_variants(
-                submitter1_id=submitter1_id,
-                submitter2_id=submitter2_id,
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
                 min_conflict_level=0,
+                **args
             ),
             breakdown=get_conflict_breakdown(
                 DB().total_conflicting_variants_by_significance_and_significance(
-                    submitter1_id=submitter1_id,
-                    submitter2_id=submitter2_id,
-                    min_stars1=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    min_stars2=int_arg('min_stars2'),
-                    normalized_method2=request.args.get('method2'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    original_terms=request.args.get('original_terms'),
+                    min_conflict_level=min_conflict_level,
+                    **args
                 )
             ),
             variants=DB().variants(
-                submitter1_id=submitter1_id,
-                submitter2_id=submitter2_id,
-                min_stars1=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                min_stars2=int_arg('min_stars2'),
-                normalized_method2=request.args.get('method2'),
-                min_conflict_level=max(1, int_arg('min_conflict_level')),
+                min_conflict_level=min_conflict_level,
+                **args
             ),
         )
 
@@ -1009,15 +836,9 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
         significance1=significance1,
         significance2=significance2,
         variants=DB().variants(
-            submitter1_id=submitter1_id,
-            submitter2_id=submitter2_id,
             significance1=significance1,
             significance2=significance2,
-            min_stars1=int_arg('min_stars1'),
-            normalized_method1=request.args.get('method1'),
-            min_stars2=int_arg('min_stars2'),
-            normalized_method2=request.args.get('method2'),
-            original_terms=request.args.get('original_terms'),
+            **args
         ),
     )
 
@@ -1112,13 +933,17 @@ def submissions_by_variant(variant_name):
 @app.route('/total-submissions-by-country/', defaults={'country_code': ''})
 @app.route('/total-submissions-by-country/<country_code>')
 def total_submissions_by_country(country_code = None):
+    args = {
+        'min_stars': int_arg('min_stars1'),
+        'normalized_method': request.args.get('method1'),
+        'min_conflict_level': int_arg('min_conflict_level'),
+    }
+
     if country_code == None:
         return render_template(
             'total-submissions-by-country.html',
             total_submissions_by_country=DB().total_submissions_by_country(
-                min_stars=int_arg('min_stars1'),
-                normalized_method=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
+                **args,
             ),
         )
 
@@ -1131,9 +956,7 @@ def total_submissions_by_country(country_code = None):
         country_name=country_name,
         total_submissions_by_submitter=DB().total_submissions_by_submitter(
             country_code=country_code,
-            min_stars=int_arg('min_stars1'),
-            normalized_method=request.args.get('method1'),
-            min_conflict_level=int_arg('min_conflict_level'),
+            **args
         ),
     )
 
@@ -1181,106 +1004,56 @@ def total_submissions_by_method():
 @app.route('/variants-by-condition/<superescaped:condition_name>/submitter/<int:submitter_id>', defaults={'significance': ''})
 @app.route('/variants-by-condition/<superescaped:condition_name>/submitter/<int:submitter_id>/<superescaped:significance>')
 def variants_by_condition(significance = None, condition_name = None, gene = None, submitter_id = None):
+    args = {
+        'min_stars1': int_arg('min_stars1'),
+        'min_stars2': int_arg('min_stars1'),
+        'normalized_method1': request.args.get('method1'),
+        'normalized_method2': request.args.get('method1'),
+        'min_conflict_level': int_arg('min_conflict_level'),
+    }
+
     if condition_name == None:
+        args['condition1_name'] = list_arg('conditions')
         return render_template_async(
             'variants-by-condition.html',
-            total_variants_by_condition=DB().total_variants_by_condition(
-                min_stars=int_arg('min_stars1'),
-                normalized_method=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                condition_names=list_arg('conditions'),
-            ),
-            total_variants=DB().total_variants(
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                normalized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                condition1_name=list_arg('conditions'),
-            ),
+            total_variants_by_condition=DB().total_variants_by_condition(**args),
+            total_variants=DB().total_variants(**args),
         )
 
     condition_info = DB().condition_info(condition_name)
     if not condition_info:
         abort(404)
+    args['condition1_name'] = condition_name
+    args['original_terms'] = request.args.get('original_terms')
 
     if significance == None and gene == None and submitter_id == None:
         return render_template_async(
             'variants-by-condition--condition.html',
             condition_info=condition_info,
             overview=get_significance_overview(
-                DB().total_variants_by_significance(
-                    condition_name=condition_name,
-                    min_stars=int_arg('min_stars1'),
-                    normalized_method=request.args.get('method1'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    original_terms=request.args.get('original_terms'),
-                )
+                DB().total_variants_by_significance(**args)
             ),
             breakdown_by_gene_and_significance=get_breakdown_by_gene_and_significance(
-                DB().total_variants_by_gene(
-                    condition1_name=condition_name,
-                    min_stars1=int_arg('min_stars1'),
-                    min_stars2=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    normalized_method2=request.args.get('method1'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    original_terms=request.args.get('original_terms'),
-                ),
-                DB().total_variants_by_gene_and_significance(
-                    condition_name=condition_name,
-                    min_stars=int_arg('min_stars1'),
-                    normalized_method=request.args.get('method1'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    original_terms=request.args.get('original_terms'),
-                )
+                DB().total_variants_by_gene(**args),
+                DB().total_variants_by_gene_and_significance(**args)
             ),
             breakdown_by_submitter_and_significance=get_breakdown_by_submitter_and_significance(
-                DB().total_variants_by_submitter(
-                    condition1_name=condition_name,
-                    min_stars1=int_arg('min_stars1'),
-                    min_stars2=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    normalized_method2=request.args.get('method1'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    original_terms=request.args.get('original_terms'),
-                ),
-                DB().total_variants_by_submitter_and_significance(
-                    condition_name=condition_name,
-                    min_stars=int_arg('min_stars1'),
-                    normalized_method=request.args.get('method1'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    original_terms=request.args.get('original_terms'),
-                )
+                DB().total_variants_by_submitter(**args),
+                DB().total_variants_by_submitter_and_significance(**args)
             ),
-            total_variants=DB().total_variants(
-                condition1_name=condition_name,
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                normalized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-            ),
+            total_variants=DB().total_variants(**args),
         )
 
     if significance and not DB().is_significance(significance):
         abort(404)
+    args['significance1'] = significance
 
     if gene == None and submitter_id == None:
         return render_template_async(
             'variants-by-condition--condition-significance.html',
             condition_info=condition_info,
             significance=significance,
-            variants=DB().variants(
-                condition1_name=condition_name,
-                significance1=significance,
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                normalized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                original_terms=request.args.get('original_terms'),
-            ),
+            variants=DB().variants(**args),
         )
 
     if gene:
@@ -1288,46 +1061,28 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
             gene = ''
         elif not DB().is_gene(gene):
             abort(404)
+        args['gene'] = gene
 
         return render_template_async(
             'variants-by-condition--condition-gene-significance.html',
             condition_info=condition_info,
             gene=gene,
             significance=significance,
-            variants=DB().variants(
-                gene=gene,
-                condition1_name=condition_name,
-                significance1=significance,
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                normalized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                original_terms=request.args.get('original_terms'),
-            ),
+            variants=DB().variants(**args),
         )
 
     if submitter_id:
         submitter_info = DB().submitter_info(submitter_id)
         if not submitter_info:
             abort(404)
+        args['submitter1_id'] = submitter_id
 
         return render_template_async(
             'variants-by-condition--condition-submitter-significance.html',
             condition_info=condition_info,
             submitter_info=submitter_info,
             significance=significance,
-            variants=DB().variants(
-                condition1_name=condition_name,
-                submitter1_id=submitter_id,
-                significance1=significance,
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                normalized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                original_terms=request.args.get('original_terms'),
-            ),
+            variants=DB().variants(**args),
         )
 
 @app.route('/variants-by-gene')
@@ -1339,27 +1094,21 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
 @app.route('/variants-by-gene/<superescaped:gene>/condition/<superescaped:condition_name>', defaults={'significance': ''})
 @app.route('/variants-by-gene/<superescaped:gene>/condition/<superescaped:condition_name>/<superescaped:significance>')
 def variants_by_gene(gene = None, significance = None, submitter_id = None, condition_name = None):
+    args = {
+        'min_stars1': int_arg('min_stars1'),
+        'min_stars2': int_arg('min_stars1'),
+        'normalized_method1': request.args.get('method1'),
+        'normalized_method2': request.args.get('method1'),
+        'gene_type': int_arg('gene_type'),
+        'min_conflict_level': int_arg('min_conflict_level')
+    }
+
     if gene == None:
+        args['gene'] = list_arg('genes')
         return render_template_async(
             'variants-by-gene.html',
-            total_variants_by_gene=DB().total_variants_by_gene(
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                normalized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                gene_type=int_arg('gene_type'),
-                genes=list_arg('genes'),
-            ),
-            total_variants=DB().total_variants(
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                normalized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                gene_type=int_arg('gene_type'),
-                gene=list_arg('genes'),
-            ),
+            total_variants_by_gene=DB().total_variants_by_gene(**args),
+            total_variants=DB().total_variants(**args),
         )
 
     if gene == 'intergenic':
@@ -1367,193 +1116,96 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
     gene_info = DB().gene_info(gene)
     if not gene_info:
         abort(404)
+    args['gene'] = gene
+    args['original_terms'] = request.args.get('original_terms')
 
     if significance == None and submitter_id == None and condition_name == None:
         return render_template_async(
             'variants-by-gene--gene.html',
             gene_info=gene_info,
             overview=get_significance_overview(
-                DB().total_variants_by_significance(
-                    gene=gene,
-                    min_stars=int_arg('min_stars1'),
-                    normalized_method=request.args.get('method1'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    gene_type=int_arg('gene_type'),
-                    original_terms=request.args.get('original_terms'),
-                )
+                DB().total_variants_by_significance(**args)
             ),
             breakdown_by_condition_and_significance=get_breakdown_by_condition_and_significance(
-                DB().total_variants_by_condition(
-                    gene=gene,
-                    min_stars=int_arg('min_stars1'),
-                    normalized_method=request.args.get('method1'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    gene_type=int_arg('gene_type'),
-                    original_terms=request.args.get('original_terms'),
-                ),
-                DB().total_variants_by_condition_and_significance(
-                    gene=gene,
-                    min_stars=int_arg('min_stars1'),
-                    normalized_method=request.args.get('method1'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    gene_type=int_arg('gene_type'),
-                    original_terms=request.args.get('original_terms'),
-                )
+                DB().total_variants_by_condition(**args),
+                DB().total_variants_by_condition_and_significance(**args)
             ),
             breakdown_by_submitter_and_significance=get_breakdown_by_submitter_and_significance(
-                DB().total_variants_by_submitter(
-                    gene=gene,
-                    min_stars1=int_arg('min_stars1'),
-                    min_stars2=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    normalized_method2=request.args.get('method1'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    gene_type=int_arg('gene_type'),
-                    original_terms=request.args.get('original_terms'),
-                ),
-                DB().total_variants_by_submitter_and_significance(
-                    gene=gene,
-                    min_stars=int_arg('min_stars1'),
-                    normalized_method=request.args.get('method1'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    gene_type=int_arg('gene_type'),
-                    original_terms=request.args.get('original_terms'),
-                )
+                DB().total_variants_by_submitter(**args),
+                DB().total_variants_by_submitter_and_significance(**args)
             ),
-            total_variants=DB().total_variants(
-                gene=gene,
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                normalized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                gene_type=int_arg('gene_type'),
-            ),
+            total_variants=DB().total_variants(**args),
         )
 
     if significance and not DB().is_significance(significance):
         abort(404)
+    args['significance1'] = significance
 
     if submitter_id == None and condition_name == None:
         return render_template_async(
             'variants-by-gene--gene-significance.html',
             gene_info=gene_info,
             significance=significance,
-            variants=DB().variants(
-                gene=gene,
-                significance1=significance,
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                normalized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                gene_type=int_arg('gene_type'),
-                original_terms=request.args.get('original_terms'),
-            ),
+            variants=DB().variants(**args),
         )
 
     if submitter_id:
         submitter_info = DB().submitter_info(submitter_id)
         if not submitter_info:
             abort(404)
+        args['submitter1_id'] = submitter_id
 
         return render_template_async(
             'variants-by-gene--gene-submitter-significance.html',
             gene_info=gene_info,
             submitter_info=submitter_info,
             significance=significance,
-            variants=DB().variants(
-                gene=gene,
-                submitter1_id=submitter_id,
-                significance1=significance,
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                normalized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                gene_type=int_arg('gene_type'),
-                original_terms=request.args.get('original_terms'),
-            ),
+            variants=DB().variants(**args),
         )
 
     if condition_name:
         condition_info = DB().condition_info(condition_name)
         if not condition_info:
             abort(404)
+        args['condition1_name'] = condition_name
 
         return render_template_async(
             'variants-by-gene--gene-condition-significance.html',
             gene_info=gene_info,
             condition_info=condition_info,
             significance=significance,
-            variants=DB().variants(
-                gene=gene,
-                condition1_name=condition_name,
-                significance1=significance,
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                normalized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                gene_type=int_arg('gene_type'),
-                original_terms=request.args.get('original_terms'),
-            ),
+            variants=DB().variants(**args),
         )
 
 @app.route('/variants-by-significance')
 @app.route('/variants-by-significance/<superescaped:significance>')
 def variants_by_significance(significance = None):
+    args = {
+        'min_stars1': int_arg('min_stars1'),
+        'min_stars2': int_arg('min_stars1'),
+        'normalized_method1': request.args.get('method1'),
+        'normalized_method2': request.args.get('method1'),
+        'min_conflict_level': int_arg('min_conflict_level'),
+        'original_terms': request.args.get('original_terms'),
+    }
+
     if significance == None:
         return render_template_async(
             'variants-by-significance.html',
-            total_variants_by_significance=DB().total_variants_by_significance(
-                min_stars=int_arg('min_stars1'),
-                normalized_method=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                original_terms=request.args.get('original_terms'),
-            ),
+            total_variants_by_significance=DB().total_variants_by_significance(**args),
         )
 
     if not DB().is_significance(significance):
         abort(404)
+    args['significance1'] = significance
 
     return render_template_async(
         'variants-by-significance--significance.html',
         significance=significance,
-        total_variants=DB().total_variants(
-            significance1=significance,
-            min_stars1=int_arg('min_stars1'),
-            min_stars2=int_arg('min_stars1'),
-            normalized_method1=request.args.get('method1'),
-            normalized_method2=request.args.get('method1'),
-            min_conflict_level=int_arg('min_conflict_level'),
-            original_terms=request.args.get('original_terms'),
-        ),
-        total_variants_by_submitter=DB().total_variants_by_submitter(
-            significance1=significance,
-            min_stars1=int_arg('min_stars1'),
-            min_stars2=int_arg('min_stars1'),
-            normalized_method1=request.args.get('method1'),
-            normalized_method2=request.args.get('method1'),
-            min_conflict_level=int_arg('min_conflict_level'),
-            original_terms=request.args.get('original_terms'),
-        ),
-        total_variants_by_gene=DB().total_variants_by_gene(
-            significance1=significance,
-            min_stars1=int_arg('min_stars1'),
-            min_stars2=int_arg('min_stars1'),
-            normalized_method1=request.args.get('method1'),
-            normalized_method2=request.args.get('method1'),
-            min_conflict_level=int_arg('min_conflict_level'),
-            original_terms=request.args.get('original_terms'),
-        ),
-        total_variants_by_condition=DB().total_variants_by_condition(
-            significance1=significance,
-            min_stars=int_arg('min_stars1'),
-            normalized_method=request.args.get('method1'),
-            min_conflict_level=int_arg('min_conflict_level'),
-            original_terms=request.args.get('original_terms'),
-        ),
+        total_variants=DB().total_variants(**args),
+        total_variants_by_submitter=DB().total_variants_by_submitter(**args),
+        total_variants_by_gene=DB().total_variants_by_gene(**args),
+        total_variants_by_condition=DB().total_variants_by_condition(**args),
     )
 
 @app.route('/variants-by-submitter')
@@ -1565,30 +1217,31 @@ def variants_by_significance(significance = None):
 @app.route('/variants-by-submitter/<int:submitter_id>/condition/<superescaped:condition_name>', defaults={'significance': ''})
 @app.route('/variants-by-submitter/<int:submitter_id>/condition/<superescaped:condition_name>/<superescaped:significance>')
 def variants_by_submitter(submitter_id = None, significance = None, gene = None, condition_name = None):
+    args = {
+        'min_stars1': int_arg('min_stars1'),
+        'min_stars2': int_arg('min_stars1'),
+        'normalized_method1': request.args.get('method1'),
+        'normalized_method2': request.args.get('method1'),
+        'min_conflict_level': int_arg('min_conflict_level'),
+    }
+
     if submitter_id == None:
         return render_template_async(
             'variants-by-submitter.html',
             total_variants_by_submitter=DB().total_variants_by_submitter(
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                normalized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
                 submitter_ids=list_arg('submitters'),
+                **args
             ),
             total_variants=DB().total_variants(
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                normalized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
                 submitter1_id=list_arg('submitters'),
+                **args
             ),
         )
 
     submitter_info = DB().submitter_info(submitter_id)
     if not submitter_info:
         abort(404)
+    args['submitter1_id'] = submitter_id
 
     if significance == None and gene == None and condition_name == None:
         return render_template_async(
@@ -1596,76 +1249,29 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
             submitter_info=submitter_info,
             submitter_primary_method=DB().submitter_primary_method(submitter_id),
             overview=get_significance_overview(
-                DB().total_variants_by_significance(
-                    submitter_id=submitter_id,
-                    min_stars=int_arg('min_stars1'),
-                    normalized_method=request.args.get('method1'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    original_terms=request.args.get('original_terms'),
-                )
+                DB().total_variants_by_significance(**args),
             ),
             breakdown_by_gene_and_significance=get_breakdown_by_gene_and_significance(
-                DB().total_variants_by_gene(
-                    submitter1_id=submitter_id,
-                    min_stars1=int_arg('min_stars1'),
-                    min_stars2=int_arg('min_stars1'),
-                    normalized_method1=request.args.get('method1'),
-                    normalized_method2=request.args.get('method1'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    original_terms=request.args.get('original_terms'),
-                ),
-                DB().total_variants_by_gene_and_significance(
-                    submitter_id=submitter_id,
-                    min_stars=int_arg('min_stars1'),
-                    normalized_method=request.args.get('method1'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    original_terms=request.args.get('original_terms'),
-                )
+                DB().total_variants_by_gene(**args),
+                DB().total_variants_by_gene_and_significance(**args),
             ),
             breakdown_by_condition_and_significance=get_breakdown_by_condition_and_significance(
-                DB().total_variants_by_condition(
-                    submitter1_id=submitter_id,
-                    min_stars=int_arg('min_stars1'),
-                    normalized_method=request.args.get('method1'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    original_terms=request.args.get('original_terms'),
-                ),
-                DB().total_variants_by_condition_and_significance(
-                    submitter_id=submitter_id,
-                    min_stars=int_arg('min_stars1'),
-                    normalized_method=request.args.get('method1'),
-                    min_conflict_level=int_arg('min_conflict_level'),
-                    original_terms=request.args.get('original_terms'),
-                )
+                DB().total_variants_by_condition(**args),
+                DB().total_variants_by_condition_and_significance(**args),
             ),
-            total_variants=DB().total_variants(
-                submitter1_id=submitter_id,
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                normalized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-            ),
+            total_variants=DB().total_variants(**args),
         )
 
     if significance and not DB().is_significance(significance):
         abort(404)
+    args['significance1'] = significance
 
     if gene == None and condition_name == None:
         return render_template_async(
             'variants-by-submitter--submitter-significance.html',
             submitter_info=submitter_info,
             significance=significance,
-            variants=DB().variants(
-                submitter1_id=submitter_id,
-                significance1=significance,
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                normalized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                original_terms=request.args.get('original_terms'),
-            ),
+            variants=DB().variants(**args),
         )
 
     if gene:
@@ -1673,44 +1279,26 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
             gene = ''
         elif not DB().is_gene(gene):
             abort(404)
+        args['gene'] = gene
 
         return render_template_async(
             'variants-by-submitter--submitter-gene-significance.html',
             gene=gene,
             submitter_info=submitter_info,
             significance=significance,
-            variants=DB().variants(
-                gene=gene,
-                submitter1_id=submitter_id,
-                significance1=significance,
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                normalized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                original_terms=request.args.get('original_terms'),
-            ),
+            variants=DB().variants(**args),
         )
 
     if condition_name:
         condition_info = DB().condition_info(condition_name)
         if not condition_info:
             abort(404)
+        args['condition1_name'] = condition_name
 
         return render_template_async(
             'variants-by-submitter--submitter-condition-significance.html',
             condition_info=condition_info,
             submitter_info=submitter_info,
             significance=significance,
-            variants=DB().variants(
-                condition1_name=condition_name,
-                submitter1_id=submitter_id,
-                significance1=significance,
-                min_stars1=int_arg('min_stars1'),
-                min_stars2=int_arg('min_stars1'),
-                normalized_method1=request.args.get('method1'),
-                normalized_method2=request.args.get('method1'),
-                min_conflict_level=int_arg('min_conflict_level'),
-                original_terms=request.args.get('original_terms'),
-            ),
+            variants=DB().variants(**args),
         )
