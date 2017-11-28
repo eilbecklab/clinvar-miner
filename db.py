@@ -131,9 +131,9 @@ class DB():
         if kwargs.get('variant_name'):
             self.and_equals('variant_name', kwargs['variant_name'])
 
-        if kwargs.get('standardized_method'):
-            self.and_equals('standardized_method1', kwargs['standardized_method'])
-            self.and_equals('standardized_method2', kwargs['standardized_method'])
+        if kwargs.get('normalized_method'):
+            self.and_equals('normalized_method1', kwargs['normalized_method'])
+            self.and_equals('normalized_method2', kwargs['normalized_method'])
 
         self.query += ' GROUP BY scv1 ORDER BY submitter_name'
 
@@ -179,9 +179,9 @@ class DB():
             'min_conflict_level': max(1, kwargs.get('min_conflict_level', 1)),
         }
 
-        if kwargs.get('standardized_method'):
-            self.and_equals('standardized_method1', kwargs['standardized_method'])
-            self.and_equals('standardized_method2', kwargs['standardized_method'])
+        if kwargs.get('normalized_method'):
+            self.and_equals('normalized_method1', kwargs['normalized_method'])
+            self.and_equals('normalized_method2', kwargs['normalized_method'])
 
         if kwargs.get('condition_names'):
             self.and_equals('condition_name', kwargs['condition_names'])
@@ -215,11 +215,11 @@ class DB():
         if kwargs.get('submitter2_id'):
             self.and_equals('submitter2_id', kwargs['submitter2_id'])
 
-        if kwargs.get('standardized_method1'):
-            self.and_equals('standardized_method1', kwargs['standardized_method1'])
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
 
-        if kwargs.get('standardized_method2'):
-            self.and_equals('standardized_method2', kwargs['standardized_method2'])
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
@@ -243,11 +243,11 @@ class DB():
             'min_conflict_level': max(1, kwargs.get('min_conflict_level', 1)),
         }
 
-        if kwargs.get('standardized_method1'):
-            self.and_equals('standardized_method1', kwargs['standardized_method1'])
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
 
-        if kwargs.get('standardized_method2'):
-            self.and_equals('standardized_method2', kwargs['standardized_method2'])
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type') != -1:
             self.query += ' AND gene_type=:gene_type'
@@ -266,7 +266,7 @@ class DB():
             self.query = 'SELECT significance1, significance2'
         else:
             self.query = '''
-                SELECT standardized_significance1 AS significance1, standardized_significance2 AS significance2
+                SELECT normalized_significance1 AS significance1, normalized_significance2 AS significance2
             '''
 
         self.query += ', conflict_level, COUNT(DISTINCT variant_name) AS count FROM current_comparisons'
@@ -290,11 +290,11 @@ class DB():
         if kwargs.get('submitter2_id'):
             self.and_equals('submitter2_id', kwargs['submitter2_id'])
 
-        if kwargs.get('standardized_method1'):
-            self.and_equals('standardized_method1', kwargs['standardized_method1'])
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
 
-        if kwargs.get('standardized_method2'):
-            self.and_equals('standardized_method2', kwargs['standardized_method2'])
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
@@ -303,7 +303,7 @@ class DB():
         if kwargs.get('original_terms'):
             self.query += ' GROUP BY significance1, significance2'
         else:
-            self.query += ' GROUP BY standardized_significance1, standardized_significance2'
+            self.query += ' GROUP BY normalized_significance1, normalized_significance2'
 
         return self.rows()
 
@@ -329,11 +329,11 @@ class DB():
         if kwargs.get('submitter1_id'):
             self.and_equals('submitter1_id', kwargs['submitter1_id'])
 
-        if kwargs.get('standardized_method1'):
-            self.and_equals('standardized_method1', kwargs['standardized_method1'])
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
 
-        if kwargs.get('standardized_method2'):
-            self.and_equals('standardized_method2', kwargs['standardized_method2'])
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('submitter_ids'):
             self.and_equals('submitter_id', kwargs['submitter_ids'])
@@ -368,9 +368,9 @@ class DB():
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
         }
 
-        if kwargs.get('standardized_method'):
-            self.and_equals('standardized_method1', kwargs['standardized_method'])
-            self.and_equals('standardized_method2', kwargs['standardized_method'])
+        if kwargs.get('normalized_method'):
+            self.and_equals('normalized_method1', kwargs['normalized_method'])
+            self.and_equals('normalized_method2', kwargs['normalized_method'])
 
         self.query += ' GROUP BY country_code ORDER BY count DESC'
 
@@ -393,15 +393,15 @@ class DB():
             )
         ))
 
-    def total_submissions_by_standardized_method_over_time(self, **kwargs):
+    def total_submissions_by_normalized_method_over_time(self, **kwargs):
         return list(map(
             dict,
             self.cursor.execute(
                 '''
-                    SELECT date, standardized_method1 AS standardized_method, COUNT(DISTINCT scv1) AS count
+                    SELECT date, normalized_method1 AS normalized_method, COUNT(DISTINCT scv1) AS count
                     FROM comparisons
                     WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
-                    GROUP BY date, standardized_method ORDER BY date, count DESC
+                    GROUP BY date, normalized_method ORDER BY date, count DESC
                 ''',
                 {
                     'min_stars': kwargs.get('min_stars', 0),
@@ -425,8 +425,8 @@ class DB():
         if kwargs.get('country_code'):
             self.and_equals('submitter1_country_code', kwargs['country_code'])
 
-        if kwargs.get('standardized_method'):
-            self.and_equals('standardized_method1', kwargs['standardized_method'])
+        if kwargs.get('normalized_method'):
+            self.and_equals('normalized_method1', kwargs['normalized_method'])
 
         self.query += ' GROUP BY submitter1_id ORDER BY count DESC'
 
@@ -460,13 +460,13 @@ class DB():
             if kwargs.get('original_terms'):
                 self.and_equals('significance1', kwargs['significance1'])
             else:
-                self.and_equals('standardized_significance1', kwargs['significance1'])
+                self.and_equals('normalized_significance1', kwargs['significance1'])
 
-        if kwargs.get('standardized_method1'):
-            self.and_equals('standardized_method1', kwargs['standardized_method1'])
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
 
-        if kwargs.get('standardized_method2'):
-            self.and_equals('standardized_method2', kwargs['standardized_method2'])
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
@@ -503,11 +503,11 @@ class DB():
             if kwargs.get('original_terms'):
                 self.and_equals('significance1', kwargs['significance1'])
             else:
-                self.and_equals('standardized_significance1', kwargs['significance1'])
+                self.and_equals('normalized_significance1', kwargs['significance1'])
 
-        if kwargs.get('standardized_method'):
-            self.and_equals('standardized_method1', kwargs['standardized_method'])
-            self.and_equals('standardized_method2', kwargs['standardized_method'])
+        if kwargs.get('normalized_method'):
+            self.and_equals('normalized_method1', kwargs['normalized_method'])
+            self.and_equals('normalized_method2', kwargs['normalized_method'])
 
         if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
@@ -527,7 +527,7 @@ class DB():
         if kwargs.get('original_terms'):
             self.query += ', significance1 AS significance'
         else:
-            self.query += ', standardized_significance1 AS significance'
+            self.query += ', normalized_significance1 AS significance'
 
         self.query += '''
             FROM current_comparisons
@@ -545,8 +545,8 @@ class DB():
         if kwargs.get('submitter_id'):
             self.and_equals('submitter1_id', kwargs['submitter_id'])
 
-        if kwargs.get('standardized_method'):
-            self.and_equals('standardized_method1', kwargs['standardized_method'])
+        if kwargs.get('normalized_method'):
+            self.and_equals('normalized_method1', kwargs['normalized_method'])
 
         if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
@@ -584,13 +584,13 @@ class DB():
             if kwargs.get('original_terms'):
                 self.and_equals('significance1', kwargs['significance1'])
             else:
-                self.and_equals('standardized_significance1', kwargs['significance1'])
+                self.and_equals('normalized_significance1', kwargs['significance1'])
 
-        if kwargs.get('standardized_method1'):
-            self.and_equals('standardized_method1', kwargs['standardized_method1'])
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
 
-        if kwargs.get('standardized_method2'):
-            self.and_equals('standardized_method2', kwargs['standardized_method2'])
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
@@ -610,7 +610,7 @@ class DB():
         if kwargs.get('original_terms'):
             self.query += ', significance1 AS significance'
         else:
-            self.query += ', standardized_significance1 AS significance'
+            self.query += ', normalized_significance1 AS significance'
 
         self.query += '''
             FROM current_comparisons
@@ -628,9 +628,9 @@ class DB():
         if kwargs.get('submitter_id'):
             self.and_equals('submitter1_id', kwargs['submitter_id'])
 
-        if kwargs.get('standardized_method'):
-            self.and_equals('standardized_method1', kwargs['standardized_method'])
-            self.and_equals('standardized_method2', kwargs['standardized_method'])
+        if kwargs.get('normalized_method'):
+            self.and_equals('normalized_method1', kwargs['normalized_method'])
+            self.and_equals('normalized_method2', kwargs['normalized_method'])
 
         self.query += ' GROUP BY gene, significance'
 
@@ -643,7 +643,7 @@ class DB():
         if kwargs.get('original_terms'):
             self.query += ', significance1 AS significance'
         else:
-            self.query += ', standardized_significance1 AS significance'
+            self.query += ', normalized_significance1 AS significance'
 
         self.query += '''
             , COUNT(DISTINCT gene) AS gene_count
@@ -667,9 +667,9 @@ class DB():
         if kwargs.get('submitter_id'):
             self.and_equals('submitter1_id', kwargs['submitter_id'])
 
-        if kwargs.get('standardized_method'):
-            self.and_equals('standardized_method1', kwargs['standardized_method'])
-            self.and_equals('standardized_method2', kwargs['standardized_method'])
+        if kwargs.get('normalized_method'):
+            self.and_equals('normalized_method1', kwargs['normalized_method'])
+            self.and_equals('normalized_method2', kwargs['normalized_method'])
 
         if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
@@ -713,13 +713,13 @@ class DB():
             if kwargs.get('original_terms'):
                 self.and_equals('significance1', kwargs['significance1'])
             else:
-                self.and_equals('standardized_significance1', kwargs['significance1'])
+                self.and_equals('normalized_significance1', kwargs['significance1'])
 
-        if kwargs.get('standardized_method1'):
-            self.and_equals('standardized_method1', kwargs['standardized_method1'])
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
 
-        if kwargs.get('standardized_method2'):
-            self.and_equals('standardized_method2', kwargs['standardized_method2'])
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
@@ -739,7 +739,7 @@ class DB():
         if kwargs.get('original_terms'):
             self.query += ', significance1 AS significance'
         else:
-            self.query += ', standardized_significance1 AS significance'
+            self.query += ', normalized_significance1 AS significance'
 
         self.query += '''
             FROM current_comparisons
@@ -757,9 +757,9 @@ class DB():
         if kwargs.get('condition_name'):
             self.and_equals('condition1_name', kwargs['condition_name'])
 
-        if kwargs.get('standardized_method'):
-            self.and_equals('standardized_method1', kwargs['standardized_method'])
-            self.and_equals('standardized_method2', kwargs['standardized_method'])
+        if kwargs.get('normalized_method'):
+            self.and_equals('normalized_method1', kwargs['normalized_method'])
+            self.and_equals('normalized_method2', kwargs['normalized_method'])
 
         if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'
@@ -829,19 +829,19 @@ class DB():
             if kwargs.get('original_terms'):
                 self.and_equals('significance1', kwargs['significance1'])
             else:
-                self.and_equals('standardized_significance1', kwargs['significance1'])
+                self.and_equals('normalized_significance1', kwargs['significance1'])
 
         if kwargs.get('significance2'):
             if kwargs.get('original_terms'):
                 self.and_equals('significance2', kwargs['significance2'])
             else:
-                self.and_equals('standardized_significance2', kwargs['significance2'])
+                self.and_equals('normalized_significance2', kwargs['significance2'])
 
-        if kwargs.get('standardized_method1'):
-            self.and_equals('standardized_method1', kwargs['standardized_method1'])
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
 
-        if kwargs.get('standardized_method2'):
-            self.and_equals('standardized_method2', kwargs['standardized_method2'])
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
             self.query += ' AND gene_type=:gene_type'

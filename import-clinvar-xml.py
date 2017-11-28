@@ -52,7 +52,7 @@ def create_tables():
             rcv TEXT,
             scv TEXT,
             significance TEXT,
-            standardized_significance TEXT,
+            normalized_significance TEXT,
             last_eval TEXT,
             review_status TEXT,
             star_level INTEGER,
@@ -60,7 +60,7 @@ def create_tables():
             condition_id TEXT,
             condition_name TEXT,
             method TEXT,
-            standardized_method TEXT,
+            normalized_method TEXT,
             comment TEXT,
             PRIMARY KEY (date, scv)
         )
@@ -86,7 +86,7 @@ def create_tables():
             rcv1 TEXT,
             scv1 TEXT,
             significance1 TEXT,
-            standardized_significance1 TEXT,
+            normalized_significance1 TEXT,
             last_eval1 TEXT,
             review_status1 TEXT,
             star_level1 INTEGER,
@@ -94,16 +94,16 @@ def create_tables():
             condition1_id TEXT,
             condition1_name TEXT,
             method1 TEXT,
-            standardized_method1 TEXT,
+            normalized_method1 TEXT,
             comment1 TEXT,
 
             submitter2_id INTEGER,
             submitter2_name TEXT,
             scv2 TEXT,
             significance2 TEXT,
-            standardized_significance2 TEXT,
+            normalized_significance2 TEXT,
             star_level2 INTEGER,
-            standardized_method2 TEXT,
+            normalized_method2 TEXT,
 
             conflict_level INTEGER,
 
@@ -114,7 +114,7 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__date ON comparisons (date)')
     cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__scv1 ON comparisons (scv1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__star_level1 ON comparisons (star_level1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__standardized_method1 ON comparisons (standardized_method1)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__normalized_method1 ON comparisons (normalized_method1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__star_level2 ON comparisons (star_level2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__conflict_level ON comparisons (conflict_level)')
 
@@ -218,11 +218,11 @@ def get_submissions(date, set_xml):
             submitter_country_name = ''
 
         significance = description_el.text.lower() if description_el != None else 'not provided'
-        standardized_significance = nonstandard_significance_term_map.get(significance, significance)
+        normalized_significance = nonstandard_significance_term_map.get(significance, significance)
         last_eval = significance_el.attrib.get('DateLastEvaluated', '') #missing in old versions
         review_status = review_status_el.text if review_status_el != None else '' #missing in old versions
         method = method_el.text if method_el != None else 'not provided' #missing in old versions
-        standardized_method = method if method in standard_methods else 'other'
+        normalized_method = method if method in standard_methods else 'other'
         comment = comment_el.text if comment_el != None else ''
 
         if review_status in ['criteria provided, single submitter', 'criteria provided, conflicting interpretations']:
@@ -248,7 +248,7 @@ def get_submissions(date, set_xml):
             rcv,
             scv,
             significance,
-            standardized_significance,
+            normalized_significance,
             last_eval,
             review_status,
             star_level,
@@ -256,7 +256,7 @@ def get_submissions(date, set_xml):
             condition_id,
             condition_name,
             method,
-            standardized_method,
+            normalized_method,
             comment,
         ))
 
@@ -294,27 +294,27 @@ def import_file(filename):
             t2.submitter_name,
             t2.scv,
             t2.significance,
-            t2.standardized_significance,
+            t2.normalized_significance,
             t2.star_level,
-            t2.standardized_method,
+            t2.normalized_method,
             CASE
                 WHEN t1.scv=t2.scv THEN -1
 
                 WHEN t1.significance=t2.significance THEN 0
-                WHEN t1.standardized_significance="not provided" OR t2.standardized_significance="not provided" THEN 0
+                WHEN t1.normalized_significance="not provided" OR t2.normalized_significance="not provided" THEN 0
 
-                WHEN t1.standardized_significance=t2.standardized_significance THEN 1
+                WHEN t1.normalized_significance=t2.normalized_significance THEN 1
 
-                WHEN t1.standardized_significance="benign" AND t2.standardized_significance="likely benign" THEN 2
-                WHEN t1.standardized_significance="likely benign" AND t2.standardized_significance="benign" THEN 2
-                WHEN t1.standardized_significance="pathogenic" AND t2.standardized_significance="likely pathogenic" THEN 2
-                WHEN t1.standardized_significance="likely pathogenic" AND t2.standardized_significance="pathogenic" THEN 2
+                WHEN t1.normalized_significance="benign" AND t2.normalized_significance="likely benign" THEN 2
+                WHEN t1.normalized_significance="likely benign" AND t2.normalized_significance="benign" THEN 2
+                WHEN t1.normalized_significance="pathogenic" AND t2.normalized_significance="likely pathogenic" THEN 2
+                WHEN t1.normalized_significance="likely pathogenic" AND t2.normalized_significance="pathogenic" THEN 2
 
-                WHEN t1.standardized_significance IN ("benign", "likely benign") AND t2.standardized_significance="uncertain significance" THEN 3
-                WHEN t1.standardized_significance="uncertain significance" AND t2.standardized_significance IN ("benign", "likely benign") THEN 3
+                WHEN t1.normalized_significance IN ("benign", "likely benign") AND t2.normalized_significance="uncertain significance" THEN 3
+                WHEN t1.normalized_significance="uncertain significance" AND t2.normalized_significance IN ("benign", "likely benign") THEN 3
 
-                WHEN t1.standardized_significance IN ("benign", "likely benign", "uncertain significance") AND t2.standardized_significance IN ("pathogenic", "likely pathogenic") THEN 5
-                WHEN t1.standardized_significance IN ("pathogenic", "likely pathogenic") AND t2.standardized_significance IN ("benign", "likely benign", "uncertain significance") THEN 5
+                WHEN t1.normalized_significance IN ("benign", "likely benign", "uncertain significance") AND t2.normalized_significance IN ("pathogenic", "likely pathogenic") THEN 5
+                WHEN t1.normalized_significance IN ("pathogenic", "likely pathogenic") AND t2.normalized_significance IN ("benign", "likely benign", "uncertain significance") THEN 5
 
                 ELSE 4
             END AS conflict_level
