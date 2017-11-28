@@ -1,9 +1,10 @@
 import sqlite3
+from asynchelper import promise
 from sqlite3 import OperationalError
 
 class DB():
     def __init__(self):
-        self.db = sqlite3.connect('clinvar.db', timeout=20)
+        self.db = sqlite3.connect('clinvar.db', timeout=20, check_same_thread=False)
         self.db.row_factory = sqlite3.Row
         self.cursor = self.db.cursor()
 
@@ -165,6 +166,7 @@ class DB():
             ''', [submitter_id])
         )[0][0]
 
+    @promise
     def total_conflicting_variants_by_condition_and_conflict_level(self, **kwargs):
         self.query = '''
             SELECT condition1_name AS condition_name, conflict_level, COUNT(DISTINCT variant_name) AS count
@@ -188,6 +190,7 @@ class DB():
 
         return list(map(dict, self.cursor.execute(self.query, self.parameters)))
 
+    @promise
     def total_conflicting_variants_by_conflict_level(self, **kwargs):
         self.query = '''
             SELECT conflict_level, COUNT(DISTINCT variant_name) AS count FROM current_comparisons
@@ -226,6 +229,7 @@ class DB():
 
         return self.rows()
 
+    @promise
     def total_conflicting_variants_by_gene_and_conflict_level(self, **kwargs):
         self.query = '''
             SELECT gene, conflict_level, COUNT(DISTINCT variant_name) AS count
@@ -256,6 +260,7 @@ class DB():
 
         return list(map(dict, self.cursor.execute(self.query, self.parameters)))
 
+    @promise
     def total_conflicting_variants_by_significance_and_significance(self, **kwargs):
         if kwargs.get('original_terms'):
             self.query = 'SELECT significance1, significance2'
@@ -302,6 +307,7 @@ class DB():
 
         return self.rows()
 
+    @promise
     def total_conflicting_variants_by_submitter_and_conflict_level(self, **kwargs):
         if kwargs.get('submitter1_id'):
             self.query = 'SELECT submitter2_id AS submitter_id'
@@ -336,12 +342,14 @@ class DB():
 
         return self.rows()
 
+    @promise
     def total_significance_terms_over_time(self):
         return list(map(
             dict,
             self.cursor.execute('SELECT date, COUNT(DISTINCT significance) AS count FROM submissions GROUP BY date')
         ))
 
+    @promise
     def total_submissions(self):
         return list(self.cursor.execute('SELECT COUNT(*) FROM current_submissions'))[0][0]
 
@@ -466,6 +474,7 @@ class DB():
 
         return self.value()
 
+    @promise
     def total_variants_by_condition(self, **kwargs):
         self.query = '''
             SELECT
@@ -511,6 +520,7 @@ class DB():
 
         return list(map(dict, self.cursor.execute(self.query, self.parameters)))
 
+    @promise
     def total_variants_by_condition_and_significance(self, **kwargs):
         self.query = 'SELECT condition1_name AS condition_name, COUNT(DISTINCT variant_name) AS count'
 
@@ -546,6 +556,7 @@ class DB():
 
         return self.rows()
 
+    @promise
     def total_variants_by_gene(self, **kwargs):
         self.query = '''
             SELECT
@@ -592,6 +603,7 @@ class DB():
 
         return self.rows()
 
+    @promise
     def total_variants_by_gene_and_significance(self, **kwargs):
         self.query = 'SELECT gene, COUNT(DISTINCT variant_name) AS count'
 
@@ -624,6 +636,7 @@ class DB():
 
         return self.rows()
 
+    @promise
     def total_variants_by_significance(self, **kwargs):
         self.query = 'SELECT COUNT(DISTINCT variant_name) AS count'
 
@@ -666,6 +679,7 @@ class DB():
 
         return self.rows()
 
+    @promise
     def total_variants_by_submitter(self, **kwargs):
         if kwargs.get('submitter1_id'):
             self.query = 'SELECT submitter2_id AS submitter_id, submitter2_name AS submitter_name'
@@ -718,6 +732,7 @@ class DB():
 
         return self.rows()
 
+    @promise
     def total_variants_by_submitter_and_significance(self, **kwargs):
         self.query = 'SELECT submitter1_id AS submitter_id, COUNT(DISTINCT variant_name) AS count'
 
@@ -785,6 +800,7 @@ class DB():
         except IndexError:
             return None
 
+    @promise
     def variants(self, **kwargs):
         self.query = '''
             SELECT DISTINCT variant_name, variant_rsid FROM current_comparisons

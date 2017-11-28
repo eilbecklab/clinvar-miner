@@ -22,7 +22,7 @@
         {% include 'include/filter-form.html' %}
     {% endwith %}
     {% include 'include/significance-overview.html' %}
-    {% if significances %}
+    {% if total_variants %}
         {% include 'include/breakdown-by-condition-and-significance.html' %}
         {% include 'include/breakdown-by-submitter-and-significance.html' %}
     {% endif %}

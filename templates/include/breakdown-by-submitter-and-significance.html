@@ -1,31 +1,31 @@
 {{ h2('Submitter and significance breakdown')|safe }}
 <div class="totals">
-    <div>Total submitters: {{ breakdown_by_submitter_and_significance|length }}</div>
+    <div>Total submitters: {{ breakdown_by_submitter_and_significance['data']|length }}</div>
     <div>{{ 'submitter-table'|tabledownloadlink|safe }}</div>
 </div>
 <table class="breakdown sortable table table-bordered table-striped" id="submitter-table">
     <thead>
         <tr>
             <th>Submitter</th>
-            {% for significance in significances %}
+            {% for significance in breakdown_by_submitter_and_significance['significances'] %}
                 <th>{{ significance }}</th>
             {% endfor %}
             <th class="desc">total</th>
         </tr>
     </thead>
     <tbody>
-        {% for submitter_id in breakdown_by_submitter_and_significance %}
+        {% for submitter_id in breakdown_by_submitter_and_significance['data'] %}
             <tr>
                 <th>
                     <a href="{{ request.base_url }}/submitter/{{ submitter_id }}{{ query_suffix('min_conflict_level', 'gene_type') }}">
-                        {{ breakdown_by_submitter_and_significance[submitter_id]['name'] }}
+                        {{ breakdown_by_submitter_and_significance['data'][submitter_id]['name'] }}
                     </a>
                 </th>
-                {% for significance in significances %}
-                    {% if significance in breakdown_by_submitter_and_significance[submitter_id]['counts'] %}
+                {% for significance in breakdown_by_submitter_and_significance['significances'] %}
+                    {% if significance in breakdown_by_submitter_and_significance['data'][submitter_id]['counts'] %}
                         <td class="highlight">
                             <a href="{{ request.base_url }}/submitter/{{ submitter_id }}/{{ significance|superescaped }}{{ query_suffix('min_conflict_level', 'gene_type', 'original_terms') }}">
-                                {{ breakdown_by_submitter_and_significance[submitter_id]['counts'][significance] }}
+                                {{ breakdown_by_submitter_and_significance['data'][submitter_id]['counts'][significance] }}
                             </a>
                         </td>
                     {% else %}
@@ -34,7 +34,7 @@
                 {% endfor %}
                 <td class="highlight">
                     <a href="{{ request.base_url }}/submitter/{{ submitter_id }}{{ query_suffix('min_conflict_level', 'gene_type') }}">
-                        {{ breakdown_by_submitter_and_significance[submitter_id]['counts']['total'] }}
+                        {{ breakdown_by_submitter_and_significance['data'][submitter_id]['counts']['total'] }}
                     </a>
                 </td>
             </tr>

@@ -1,31 +1,31 @@
 {{ h2('Gene and significance breakdown')|safe }}
 <div class="totals">
-    <div>Total genes: {{ breakdown_by_gene_and_significance|length }}</div>
+    <div>Total genes: {{ breakdown_by_gene_and_significance['data']|length }}</div>
     <div>{{ 'gene-table'|tabledownloadlink|safe }}</div>
 </div>
 <table class="breakdown sortable table table-bordered table-striped" id="gene-table">
     <thead>
         <tr>
             <th>Gene</th>
-            {% for significance in significances %}
+            {% for significance in breakdown_by_gene_and_significance['significances'] %}
                 <th>{{ significance }}</th>
             {% endfor %}
             <th class="desc">total</th>
         </tr>
     </thead>
     <tbody>
-        {% for gene in breakdown_by_gene_and_significance %}
+        {% for gene in breakdown_by_gene_and_significance['data'] %}
             <tr>
                 <th>
                     <a href="{{ request.base_url }}/gene/{{ gene|superescaped or 'intergenic' }}{{ query_suffix('min_conflict_level') }}">
                         {{ gene or '\u200Bintergenic' }}
                     </a>
                 </th>
-                {% for significance in significances %}
-                    {% if significance in breakdown_by_gene_and_significance[gene] %}
+                {% for significance in breakdown_by_gene_and_significance['significances'] %}
+                    {% if significance in breakdown_by_gene_and_significance['data'][gene] %}
                         <td class="highlight">
                             <a href="{{ request.base_url }}/gene/{{ gene|superescaped or 'intergenic' }}/{{ significance|superescaped }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
-                                {{ breakdown_by_gene_and_significance[gene][significance] }}
+                                {{ breakdown_by_gene_and_significance['data'][gene][significance] }}
                             </a>
                         </td>
                     {% else %}
@@ -34,7 +34,7 @@
                 {% endfor %}
                 <td class="highlight">
                     <a href="{{ request.base_url }}/gene/{{ gene|superescaped or 'intergenic' }}{{ query_suffix('min_conflict_level') }}">
-                        {{ breakdown_by_gene_and_significance[gene]['total'] }}
+                        {{ breakdown_by_gene_and_significance['data'][gene]['total'] }}
                     </a>
                 </td>
             </tr>

@@ -22,25 +22,25 @@
             </th>
         {% endif %}
         <th></th>
-        {% for significance2 in submitter2_significances %}
+        {% for significance2 in breakdown['submitter2_significances'] %}
             <th>{{ significance2 }}</th>
         {% endfor %}
     </tr>
-    {% for significance1 in submitter1_significances %}
+    {% for significance1 in breakdown['submitter1_significances'] %}
         <tr>
             <th>{{ significance1 }}</th>
-            {% for significance2 in submitter2_significances %}
-                {% if significance2 in breakdown[significance1] %}
+            {% for significance2 in breakdown['submitter2_significances'] %}
+                {% if significance2 in breakdown['data'][significance1] %}
                     <td
-                        class="level{{ breakdown[significance1][significance2]['level'] }}-conflict"
-                        title="{{ breakdown[significance1][significance2]['level']|conflictlevel }}"
+                        class="level{{ breakdown['data'][significance1][significance2]['level'] }}-conflict"
+                        title="{{ breakdown['data'][significance1][significance2]['level']|conflictlevel }}"
                     />
                         {% if link_base %}
                             <a href="{{ link_base }}/{{ significance1|superescaped }}/{{ significance2|superescaped }}{{ query_suffix('original_terms') }}">
-                                {{ breakdown[significance1][significance2]['count'] }}
+                                {{ breakdown['data'][significance1][significance2]['count'] }}
                             </a>
                         {% else %}
-                            {{ breakdown[significance1][significance2]['count'] }}
+                            {{ breakdown['data'][significance1][significance2]['count'] }}
                         {% endif %}
                     </td>
                 {% else %}
