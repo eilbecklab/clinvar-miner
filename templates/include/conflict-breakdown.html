@@ -10,14 +10,14 @@
     {% if submitter2_info %}
         <tr>
             {% if submitter1_info %}<th></th>{% endif %}
-            <th colspan="{{ submitter2_significances|length + 1 }}">
+            <th colspan="{{ breakdown['submitter2_significances']|length + 1 }}">
                 {{ submitter_link(submitter2_info['id'], submitter2_info['name'])|safe }}
             </th>
         </tr>
     {% endif %}
     <tr>
         {% if submitter1_info %}
-            <th rowspan="{{ submitter1_significances|length + 1 }}">
+            <th rowspan="{{ breakdown['submitter1_significances']|length + 1 }}">
                 {{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }}
             </th>
         {% endif %}
