@@ -63,7 +63,7 @@
         <tr>
             <td>Gene type:</td>
             <td>
-                <select name="gene_type" {% if gene_type_disabled %}disabled="disabled"{% endif %}>
+                <select name="gene_type">
                     <option></option>
                     <option {% if request.args.get('gene_type') == '1' %}selected="selected"{% endif %} value="1">
                         in or near a single gene
@@ -84,14 +84,10 @@
                 <label>
                     <input
                         {% if request.args.get('original_terms') %} checked="checked" {% endif %}
-                        {% if original_terms_disabled %} disabled="disabled" {% endif %}
                         name="original_terms"
                         type="checkbox"
                         value="1"
                     />
-                    {% if request.args.get('original_terms') and original_terms_disabled %}
-                        <input type="hidden" name="original_terms" value="1"/>
-                    {% endif %}
                     Show significances as they were submitted (without aggregation into standard terms)
                 </label>
             </td>
