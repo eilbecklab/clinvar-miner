@@ -24,23 +24,22 @@ class DB():
             self.query += ' AND ' + column + '=:' + column
             self.parameters[column] = value
 
-    def gene_info(self, gene):
-        try:
-            row = list(self.cursor.execute('SELECT gene_type FROM current_submissions WHERE gene=? LIMIT 1', [gene]))[0]
-            ret = {'name': gene, 'type': row[0]}
-        except IndexError:
-            return None
-        ret['see_also'] = list(map(
-            lambda row: row[0],
-            self.cursor.execute('SELECT see_also FROM gene_links WHERE gene=?', [gene])
-        ))
-        return ret
-
     def rows(self):
         return list(map(dict, self.cursor.execute(self.query, self.parameters)))
 
     def value(self):
         return list(self.cursor.execute(self.query, self.parameters))[0][0]
+
+    def condition_info(self, condition_name):
+        try:
+            #prefer a row that links the condition name to a condition ID
+            row = list(self.cursor.execute('''
+                SELECT condition_db, condition_id FROM current_submissions WHERE condition_name=?
+                GROUP BY condition_id=='' ORDER BY condition_id=='' LIMIT 1
+            ''', [condition_name]))[0]
+            return {'db': row[0], 'id': row[1], 'name': condition_name}
+        except IndexError:
+            return None
 
     def country_name(self, country_code):
         try:
@@ -58,6 +57,18 @@ class DB():
             ))[0][0]
         except IndexError:
             return None
+
+    def gene_info(self, gene):
+        try:
+            row = list(self.cursor.execute('SELECT gene_type FROM current_submissions WHERE gene=? LIMIT 1', [gene]))[0]
+            ret = {'name': gene, 'type': row[0]}
+        except IndexError:
+            return None
+        ret['see_also'] = list(map(
+            lambda row: row[0],
+            self.cursor.execute('SELECT see_also FROM gene_links WHERE gene=?', [gene])
+        ))
+        return ret
 
     def is_gene(self, gene):
         return bool(list(self.cursor.execute(
@@ -742,17 +753,6 @@ class DB():
         self.query += ' GROUP BY submitter_id, significance'
 
         return self.rows()
-
-    def condition_info(self, condition_name):
-        try:
-            #prefer a row that links the condition name to a condition ID
-            row = list(self.cursor.execute('''
-                SELECT condition_db, condition_id FROM current_submissions WHERE condition_name=?
-                GROUP BY condition_id=='' ORDER BY condition_id=='' LIMIT 1
-            ''', [condition_name]))[0]
-            return {'db': row[0], 'id': row[1], 'name': condition_name}
-        except IndexError:
-            return None
 
     def variant_info(self, variant_name):
         try:
