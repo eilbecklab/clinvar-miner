@@ -20,6 +20,10 @@
         {% set total_conflicting_variants = variants|length %}
         {% include 'include/conflict-overview.html' %}
     {% endwith %}
+        {% with %}
+            {% set link_base = 'conflicting-variants-by-submitter/' + submitter1_info['id']|string + '/0' %}
+            {% include 'include/conflict-breakdown.html' %}
+        {% endwith %}
     {% if variants %}
         {{ h2('Submitter to submitter summary')|safe }}
         <div class="totals">
@@ -71,10 +75,6 @@
                 {% endfor %}
             </tbody>
         </table>
-        {% with %}
-            {% set link_base = 'conflicting-variants-by-submitter/' + submitter1_info['id']|string + '/0' %}
-            {% include 'include/conflict-breakdown.html' %}
-        {% endwith %}
         {% include 'include/all-conflicting-variants.html' %}
     {% endif %}
 {% endblock %}
