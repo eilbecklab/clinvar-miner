@@ -616,15 +616,18 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
 
     if not DB().is_significance(significance1) or not DB().is_significance(significance2):
         abort(404)
-    args['significance1'] = significance1
-    args['significance2'] = significance2
 
     return render_template_async(
         'conflicting-variants-by-gene--2significances.html',
         gene_info=gene_info,
         significance1=significance1,
         significance2=significance2,
-        variants=DB().variants(**args),
+        variants=DB().variants(
+            significance1=significance1,
+            significance2=significance2,
+            min_conflict_level=1,
+            **args
+        ),
     )
 
 @app.route('/conflicting-variants-by-significance')
@@ -676,6 +679,7 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
         variants=DB().variants(
             significance1=significance1,
             significance2=significance2,
+            min_conflict_level=1,
             **args
         ),
     )
@@ -843,6 +847,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
         variants=DB().variants(
             significance1=significance1,
             significance2=significance2,
+            min_conflict_level=1,
             **args
         ),
     )
