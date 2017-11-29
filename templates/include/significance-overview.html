@@ -13,26 +13,28 @@
     </thead>
     <tbody>
         <tr>
-            {% for significance, count in overview.items() %}
-                {% if count %}
+            {% with url = request.base_url + '/significance/' %}
+                {% for significance, count in overview.items() %}
+                    {% if count %}
+                        <td class="highlight">
+                            <a href="{{ url + significance|superescaped + query_suffix('min_conflict_level', 'gene_type', 'original_terms') }}">
+                                {{ count }}
+                            </a>
+                        </td>
+                    {% else %}
+                        <td>0</td>
+                    {% endif %}
+                {% endfor %}
+                {% if total_variants %}
                     <td class="highlight">
-                        <a href="{{ request.base_url }}/significance/{{ significance|superescaped }}{{ query_suffix('min_conflict_level', 'gene_type', 'original_terms') }}">
-                            {{ count }}
+                        <a href="{{ url + 'any' + query_suffix('min_conflict_level', 'gene_type') }}">
+                            {{ total_variants }}
                         </a>
                     </td>
                 {% else %}
                     <td>0</td>
                 {% endif %}
-            {% endfor %}
-            {% if total_variants %}
-                <td class="highlight">
-                    <a href="{{ request.base_url }}/significance/any{{ query_suffix('min_conflict_level', 'gene_type') }}">
-                        {{ total_variants }}
-                    </a>
-                </td>
-            {% else %}
-                <td>0</td>
-            {% endif %}
+            {% endwith %}
         </tr>
     </tbody>
 </table>

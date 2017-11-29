@@ -30,34 +30,36 @@
                 <tbody>
                     {% for row in total_variants_by_gene %}
                         <tr>
-                            <td>
-                                <input
-                                    {% if row['gene'] in request.args.getlist('genes') %}checked="checked"{% endif %}
-                                    name="genes"
-                                    type="checkbox"
-                                    value="{{ row['gene'] }}"
-                                />
-                            </td>
-                            <td>
-                                <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}{{ query_suffix('min_conflict_level', 'gene_type') }}">
-                                    {{ row['gene'] or '\u200Bintergenic' }}
-                                </a>
-                            </td>
-                            <td>
-                                <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}{{ query_suffix('min_conflict_level', 'gene_type') }}">
-                                    {{ row['count'] }}
-                                </a>
-                            </td>
-                            <td>
-                                <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}{{ query_suffix('min_conflict_level', 'gene_type') }}#condition-and-significance-breakdown">
-                                    {{ row['condition_count'] }}
-                                </a>
-                            </td>
-                            <td>
-                                <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}{{ query_suffix('min_conflict_level', 'gene_type') }}#submitter-and-significance-breakdown">
-                                    {{ row['submitter_count'] }}
-                                </a>
-                            </td>
+                            {% with url = 'variants-by-gene/' + (row['gene']|superescaped or 'intergenic') + query_suffix('min_conflict_level', 'gene_type') %}
+                                <td>
+                                    <input
+                                        {% if row['gene'] in request.args.getlist('genes') %}checked="checked"{% endif %}
+                                        name="genes"
+                                        type="checkbox"
+                                        value="{{ row['gene'] }}"
+                                    />
+                                </td>
+                                <td>
+                                    <a href="{{ url }}">
+                                        {{ row['gene'] or '\u200Bintergenic' }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ url }}">
+                                        {{ row['count'] }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ url }}#condition-and-significance-breakdown">
+                                        {{ row['condition_count'] }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ url }}#submitter-and-significance-breakdown">
+                                        {{ row['submitter_count'] }}
+                                    </a>
+                                </td>
+                            {% endwith %}
                         </tr>
                     {% endfor %}
                 </tbody>

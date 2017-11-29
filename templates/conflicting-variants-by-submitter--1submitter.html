@@ -42,35 +42,33 @@
             <tbody>
                 {% for submitter2_id, submitter2_summary in summary.items() %}
                     <tr>
-                        <th>
-                            <a href="conflicting-variants-by-submitter/{{ submitter1_info['id'] }}/{{ submitter2_id }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
-                                {{ submitter2_summary['name'] }}
-                            </a>
-                        </th>
-                        {% if submitter2_summary[-1] %}
-                            <td class="level{{ 0 }}-conflict">{{ submitter2_summary[-1] }}</td>
-                        {% else %}
-                            <td>0</td>
-                        {% endif %}
-                        {% if submitter2_summary[0] %}
-                            <td class="level{{ 0 }}-conflict">{{ submitter2_summary[0] }}</td>
-                        {% else %}
-                            <td>0</td>
-                        {% endif %}
-                        {% for i in range(1, 6) %}
-                            {% if min_conflict_level <= i %}
-                                {% if i in submitter2_summary %}
-                                    <td class="level{{ i }}-conflict">{{ submitter2_summary[i] }}</td>
-                                {% else %}
-                                    <td>0</td>
-                                {% endif %}
+                        {% with url = 'conflicting-variants-by-submitter/' + submitter1_info['id']|string + '/' + submitter2_id|string + query_suffix('min_conflict_level', 'original_terms') %}
+                            <th>
+                                <a href="{{ url }}">{{ submitter2_summary['name'] }}</a>
+                            </th>
+                            {% if submitter2_summary[-1] %}
+                                <td class="level{{ 0 }}-conflict">{{ submitter2_summary[-1] }}</td>
+                            {% else %}
+                                <td>0</td>
                             {% endif %}
-                        {% endfor %}
-                        <td class="highlight">
-                            <a href="conflicting-variants-by-submitter/{{ submitter1_info['id'] }}/{{ submitter2_id }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
-                                {{ submitter2_summary['any_conflict'] }}
-                            </a>
-                        </td>
+                            {% if submitter2_summary[0] %}
+                                <td class="level{{ 0 }}-conflict">{{ submitter2_summary[0] }}</td>
+                            {% else %}
+                                <td>0</td>
+                            {% endif %}
+                            {% for i in range(1, 6) %}
+                                {% if min_conflict_level <= i %}
+                                    {% if i in submitter2_summary %}
+                                        <td class="level{{ i }}-conflict">{{ submitter2_summary[i] }}</td>
+                                    {% else %}
+                                        <td>0</td>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            <td class="highlight">
+                                <a href="{{ url }}">{{ submitter2_summary['any_conflict'] }}</a>
+                            </td>
+                        {% endwith %}
                     </tr>
                 {% endfor %}
             </tbody>

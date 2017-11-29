@@ -29,36 +29,38 @@
                 <tbody>
                     {% for row in total_variants_by_submitter %}
                         <tr>
-                            <td>
-                                <input
-                                    {% if row['submitter_id']|string in request.args.getlist('submitters') %}
-                                        checked="checked"
-                                    {% endif %}
-                                    name="submitters"
-                                    type="checkbox"
-                                    value="{{ row['submitter_id'] }}"
-                                />
-                            </td>
-                            <td>
-                                <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
-                                    {{ row['submitter_name'] }}
-                                </a>
-                            </td>
-                            <td>
-                                <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
-                                    {{ row['count'] }}
-                                </a>
-                            </td>
-                            <td>
-                                <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ query_suffix('min_conflict_level', 'original_terms') }}#gene-and-significance-breakdown">
-                                    {{ row['gene_count'] }}
-                                </a>
-                            </td>
-                            <td>
-                                <a href="variants-by-submitter/{{ row['submitter_id'] }}{{ query_suffix('min_conflict_level', 'original_terms') }}#condition-and-significance-breakdown">
-                                    {{ row['condition_count'] }}
-                                </a>
-                            </td>
+                            {% with url = 'variants-by-submitter/' + row['submitter_id']|string + query_suffix('min_conflict_level', 'original_terms') %}
+                                <td>
+                                    <input
+                                        {% if row['submitter_id']|string in request.args.getlist('submitters') %}
+                                            checked="checked"
+                                        {% endif %}
+                                        name="submitters"
+                                        type="checkbox"
+                                        value="{{ row['submitter_id'] }}"
+                                    />
+                                </td>
+                                <td>
+                                    <a href="{{ url }}">
+                                        {{ row['submitter_name'] }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ url }}">
+                                        {{ row['count'] }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ url }}#gene-and-significance-breakdown">
+                                        {{ row['gene_count'] }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ url }}#condition-and-significance-breakdown">
+                                        {{ row['condition_count'] }}
+                                    </a>
+                                </td>
+                            {% endwith %}
                         </tr>
                     {% endfor %}
                 </tbody>

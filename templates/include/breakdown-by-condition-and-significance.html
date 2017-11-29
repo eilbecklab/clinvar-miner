@@ -16,27 +16,29 @@
     <tbody>
         {% for condition_name in breakdown_by_condition_and_significance['data'] %}
             <tr>
-                <th>
-                    <a href="{{ request.base_url }}/condition/{{ condition_name|superescaped }}{{ query_suffix('min_conflict_level', 'gene_type') }}">
-                        {{ condition_name }}
-                    </a>
-                </th>
-                {% for significance in breakdown_by_condition_and_significance['significances'] %}
-                    {% if significance in breakdown_by_condition_and_significance['data'][condition_name] %}
-                        <td class="highlight">
-                            <a href="{{ request.base_url }}/condition/{{ condition_name|superescaped }}/{{ significance|superescaped }}{{ query_suffix('min_conflict_level', 'gene_type', 'original_terms') }}">
-                                {{ breakdown_by_condition_and_significance['data'][condition_name][significance] }}
-                            </a>
-                        </td>
-                    {% else %}
-                        <td>0</td>
-                    {% endif %}
-                {% endfor %}
-                <td class="highlight">
-                    <a href="{{ request.base_url }}/condition/{{ condition_name|superescaped }}{{ query_suffix('min_conflict_level', 'gene_type') }}">
-                        {{ breakdown_by_condition_and_significance['data'][condition_name]['total'] }}
-                    </a>
-                </td>
+                {% with url = request.base_url + '/condition/' + condition_name|superescaped %}
+                    <th>
+                        <a href="{{ url + query_suffix('min_conflict_level', 'gene_type') }}">
+                            {{ condition_name }}
+                        </a>
+                    </th>
+                    {% for significance in breakdown_by_condition_and_significance['significances'] %}
+                        {% if significance in breakdown_by_condition_and_significance['data'][condition_name] %}
+                            <td class="highlight">
+                                <a href="{{ url + '/' + significance|superescaped + query_suffix('min_conflict_level', 'gene_type', 'original_terms') }}">
+                                    {{ breakdown_by_condition_and_significance['data'][condition_name][significance] }}
+                                </a>
+                            </td>
+                        {% else %}
+                            <td>0</td>
+                        {% endif %}
+                    {% endfor %}
+                    <td class="highlight">
+                        <a href="{{ url + query_suffix('min_conflict_level', 'gene_type') }}">
+                            {{ breakdown_by_condition_and_significance['data'][condition_name]['total'] }}
+                        </a>
+                    </td>
+                {% endwith %}
             </tr>
         {% endfor %}
     </tbody>

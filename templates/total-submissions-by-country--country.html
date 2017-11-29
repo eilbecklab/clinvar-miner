@@ -28,12 +28,14 @@
             <tbody>
                 {% for row in total_submissions_by_submitter %}
                     <tr>
-                        <td>
-                            <a href="variants-by-submitter/{{ row['submitter_id']}}{{ query_suffix('min_conflict_level') }}">{{ row['submitter_name'] }}</a>
-                        </td>
-                        <td>
-                            <a href="variants-by-submitter/{{ row['submitter_id']}}{{ query_suffix('min_conflict_level') }}">{{ row['count'] }}</a>
-                        </td>
+                        {% with url = 'variants-by-submitter/' + row['submitter_id']|string + query_suffix('min_conflict_level') %}
+                            <td>
+                                <a href="{{ url }}">{{ row['submitter_name'] }}</a>
+                            </td>
+                            <td>
+                                <a href="{{ url }}">{{ row['count'] }}</a>
+                            </td>
+                        {% endwith %}
                     </tr>
                 {% endfor %}
             </tbody>

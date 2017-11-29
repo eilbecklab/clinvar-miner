@@ -25,16 +25,14 @@
             <tbody>
                 {% for row in total_variants_by_submitter %}
                     <tr>
-                        <td>
-                            <a href="variants-by-submitter/{{ row['submitter_id'] }}/significance/{{ significance|superescaped }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
-                                {{ row['submitter_name'] }}
-                            </a>
-                        </td>
-                        <td>
-                            <a href="variants-by-submitter/{{ row['submitter_id'] }}/significance/{{ significance|superescaped }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
-                                {{ row['count'] }}
-                            </a>
-                        </td>
+                        {% with url = 'variants-by-submitter/' + row['submitter_id']|string + '/significance/' + significance|superescaped + query_suffix('min_conflict_level', 'original_terms') %}
+                            <td>
+                                <a href="{{ url }}">{{ row['submitter_name'] }}</a>
+                            </td>
+                            <td>
+                                <a href="{{ url }}">{{ row['count'] }}</a>
+                            </td>
+                        {% endwith %}
                     </tr>
                 {% endfor %}
             </tbody>
@@ -54,16 +52,14 @@
             <tbody>
                 {% for row in total_variants_by_condition %}
                     <tr>
-                        <td>
-                            <a href="variants-by-condition/{{ row['condition_name']|superescaped }}/significance/{{ significance|superescaped }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
-                                {{ row['condition_name'] }}
-                            </a>
-                        </td>
-                        <td>
-                            <a href="variants-by-condition/{{ row['condition_name']|superescaped }}/significance/{{ significance|superescaped }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
-                                {{ row['count'] }}
-                            </a>
-                        </td>
+                        {% with url = 'variants-by-conditon/' + row['condition_name']|superescaped + '/significance/' + significance|superescaped + query_suffix('min_conflict_level', 'original_terms') %}
+                            <td>
+                                <a href="{{ url }}">{{ row['condition_name'] }}</a>
+                            </td>
+                            <td>
+                                <a href="{{ url }}">{{ row['count'] }}</a>
+                            </td>
+                        {% endwith %}
                     </tr>
                 {% endfor %}
             </tbody>
@@ -83,16 +79,14 @@
             <tbody>
                 {% for row in total_variants_by_gene %}
                     <tr>
-                        <td>
-                            <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}/significance/{{ significance|superescaped }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
-                                {{ row['gene'] or '\u200Bintergenic' }}
-                            </a>
-                        </td>
-                        <td>
-                            <a href="variants-by-gene/{{ row['gene']|superescaped or 'intergenic' }}/significance/{{ significance|superescaped }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
-                                {{ row['count'] }}
-                            </a>
-                        </td>
+                        {% with url = 'variants-by-gene/' + (row['gene']|superescaped or 'intergenic') + '/significance/' + significance|superescaped + query_suffix('min_conflict_level', 'original_genes', 'original_terms') %}
+                            <td>
+                                <a href="{{ url }}">{{ row['gene'] or '\u200Bintergenic' }}</a>
+                            </td>
+                            <td>
+                                <a href="{{ url }}">{{ row['count'] }}</a>
+                            </td>
+                        {% endwith %}
                     </tr>
                 {% endfor %}
             </tbody>

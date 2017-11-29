@@ -32,31 +32,23 @@
             <tbody>
                 {% for row in total_variants_by_significance %}
                     <tr>
-                        <td>
-                            <a href="variants-by-significance/{{ row['significance']|superescaped }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
-                                {{ row['significance'] }}
-                            </a>
-                        </td>
-                        <td>
-                            <a href="variants-by-significance/{{ row['significance']|superescaped }}{{ query_suffix('min_conflict_level', 'original_terms') }}">
-                                {{ row['count'] }}
-                            </a>
-                        </td>
-                        <td>
-                            <a href="variants-by-significance/{{ row['significance']|superescaped }}{{ query_suffix('min_conflict_level', 'original_terms') }}#breakdown-by-gene">
-                                {{ row['gene_count'] }}
-                            </a>
-                        </td>
-                        <td>
-                            <a href="variants-by-significance/{{ row['significance']|superescaped }}{{ query_suffix('min_conflict_level', 'original_terms') }}#breakdown-by-condition">
-                                {{ row['condition_count'] }}
-                            </a>
-                        </td>
-                        <td>
-                            <a href="variants-by-significance/{{ row['significance']|superescaped }}{{ query_suffix('min_conflict_level', 'original_terms') }}#breakdown-by-submitter">
-                                {{ row['submitter_count'] }}
-                            </a>
-                        </td>
+                        {% with url = 'variants-by-significance/' + row['significance']|superescaped + query_suffix('min_conflict_level', 'original_terms') %}
+                            <td>
+                                <a href="{{ url }}">{{ row['significance'] }}</a>
+                            </td>
+                            <td>
+                                <a href="{{ url }}">{{ row['count'] }}</a>
+                            </td>
+                            <td>
+                                <a href="{{ url }}#breakdown-by-gene">{{ row['gene_count'] }}</a>
+                            </td>
+                            <td>
+                                <a href="{{ url }}#breakdown-by-condition">{{ row['condition_count'] }}</a>
+                            </td>
+                            <td>
+                                <a href="{{ url }}#breakdown-by-submitter">{{ row['submitter_count'] }}</a>
+                            </td>
+                        {% endwith %}
                     </tr>
                 {% endfor %}
             </tbody>
