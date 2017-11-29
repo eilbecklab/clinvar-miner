@@ -640,16 +640,16 @@ class DB():
             self.query += ' AND gene_type=:gene_type'
             self.parameters['gene_type'] = kwargs['gene_type']
 
+        if kwargs.get('original_genes'):
+            self.query += ' GROUP BY gene ORDER BY count DESC'
+        else:
+            self.query += ' GROUP BY normalized_gene ORDER BY count DESC'
+
         if kwargs.get('gene'):
             if kwargs.get('original_genes'):
                 self.and_equals('gene', kwargs['gene'])
             else:
                 self.and_equals('normalized_gene', kwargs['gene'])
-
-        if kwargs.get('original_genes'):
-            self.query += ' GROUP BY gene ORDER BY count DESC'
-        else:
-            self.query += ' GROUP BY normalized_gene ORDER BY count DESC'
 
         return self.rows()
 
@@ -689,6 +689,10 @@ class DB():
 
         if kwargs.get('normalized_method2'):
             self.and_equals('normalized_method2', kwargs['normalized_method2'])
+
+        if kwargs.get('gene_type', -1) != -1:
+            self.query += ' AND gene_type=:gene_type'
+            self.parameters['gene_type'] = kwargs['gene_type']
 
         if kwargs.get('original_genes'):
             self.query += ' GROUP BY gene, significance'

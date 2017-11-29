@@ -59,10 +59,10 @@
             </td>
         </tr>
     {% endif %}
-    {% if gene_type_filter %}
+    {% if gene_filters %}
         <tr>
             <td>Gene type:</td>
-            <td colspan="3">
+            <td>
                 <select name="gene_type">
                     <option></option>
                     <option {% if request.args.get('gene_type') == '1' %}selected="selected"{% endif %} value="1">
@@ -76,11 +76,7 @@
                     </option>
                 </select>
             </td>
-        </tr>
-    {% endif %}
-    {% if original_genes_filter %}
-        <tr>
-            <td colspan="4">
+            <td colspan="2">
                 <label>
                     <input
                         {% if request.args.get('original_genes') %} checked="checked" {% endif %}
