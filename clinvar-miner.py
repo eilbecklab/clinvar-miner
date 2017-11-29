@@ -943,7 +943,7 @@ def total_submissions_by_country(country_code = None):
         return render_template(
             'total-submissions-by-country.html',
             total_submissions_by_country=DB().total_submissions_by_country(
-                **args,
+                **args
             ),
         )
 
