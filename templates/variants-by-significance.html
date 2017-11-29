@@ -9,6 +9,7 @@
         {% set review_status1_label = 'Minimum submission review status' %}
         {% set method1_label = 'Collection method' %}
         {% set min_conflict_level_filter = True %}
+        {% set original_genes_filter = True %}
         {% set original_terms_filter = True %}
         {% include 'include/filter-form.html' %}
     {% endwith %}
@@ -32,7 +33,7 @@
             <tbody>
                 {% for row in total_variants_by_significance %}
                     <tr>
-                        {% with url = 'variants-by-significance/' + row['significance']|superescaped + query_suffix('min_conflict_level', 'original_terms') %}
+                        {% with url = 'variants-by-significance/' + row['significance']|superescaped + query_suffix('min_conflict_level', 'original_genes', 'original_terms') %}
                             <td>
                                 <a href="{{ url }}">{{ row['significance'] }}</a>
                             </td>

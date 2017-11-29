@@ -479,6 +479,7 @@ def conflicting_variants_by_condition():
         'normalized_method1': request.args.get('method1'),
         'min_stars2': int_arg('min_stars2'),
         'normalized_method2': request.args.get('method2'),
+        'original_genes': request.args.get('original_genes'),
         'condition1_name': list_arg('conditions'),
     }
     min_conflict_level = max(1, int_arg('min_conflict_level'))
@@ -531,6 +532,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
         'min_stars2': int_arg('min_stars2'),
         'normalized_method2': request.args.get('method2'),
         'gene_type': int_arg('gene_type'),
+        'original_genes': request.args.get('original_genes'),
     }
     min_conflict_level = max(1, int_arg('min_conflict_level'))
 
@@ -576,7 +578,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
 
     if gene == 'intergenic':
         gene = ''
-    gene_info = DB().gene_info(gene)
+    gene_info = DB().gene_info(gene, args['original_genes'])
     if not gene_info:
         abort(404)
     args['gene'] = gene
@@ -687,6 +689,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
         'normalized_method1': request.args.get('method1'),
         'min_stars2': int_arg('min_stars2'),
         'normalized_method2': request.args.get('method2'),
+        'original_genes': request.args.get('original_genes'),
     }
     min_conflict_level = max(1, int_arg('min_conflict_level'))
 
@@ -1010,6 +1013,7 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
         'normalized_method1': request.args.get('method1'),
         'normalized_method2': request.args.get('method1'),
         'min_conflict_level': int_arg('min_conflict_level'),
+        'original_genes': request.args.get('original_genes'),
     }
 
     if condition_name == None:
@@ -1099,8 +1103,9 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
         'min_stars2': int_arg('min_stars1'),
         'normalized_method1': request.args.get('method1'),
         'normalized_method2': request.args.get('method1'),
+        'min_conflict_level': int_arg('min_conflict_level'),
         'gene_type': int_arg('gene_type'),
-        'min_conflict_level': int_arg('min_conflict_level')
+        'original_genes': request.args.get('original_genes'),
     }
 
     if gene == None:
@@ -1113,7 +1118,7 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
 
     if gene == 'intergenic':
         gene = ''
-    gene_info = DB().gene_info(gene)
+    gene_info = DB().gene_info(gene, args['original_genes'])
     if not gene_info:
         abort(404)
     args['gene'] = gene
@@ -1186,6 +1191,7 @@ def variants_by_significance(significance = None):
         'normalized_method1': request.args.get('method1'),
         'normalized_method2': request.args.get('method1'),
         'min_conflict_level': int_arg('min_conflict_level'),
+        'original_genes': request.args.get('original_genes'),
         'original_terms': request.args.get('original_terms'),
     }
 
@@ -1223,6 +1229,7 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
         'normalized_method1': request.args.get('method1'),
         'normalized_method2': request.args.get('method1'),
         'min_conflict_level': int_arg('min_conflict_level'),
+        'original_genes': request.args.get('original_genes'),
     }
 
     if submitter_id == None:

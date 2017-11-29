@@ -6,6 +6,7 @@
             {% set review_status1_label = 'Minimum submission review status' %}
             {% set method1_label = 'Collection method' %}
             {% set min_conflict_level_filter = True %}
+            {% set original_genes_filter = True %}
             {% include 'include/filter.html' %}
         {% endwith %}
         <div class="totals">
@@ -29,7 +30,7 @@
                 <tbody>
                     {% for row in total_variants_by_condition %}
                         <tr>
-                            {% with url = 'variants-by-condition/' + row['condition_name']|superescaped + query_suffix('min_conflict_level') %}
+                            {% with url = 'variants-by-condition/' + row['condition_name']|superescaped + query_suffix('min_conflict_level', 'original_genes') %}
                                 <td>
                                     <input
                                         {% if row['condition_name']|string in request.args.getlist('conditions') %}

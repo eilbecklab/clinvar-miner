@@ -45,6 +45,8 @@ def create_tables():
             variant_rsid TEXT,
             gene TEXT,
             gene_type INTEGER,
+            normalized_gene TEXT,
+            normalized_gene_type INTEGER,
             submitter_id INTEGER,
             submitter_name TEXT,
             submitter_country_code TEXT,
@@ -78,6 +80,8 @@ def create_tables():
             variant_rsid TEXT,
             gene TEXT,
             gene_type INTEGER,
+            normalized_gene TEXT,
+            normalized_gene_type INTEGER,
 
             submitter1_id INTEGER,
             submitter1_name TEXT,
@@ -117,6 +121,16 @@ def create_tables():
     cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__normalized_method1 ON comparisons (normalized_method1)')
     cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__star_level2 ON comparisons (star_level2)')
     cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__conflict_level ON comparisons (conflict_level)')
+
+def get_gene_type(genes, small_variant):
+    if len(genes) == 0:
+        return 0 #intergenic
+    elif len(genes) == 1:
+        return 1 #in or near a single gene
+    elif small_variant:
+        return 2 #multiple genes because genes are close or overlap
+    else:
+        return 3 #multiple genes because variant is large
 
 def get_submissions(date, set_xml):
     set_el = ElementTree.fromstring(set_xml)
@@ -169,16 +183,12 @@ def get_submissions(date, set_xml):
 
         genes |= variant_genes
 
-    if len(genes) == 0:
-        gene_type = 0 #intergenic
-    elif len(genes) == 1:
-        gene_type = 1 #in or near a single gene
-    elif small_variant:
-        gene_type = 2 #multiple genes because genes are close or overlap
-    else:
-        gene_type = 3 #multiple genes because variant is large
-
     gene = ', '.join(sorted(genes))
+    gene_type = get_gene_type(genes, small_variant)
+
+    genes = set(map(lambda gene: gene.rpartition('-')[0] if re.fullmatch('.+-AS[1-9]?', gene) else gene, genes))
+    normalized_gene = ', '.join(sorted(genes))
+    normalized_gene_type = get_gene_type(genes, small_variant)
 
     trait_name_els = reference_assertion_el.findall('./TraitSet/Trait/Name/ElementValue[@Type="Preferred"]')
     if trait_name_els:
@@ -241,6 +251,8 @@ def get_submissions(date, set_xml):
             variant_rsid,
             gene,
             gene_type,
+            normalized_gene,
+            normalized_gene_type,
             submitter_id,
             submitter_name,
             submitter_country_code,

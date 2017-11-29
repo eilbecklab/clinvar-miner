@@ -78,6 +78,21 @@
             </td>
         </tr>
     {% endif %}
+    {% if original_genes_filter %}
+        <tr>
+            <td colspan="4">
+                <label>
+                    <input
+                        {% if request.args.get('original_genes') %} checked="checked" {% endif %}
+                        name="original_genes"
+                        type="checkbox"
+                        value="1"
+                    />
+                    Distinguish antisense genes from sense genes
+                </label>
+            </td>
+        </tr>
+    {% endif %}
     {% if original_terms_filter %}
         <tr>
             <td colspan="4">

@@ -7,6 +7,7 @@
             {% set method1_label = 'Collection method' %}
             {% set min_conflict_level_filter = True %}
             {% set gene_type_filter = True %}
+            {% set original_genes_filter = True %}
             {% include 'include/filter.html' %}
         {% endwith %}
         <div class="totals">
@@ -30,7 +31,7 @@
                 <tbody>
                     {% for row in total_variants_by_gene %}
                         <tr>
-                            {% with url = 'variants-by-gene/' + (row['gene']|superescaped or 'intergenic') + query_suffix('min_conflict_level', 'gene_type') %}
+                            {% with url = 'variants-by-gene/' + (row['gene']|superescaped or 'intergenic') + query_suffix('min_conflict_level', 'gene_type', 'original_genes') %}
                                 <td>
                                     <input
                                         {% if row['gene'] in request.args.getlist('genes') %}checked="checked"{% endif %}

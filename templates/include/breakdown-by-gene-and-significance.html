@@ -18,14 +18,14 @@
             <tr>
                 {% with url = request.base_url + '/gene/' + (gene|superescaped or 'intergenic') %}
                     <th>
-                        <a href="{{ url + query_suffix('min_conflict_level') }}">
+                        <a href="{{ url + query_suffix('min_conflict_level', 'original_genes') }}">
                             {{ gene or '\u200Bintergenic' }}
                         </a>
                     </th>
                     {% for significance in breakdown_by_gene_and_significance['significances'] %}
                         {% if significance in breakdown_by_gene_and_significance['data'][gene] %}
                             <td class="highlight">
-                                <a href="{{ url + '/' + significance|superescaped + query_suffix('min_conflict_level', 'original_terms') }}">
+                                <a href="{{ url + '/' + significance|superescaped + query_suffix('min_conflict_level', 'original_genes', 'original_terms') }}">
                                     {{ breakdown_by_gene_and_significance['data'][gene][significance] }}
                                 </a>
                             </td>
@@ -34,7 +34,7 @@
                         {% endif %}
                     {% endfor %}
                     <td class="highlight">
-                        <a href="{{ url + query_suffix('min_conflict_level') }}">
+                        <a href="{{ url + query_suffix('min_conflict_level', 'original_genes') }}">
                             {{ breakdown_by_gene_and_significance['data'][gene]['total'] }}
                         </a>
                     </td>

@@ -59,21 +59,22 @@ class DB():
         except IndexError:
             return None
 
-    def gene_info(self, gene):
+    def gene_info(self, gene, original_genes = False):
         try:
             row = list(self.cursor.execute('SELECT gene_type FROM current_submissions WHERE gene=? LIMIT 1', [gene]))[0]
             ret = {'name': gene, 'type': row[0]}
         except IndexError:
             return None
+        table = 'gene_links' if original_genes else 'normalized_gene_links'
         ret['see_also'] = list(map(
             lambda row: row[0],
-            self.cursor.execute('SELECT see_also FROM gene_links WHERE gene=?', [gene])
+            self.cursor.execute('SELECT see_also FROM ' + table + ' WHERE gene=?', [gene])
         ))
         return ret
 
     def is_gene(self, gene):
         return bool(list(self.cursor.execute(
-            'SELECT 1 FROM current_submissions WHERE gene=? LIMIT 1', [gene]
+            'SELECT 1 FROM current_submissions WHERE gene=? OR normalized_gene=? LIMIT 1', [gene, gene]
         )))
 
     def is_condition_name(self, condition_name):
@@ -207,7 +208,10 @@ class DB():
         }
 
         if kwargs.get('gene') != None:
-            self.and_equals('gene', kwargs['gene'])
+            if kwargs.get('original_genes'):
+                self.and_equals('gene', kwargs['gene'])
+            else:
+                self.and_equals('normalized_gene', kwargs['gene'])
 
         if kwargs.get('condition1_name'):
             self.and_equals('condition1_name', kwargs['condition1_name'])
@@ -234,8 +238,13 @@ class DB():
 
     @promise
     def total_conflicting_variants_by_gene_and_conflict_level(self, **kwargs):
-        self.query = '''
-            SELECT gene, conflict_level, COUNT(DISTINCT variant_name) AS count
+        if kwargs.get('original_genes'):
+            self.query = 'SELECT gene'
+        else:
+            self.query = 'SELECT normalized_gene AS gene'
+
+        self.query += '''
+            , conflict_level, COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
@@ -257,9 +266,15 @@ class DB():
             self.parameters['gene_type'] = kwargs['gene_type']
 
         if kwargs.get('gene'):
-            self.and_equals('gene', kwargs['gene'])
+            if kwargs.get('original_genes'):
+                self.and_equals('gene', kwargs['gene'])
+            else:
+                self.and_equals('normalized_gene', kwargs['gene'])
 
-        self.query += ' GROUP BY gene, conflict_level'
+        if kwargs.get('original_genes'):
+            self.query += ' GROUP BY gene, conflict_level'
+        else:
+            self.query += ' GROUP BY normalized_gene, conflict_level'
 
         return list(map(dict, self.cursor.execute(self.query, self.parameters)))
 
@@ -285,7 +300,10 @@ class DB():
         }
 
         if kwargs.get('gene') != None:
-            self.and_equals('gene', kwargs['gene'])
+            if kwargs.get('original_genes'):
+                self.and_equals('gene', kwargs['gene'])
+            else:
+                self.and_equals('normalized_gene', kwargs['gene'])
 
         if kwargs.get('submitter1_id'):
             self.and_equals('submitter1_id', kwargs['submitter1_id'])
@@ -448,7 +466,10 @@ class DB():
         }
 
         if kwargs.get('gene') != None:
-            self.and_equals('gene', kwargs['gene'])
+            if kwargs.get('original_genes'):
+                self.and_equals('gene', kwargs['gene'])
+            else:
+                self.and_equals('normalized_gene', kwargs['gene'])
 
         if kwargs.get('condition1_name'):
             self.and_equals('condition1_name', kwargs['condition1_name'])
@@ -480,13 +501,17 @@ class DB():
     @promise
     def total_variants_by_condition(self, **kwargs):
         self.query = '''
-            SELECT
-                condition1_db AS condition_db,
-                condition1_id AS condition_id,
-                condition1_name AS condition_name,
-                COUNT(DISTINCT gene) AS gene_count,
-                COUNT(DISTINCT submitter1_id) AS submitter_count,
-                COUNT(DISTINCT variant_name) AS count
+            SELECT condition1_db AS condition_db, condition1_id AS condition_id, condition1_name AS condition_name
+        '''
+
+        if kwargs.get('original_genes'):
+            self.query += ', COUNT(DISTINCT gene) AS gene_count'
+        else:
+            self.query += ', COUNT(DISTINCT normalized_gene) AS gene_count'
+
+        self.query += '''
+            , COUNT(DISTINCT submitter1_id) AS submitter_count
+            , COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
@@ -498,7 +523,10 @@ class DB():
         }
 
         if kwargs.get('gene') != None:
-            self.and_equals('gene', kwargs['gene'])
+            if kwargs.get('original_genes'):
+                self.and_equals('gene', kwargs['gene'])
+            else:
+                self.and_equals('normalized_gene', kwargs['gene'])
 
         if kwargs.get('submitter1_id'):
             self.and_equals('submitter1_id', kwargs['submitter1_id'])
@@ -547,7 +575,10 @@ class DB():
         }
 
         if kwargs.get('gene') != None:
-            self.and_equals('gene', kwargs['gene'])
+            if kwargs.get('original_genes'):
+                self.and_equals('gene', kwargs['gene'])
+            else:
+                self.and_equals('normalized_gene', kwargs['gene'])
 
         if kwargs.get('submitter1_id'):
             self.and_equals('submitter1_id', kwargs['submitter1_id'])
@@ -568,12 +599,15 @@ class DB():
 
     @promise
     def total_variants_by_gene(self, **kwargs):
-        self.query = '''
-            SELECT
-                gene,
-                COUNT(DISTINCT condition1_name) AS condition_count,
-                COUNT(DISTINCT submitter1_id) AS submitter_count,
-                COUNT(DISTINCT variant_name) AS count
+        if kwargs.get('original_genes'):
+            self.query = 'SELECT gene'
+        else:
+            self.query = 'SELECT normalized_gene AS gene'
+
+        self.query += '''
+            , COUNT(DISTINCT condition1_name) AS condition_count
+            , COUNT(DISTINCT submitter1_id) AS submitter_count
+            , COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
@@ -607,15 +641,26 @@ class DB():
             self.parameters['gene_type'] = kwargs['gene_type']
 
         if kwargs.get('gene'):
-            self.and_equals('gene', kwargs['gene'])
+            if kwargs.get('original_genes'):
+                self.and_equals('gene', kwargs['gene'])
+            else:
+                self.and_equals('normalized_gene', kwargs['gene'])
 
-        self.query += ' GROUP BY gene ORDER BY count DESC'
+        if kwargs.get('original_genes'):
+            self.query += ' GROUP BY gene ORDER BY count DESC'
+        else:
+            self.query += ' GROUP BY normalized_gene ORDER BY count DESC'
 
         return self.rows()
 
     @promise
     def total_variants_by_gene_and_significance(self, **kwargs):
-        self.query = 'SELECT gene, COUNT(DISTINCT variant_name) AS count'
+        if kwargs.get('original_genes'):
+            self.query = 'SELECT gene'
+        else:
+            self.query = 'SELECT normalized_gene AS gene'
+
+        self.query += ', COUNT(DISTINCT variant_name) AS count'
 
         if kwargs.get('original_terms'):
             self.query += ', significance1 AS significance'
@@ -645,7 +690,10 @@ class DB():
         if kwargs.get('normalized_method2'):
             self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
-        self.query += ' GROUP BY gene, significance'
+        if kwargs.get('original_genes'):
+            self.query += ' GROUP BY gene, significance'
+        else:
+            self.query += ' GROUP BY normalized_gene, significance'
 
         return self.rows()
 
@@ -658,8 +706,12 @@ class DB():
         else:
             self.query += ', normalized_significance1 AS significance'
 
+        if kwargs.get('original_genes'):
+            self.query += ', COUNT(DISTINCT gene) AS gene_count'
+        else:
+            self.query += ', COUNT(DISTINCT normalized_gene) AS gene_count'
+
         self.query += '''
-            , COUNT(DISTINCT gene) AS gene_count
             , COUNT(DISTINCT condition1_name) AS condition_count
             , COUNT(DISTINCT submitter1_id) AS submitter_count
             FROM current_comparisons
@@ -673,7 +725,10 @@ class DB():
         }
 
         if kwargs.get('gene') != None:
-            self.and_equals('gene', kwargs['gene'])
+            if kwargs.get('original_genes'):
+                self.and_equals('gene', kwargs['gene'])
+            else:
+                self.and_equals('normalized_gene', kwargs['gene'])
 
         if kwargs.get('condition1_name'):
             self.and_equals('condition1_name', kwargs['condition1_name'])
@@ -702,8 +757,12 @@ class DB():
         else:
             self.query = 'SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name'
 
+        if kwargs.get('original_genes'):
+            self.query += ', COUNT(DISTINCT gene) AS gene_count'
+        else:
+            self.query += ', COUNT(DISTINCT normalized_gene) AS gene_count'
+
         self.query += '''
-            , COUNT(DISTINCT gene) AS gene_count
             , COUNT(DISTINCT condition1_name) AS condition_count
             , COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
@@ -717,7 +776,10 @@ class DB():
         }
 
         if kwargs.get('gene') != None:
-            self.and_equals('gene', kwargs['gene'])
+            if kwargs.get('original_genes'):
+                self.and_equals('gene', kwargs['gene'])
+            else:
+                self.and_equals('normalized_gene', kwargs['gene'])
 
         if kwargs.get('condition1_name'):
             self.and_equals('condition1_name', kwargs['condition1_name'])
@@ -769,7 +831,10 @@ class DB():
         }
 
         if kwargs.get('gene') != None:
-            self.and_equals('gene', kwargs['gene'])
+            if kwargs.get('original_genes'):
+                self.and_equals('gene', kwargs['gene'])
+            else:
+                self.and_equals('normalized_gene', kwargs['gene'])
 
         if kwargs.get('condition1_name'):
             self.and_equals('condition1_name', kwargs['condition1_name'])
@@ -833,7 +898,10 @@ class DB():
         }
 
         if kwargs.get('gene') != None:
-            self.and_equals('gene', kwargs.get('gene'))
+            if kwargs.get('original_genes'):
+                self.and_equals('gene', kwargs['gene'])
+            else:
+                self.and_equals('normalized_gene', kwargs['gene'])
 
         if kwargs.get('condition1_name'):
             self.and_equals('condition1_name', kwargs['condition1_name'])

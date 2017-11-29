@@ -17,7 +17,7 @@
                 {% for significance, count in overview.items() %}
                     {% if count %}
                         <td class="highlight">
-                            <a href="{{ url + significance|superescaped + query_suffix('min_conflict_level', 'gene_type', 'original_terms') }}">
+                            <a href="{{ url + significance|superescaped + query_suffix('min_conflict_level', 'gene_type', 'original_genes', 'original_terms') }}">
                                 {{ count }}
                             </a>
                         </td>
@@ -27,7 +27,7 @@
                 {% endfor %}
                 {% if total_variants %}
                     <td class="highlight">
-                        <a href="{{ url + 'any' + query_suffix('min_conflict_level', 'gene_type') }}">
+                        <a href="{{ url + 'any' + query_suffix('min_conflict_level', 'gene_type', 'original_genes') }}">
                             {{ total_variants }}
                         </a>
                     </td>
