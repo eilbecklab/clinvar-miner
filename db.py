@@ -168,7 +168,7 @@ class DB():
         )[0][0]
 
     @promise
-    def total_conflicting_variants_by_condition_and_conflict_level(self, **kwargs):
+    def total_conflicted_variants_by_condition_and_conflict_level(self, **kwargs):
         self.query = '''
             SELECT condition1_name AS condition_name, conflict_level, COUNT(DISTINCT variant_name) AS count
             FROM current_comparisons
@@ -195,7 +195,7 @@ class DB():
         return list(map(dict, self.cursor.execute(self.query, self.parameters)))
 
     @promise
-    def total_conflicting_variants_by_conflict_level(self, **kwargs):
+    def total_conflicted_variants_by_conflict_level(self, **kwargs):
         self.query = '''
             SELECT conflict_level, COUNT(DISTINCT variant_name) AS count FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
@@ -237,7 +237,7 @@ class DB():
         return self.rows()
 
     @promise
-    def total_conflicting_variants_by_gene_and_conflict_level(self, **kwargs):
+    def total_conflicted_variants_by_gene_and_conflict_level(self, **kwargs):
         if kwargs.get('original_genes'):
             self.query = 'SELECT gene'
         else:
@@ -279,7 +279,7 @@ class DB():
         return list(map(dict, self.cursor.execute(self.query, self.parameters)))
 
     @promise
-    def total_conflicting_variants_by_significance_and_significance(self, **kwargs):
+    def total_conflicted_variants_by_significance_and_significance(self, **kwargs):
         if kwargs.get('original_terms'):
             self.query = 'SELECT significance1, significance2'
         else:
@@ -329,7 +329,7 @@ class DB():
         return self.rows()
 
     @promise
-    def total_conflicting_variants_by_submitter_and_conflict_level(self, **kwargs):
+    def total_conflicted_variants_by_submitter_and_conflict_level(self, **kwargs):
         if kwargs.get('submitter1_id'):
             self.query = 'SELECT submitter2_id AS submitter_id'
         else:

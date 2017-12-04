@@ -130,10 +130,10 @@ def get_breakdown_by_submitter_and_significance(total_variants_by_submitter,
     return breakdown
 
 @promise
-def get_conflict_breakdown(total_conflicting_variants_by_significance_and_significance):
+def get_conflict_breakdown(total_conflicted_variants_by_significance_and_significance):
     breakdown = {'data': {}, 'submitter1_significances': set(), 'submitter2_significances': set()}
 
-    for row in total_conflicting_variants_by_significance_and_significance.result():
+    for row in total_conflicted_variants_by_significance_and_significance.result():
         significance1 = row['significance1']
         significance2 = row['significance2']
         conflict_level = row['conflict_level']
@@ -157,12 +157,12 @@ def get_conflict_breakdown(total_conflicting_variants_by_significance_and_signif
     return breakdown
 
 @promise
-def get_conflict_summary_by_condition(total_variants_by_condition, total_potentially_conflicting_variants_by_condition,
-                                      total_conflicting_variants_by_condition,
-                                      total_conflicting_variants_by_condition_and_conflict_level):
+def get_conflict_summary_by_condition(total_variants_by_condition, total_potentially_conflicted_variants_by_condition,
+                                      total_conflicted_variants_by_condition,
+                                      total_conflicted_variants_by_condition_and_conflict_level):
     summary = OrderedDict()
 
-    for row in total_conflicting_variants_by_condition.result():
+    for row in total_conflicted_variants_by_condition.result():
         condition_name = row['condition_name']
         count = row['count']
         summary[condition_name] = {
@@ -171,7 +171,7 @@ def get_conflict_summary_by_condition(total_variants_by_condition, total_potenti
             'any_conflict': count,
         }
 
-    for row in total_potentially_conflicting_variants_by_condition.result():
+    for row in total_potentially_conflicted_variants_by_condition.result():
         condition_name = row['condition_name']
         if condition_name in summary: #some conditions have no conflicts at all
             count = row['count']
@@ -183,7 +183,7 @@ def get_conflict_summary_by_condition(total_variants_by_condition, total_potenti
             count = row['count']
             summary[condition_name][-1] = count - summary[condition_name][0] - summary[condition_name]['any_conflict']
 
-    for row in total_conflicting_variants_by_condition_and_conflict_level.result():
+    for row in total_conflicted_variants_by_condition_and_conflict_level.result():
         condition_name = row['condition_name']
         conflict_level = row['conflict_level']
         count = row['count']
@@ -192,17 +192,17 @@ def get_conflict_summary_by_condition(total_variants_by_condition, total_potenti
     return summary
 
 @promise
-def get_conflict_summary_by_gene(total_variants_by_gene, total_potentially_conflicting_variants_by_gene,
-                                 total_conflicting_variants_by_gene,
-                                 total_conflicting_variants_by_gene_and_conflict_level):
+def get_conflict_summary_by_gene(total_variants_by_gene, total_potentially_conflicted_variants_by_gene,
+                                 total_conflicted_variants_by_gene,
+                                 total_conflicted_variants_by_gene_and_conflict_level):
     summary = OrderedDict()
 
-    for row in total_conflicting_variants_by_gene.result():
+    for row in total_conflicted_variants_by_gene.result():
         gene = row['gene']
         count = row['count']
         summary[gene] = {'any_conflict': count}
 
-    for row in total_potentially_conflicting_variants_by_gene.result():
+    for row in total_potentially_conflicted_variants_by_gene.result():
         gene = row['gene']
         if gene in summary: #some genes have no conflicts at all
             count = row['count']
@@ -214,7 +214,7 @@ def get_conflict_summary_by_gene(total_variants_by_gene, total_potentially_confl
             count = row['count']
             summary[gene][-1] = count - summary[gene][0] - summary[gene]['any_conflict']
 
-    for row in total_conflicting_variants_by_gene_and_conflict_level.result():
+    for row in total_conflicted_variants_by_gene_and_conflict_level.result():
         gene = row['gene']
         conflict_level = row['conflict_level']
         count = row['count']
@@ -223,18 +223,18 @@ def get_conflict_summary_by_gene(total_variants_by_gene, total_potentially_confl
     return summary
 
 @promise
-def get_conflict_summary_by_submitter(total_variants_by_submitter, total_potentially_conflicting_variants_by_submitter,
-                                      total_conflicting_variants_by_submitter,
-                                      total_conflicting_variants_by_submitter_and_conflict_level):
+def get_conflict_summary_by_submitter(total_variants_by_submitter, total_potentially_conflicted_variants_by_submitter,
+                                      total_conflicted_variants_by_submitter,
+                                      total_conflicted_variants_by_submitter_and_conflict_level):
     summary = OrderedDict()
 
-    for row in total_conflicting_variants_by_submitter.result():
+    for row in total_conflicted_variants_by_submitter.result():
         submitter_id = row['submitter_id']
         submitter_name = row['submitter_name']
         count = row['count']
         summary[submitter_id] = {'name': submitter_name, 'any_conflict': count}
 
-    for row in total_potentially_conflicting_variants_by_submitter.result():
+    for row in total_potentially_conflicted_variants_by_submitter.result():
         submitter_id = row['submitter_id']
         if submitter_id in summary: #some submitters have no conflicts with anyone
             count = row['count']
@@ -246,7 +246,7 @@ def get_conflict_summary_by_submitter(total_variants_by_submitter, total_potenti
             count = row['count']
             summary[submitter_id][-1] = count - summary[submitter_id][0] - summary[submitter_id]['any_conflict']
 
-    for row in total_conflicting_variants_by_submitter_and_conflict_level.result():
+    for row in total_conflicted_variants_by_submitter_and_conflict_level.result():
         submitter_id = row['submitter_id']
         conflict_level = row['conflict_level']
         count = row['count']
@@ -255,10 +255,10 @@ def get_conflict_summary_by_submitter(total_variants_by_submitter, total_potenti
     return summary
 
 @promise
-def get_conflict_overview(total_conflicting_variants_by_conflict_level):
+def get_conflict_overview(total_conflicted_variants_by_conflict_level):
     overview = {}
 
-    for row in total_conflicting_variants_by_conflict_level.result():
+    for row in total_conflicted_variants_by_conflict_level.result():
         conflict_level = row['conflict_level']
         count = row['count']
         overview[conflict_level] = count
@@ -472,8 +472,8 @@ def cache_set(response):
         cache.set(request.url, response, timeout=ttl)
     return response
 
-@app.route('/conflicting-variants-by-condition')
-def conflicting_variants_by_condition():
+@app.route('/conflicted-variants-by-condition')
+def conflicted_variants_by_condition():
     args = {
         'min_stars1': int_arg('min_stars1'),
         'normalized_method1': request.args.get('method1'),
@@ -486,9 +486,9 @@ def conflicting_variants_by_condition():
     min_conflict_level = max(1, int_arg('min_conflict_level'))
 
     return render_template_async(
-        'conflicting-variants-by-condition.html',
+        'conflicted-variants-by-condition.html',
         overview=get_conflict_overview(
-            DB().total_conflicting_variants_by_conflict_level(
+            DB().total_conflicted_variants_by_conflict_level(
                 min_conflict_level=min_conflict_level,
                 **args
             ),
@@ -496,11 +496,11 @@ def conflicting_variants_by_condition():
         total_variants=DB().total_variants(
             **args
         ),
-        total_potentially_conflicting_variants=DB().total_variants(
+        total_potentially_conflicted_variants=DB().total_variants(
             min_conflict_level=0,
             **args
         ),
-        total_conflicting_variants=DB().total_variants(
+        total_conflicted_variants=DB().total_variants(
             min_conflict_level=min_conflict_level,
             **args
         ),
@@ -516,17 +516,17 @@ def conflicting_variants_by_condition():
                 min_conflict_level=min_conflict_level,
                 **args
             ),
-            DB().total_conflicting_variants_by_condition_and_conflict_level(
+            DB().total_conflicted_variants_by_condition_and_conflict_level(
                 min_conflict_level=min_conflict_level,
                 **args
             ),
         ),
     )
 
-@app.route('/conflicting-variants-by-gene')
-@app.route('/conflicting-variants-by-gene/<superescaped:gene>')
-@app.route('/conflicting-variants-by-gene/<superescaped:gene>/<superescaped:significance1>/<superescaped:significance2>')
-def conflicting_variants_by_gene(gene = None, significance1 = None, significance2 = None):
+@app.route('/conflicted-variants-by-gene')
+@app.route('/conflicted-variants-by-gene/<superescaped:gene>')
+@app.route('/conflicted-variants-by-gene/<superescaped:gene>/<superescaped:significance1>/<superescaped:significance2>')
+def conflicted_variants_by_gene(gene = None, significance1 = None, significance2 = None):
     args = {
         'min_stars1': int_arg('min_stars1'),
         'normalized_method1': request.args.get('method1'),
@@ -540,9 +540,9 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
     if not gene:
         args['gene'] = list_arg('genes')
         return render_template_async(
-            'conflicting-variants-by-gene.html',
+            'conflicted-variants-by-gene.html',
             overview=get_conflict_overview(
-                DB().total_conflicting_variants_by_conflict_level(
+                DB().total_conflicted_variants_by_conflict_level(
                     min_conflict_level=min_conflict_level,
                     **args
                 ),
@@ -550,11 +550,11 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
             total_variants=DB().total_variants(
                 **args
             ),
-            total_potentially_conflicting_variants=DB().total_variants(
+            total_potentially_conflicted_variants=DB().total_variants(
                 min_conflict_level=0,
                 **args
             ),
-            total_conflicting_variants=DB().total_variants(
+            total_conflicted_variants=DB().total_variants(
                 min_conflict_level=min_conflict_level,
                 **args
             ),
@@ -570,7 +570,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
                     min_conflict_level=min_conflict_level,
                     **args
                 ),
-                DB().total_conflicting_variants_by_gene_and_conflict_level(
+                DB().total_conflicted_variants_by_gene_and_conflict_level(
                     min_conflict_level=min_conflict_level,
                     **args
                 ),
@@ -587,10 +587,10 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
 
     if not significance1:
         return render_template_async(
-            'conflicting-variants-by-gene--gene.html',
+            'conflicted-variants-by-gene--gene.html',
             gene_info=gene_info,
             overview=get_conflict_overview(
-                DB().total_conflicting_variants_by_conflict_level(
+                DB().total_conflicted_variants_by_conflict_level(
                     min_conflict_level=min_conflict_level,
                     **args
                 ),
@@ -598,7 +598,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
             total_variants=DB().total_variants(
                 **args
             ),
-            total_potentially_conflicting_variants=DB().total_variants(
+            total_potentially_conflicted_variants=DB().total_variants(
                 min_conflict_level=0,
                 **args
             ),
@@ -607,7 +607,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
                 **args
             ),
             breakdown=get_conflict_breakdown(
-                DB().total_conflicting_variants_by_significance_and_significance(
+                DB().total_conflicted_variants_by_significance_and_significance(
                     min_conflict_level=min_conflict_level,
                     **args
                 )
@@ -618,7 +618,7 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
         abort(404)
 
     return render_template_async(
-        'conflicting-variants-by-gene--2significances.html',
+        'conflicted-variants-by-gene--2significances.html',
         gene_info=gene_info,
         significance1=significance1,
         significance2=significance2,
@@ -630,9 +630,9 @@ def conflicting_variants_by_gene(gene = None, significance1 = None, significance
         ),
     )
 
-@app.route('/conflicting-variants-by-significance')
-@app.route('/conflicting-variants-by-significance/<superescaped:significance1>/<superescaped:significance2>')
-def conflicting_variants_by_significance(significance1 = None, significance2 = None):
+@app.route('/conflicted-variants-by-significance')
+@app.route('/conflicted-variants-by-significance/<superescaped:significance1>/<superescaped:significance2>')
+def conflicted_variants_by_significance(significance1 = None, significance2 = None):
     args = {
         'min_stars1': int_arg('min_stars1'),
         'normalized_method1': request.args.get('method1'),
@@ -644,25 +644,25 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
 
     if not significance2:
         return render_template_async(
-            'conflicting-variants-by-significance.html',
+            'conflicted-variants-by-significance.html',
             overview=get_conflict_overview(
-                DB().total_conflicting_variants_by_conflict_level(
+                DB().total_conflicted_variants_by_conflict_level(
                     **args
                 ),
             ),
             total_variants=DB().total_variants(
                 **args
             ),
-            total_potentially_conflicting_variants=DB().total_variants(
+            total_potentially_conflicted_variants=DB().total_variants(
                 min_conflict_level=0,
                 **args
             ),
-            total_conflicting_variants=DB().total_variants(
+            total_conflicted_variants=DB().total_variants(
                 min_conflict_level=min_conflict_level,
                 **args
             ),
             breakdown=get_conflict_breakdown(
-                DB().total_conflicting_variants_by_significance_and_significance(
+                DB().total_conflicted_variants_by_significance_and_significance(
                     min_conflict_level=min_conflict_level,
                     **args
                 )
@@ -673,7 +673,7 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
         abort(404)
 
     return render_template_async(
-        'conflicting-variants-by-significance--2significances.html',
+        'conflicted-variants-by-significance--2significances.html',
         significance1=significance1,
         significance2=significance2,
         variants=DB().variants(
@@ -684,11 +684,11 @@ def conflicting_variants_by_significance(significance1 = None, significance2 = N
         ),
     )
 
-@app.route('/conflicting-variants-by-submitter')
-@app.route('/conflicting-variants-by-submitter/<int:submitter1_id>')
-@app.route('/conflicting-variants-by-submitter/<int:submitter1_id>/<int:submitter2_id>')
-@app.route('/conflicting-variants-by-submitter/<int:submitter1_id>/<int:submitter2_id>/<superescaped:significance1>/<superescaped:significance2>')
-def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None):
+@app.route('/conflicted-variants-by-submitter')
+@app.route('/conflicted-variants-by-submitter/<int:submitter1_id>')
+@app.route('/conflicted-variants-by-submitter/<int:submitter1_id>/<int:submitter2_id>')
+@app.route('/conflicted-variants-by-submitter/<int:submitter1_id>/<int:submitter2_id>/<superescaped:significance1>/<superescaped:significance2>')
+def conflicted_variants_by_submitter(submitter1_id = None, submitter2_id = None, significance1 = None, significance2 = None):
     args = {
         'min_stars1': int_arg('min_stars1'),
         'normalized_method1': request.args.get('method1'),
@@ -702,9 +702,9 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
     if submitter1_id == None:
         args['submitter1_id'] = list_arg('submitters')
         return render_template_async(
-            'conflicting-variants-by-submitter.html',
+            'conflicted-variants-by-submitter.html',
             overview=get_conflict_overview(
-                DB().total_conflicting_variants_by_conflict_level(
+                DB().total_conflicted_variants_by_conflict_level(
                     min_conflict_level=min_conflict_level,
                     **args
                 ),
@@ -712,11 +712,11 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             total_variants=DB().total_variants(
                 **args
             ),
-            total_potentially_conflicting_variants=DB().total_variants(
+            total_potentially_conflicted_variants=DB().total_variants(
                 min_conflict_level=0,
                 **args
             ),
-            total_conflicting_variants=DB().total_variants(
+            total_conflicted_variants=DB().total_variants(
                 min_conflict_level=min_conflict_level,
                 **args
             ),
@@ -732,7 +732,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
                     min_conflict_level=min_conflict_level,
                     **args
                 ),
-                DB().total_conflicting_variants_by_submitter_and_conflict_level(
+                DB().total_conflicted_variants_by_submitter_and_conflict_level(
                     min_conflict_level=min_conflict_level,
                     **args
                 ),
@@ -747,12 +747,12 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
 
     if submitter2_id == None:
         return render_template_async(
-            'conflicting-variants-by-submitter--1submitter.html',
+            'conflicted-variants-by-submitter--1submitter.html',
             submitter1_info=submitter1_info,
             submitter1_primary_method=DB().submitter_primary_method(submitter1_id),
             submitter2_info={'id': 0, 'name': 'All submitters'},
             overview=get_conflict_overview(
-                DB().total_conflicting_variants_by_conflict_level(
+                DB().total_conflicted_variants_by_conflict_level(
                     min_conflict_level=min_conflict_level,
                     **args
                 ),
@@ -760,11 +760,11 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             total_variants=DB().total_variants(
                 **args
             ),
-            total_potentially_conflicting_variants=DB().total_variants(
+            total_potentially_conflicted_variants=DB().total_variants(
                 min_conflict_level=0,
                 **args
             ),
-            total_conflicting_variants=DB().total_variants(
+            total_conflicted_variants=DB().total_variants(
                 min_conflict_level=min_conflict_level,
                 **args
             ),
@@ -780,13 +780,13 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
                     min_conflict_level=min_conflict_level,
                     **args
                 ),
-                DB().total_conflicting_variants_by_submitter_and_conflict_level(
+                DB().total_conflicted_variants_by_submitter_and_conflict_level(
                     min_conflict_level=min_conflict_level,
                     **args
                 ),
             ),
             breakdown=get_conflict_breakdown(
-                DB().total_conflicting_variants_by_significance_and_significance(
+                DB().total_conflicted_variants_by_significance_and_significance(
                     min_conflict_level=min_conflict_level,
                     **args
                 )
@@ -807,11 +807,11 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
 
     if not significance1:
         return render_template_async(
-            'conflicting-variants-by-submitter--2submitters.html',
+            'conflicted-variants-by-submitter--2submitters.html',
             submitter1_info=submitter1_info,
             submitter2_info=submitter2_info,
             overview=get_conflict_overview(
-                DB().total_conflicting_variants_by_conflict_level(
+                DB().total_conflicted_variants_by_conflict_level(
                     min_conflict_level=min_conflict_level,
                     **args
                 ),
@@ -819,12 +819,12 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
             total_variants=DB().total_variants(
                 **args
             ),
-            total_potentially_conflicting_variants=DB().total_variants(
+            total_potentially_conflicted_variants=DB().total_variants(
                 min_conflict_level=0,
                 **args
             ),
             breakdown=get_conflict_breakdown(
-                DB().total_conflicting_variants_by_significance_and_significance(
+                DB().total_conflicted_variants_by_significance_and_significance(
                     min_conflict_level=min_conflict_level,
                     **args
                 )
@@ -839,7 +839,7 @@ def conflicting_variants_by_submitter(submitter1_id = None, submitter2_id = None
         abort(404)
 
     return render_template_async(
-        'conflicting-variants-by-submitter--2significances.html',
+        'conflicted-variants-by-submitter--2significances.html',
         submitter1_info=submitter1_info,
         submitter2_info=submitter2_info,
         significance1=significance1,

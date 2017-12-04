@@ -1,7 +1,7 @@
 {% extends 'extend/skin.html' %}
 {% set title %}
-    Conflicting variants reported as {{ significance1 }} by
-    {{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }} and {{ significance2 }} by
+    Variants with conflicting interpretations between
+    {{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }} and
     {{ submitter_link(submitter2_info['id'], submitter2_info['name'])|safe }}
 {% endset %}
 {% block content %}
@@ -10,16 +10,19 @@
         {% set method1_label = 'Collection method of the submission from ' + submitter1_info['name'] %}
         {% set review_status2_label = 'Minimum review status of the other submission' %}
         {% set method2_label = 'Collection method of the other submission' %}
+        {% set min_conflict_level_filter = 'high_only' %}
         {% set original_terms_filter = True %}
         {% include 'include/filter-form.html' %}
     {% endwith %}
-    <div class="totals">
-        <div>Total conflicting variants: {{ variants|length }}</div>
-        {% if variants %}
-            <div>{{ 'variant-table'|tabledownloadlink|safe }}</div>
-        {% endif %}
-    </div>
+    {% with %}
+        {% set total_conflicted_variants = variants|length %}
+        {% include 'include/conflict-overview.html' %}
+    {% endwith %}
     {% if variants %}
-        {% include 'include/variants.html' %}
+        {% with %}
+            {% set link_base = 'conflicted-variants-by-submitter/' + submitter1_info['id']|string + '/' + submitter2_info['id']|string %}
+            {% include 'include/conflict-breakdown.html' %}
+        {% endwith %}
+        {% include 'include/all-conflicted-variants.html' %}
     {% endif %}
 {% endblock %}

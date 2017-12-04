@@ -1,5 +1,5 @@
 {% extends 'extend/skin.html' %}
-{% set title = 'Conflicting variants by significance' %}
+{% set title = 'Variants with conflicting interpretations, by significance' %}
 {% block content %}
     {% with %}
         {% set review_status1_label = 'Y axis minimum submission review status' %}
@@ -11,9 +11,9 @@
         {% include 'include/filter-form.html' %}
     {% endwith %}
     {% include 'include/conflict-overview.html' %}
-    {% if total_conflicting_variants %}
+    {% if total_conflicted_variants %}
         {% with %}
-            {% set link_base = 'conflicting-variants-by-significance' %}
+            {% set link_base = 'conflicted-variants-by-significance' %}
             {% include 'include/conflict-breakdown.html' %}
         {% endwith %}
     {% endif %}

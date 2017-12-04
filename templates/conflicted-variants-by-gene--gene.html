@@ -1,15 +1,15 @@
 {% extends 'extend/skin.html' %}
 {% set title %}
     {% if gene_info['type'] == 0 %}
-        Conflicting intergenic variants
+        Intergenic variants with conflicting interpretations
     {% elif gene_info['type'] == 1 %}
-        Conflicting variants in gene {{ gene_info['name']|genelink|safe }}
+        Variants in gene {{ gene_info['name']|genelink|safe }} with conflicting interpretations
     {% else %}
-        Conflicting variants in gene combination {{ gene_info['name'] }}
+        Variants in gene combination {{ gene_info['name'] }} with conflicting interpretations
     {% endif %}
 {% endset %}
 {% block tagline %}
-    {{ gene_tagline(gene_info, 'conflicting-variants-by-gene')|safe }}
+    {{ gene_tagline(gene_info, 'conflicted-variants-by-gene')|safe }}
 {% endblock %}
 {% block content %}
     {% with %}
@@ -23,7 +23,7 @@
         {% include 'include/filter-form.html' %}
     {% endwith %}
     {% with %}
-        {% set total_conflicting_variants = variants|length %}
+        {% set total_conflicted_variants = variants|length %}
         {% include 'include/conflict-overview.html' %}
     {% endwith %}
     {% if variants %}
@@ -31,6 +31,6 @@
             {% set link_base = request.base_url %}
             {% include 'include/conflict-breakdown.html' %}
         {% endwith %}
-        {% include 'include/all-conflicting-variants.html' %}
+        {% include 'include/all-conflicted-variants.html' %}
     {% endif %}
 {% endblock %}

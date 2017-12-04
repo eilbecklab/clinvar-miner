@@ -1,26 +1,15 @@
 {% extends 'extend/skin.html' %}
-{% set title %}
-    {% if gene_info['type'] == 0 %}
-        Conflicting intergenic variants reported as {{ significance1 }} and {{ significance2 }}
-    {% elif gene_info['type'] == 1 %}
-        Conflicting variants in gene {{ gene_info['name']|genelink|safe }} reported as {{ significance1 }} and
-        {{ significance2 }}
-    {% else %}
-        Conflicting variants in gene combination {{ gene_info['name'] }} reported as {{ significance1 }} and
-        {{ significance2 }}
-    {% endif %}
-{% endset %}
+{% set title = 'Variants with conflicting interpretations "' + significance1 + '" and "' + significance2 + '"' %}
 {% block content %}
     {% with %}
         {% set review_status1_label = 'Submission 1 (' + significance1 + ') minimum review status' %}
         {% set method1_label = 'Submission 1 (' + significance1 + ') method' %}
         {% set review_status2_label = 'Submission 2 (' + significance2 + ') minimum review status' %}
         {% set method2_label = 'Submission 2 (' + significance2 + ') method' %}
-        {% set gene_filters = True %}
         {% set original_terms_filter = True %}
         {% include 'include/filter-form.html' %}
     {% endwith %}
-    <p>Total conflicting variants: {{ variants|length }}</p>
+    <p>Total variants with conflicting interpretations: {{ variants|length }}</p>
     {% if variants %}
         {% include 'include/variants.html' %}
     {% endif %}
