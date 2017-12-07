@@ -20,7 +20,12 @@
         {% set original_terms_filter = True %}
         {% include 'include/filter-form.html' %}
     {% endwith %}
-    <p>Total variants with conflicting interpretations: {{ variants|length }}</p>
+    <div class="totals">
+        <div>Total variants with conflicting interpretations: {{ variants|length }}</div>
+        {% if variants %}
+            <div>{{ 'variant-table'|tabledownloadlink|safe }}</div>
+        {% endif %}
+    </div>
     {% if variants %}
         {% include 'include/variants.html' %}
     {% endif %}
