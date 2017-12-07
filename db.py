@@ -61,15 +61,20 @@ class DB():
 
     def gene_info(self, gene, original_genes = False):
         try:
-            row = list(self.cursor.execute('SELECT gene_type FROM current_submissions WHERE gene=? LIMIT 1', [gene]))[0]
-            ret = {'name': gene, 'type': row[0]}
+            if original_genes:
+                query = 'SELECT gene_type FROM current_submissions WHERE gene=? LIMIT 1'
+            else:
+                query = 'SELECT normalized_gene_type FROM current_submissions WHERE normalized_gene=? LIMIT 1'
+            ret = {'name': gene, 'type': list(self.cursor.execute(query, [gene]))[0][0]}
         except IndexError:
             return None
-        table = 'gene_links' if original_genes else 'normalized_gene_links'
-        ret['see_also'] = list(map(
-            lambda row: row[0],
-            self.cursor.execute('SELECT see_also FROM ' + table + ' WHERE gene=?', [gene])
-        ))
+
+        if original_genes:
+            query = 'SELECT see_also FROM gene_links WHERE gene=?'
+        else:
+            query = 'SELECT see_also FROM normalized_gene_links WHERE gene=?'
+        ret['see_also'] = list(map(lambda row: row[0], self.cursor.execute(query, [gene])))
+
         return ret
 
     def is_gene(self, gene):
@@ -229,8 +234,10 @@ class DB():
             self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
-            self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = kwargs['gene_type']
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
         self.query += ' GROUP BY conflict_level'
 
@@ -261,9 +268,11 @@ class DB():
         if kwargs.get('normalized_method2'):
             self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
-        if kwargs.get('gene_type') != -1:
-            self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = kwargs['gene_type']
+        if kwargs.get('gene_type', -1) != -1:
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
         if kwargs.get('gene'):
             if kwargs.get('original_genes'):
@@ -318,8 +327,10 @@ class DB():
             self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
-            self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = kwargs['gene_type']
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
         if kwargs.get('original_terms'):
             self.query += ' GROUP BY significance1, significance2'
@@ -493,8 +504,10 @@ class DB():
             self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
-            self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = kwargs['gene_type']
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
         return self.value()
 
@@ -544,8 +557,10 @@ class DB():
             self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
-            self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = kwargs['gene_type']
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
         if kwargs.get('condition1_name'):
             self.and_equals('condition1_name', kwargs['condition1_name'])
@@ -590,8 +605,10 @@ class DB():
             self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
-            self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = kwargs['gene_type']
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
         self.query += ' GROUP BY condition_name, significance'
 
@@ -637,8 +654,10 @@ class DB():
             self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
-            self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = kwargs['gene_type']
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
         if kwargs.get('original_genes'):
             self.query += ' GROUP BY gene ORDER BY count DESC'
@@ -691,8 +710,10 @@ class DB():
             self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
-            self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = kwargs['gene_type']
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
         if kwargs.get('original_genes'):
             self.query += ' GROUP BY gene, significance'
@@ -747,8 +768,10 @@ class DB():
             self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
-            self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = kwargs['gene_type']
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
         self.query += ' GROUP BY significance ORDER BY count DESC'
 
@@ -804,8 +827,10 @@ class DB():
             self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
-            self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = kwargs['gene_type']
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
         if kwargs.get('submitter_ids'):
             self.and_equals('submitter_id', kwargs['submitter_ids'])
@@ -850,8 +875,10 @@ class DB():
             self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
-            self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = kwargs['gene_type']
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
         self.query += ' GROUP BY submitter_id, significance'
 
@@ -935,8 +962,10 @@ class DB():
             self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
         if kwargs.get('gene_type', -1) != -1:
-            self.query += ' AND gene_type=:gene_type'
-            self.parameters['gene_type'] = kwargs['gene_type']
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
         self.query += ' GROUP BY variant_name ORDER BY variant_name'
 
