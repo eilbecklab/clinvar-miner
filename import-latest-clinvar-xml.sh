@@ -7,6 +7,7 @@ function import {
     curl $url | gunzip > $filename 2> /dev/null
     if [ -s $filename ]; then
         if ./import-clinvar-xml.py $filename; then
+            ./create-current-tables.py
             rm $filename
         fi
     fi

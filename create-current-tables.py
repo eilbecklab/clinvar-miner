@@ -2,6 +2,8 @@
 
 import sqlite3
 
+print('Creating current tables')
+
 db = __import__('import-clinvar-xml').connect()
 cursor = db.cursor()
 
