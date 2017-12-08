@@ -165,11 +165,7 @@ def get_conflict_summary_by_condition(total_variants_by_condition, total_potenti
     for row in total_conflicted_variants_by_condition.result():
         condition_name = row['condition_name']
         count = row['count']
-        summary[condition_name] = {
-            'db': row['condition_db'],
-            'id': row['condition_id'],
-            'any_conflict': count,
-        }
+        summary[condition_name] = {'any_conflict': count}
 
     for row in total_potentially_conflicted_variants_by_condition.result():
         condition_name = row['condition_name']
@@ -473,20 +469,66 @@ def cache_set(response):
     return response
 
 @app.route('/conflicted-variants-by-condition')
-def conflicted_variants_by_condition():
+@app.route('/conflicted-variants-by-condition/<superescaped:condition_name>')
+def conflicted_variants_by_condition(condition_name = None):
     args = {
         'min_stars1': int_arg('min_stars1'),
         'normalized_method1': request.args.get('method1'),
         'min_stars2': int_arg('min_stars2'),
         'normalized_method2': request.args.get('method2'),
-        'gene_type': int_arg('gene_type'),
         'original_genes': request.args.get('original_genes'),
-        'condition1_name': list_arg('conditions'),
     }
     min_conflict_level = max(1, int_arg('min_conflict_level'))
 
+    if condition_name == None:
+        args['condition1_name'] = list_arg('conditions')
+        return render_template_async(
+            'conflicted-variants-by-condition.html',
+            overview=get_conflict_overview(
+                DB().total_conflicted_variants_by_conflict_level(
+                    min_conflict_level=min_conflict_level,
+                    **args
+                ),
+            ),
+            total_variants=DB().total_variants(
+                **args
+            ),
+            total_potentially_conflicted_variants=DB().total_variants(
+                min_conflict_level=0,
+                **args
+            ),
+            total_conflicted_variants=DB().total_variants(
+                min_conflict_level=min_conflict_level,
+                **args
+            ),
+            summary=get_conflict_summary_by_condition(
+                DB().total_variants_by_condition(
+                    **args
+                ),
+                DB().total_variants_by_condition(
+                    min_conflict_level=0,
+                    **args
+                ),
+                DB().total_variants_by_condition(
+                    min_conflict_level=min_conflict_level,
+                    **args
+                ),
+                DB().total_conflicted_variants_by_condition_and_conflict_level(
+                    min_conflict_level=min_conflict_level,
+                    **args
+                ),
+            ),
+        )
+
+    condition_info = DB().condition_info(condition_name)
+    if not condition_info:
+        abort(404)
+    args['condition1_name'] = condition_name
+    args['original_terms'] = request.args.get('original_terms')
+
     return render_template_async(
-        'conflicted-variants-by-condition.html',
+        'conflicted-variants-by-condition--condition.html',
+        condition_info=condition_info,
         overview=get_conflict_overview(
             DB().total_conflicted_variants_by_conflict_level(
                 min_conflict_level=min_conflict_level,
@@ -500,26 +542,15 @@ def conflicted_variants_by_condition():
             min_conflict_level=0,
             **args
         ),
-        total_conflicted_variants=DB().total_variants(
+        breakdown=get_conflict_breakdown(
+            DB().total_conflicted_variants_by_significance_and_significance(
+                min_conflict_level=min_conflict_level,
+                **args
+            )
+        ),
+        variants=DB().variants(
             min_conflict_level=min_conflict_level,
             **args
-        ),
-        summary=get_conflict_summary_by_condition(
-            DB().total_variants_by_condition(
-                **args
-            ),
-            DB().total_variants_by_condition(
-                min_conflict_level=0,
-                **args
-            ),
-            DB().total_variants_by_condition(
-                min_conflict_level=min_conflict_level,
-                **args
-            ),
-            DB().total_conflicted_variants_by_condition_and_conflict_level(
-                min_conflict_level=min_conflict_level,
-                **args
-            ),
         ),
     )
 

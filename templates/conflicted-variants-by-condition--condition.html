@@ -1,7 +1,7 @@
 {% extends 'extend/skin.html' %}
 {% set title %}
     Variants with conflicting interpretations studied for
-    {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'] }}
+    {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
 {% endset %}
 {% block content %}
     {% with %}
@@ -9,18 +9,16 @@
         {% set method1_label = 'Y axis collection method' %}
         {% set review_status2_label = 'X axis minimum submission review status' %}
         {% set method2_label = 'X axis collection method' %}
+        {% set min_conflict_level_filter = 'high_only' %}
         {% set original_terms_filter = True %}
-        {% include 'include/filter.html' %}
+        {% include 'include/filter-form.html' %}
     {% endwith %}
     {% with %}
         {% set total_conflicted_variants = variants|length %}
         {% include 'include/conflict-overview.html' %}
     {% endwith %}
     {% if variants %}
-        {% with %}
-            {% set link_base = 'conflicted-variants-by-condition/' + condition_info['name']|superescaped %}
-            {% include 'include/conflict-breakdown.html' %}
-        {% endwith %}
+        {% include 'include/conflict-breakdown.html' %}
         {% include 'include/all-conflicted-variants.html' %}
     {% endif %}
 {% endblock %}

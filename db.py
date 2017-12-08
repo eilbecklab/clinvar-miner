@@ -513,9 +513,7 @@ class DB():
 
     @promise
     def total_variants_by_condition(self, **kwargs):
-        self.query = '''
-            SELECT condition1_db AS condition_db, condition1_id AS condition_id, condition1_name AS condition_name
-        '''
+        self.query = 'SELECT condition1_name AS condition_name'
 
         if kwargs.get('original_genes'):
             self.query += ', COUNT(DISTINCT gene) AS gene_count'
