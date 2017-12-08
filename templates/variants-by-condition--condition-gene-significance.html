@@ -2,20 +2,28 @@
 {% set gene_filters = True %}
 {% set original_terms_filter = True %}
 {% set title %}
-    {% if gene %}
-        {% if significance %}
-            List of variants in gene {{ gene|genelink|safe }} reported as {{ significance }} for
-            {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
-        {% else %}
-            List of variants in gene {{ gene|genelink|safe }} studied for
-            {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
-        {% endif %}
-    {% else %}
+    {% if gene_info['type'] == 0 %}
         {% if significance %}
             List of intergenic variants reported as {{ significance }} for
             {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
         {% else %}
             List of intergenic variants studied for
+            {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
+        {% endif %}
+    {% elif gene_info['type'] == 1 %}
+        {% if significance %}
+            List of variants in gene combination {{ gene_info['name'] }} reported as {{ significance }} for
+            {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
+        {% else %}
+            List of variants in gene {{ gene_info['name'] }} studied for
+            {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
+        {% endif %}
+    {% else %}
+        {% if significance %}
+            List of variants in gene {{ gene_info['name']|genelink|safe }} reported as {{ significance }} for
+            {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
+        {% else %}
+            List of variants in gene {{ gene_info['name']|genelink|safe }} studied for
             {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
         {% endif %}
     {% endif %}

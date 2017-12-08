@@ -1102,14 +1102,15 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
     if gene:
         if gene == 'intergenic':
             gene = ''
-        elif not DB().is_gene(gene):
+        gene_info = DB().gene_info(gene)
+        if not gene_info:
             abort(404)
         args['gene'] = gene
 
         return render_template_async(
             'variants-by-condition--condition-gene-significance.html',
             condition_info=condition_info,
-            gene=gene,
+            gene_info=gene_info,
             significance=significance,
             variants=DB().variants(**args),
         )
@@ -1325,13 +1326,14 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
     if gene:
         if gene == 'intergenic':
             gene = ''
-        elif not DB().is_gene(gene):
+        gene_info = DB().gene_info(gene)
+        if not gene_info:
             abort(404)
         args['gene'] = gene
 
         return render_template_async(
             'variants-by-submitter--submitter-gene-significance.html',
-            gene=gene,
+            gene_info=gene_info,
             submitter_info=submitter_info,
             significance=significance,
             variants=DB().variants(**args),
