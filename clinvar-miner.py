@@ -602,15 +602,15 @@ def conflicted_variants_by_gene(gene = None, significance1 = None, significance2
                 min_conflict_level=0,
                 **args
             ),
-            variants=DB().variants(
-                min_conflict_level=min_conflict_level,
-                **args
-            ),
             breakdown=get_conflict_breakdown(
                 DB().total_conflicted_variants_by_significance_and_significance(
                     min_conflict_level=min_conflict_level,
                     **args
                 )
+            ),
+            variants=DB().variants(
+                min_conflict_level=min_conflict_level,
+                **args
             ),
         )
 
