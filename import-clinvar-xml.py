@@ -13,6 +13,12 @@ import csv
 import re
 import sqlite3
 
+with open('gene_specific_summary.tsv', 'r') as f:
+    #skip headers
+    next(f)
+    next(f)
+    gene_id_map = dict(map(lambda row: (row[1], row[0]), csv.reader(f, delimiter='\t')))
+
 nonstandard_significance_term_map = dict(map(
     lambda line: line[0:-1].split('\t'),
     open('nonstandard_significance_terms.tsv')
@@ -171,9 +177,12 @@ def get_submissions(date, set_xml):
             if relationship_el.attrib['Type'] == 'genes overlapped by variant':
                 small_variant = False #probably a large deletion
 
-            gene_el = relationship_el.find('./Symbol/ElementValue[@Type="Preferred"]')
-            if gene_el != None and gene_el.text: #blank in old versions
-                variant_genes.add(gene_el.text)
+            gene_id = relationship_el.find('./XRef[@DB="Gene"]').attrib['ID']
+
+            #some genes used to be represented in ClinVar and are there no longer
+            #if we can't find an old gene's name, treat it as intergenic
+            if gene_id in gene_id_map:
+                variant_genes.add(gene_id_map[gene_id])
 
         #if the compound variant is small, each individual variant should be annotated with the same genes
         if i == 0:
