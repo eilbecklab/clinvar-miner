@@ -54,7 +54,7 @@ class DB():
     def gene_from_rsid(self, rsid):
         try:
             return list(self.cursor.execute(
-                'SELECT DISTINCT gene FROM current_submissions WHERE variant_rsid=? LIMIT 1', [rsid]
+                'SELECT DISTINCT gene FROM current_submissions WHERE rsid=? LIMIT 1', [rsid]
             ))[0][0]
         except IndexError:
             return None
@@ -887,7 +887,7 @@ class DB():
     def variant_info(self, variant_name):
         try:
             row = list(self.cursor.execute(
-                'SELECT variant_id, variant_rsid FROM current_submissions WHERE variant_name=? LIMIT 1', [variant_name]
+                'SELECT variant_id, rsid FROM current_submissions WHERE variant_name=? LIMIT 1', [variant_name]
             ))[0]
             return {'id': row[0], 'name': variant_name, 'rsid': row[1]}
         except IndexError:
@@ -903,7 +903,7 @@ class DB():
 
     def variant_name_from_rsid(self, rsid):
         rows = list(self.cursor.execute(
-            'SELECT DISTINCT variant_name FROM current_submissions WHERE variant_rsid=?', [rsid]
+            'SELECT DISTINCT variant_name FROM current_submissions WHERE rsid=?', [rsid]
         ))
         return rows[0][0] if len(rows) == 1 else None
 
@@ -918,7 +918,7 @@ class DB():
     @promise
     def variants(self, **kwargs):
         self.query = '''
-            SELECT variant_name, variant_rsid FROM current_comparisons
+            SELECT variant_name, rsid FROM current_comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 

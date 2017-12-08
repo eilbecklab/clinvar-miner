@@ -42,7 +42,7 @@ def create_tables():
             date TEXT,
             variant_id INTEGER,
             variant_name TEXT,
-            variant_rsid TEXT,
+            rsid TEXT,
             gene TEXT,
             gene_type INTEGER,
             normalized_gene TEXT,
@@ -77,7 +77,7 @@ def create_tables():
             date TEXT,
             variant_id TEXT,
             variant_name TEXT,
-            variant_rsid TEXT,
+            rsid TEXT,
             gene TEXT,
             gene_type INTEGER,
             normalized_gene TEXT,
@@ -153,11 +153,11 @@ def get_submissions(date, set_xml):
 
     variant_name = variant_name_el.text if variant_name_el != None else str(variant_id) #missing in old versions
 
-    variant_rsid = ''
+    rsid = ''
     if len(measure_els) == 1:
         rsid_el = measure_els[0].find('./XRef[@Type="rs"]')
         if rsid_el != None:
-            variant_rsid = 'rs' + rsid_el.attrib['ID']
+            rsid = 'rs' + rsid_el.attrib['ID']
 
     genes = set()
     small_variant = True
@@ -248,7 +248,7 @@ def get_submissions(date, set_xml):
             date,
             variant_id,
             variant_name,
-            variant_rsid,
+            rsid,
             gene,
             gene_type,
             normalized_gene,

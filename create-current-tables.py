@@ -17,7 +17,7 @@ cursor.execute('''
 ''')
 
 cursor.execute('CREATE INDEX current_submissions__variant_name ON current_submissions (variant_name)')
-cursor.execute('CREATE INDEX current_submissions__variant_rsid ON current_submissions (variant_rsid)')
+cursor.execute('CREATE INDEX current_submissions__rsid ON current_submissions (rsid)')
 cursor.execute('CREATE INDEX current_submissions__gene ON current_submissions (gene)')
 cursor.execute('CREATE INDEX current_submissions__normalized_gene ON current_submissions (normalized_gene)')
 cursor.execute('CREATE INDEX current_submissions__rcv ON current_submissions (rcv)')

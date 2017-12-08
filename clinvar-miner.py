@@ -426,14 +426,14 @@ def template_functions():
                 args.append(quote(key, safe='') + '=' + quote(request.args[key], safe=''))
         return '?' + '&'.join(args) if args else ''
 
-    def variant_link(variant_id, variant_name, variant_rsid):
+    def variant_link(variant_id, variant_name, rsid):
         if variant_id == 0:
             return variant_name
 
         ret = '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + str(variant_id) + '/">' + extra_breaks(variant_name) + '</a>'
 
-        if variant_rsid:
-            ret += ' (<a class="external" href="https://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=' + variant_rsid + '">' + variant_rsid + '</a>)'
+        if rsid:
+            ret += ' (<a class="external" href="https://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=' + rsid + '">' + rsid + '</a>)'
 
         return ret
 
