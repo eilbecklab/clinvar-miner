@@ -172,6 +172,41 @@ class DB():
             ''', [submitter_id])
         )[0][0]
 
+    def total_conditions(self, **kwargs):
+        self.query = '''
+            SELECT COUNT(DISTINCT condition1_name) FROM current_comparisons
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+        '''
+
+        self.parameters = {
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
+        }
+
+        if kwargs.get('gene'):
+            if kwargs.get('original_genes'):
+                self.and_equals('gene', kwargs['gene'])
+            else:
+                self.and_equals('normalized_gene', kwargs['gene'])
+
+        if kwargs.get('submitter1_id'):
+            self.and_equals('submitter1_id', kwargs['submitter1_id'])
+
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
+
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
+
+        if kwargs.get('gene_type', -1) != -1:
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
+
+        return self.value()
+
     @promise
     def total_conflicted_variants_by_condition_and_conflict_level(self, **kwargs):
         self.query = '''
@@ -374,6 +409,42 @@ class DB():
 
         return self.rows()
 
+    def total_genes(self, **kwargs):
+        if kwargs.get('original_genes'):
+            self.query = 'SELECT COUNT(DISTINCT gene) FROM current_comparisons'
+        else:
+            self.query = 'SELECT COUNT(DISTINCT normalized_gene) FROM current_comparisons'
+
+        self.query += '''
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+        '''
+
+        self.parameters = {
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
+        }
+
+        if kwargs.get('condition1_name'):
+            self.and_equals('condition1_name', kwargs['condition1_name'])
+
+        if kwargs.get('submitter1_id'):
+            self.and_equals('submitter1_id', kwargs['submitter1_id'])
+
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
+
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
+
+        if kwargs.get('gene_type', -1) != -1:
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
+
+        return self.value()
+
     @promise
     def total_significance_terms_over_time(self):
         return list(map(
@@ -384,6 +455,41 @@ class DB():
     @promise
     def total_submissions(self):
         return list(self.cursor.execute('SELECT COUNT(*) FROM current_submissions'))[0][0]
+
+    def total_submitters(self, **kwargs):
+        self.query = '''
+            SELECT COUNT(DISTINCT submitter1_id) FROM current_comparisons
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+        '''
+
+        self.parameters = {
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
+        }
+
+        if kwargs.get('gene'):
+            if kwargs.get('original_genes'):
+                self.and_equals('gene', kwargs['gene'])
+            else:
+                self.and_equals('normalized_gene', kwargs['gene'])
+
+        if kwargs.get('condition1_name'):
+            self.and_equals('condition1_name', kwargs['condition1_name'])
+
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
+
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
+
+        if kwargs.get('gene_type', -1) != -1:
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
+
+        return self.value()
 
     def total_submissions_by_country(self, **kwargs):
         self.query = '''

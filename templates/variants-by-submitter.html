@@ -12,6 +12,8 @@
         <div class="totals">
             <div>Total submitters: {{ total_variants_by_submitter|length }}</div>
             <div>Total variants: {{ total_variants }}</div>
+            <div>Total genes: {{ total_genes }}</div>
+            <div>Total conditions: {{ total_conditions }}</div>
             {% if total_variants %}
                 <div>{{ 'submitter-table'|tabledownloadlink|safe }}</div>
             {% endif %}

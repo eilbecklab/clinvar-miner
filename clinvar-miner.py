@@ -1061,6 +1061,8 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
             'variants-by-condition.html',
             total_variants_by_condition=DB().total_variants_by_condition(**args),
             total_variants=DB().total_variants(**args),
+            total_genes=DB().total_genes(**args),
+            total_submitters=DB().total_submitters(**args),
         )
 
     condition_info = DB().condition_info(condition_name)
@@ -1154,6 +1156,8 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
             'variants-by-gene.html',
             total_variants_by_gene=DB().total_variants_by_gene(**args),
             total_variants=DB().total_variants(**args),
+            total_conditions=DB().total_conditions(**args),
+            total_submitters=DB().total_submitters(**args),
         )
 
     if gene == 'intergenic':
@@ -1275,14 +1279,23 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
     }
 
     if submitter_id == None:
+        submitters = list_arg('submitters')
         return render_template_async(
             'variants-by-submitter.html',
             total_variants_by_submitter=DB().total_variants_by_submitter(
-                submitter_ids=list_arg('submitters'),
+                submitter_ids=submitters,
                 **args
             ),
             total_variants=DB().total_variants(
-                submitter1_id=list_arg('submitters'),
+                submitter1_id=submitters,
+                **args
+            ),
+            total_genes=DB().total_genes(
+                submitter1_id=submitters,
+                **args
+            ),
+            total_conditions=DB().total_conditions(
+                submitter1_id=submitters,
                 **args
             ),
         )

@@ -12,6 +12,8 @@
         <div class="totals">
             <div>Total genes and gene combinations: {{ total_variants_by_gene|length }}</div>
             <div>Total variants: {{ total_variants }}</div>
+            <div>Total conditions: {{ total_conditions }}</div>
+            <div>Total submitters: {{ total_submitters }}</div>
             {% if total_variants %}
                 <div>{{ 'gene-table'|tabledownloadlink|safe }}</div>
             {% endif %}
