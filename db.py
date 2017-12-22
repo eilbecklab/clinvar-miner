@@ -657,16 +657,16 @@ class DB():
             else:
                 self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
-        if kwargs.get('original_genes'):
-            self.query += ' GROUP BY gene ORDER BY count DESC'
-        else:
-            self.query += ' GROUP BY normalized_gene ORDER BY count DESC'
-
         if kwargs.get('gene'):
             if kwargs.get('original_genes'):
                 self.and_equals('gene', kwargs['gene'])
             else:
                 self.and_equals('normalized_gene', kwargs['gene'])
+
+        if kwargs.get('original_genes'):
+            self.query += ' GROUP BY gene ORDER BY count DESC'
+        else:
+            self.query += ' GROUP BY normalized_gene ORDER BY count DESC'
 
         return self.rows()
 
