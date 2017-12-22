@@ -35,14 +35,12 @@
                 </td>
             </tr>
         </table>
-        <div style="display:flex">
-            <div class="container">
-                {% if title %}
-                    <h1>{{ title }}</h1>
-                    {% block tagline %}{% endblock %}
-                {% endif %}
-                <div id="content">{% block content %}{% endblock %}</div>
-            </div>
+        <div class="container">
+            {% if title %}
+                <h1>{{ title }}</h1>
+                {% block tagline %}{% endblock %}
+            {% endif %}
+            <div id="content">{% block content %}{% endblock %}</div>
         </div>
         <script src="static/global.js" type="application/javascript"></script>
     </body>
