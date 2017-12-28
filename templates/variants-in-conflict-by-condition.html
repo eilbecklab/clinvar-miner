@@ -32,7 +32,7 @@
                 <tbody>
                     {% for condition_name, condition_summary in summary.items() %}
                         <tr>
-                            {% with url = 'conflicted-variants-by-condition/' + condition_name|superescaped + query_suffix('min_conflict_level') %}
+                            {% with url = 'variants-in-conflict-by-condition/' + condition_name|superescaped + query_suffix('min_conflict_level') %}
                                 <td>
                                     <input
                                         {% if condition_name in request.args.getlist('conditions') %}

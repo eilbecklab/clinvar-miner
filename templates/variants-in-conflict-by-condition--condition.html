@@ -14,11 +14,11 @@
         {% include 'include/filter-form.html' %}
     {% endwith %}
     {% with %}
-        {% set total_conflicted_variants = variants|length %}
+        {% set total_variants_in_conflict = variants|length %}
         {% include 'include/conflict-overview.html' %}
     {% endwith %}
     {% if variants %}
         {% include 'include/conflict-breakdown.html' %}
-        {% include 'include/all-conflicted-variants.html' %}
+        {% include 'include/all-variants-in-conflict.html' %}
     {% endif %}
 {% endblock %}

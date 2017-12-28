@@ -207,208 +207,6 @@ class DB():
 
         return self.value()
 
-    @promise
-    def total_conflicted_variants_by_condition_and_conflict_level(self, **kwargs):
-        self.query = '''
-            SELECT condition1_name AS condition_name, conflict_level, COUNT(DISTINCT variant_name) AS count
-            FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
-        '''
-
-        self.parameters = {
-            'min_stars1': kwargs.get('min_stars1', 0),
-            'min_stars2': kwargs.get('min_stars2', 0),
-            'min_conflict_level': kwargs.get('min_conflict_level', 1),
-        }
-
-        if kwargs.get('normalized_method1'):
-            self.and_equals('normalized_method1', kwargs['normalized_method1'])
-
-        if kwargs.get('normalized_method2'):
-            self.and_equals('normalized_method2', kwargs['normalized_method2'])
-
-        if kwargs.get('condition1_name'):
-            self.and_equals('condition1_name', kwargs['condition1_name'])
-
-        self.query += ' GROUP BY condition_name, conflict_level'
-
-        return list(map(dict, self.cursor.execute(self.query, self.parameters)))
-
-    @promise
-    def total_conflicted_variants_by_conflict_level(self, **kwargs):
-        self.query = '''
-            SELECT conflict_level, COUNT(DISTINCT variant_name) AS count FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
-        '''
-
-        self.parameters = {
-            'min_stars1': kwargs.get('min_stars1', 0),
-            'min_stars2': kwargs.get('min_stars2', 0),
-            'min_conflict_level': kwargs.get('min_conflict_level', 1),
-        }
-
-        if kwargs.get('gene') != None:
-            if kwargs.get('original_genes'):
-                self.and_equals('gene', kwargs['gene'])
-            else:
-                self.and_equals('normalized_gene', kwargs['gene'])
-
-        if kwargs.get('condition1_name'):
-            self.and_equals('condition1_name', kwargs['condition1_name'])
-
-        if kwargs.get('submitter1_id'):
-            self.and_equals('submitter1_id', kwargs['submitter1_id'])
-
-        if kwargs.get('submitter2_id'):
-            self.and_equals('submitter2_id', kwargs['submitter2_id'])
-
-        if kwargs.get('normalized_method1'):
-            self.and_equals('normalized_method1', kwargs['normalized_method1'])
-
-        if kwargs.get('normalized_method2'):
-            self.and_equals('normalized_method2', kwargs['normalized_method2'])
-
-        if kwargs.get('gene_type', -1) != -1:
-            if kwargs.get('original_genes'):
-                self.and_equals('gene_type', kwargs['gene_type'])
-            else:
-                self.and_equals('normalized_gene_type', kwargs['gene_type'])
-
-        self.query += ' GROUP BY conflict_level'
-
-        return self.rows()
-
-    @promise
-    def total_conflicted_variants_by_gene_and_conflict_level(self, **kwargs):
-        if kwargs.get('original_genes'):
-            self.query = 'SELECT gene'
-        else:
-            self.query = 'SELECT normalized_gene AS gene'
-
-        self.query += '''
-            , conflict_level, COUNT(DISTINCT variant_name) AS count
-            FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
-        '''
-
-        self.parameters = {
-            'min_stars1': kwargs.get('min_stars1', 0),
-            'min_stars2': kwargs.get('min_stars2', 0),
-            'min_conflict_level': kwargs.get('min_conflict_level', 1),
-        }
-
-        if kwargs.get('normalized_method1'):
-            self.and_equals('normalized_method1', kwargs['normalized_method1'])
-
-        if kwargs.get('normalized_method2'):
-            self.and_equals('normalized_method2', kwargs['normalized_method2'])
-
-        if kwargs.get('gene_type', -1) != -1:
-            if kwargs.get('original_genes'):
-                self.and_equals('gene_type', kwargs['gene_type'])
-            else:
-                self.and_equals('normalized_gene_type', kwargs['gene_type'])
-
-        if kwargs.get('gene'):
-            if kwargs.get('original_genes'):
-                self.and_equals('gene', kwargs['gene'])
-            else:
-                self.and_equals('normalized_gene', kwargs['gene'])
-
-        if kwargs.get('original_genes'):
-            self.query += ' GROUP BY gene, conflict_level'
-        else:
-            self.query += ' GROUP BY normalized_gene, conflict_level'
-
-        return list(map(dict, self.cursor.execute(self.query, self.parameters)))
-
-    @promise
-    def total_conflicted_variants_by_significance_and_significance(self, **kwargs):
-        if kwargs.get('original_terms'):
-            self.query = 'SELECT significance1, significance2'
-        else:
-            self.query = '''
-                SELECT normalized_significance1 AS significance1, normalized_significance2 AS significance2
-            '''
-
-        self.query += ', conflict_level, COUNT(DISTINCT variant_name) AS count FROM current_comparisons'
-
-        self.query += '''
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
-        '''
-
-        self.parameters = {
-            'min_stars1': kwargs.get('min_stars1', 0),
-            'min_stars2': kwargs.get('min_stars2', 0),
-            'min_conflict_level': kwargs.get('min_conflict_level', 1),
-        }
-
-        if kwargs.get('gene') != None:
-            if kwargs.get('original_genes'):
-                self.and_equals('gene', kwargs['gene'])
-            else:
-                self.and_equals('normalized_gene', kwargs['gene'])
-
-        if kwargs.get('submitter1_id'):
-            self.and_equals('submitter1_id', kwargs['submitter1_id'])
-
-        if kwargs.get('submitter2_id'):
-            self.and_equals('submitter2_id', kwargs['submitter2_id'])
-
-        if kwargs.get('normalized_method1'):
-            self.and_equals('normalized_method1', kwargs['normalized_method1'])
-
-        if kwargs.get('normalized_method2'):
-            self.and_equals('normalized_method2', kwargs['normalized_method2'])
-
-        if kwargs.get('gene_type', -1) != -1:
-            if kwargs.get('original_genes'):
-                self.and_equals('gene_type', kwargs['gene_type'])
-            else:
-                self.and_equals('normalized_gene_type', kwargs['gene_type'])
-
-        if kwargs.get('original_terms'):
-            self.query += ' GROUP BY significance1, significance2'
-        else:
-            self.query += ' GROUP BY normalized_significance1, normalized_significance2'
-
-        return self.rows()
-
-    @promise
-    def total_conflicted_variants_by_submitter_and_conflict_level(self, **kwargs):
-        if kwargs.get('submitter1_id'):
-            self.query = 'SELECT submitter2_id AS submitter_id'
-        else:
-            self.query = 'SELECT submitter1_id AS submitter_id'
-
-        self.query += '''
-            , conflict_level, COUNT(DISTINCT variant_name) AS count
-            FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
-        '''
-
-        self.parameters = {
-            'min_stars1': kwargs.get('min_stars1', 0),
-            'min_stars2': kwargs.get('min_stars2', 0),
-            'min_conflict_level': kwargs.get('min_conflict_level', 1),
-        }
-
-        if kwargs.get('submitter1_id'):
-            self.and_equals('submitter1_id', kwargs['submitter1_id'])
-
-        if kwargs.get('normalized_method1'):
-            self.and_equals('normalized_method1', kwargs['normalized_method1'])
-
-        if kwargs.get('normalized_method2'):
-            self.and_equals('normalized_method2', kwargs['normalized_method2'])
-
-        if kwargs.get('submitter_ids'):
-            self.and_equals('submitter_id', kwargs['submitter_ids'])
-
-        self.query += ' GROUP BY submitter_id, conflict_level'
-
-        return self.rows()
-
     def total_genes(self, **kwargs):
         if kwargs.get('original_genes'):
             self.query = 'SELECT COUNT(DISTINCT gene) FROM current_comparisons'
@@ -985,6 +783,209 @@ class DB():
                 self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
         self.query += ' GROUP BY submitter_id, significance'
+
+        return self.rows()
+
+
+    @promise
+    def total_variants_in_conflict_by_condition_and_conflict_level(self, **kwargs):
+        self.query = '''
+            SELECT condition1_name AS condition_name, conflict_level, COUNT(DISTINCT variant_name) AS count
+            FROM current_comparisons
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+        '''
+
+        self.parameters = {
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', 1),
+        }
+
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
+
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
+
+        if kwargs.get('condition1_name'):
+            self.and_equals('condition1_name', kwargs['condition1_name'])
+
+        self.query += ' GROUP BY condition_name, conflict_level'
+
+        return list(map(dict, self.cursor.execute(self.query, self.parameters)))
+
+    @promise
+    def total_variants_in_conflict_by_conflict_level(self, **kwargs):
+        self.query = '''
+            SELECT conflict_level, COUNT(DISTINCT variant_name) AS count FROM current_comparisons
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+        '''
+
+        self.parameters = {
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', 1),
+        }
+
+        if kwargs.get('gene') != None:
+            if kwargs.get('original_genes'):
+                self.and_equals('gene', kwargs['gene'])
+            else:
+                self.and_equals('normalized_gene', kwargs['gene'])
+
+        if kwargs.get('condition1_name'):
+            self.and_equals('condition1_name', kwargs['condition1_name'])
+
+        if kwargs.get('submitter1_id'):
+            self.and_equals('submitter1_id', kwargs['submitter1_id'])
+
+        if kwargs.get('submitter2_id'):
+            self.and_equals('submitter2_id', kwargs['submitter2_id'])
+
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
+
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
+
+        if kwargs.get('gene_type', -1) != -1:
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
+
+        self.query += ' GROUP BY conflict_level'
+
+        return self.rows()
+
+    @promise
+    def total_variants_in_conflict_by_gene_and_conflict_level(self, **kwargs):
+        if kwargs.get('original_genes'):
+            self.query = 'SELECT gene'
+        else:
+            self.query = 'SELECT normalized_gene AS gene'
+
+        self.query += '''
+            , conflict_level, COUNT(DISTINCT variant_name) AS count
+            FROM current_comparisons
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+        '''
+
+        self.parameters = {
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', 1),
+        }
+
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
+
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
+
+        if kwargs.get('gene_type', -1) != -1:
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
+
+        if kwargs.get('gene'):
+            if kwargs.get('original_genes'):
+                self.and_equals('gene', kwargs['gene'])
+            else:
+                self.and_equals('normalized_gene', kwargs['gene'])
+
+        if kwargs.get('original_genes'):
+            self.query += ' GROUP BY gene, conflict_level'
+        else:
+            self.query += ' GROUP BY normalized_gene, conflict_level'
+
+        return list(map(dict, self.cursor.execute(self.query, self.parameters)))
+
+    @promise
+    def total_variants_in_conflict_by_significance_and_significance(self, **kwargs):
+        if kwargs.get('original_terms'):
+            self.query = 'SELECT significance1, significance2'
+        else:
+            self.query = '''
+                SELECT normalized_significance1 AS significance1, normalized_significance2 AS significance2
+            '''
+
+        self.query += ', conflict_level, COUNT(DISTINCT variant_name) AS count FROM current_comparisons'
+
+        self.query += '''
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+        '''
+
+        self.parameters = {
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', 1),
+        }
+
+        if kwargs.get('gene') != None:
+            if kwargs.get('original_genes'):
+                self.and_equals('gene', kwargs['gene'])
+            else:
+                self.and_equals('normalized_gene', kwargs['gene'])
+
+        if kwargs.get('submitter1_id'):
+            self.and_equals('submitter1_id', kwargs['submitter1_id'])
+
+        if kwargs.get('submitter2_id'):
+            self.and_equals('submitter2_id', kwargs['submitter2_id'])
+
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
+
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
+
+        if kwargs.get('gene_type', -1) != -1:
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
+
+        if kwargs.get('original_terms'):
+            self.query += ' GROUP BY significance1, significance2'
+        else:
+            self.query += ' GROUP BY normalized_significance1, normalized_significance2'
+
+        return self.rows()
+
+    @promise
+    def total_variants_in_conflict_by_submitter_and_conflict_level(self, **kwargs):
+        if kwargs.get('submitter1_id'):
+            self.query = 'SELECT submitter2_id AS submitter_id'
+        else:
+            self.query = 'SELECT submitter1_id AS submitter_id'
+
+        self.query += '''
+            , conflict_level, COUNT(DISTINCT variant_name) AS count
+            FROM current_comparisons
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+        '''
+
+        self.parameters = {
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', 1),
+        }
+
+        if kwargs.get('submitter1_id'):
+            self.and_equals('submitter1_id', kwargs['submitter1_id'])
+
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
+
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
+
+        if kwargs.get('submitter_ids'):
+            self.and_equals('submitter_id', kwargs['submitter_ids'])
+
+        self.query += ' GROUP BY submitter_id, conflict_level'
 
         return self.rows()
 

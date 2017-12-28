@@ -15,14 +15,14 @@
         {% include 'include/filter-form.html' %}
     {% endwith %}
     {% with %}
-        {% set total_conflicted_variants = variants|length %}
+        {% set total_variants_in_conflict = variants|length %}
         {% include 'include/conflict-overview.html' %}
     {% endwith %}
     {% if variants %}
         {% with %}
-            {% set link_base = 'conflicted-variants-by-submitter/' + submitter1_info['id']|string + '/' + submitter2_info['id']|string %}
+            {% set link_base = 'variants-in-conflict-by-submitter/' + submitter1_info['id']|string + '/' + submitter2_info['id']|string %}
             {% include 'include/conflict-breakdown.html' %}
         {% endwith %}
-        {% include 'include/all-conflicted-variants.html' %}
+        {% include 'include/all-variants-in-conflict.html' %}
     {% endif %}
 {% endblock %}

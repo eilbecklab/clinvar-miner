@@ -14,13 +14,13 @@
     </thead>
     <tbody>
         <tr>
-            {% if total_variants - total_potentially_conflicted_variants %}
-                <td class="level0-conflict">{{ total_variants - total_potentially_conflicted_variants }}</td>
+            {% if total_variants - total_variants_potentially_in_conflict %}
+                <td class="level0-conflict">{{ total_variants - total_variants_potentially_in_conflict }}</td>
             {% else %}
                 <td>0</td>
             {% endif %}
-            {% if total_potentially_conflicted_variants - total_conflicted_variants %}
-                <td class="level0-conflict">{{ total_potentially_conflicted_variants - total_conflicted_variants }}</td>
+            {% if total_variants_potentially_in_conflict - total_variants_in_conflict %}
+                <td class="level0-conflict">{{ total_variants_potentially_in_conflict - total_variants_in_conflict }}</td>
             {% else %}
                 <td>0</td>
             {% endif %}
@@ -33,8 +33,8 @@
                     {% endif %}
                 {% endif %}
             {% endfor %}
-            {% if total_conflicted_variants %}
-                <td class="highlight">{{ total_conflicted_variants }}</td>
+            {% if total_variants_in_conflict %}
+                <td class="highlight">{{ total_variants_in_conflict }}</td>
             {% else %}
                 <td>0</td>
             {% endif %}

@@ -11,9 +11,9 @@
         {% include 'include/filter-form.html' %}
     {% endwith %}
     {% include 'include/conflict-overview.html' %}
-    {% if total_conflicted_variants %}
+    {% if total_variants_in_conflict %}
         {% with %}
-            {% set link_base = 'conflicted-variants-by-significance' %}
+            {% set link_base = 'variants-in-conflict-by-significance' %}
             {% include 'include/conflict-breakdown.html' %}
         {% endwith %}
     {% endif %}

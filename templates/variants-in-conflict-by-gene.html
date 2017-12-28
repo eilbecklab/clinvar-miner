@@ -1,19 +1,20 @@
 {% extends 'extend/skin.html' %}
-{% set title = 'Variants with conflicting interpretations, by submitter' %}
+{% set title = 'Variants with conflicting interpretations, by gene' %}
 {% set min_conflict_level = int_arg('min_conflict_level') %}
 {% block content %}
     <form action="" autocomplete="off">
         {% with %}
-            {% set review_status1_label = 'Minimum review status of the submitter\'s submission' %}
-            {% set method1_label = 'Collection method of the submitter\'s submission' %}
-            {% set review_status2_label = 'Minimum review status of the other submitter\'s submission' %}
-            {% set method2_label = 'Collection method of the other submitter\'s submission' %}
+            {% set review_status1_label = 'Submission 1 minimum review status' %}
+            {% set method1_label = 'Submission 1 collection method' %}
+            {% set review_status2_label = 'Submission 2 minimum review status' %}
+            {% set method2_label = 'Submission 2 collection method' %}
             {% set min_conflict_level_filter = 'high_only' %}
+            {% set gene_filters = True %}
             {% include 'include/filter.html' %}
         {% endwith %}
         {% include 'include/conflict-overview.html' %}
         <div class="totals">
-            <div>Total submitters with conflicts: {{ summary|length }}</div>
+            <div>Total genes or gene combinations with conflicts: {{ summary|length }}</div>
             {% if summary %}
                 <div>{{ 'gene-table'|tabledownloadlink|safe }}</div>
             {% endif %}
@@ -23,50 +24,50 @@
                 <thead>
                     <tr>
                         <th>Filter</th>
-                        <th>Submitter</th>
+                        <th>Gene or gene combination</th>
                         {% with sorted = True %}
                             {% include 'include/conflict-headers.html' %}
                         {% endwith %}
                     </tr>
                 </thead>
                 <tbody>
-                    {% for submitter_id, submitter_summary in summary.items() %}
+                    {% for gene, gene_summary in summary.items() %}
                         <tr>
-                            {% with url = 'conflicted-variants-by-submitter/' + submitter_id|string + query_suffix('min_conflict_level') %}
+                            {% with url = 'variants-in-conflict-by-gene/' + (gene or 'intergenic') + query_suffix('min_conflict_level', 'gene_type', 'original_genes') %}
                                 <td>
                                     <input
-                                        {% if submitter_id|string in request.args.getlist('submitters') %}
+                                        {% if gene in request.args.getlist('genes') %}
                                             checked="checked"
                                         {% endif %}
-                                        name="submitters"
+                                        name="genes"
                                         type="checkbox"
-                                        value="{{ submitter_id }}"
+                                        value="{{ gene }}"
                                     />
                                 </td>
                                 <th>
-                                    <a href="{{ url }}">{{ submitter_summary['name'] }}</a>
+                                    <a href="{{ url }}">{{ gene or '\u200Bintergenic' }}</a>
                                 </th>
-                                {% if submitter_summary[-1] %}
-                                    <td class="level{{ 0 }}-conflict">{{ submitter_summary[-1] }}</td>
+                                {% if gene_summary[-1] %}
+                                    <td class="level{{ 0 }}-conflict">{{ gene_summary[-1] }}</td>
                                 {% else %}
                                     <td>0</td>
                                 {% endif %}
-                                {% if submitter_summary[0] %}
-                                    <td class="level{{ 0 }}-conflict">{{ submitter_summary[0] }}</td>
+                                {% if gene_summary[0] %}
+                                    <td class="level{{ 0 }}-conflict">{{ gene_summary[0] }}</td>
                                 {% else %}
                                     <td>0</td>
                                 {% endif %}
                                 {% for i in range(1, 6) %}
                                     {% if min_conflict_level <= i %}
-                                        {% if i in submitter_summary %}
-                                            <td class="level{{ i }}-conflict">{{ submitter_summary[i] }}</td>
+                                        {% if i in gene_summary %}
+                                            <td class="level{{ ([0, i]|sort)[-1] }}-conflict">{{ gene_summary[i] }}</td>
                                         {% else %}
                                             <td>0</td>
                                         {% endif %}
                                     {% endif %}
                                 {% endfor %}
                                 <td class="highlight">
-                                    <a href="{{ url }}">{{ submitter_summary['any_conflict'] }}</a>
+                                    <a href="{{ url }}">{{ gene_summary['any_conflict'] }}</a>
                                 </td>
                             {% endwith %}
                         </tr>
