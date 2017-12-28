@@ -942,6 +942,9 @@ class DB():
             else:
                 self.and_equals('normalized_gene', kwargs['gene'])
 
+        if kwargs.get('condition1_name'):
+            self.and_equals('condition1_name', kwargs['condition1_name'])
+
         if kwargs.get('submitter1_id'):
             self.and_equals('submitter1_id', kwargs['submitter1_id'])
 
