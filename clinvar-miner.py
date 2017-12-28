@@ -436,7 +436,6 @@ def template_functions():
     return {
         'gene_tagline': gene_tagline,
         'h2': h2,
-        'int_arg': int_arg,
         'submitter_link': submitter_link,
         'submitter_tagline': submitter_tagline,
         'condition_link': condition_link,
@@ -484,6 +483,7 @@ def variants_in_conflict_by_condition(condition_name = None):
         args['condition1_name'] = list_arg('conditions')
         return render_template_async(
             'variants-in-conflict-by-condition.html',
+            min_conflict_level=min_conflict_level,
             overview=get_conflict_overview(
                 DB().total_variants_in_conflict_by_conflict_level(
                     min_conflict_level=min_conflict_level,
@@ -529,6 +529,7 @@ def variants_in_conflict_by_condition(condition_name = None):
     return render_template_async(
         'variants-in-conflict-by-condition--condition.html',
         condition_info=condition_info,
+        min_conflict_level=min_conflict_level,
         overview=get_conflict_overview(
             DB().total_variants_in_conflict_by_conflict_level(
                 min_conflict_level=min_conflict_level,
@@ -547,6 +548,23 @@ def variants_in_conflict_by_condition(condition_name = None):
                 min_conflict_level=min_conflict_level,
                 **args
             )
+        ),
+        summary=get_conflict_summary_by_condition(
+            DB().total_variants_by_condition(
+                **args
+            ),
+            DB().total_variants_by_condition(
+                min_conflict_level=0,
+                **args
+            ),
+            DB().total_variants_by_condition(
+                min_conflict_level=min_conflict_level,
+                **args
+            ),
+            DB().total_variants_in_conflict_by_condition_and_conflict_level(
+                min_conflict_level=min_conflict_level,
+                **args
+            ),
         ),
         variants=DB().variants(
             min_conflict_level=min_conflict_level,
@@ -572,6 +590,7 @@ def variants_in_conflict_by_gene(gene = None, significance1 = None, significance
         args['gene'] = list_arg('genes')
         return render_template_async(
             'variants-in-conflict-by-gene.html',
+            min_conflict_level=min_conflict_level,
             overview=get_conflict_overview(
                 DB().total_variants_in_conflict_by_conflict_level(
                     min_conflict_level=min_conflict_level,
@@ -620,6 +639,7 @@ def variants_in_conflict_by_gene(gene = None, significance1 = None, significance
         return render_template_async(
             'variants-in-conflict-by-gene--gene.html',
             gene_info=gene_info,
+            min_conflict_level=min_conflict_level,
             overview=get_conflict_overview(
                 DB().total_variants_in_conflict_by_conflict_level(
                     min_conflict_level=min_conflict_level,
@@ -676,6 +696,7 @@ def variants_in_conflict_by_significance(significance1 = None, significance2 = N
     if not significance2:
         return render_template_async(
             'variants-in-conflict-by-significance.html',
+            min_conflict_level=min_conflict_level,
             overview=get_conflict_overview(
                 DB().total_variants_in_conflict_by_conflict_level(
                     **args
@@ -734,6 +755,7 @@ def variants_in_conflict_by_submitter(submitter1_id = None, submitter2_id = None
         args['submitter1_id'] = list_arg('submitters')
         return render_template_async(
             'variants-in-conflict-by-submitter.html',
+            min_conflict_level=min_conflict_level,
             overview=get_conflict_overview(
                 DB().total_variants_in_conflict_by_conflict_level(
                     min_conflict_level=min_conflict_level,
@@ -781,6 +803,7 @@ def variants_in_conflict_by_submitter(submitter1_id = None, submitter2_id = None
             'variants-in-conflict-by-submitter--1submitter.html',
             submitter1_info=submitter1_info,
             submitter1_primary_method=DB().submitter_primary_method(submitter1_id),
+            min_conflict_level=min_conflict_level,
             overview=get_conflict_overview(
                 DB().total_variants_in_conflict_by_conflict_level(
                     min_conflict_level=min_conflict_level,

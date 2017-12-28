@@ -113,6 +113,7 @@ def create_tables():
             significance2 TEXT,
             normalized_significance2 TEXT,
             star_level2 INTEGER,
+            condition2_name TEXT,
             normalized_method2 TEXT,
 
             conflict_level INTEGER,
@@ -317,6 +318,7 @@ def import_file(filename):
             t2.significance,
             t2.normalized_significance,
             t2.star_level,
+            t2.condition_name,
             t2.normalized_method,
             CASE
                 WHEN t1.scv=t2.scv THEN -1

@@ -59,6 +59,7 @@ cursor.execute('CREATE INDEX current_comparisons__significance2 ON current_compa
 cursor.execute('CREATE INDEX current_comparisons__normalized_significance2 ON current_comparisons (normalized_significance2)')
 cursor.execute('CREATE INDEX current_comparisons__star_level2 ON current_comparisons (star_level2)')
 cursor.execute('CREATE INDEX current_comparisons__normalized_method2 ON current_comparisons (normalized_method2)')
+cursor.execute('CREATE INDEX current_comparisons__condition2_name ON current_comparisons (condition2_name)')
 cursor.execute('CREATE INDEX current_comparisons__conflict_level ON current_comparisons (conflict_level)')
 
 def create_gene_links_table(normalized):

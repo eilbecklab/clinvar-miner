@@ -6,7 +6,6 @@
 {% block tagline %}
     {{ submitter_tagline(submitter1_info, submitter1_primary_method)|safe }}
 {% endblock %}
-{% set min_conflict_level = int_arg('min_conflict_level') %}
 {% block content %}
     {% with %}
         {% set review_status1_label = 'Minimum review status of the submission from ' + submitter1_info['name'] %}
@@ -30,7 +29,7 @@
         {% endwith %}
         {{ h2('Submitter to submitter summary')|safe }}
         <div class="totals">
-            <div>Total submitters: {{ variants|length }}</div>
+            <div>Total submitters: {{ summary|length }}</div>
             <div>{{ 'submitter-table'|tabledownloadlink|safe }}</div>
         </div>
         <table class="sortable summary table table-bordered table-striped" id="submitter-table">
