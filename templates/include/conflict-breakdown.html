@@ -7,19 +7,15 @@
     </p>
 {% endif %}
 <table class="breakdown table table-bordered table-condensed table-striped">
-    {% if submitter2_info %}
+    {% if x_label %}
         <tr>
-            {% if submitter1_info %}<th></th>{% endif %}
-            <th colspan="{{ breakdown['submitter2_significances']|length + 1 }}">
-                {{ submitter_link(submitter2_info['id'], submitter2_info['name'])|safe }}
-            </th>
+            {% if y_label %}<th></th>{% endif %}
+            <th colspan="{{ breakdown['submitter2_significances']|length + 1 }}">{{ x_label|safe }}</th>
         </tr>
     {% endif %}
     <tr>
-        {% if submitter1_info %}
-            <th rowspan="{{ breakdown['submitter1_significances']|length + 1 }}">
-                {{ submitter_link(submitter1_info['id'], submitter1_info['name'])|safe }}
-            </th>
+        {% if y_label %}
+            <th rowspan="{{ breakdown['submitter1_significances']|length + 1 }}">{{ y_label|safe }}</th>
         {% endif %}
         <th></th>
         {% for significance2 in breakdown['submitter2_significances'] %}

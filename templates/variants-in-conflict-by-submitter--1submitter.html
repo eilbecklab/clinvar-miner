@@ -21,11 +21,13 @@
         {% set total_variants_in_conflict = variants|length %}
         {% include 'include/conflict-overview.html' %}
     {% endwith %}
+    {% if variants %}
         {% with %}
+            {% set x_label = 'All submitters' %}
+            {% set y_label = submitter_link(submitter1_info['id'], submitter1_info['name']) %}
             {% set link_base = 'variants-in-conflict-by-submitter/' + submitter1_info['id']|string + '/0' %}
             {% include 'include/conflict-breakdown.html' %}
         {% endwith %}
-    {% if variants %}
         {{ h2('Submitter to submitter summary')|safe }}
         <div class="totals">
             <div>Total submitters: {{ variants|length }}</div>

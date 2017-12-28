@@ -781,7 +781,6 @@ def variants_in_conflict_by_submitter(submitter1_id = None, submitter2_id = None
             'variants-in-conflict-by-submitter--1submitter.html',
             submitter1_info=submitter1_info,
             submitter1_primary_method=DB().submitter_primary_method(submitter1_id),
-            submitter2_info={'id': 0, 'name': 'All submitters'},
             overview=get_conflict_overview(
                 DB().total_variants_in_conflict_by_conflict_level(
                     min_conflict_level=min_conflict_level,
@@ -829,7 +828,7 @@ def variants_in_conflict_by_submitter(submitter1_id = None, submitter2_id = None
         )
 
     if submitter2_id == 0:
-        submitter2_info = {'id': 0, 'name': 'any other submitter'}
+        submitter2_info = {'id': 0, 'name': 'any submitter'}
     else:
         submitter2_info = DB().submitter_info(submitter2_id)
         if not submitter2_info:

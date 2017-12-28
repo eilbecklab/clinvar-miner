@@ -5,10 +5,10 @@
 {% endset %}
 {% block content %}
     {% with %}
-        {% set review_status1_label = 'Y axis minimum submission review status' %}
-        {% set method1_label = 'Y axis collection method' %}
-        {% set review_status2_label = 'X axis minimum submission review status' %}
-        {% set method2_label = 'X axis collection method' %}
+        {% set review_status1_label = 'Minimum review status of the submission for ' + condition_info['name'] %}
+        {% set method1_label = 'Y axis collection method of the submission for ' + condition_info['name'] %}
+        {% set review_status2_label = 'Minimum review status of the other submission' %}
+        {% set method2_label = 'Collection method of the other submission' %}
         {% set min_conflict_level_filter = 'high_only' %}
         {% set original_terms_filter = True %}
         {% include 'include/filter-form.html' %}
@@ -18,7 +18,11 @@
         {% include 'include/conflict-overview.html' %}
     {% endwith %}
     {% if variants %}
-        {% include 'include/conflict-breakdown.html' %}
+        {% with %}
+            {% set x_label = 'All conditions' %}
+            {% set y_label = condition_link(condition_info['db'], condition_info['id'], condition_info['name']) %}
+            {% include 'include/conflict-breakdown.html' %}
+        {% endwith %}
         {% include 'include/all-variants-in-conflict.html' %}
     {% endif %}
 {% endblock %}
