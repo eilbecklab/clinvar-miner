@@ -12,7 +12,7 @@ function downloadTableAsCsv(tableId) {
         }
     }
     var link = document.createElement('a');
-    link.href = URL.createObjectURL(new Blob([csvText], {type: 'text/plain; charset=utf-8'}));
+    link.href = URL.createObjectURL(new Blob([csvText], {type: 'text/csv; charset=utf-8'}));
     link.download = tableId + '.csv';
     link.dispatchEvent(new MouseEvent('click')); //the regular click function only works if the link is in the document
 }
