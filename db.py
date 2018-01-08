@@ -417,9 +417,9 @@ class DB():
     @promise
     def total_variants_by_condition(self, **kwargs):
         if kwargs.get('condition1_name'):
-            self.query = 'SELECT condition2_name AS condition_name, COUNT(DISTINCT variant_name) AS count'
+            self.query = 'SELECT condition2_name AS condition_name'
         else:
-            self.query = 'SELECT condition1_name AS condition_name, COUNT(DISTINCT variant_name) AS count'
+            self.query = 'SELECT condition1_name AS condition_name'
 
         if kwargs.get('original_genes'):
             self.query += ', COUNT(DISTINCT gene) AS gene_count'
@@ -471,14 +471,14 @@ class DB():
 
         self.query += ' GROUP BY condition_name ORDER BY count DESC'
 
-        return list(map(dict, self.cursor.execute(self.query, self.parameters)))
+        return self.rows()
 
     @promise
     def total_variants_by_condition_and_significance(self, **kwargs):
         if kwargs.get('condition1_name'):
-            self.query = 'SELECT condition1_name AS condition_name, COUNT(DISTINCT variant_name) AS count'
-        else:
             self.query = 'SELECT condition2_name AS condition_name, COUNT(DISTINCT variant_name) AS count'
+        else:
+            self.query = 'SELECT condition1_name AS condition_name, COUNT(DISTINCT variant_name) AS count'
 
         if kwargs.get('original_terms'):
             self.query += ', significance1 AS significance'
@@ -825,7 +825,7 @@ class DB():
 
         self.query += ' GROUP BY condition_name, conflict_level'
 
-        return list(map(dict, self.cursor.execute(self.query, self.parameters)))
+        return self.rows()
 
     @promise
     def total_variants_in_conflict_by_conflict_level(self, **kwargs):
@@ -913,7 +913,7 @@ class DB():
         else:
             self.query += ' GROUP BY normalized_gene, conflict_level'
 
-        return list(map(dict, self.cursor.execute(self.query, self.parameters)))
+        return self.rows()
 
     @promise
     def total_variants_in_conflict_by_significance_and_significance(self, **kwargs):
