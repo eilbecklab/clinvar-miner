@@ -863,6 +863,7 @@ def variants_in_conflict_by_submitter(submitter1_id = None, submitter2_id = None
             'variants-in-conflict-by-submitter--2submitters.html',
             submitter1_info=submitter1_info,
             submitter2_info=submitter2_info,
+            min_conflict_level=min_conflict_level,
             overview=get_conflict_overview(
                 DB().total_variants_in_conflict_by_conflict_level(
                     min_conflict_level=min_conflict_level,
