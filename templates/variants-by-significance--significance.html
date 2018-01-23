@@ -9,7 +9,15 @@
         {% set original_terms_filter = True %}
         {% include 'include/filter-form.html' %}
     {% endwith %}
-    <p>Total variants: {{ total_variants }}</p>
+    <div class="totals">
+        <div>
+            Total variants: {{ total_variants_ever }}
+        </div>
+        <div>
+            Total variants <em>unanimously</em> reported as {{ significance }}:
+            {{ total_variants - total_variants_never }}
+        </div>
+    </div>
     {% if total_variants %}
         {{ h2('Breakdown by submitter')|safe }}
         <div class="totals">

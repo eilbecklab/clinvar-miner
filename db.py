@@ -1005,6 +1005,38 @@ class DB():
 
         return self.rows()
 
+    def total_variants_without_significance(self, **kwargs):
+        self.query = '''
+            SELECT COUNT(DISTINCT variant_name) FROM current_comparisons
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+        '''
+
+        self.parameters = {
+            'min_stars1': kwargs.get('min_stars1', 0),
+            'min_stars2': kwargs.get('min_stars2', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'significance': kwargs['significance'],
+        }
+
+        if kwargs.get('original_terms'):
+            self.query += ' AND significance1!=:significance AND significance2!=:significance'
+        else:
+            self.query += ' AND normalized_significance1!=:significance AND normalized_significance2!=:significance'
+
+        if kwargs.get('normalized_method1'):
+            self.and_equals('normalized_method1', kwargs['normalized_method1'])
+
+        if kwargs.get('normalized_method2'):
+            self.and_equals('normalized_method2', kwargs['normalized_method2'])
+
+        if kwargs.get('gene_type', -1) != -1:
+            if kwargs.get('original_genes'):
+                self.and_equals('gene_type', kwargs['gene_type'])
+            else:
+                self.and_equals('normalized_gene_type', kwargs['gene_type'])
+
+        return self.value()
+
     def variant_info(self, variant_name):
         try:
             row = list(self.cursor.execute(

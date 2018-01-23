@@ -1271,15 +1271,31 @@ def variants_by_significance(significance = None):
 
     if not DB().is_significance(significance):
         abort(404)
-    args['significance1'] = significance
 
     return render_template_async(
         'variants-by-significance--significance.html',
         significance=significance,
         total_variants=DB().total_variants(**args),
-        total_variants_by_submitter=DB().total_variants_by_submitter(**args),
-        total_variants_by_gene=DB().total_variants_by_gene(**args),
-        total_variants_by_condition=DB().total_variants_by_condition(**args),
+        total_variants_ever=DB().total_variants(
+            significance1=significance,
+            **args
+        ),
+        total_variants_never=DB().total_variants_without_significance(
+            significance=significance,
+            **args
+        ),
+        total_variants_by_submitter=DB().total_variants_by_submitter(
+            significance1=significance,
+            **args
+        ),
+        total_variants_by_gene=DB().total_variants_by_gene(
+            significance1=significance,
+            **args
+        ),
+        total_variants_by_condition=DB().total_variants_by_condition(
+            significance1=significance,
+            **args
+        ),
     )
 
 @app.route('/variants-by-submitter')
