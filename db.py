@@ -416,7 +416,7 @@ class DB():
 
     @promise
     def total_variants_by_condition(self, **kwargs):
-        if kwargs.get('condition1_name'):
+        if type(kwargs.get('condition1_name')) is str:
             self.query = 'SELECT condition2_name AS condition_name'
         else:
             self.query = 'SELECT condition1_name AS condition_name'
@@ -475,10 +475,7 @@ class DB():
 
     @promise
     def total_variants_by_condition_and_significance(self, **kwargs):
-        if kwargs.get('condition1_name'):
-            self.query = 'SELECT condition2_name AS condition_name, COUNT(DISTINCT variant_name) AS count'
-        else:
-            self.query = 'SELECT condition1_name AS condition_name, COUNT(DISTINCT variant_name) AS count'
+        self.query = 'SELECT condition1_name AS condition_name, COUNT(DISTINCT variant_name) AS count'
 
         if kwargs.get('original_terms'):
             self.query += ', significance1 AS significance'
@@ -689,7 +686,7 @@ class DB():
 
     @promise
     def total_variants_by_submitter(self, **kwargs):
-        if kwargs.get('submitter1_id'):
+        if type(kwargs.get('submitter1_id')) is str:
             self.query = 'SELECT submitter2_id AS submitter_id, submitter2_name AS submitter_name'
         else:
             self.query = 'SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name'
@@ -797,7 +794,7 @@ class DB():
 
     @promise
     def total_variants_in_conflict_by_condition_and_conflict_level(self, **kwargs):
-        if kwargs.get('condition1_name'):
+        if type(kwargs.get('condition1_name')) is str:
             self.query = 'SELECT condition2_name AS condition_name'
         else:
             self.query = 'SELECT condition1_name AS condition_name'
@@ -972,7 +969,7 @@ class DB():
 
     @promise
     def total_variants_in_conflict_by_submitter_and_conflict_level(self, **kwargs):
-        if kwargs.get('submitter1_id'):
+        if type(kwargs.get('submitter1_id')) is str:
             self.query = 'SELECT submitter2_id AS submitter_id'
         else:
             self.query = 'SELECT submitter1_id AS submitter_id'
