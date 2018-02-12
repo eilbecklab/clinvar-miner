@@ -416,10 +416,10 @@ class DB():
 
     @promise
     def total_variants_by_condition(self, **kwargs):
-        if type(kwargs.get('condition1_name')) is str:
-            self.query = 'SELECT condition2_name AS condition_name'
-        else:
+        if type(kwargs.get('condition1_name')) is list:
             self.query = 'SELECT condition1_name AS condition_name'
+        else:
+            self.query = 'SELECT condition2_name AS condition_name'
 
         if kwargs.get('original_genes'):
             self.query += ', COUNT(DISTINCT gene) AS gene_count'
@@ -686,10 +686,10 @@ class DB():
 
     @promise
     def total_variants_by_submitter(self, **kwargs):
-        if type(kwargs.get('submitter1_id')) is str:
-            self.query = 'SELECT submitter2_id AS submitter_id, submitter2_name AS submitter_name'
-        else:
+        if type(kwargs.get('submitter1_id')) is list:
             self.query = 'SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name'
+        else:
+            self.query = 'SELECT submitter2_id AS submitter_id, submitter2_name AS submitter_name'
 
         if kwargs.get('original_genes'):
             self.query += ', COUNT(DISTINCT gene) AS gene_count'
@@ -794,10 +794,10 @@ class DB():
 
     @promise
     def total_variants_in_conflict_by_condition_and_conflict_level(self, **kwargs):
-        if type(kwargs.get('condition1_name')) is str:
-            self.query = 'SELECT condition2_name AS condition_name'
-        else:
+        if type(kwargs.get('condition1_name')) is list:
             self.query = 'SELECT condition1_name AS condition_name'
+        else:
+            self.query = 'SELECT condition2_name AS condition_name'
 
         self.query += '''
             , conflict_level, COUNT(DISTINCT variant_name) AS count
@@ -969,10 +969,10 @@ class DB():
 
     @promise
     def total_variants_in_conflict_by_submitter_and_conflict_level(self, **kwargs):
-        if type(kwargs.get('submitter1_id')) is str:
-            self.query = 'SELECT submitter2_id AS submitter_id'
-        else:
+        if type(kwargs.get('submitter1_id')) is list:
             self.query = 'SELECT submitter1_id AS submitter_id'
+        else:
+            self.query = 'SELECT submitter2_id AS submitter_id'
 
         self.query += '''
             , conflict_level, COUNT(DISTINCT variant_name) AS count
