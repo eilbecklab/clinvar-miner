@@ -416,7 +416,7 @@ class DB():
 
     @promise
     def total_variants_by_condition(self, **kwargs):
-        if type(kwargs.get('condition1_name')) is list:
+        if type(kwargs.get('condition1_name')) is not str:
             self.query = 'SELECT condition1_name AS condition_name'
         else:
             self.query = 'SELECT condition2_name AS condition_name'
@@ -686,7 +686,7 @@ class DB():
 
     @promise
     def total_variants_by_submitter(self, **kwargs):
-        if type(kwargs.get('submitter1_id')) is list:
+        if type(kwargs.get('submitter1_id')) is not str:
             self.query = 'SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name'
         else:
             self.query = 'SELECT submitter2_id AS submitter_id, submitter2_name AS submitter_name'
@@ -794,7 +794,7 @@ class DB():
 
     @promise
     def total_variants_in_conflict_by_condition_and_conflict_level(self, **kwargs):
-        if type(kwargs.get('condition1_name')) is list:
+        if type(kwargs.get('condition1_name')) is not str:
             self.query = 'SELECT condition1_name AS condition_name'
         else:
             self.query = 'SELECT condition2_name AS condition_name'
@@ -969,7 +969,7 @@ class DB():
 
     @promise
     def total_variants_in_conflict_by_submitter_and_conflict_level(self, **kwargs):
-        if type(kwargs.get('submitter1_id')) is list:
+        if type(kwargs.get('submitter1_id')) is not str:
             self.query = 'SELECT submitter1_id AS submitter_id'
         else:
             self.query = 'SELECT submitter2_id AS submitter_id'
@@ -994,9 +994,6 @@ class DB():
 
         if kwargs.get('normalized_method2'):
             self.and_equals('normalized_method2', kwargs['normalized_method2'])
-
-        if kwargs.get('submitter_ids'):
-            self.and_equals('submitter_id', kwargs['submitter_ids'])
 
         self.query += ' GROUP BY submitter_id, conflict_level'
 
