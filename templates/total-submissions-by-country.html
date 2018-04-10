@@ -3,6 +3,11 @@
 {% block head %}
     <script src="static/d3-scale-chromatic.js" type="application/javascript"></script>
     <script src="static/topojson.v2.js" type="application/javascript"></script>
+    <style type="text/css">
+        path:hover {
+            fill: lightblue;
+        }
+    </style>
 {% endblock %}
 {% block content %}
     {% with %}
@@ -22,7 +27,7 @@
 
         var projection = d3.geoEquirectangular();
         var path = d3.geoPath().projection(projection);
-        var color = d3.scaleSequential(d3.interpolateBlues)
+        var color = d3.scaleSequential(d3.interpolatePurples)
             .domain([0, 5])
         var svg = d3.select('#map')
             .attr('width', width)
@@ -33,8 +38,10 @@
                 .data(topojson.feature(countries, countries.objects.units).features)
                 .enter()
                 .append('path')
-                .attr('d', path)
-                .attr('fill', function(d) { return color(totals[d.id] ? Math.log10(totals[d.id]) : 0); });
+                    .attr('d', path)
+                    .attr('fill', d => color(totals[d.id] ? Math.log10(totals[d.id]) : 0))
+                    .append('title')
+                .text(d => d.properties.name + ': ' + (totals[d.id] || 0) + ' submissions');
         });
 
         var legend = svg.append('g')
