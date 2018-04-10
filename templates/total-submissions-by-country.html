@@ -36,6 +36,21 @@
                 .attr('d', path)
                 .attr('fill', function(d) { return color(totals[d.id] ? Math.log10(totals[d.id]) : 0); });
         });
+
+        var legend = svg.append('g')
+            .attr('transform', 'translate(50,' + (height - 200) + ')')
+        for (var i = 1; i <= 5; i++) {
+            var legendItem = legend.append('g')
+                .attr('transform', 'translate(0,' + (15 * i) + ')')
+
+            legendItem.append('path')
+                .attr('class', 'line')
+                .attr('d', 'M0,-4L20,-4')
+                .attr('style', 'stroke-width:5px; stroke:' + color(i));
+            legendItem.append('text')
+                .attr('transform', 'translate(30,0)')
+                .text(Math.pow(10, i));
+        }
     </script>
     <div class="totals">
         <div>Total countries: {{ total_submissions_by_country|length }}</div>
