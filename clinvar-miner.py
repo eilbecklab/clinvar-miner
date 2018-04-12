@@ -391,6 +391,22 @@ def template_functions():
         section_id = text.lower().replace(' ', '-')
         return '<h2 id="' + section_id + '">' + text + ' <a class="internal" href="' + request.url + '#' + section_id + '">#</a></h2>'
 
+    def table_search_box(element_id, tag = 'form'):
+        return '''
+            <''' + tag + ''' class="search">
+                <input
+                    autocomplete="off"
+                    class="search-box"
+                    name=""
+                    oninput="filterTable(''' + "'" + element_id + "'," + '''this.value)"
+                    placeholder="Search this table"
+                    type="text"
+                    value=""
+                />
+                <input disabled="disabled" type="submit" value=" "></span>
+            </''' + tag + '''>
+        '''
+
     def submitter_link(submitter_id, submitter_name):
         if submitter_id == 0:
             return submitter_name
@@ -440,6 +456,7 @@ def template_functions():
         'submitter_tagline': submitter_tagline,
         'condition_link': condition_link,
         'query_suffix': query_suffix,
+        'table_search_box': table_search_box,
         'variant_link': variant_link,
     }
 

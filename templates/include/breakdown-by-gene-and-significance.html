@@ -1,4 +1,5 @@
 {{ h2('Gene and significance breakdown')|safe }}
+{{ table_search_box('gene-table')|safe }}
 <div class="totals">
     <div>Total genes: {{ breakdown_by_gene_and_significance['data']|length }}</div>
     <div>{{ 'gene-table'|tabledownloadlink|safe }}</div>

@@ -9,6 +9,9 @@
             {% set gene_filters = True %}
             {% include 'include/filter.html' %}
         {% endwith %}
+        {% if total_variants %}
+            {{ table_search_box('gene-table', 'div')|safe }}
+        {% endif %}
         <div class="totals">
             <div>Total genes and gene combinations: {{ total_variants_by_gene|length }}</div>
             <div>Total variants: {{ total_variants }}</div>

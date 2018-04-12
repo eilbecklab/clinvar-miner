@@ -1,4 +1,5 @@
 {{ h2('Submitter and significance breakdown')|safe }}
+{{ table_search_box('submitter-table')|safe }}
 <div class="totals">
     <div>Total submitters: {{ breakdown_by_submitter_and_significance['data']|length }}</div>
     <div>{{ 'submitter-table'|tabledownloadlink|safe }}</div>

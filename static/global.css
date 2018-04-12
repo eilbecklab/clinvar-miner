@@ -28,11 +28,11 @@
     padding-right: 1.1em;
 }
 
-.filterable td:first-child {
+.filterable td:first-child, .filterable th:first-child {
     text-align: center !important;
 }
 
-.filterable td:nth-child(2) {
+.filterable td:nth-child(2), .filterable th:nth-child(2) {
     text-align: left;
 }
 
@@ -79,15 +79,42 @@
     font-weight: bold;
 }
 
-.simple-numeric {
-    width: auto;
+.search {
+    background-color: white;
+    border: 1px solid #AAA;
+    float: right;
+    margin-right: 0.8ex;
+    padding: 2px;
 }
 
-.simple-numeric td:first-child {
+.search input {
+    background-color: white;
+    border: none;
+    padding: 1px
+}
+
+.search input[type=text] {
+    width: 30ex;
+}
+
+.search input[type=text]:focus {
+    outline: none;
+}
+
+.search input[type=submit] {
+    /* adapted from https://phabricator.wikimedia.org/source/mediawiki/browse/master/resources/lib/oojs-ui/themes/wikimediaui/images/indicators/search-ltr.svg */
+    background-image: url(search.svg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 1.1em;
+}
+
+.simple-numeric td:first-child, .simple-numeric th:first-child {
     text-align: left;
 }
 
-.simple-numeric td {
+.simple-numeric td, .simple-numeric th {
     text-align: right;
 }
 
@@ -146,38 +173,6 @@
     line-height: 40px;
     opacity: 0.5;
     padding-left: 10px;
-}
-
-#top-stripe form {
-    background-color: white;
-    border: 1px solid #AAA;
-    float: right;
-    margin-right: 0.8ex;
-    padding: 2px;
-}
-
-#top-stripe input {
-    background-color: white;
-    border: none;
-    padding: 1px
-}
-
-#top-stripe input[type=text] {
-    width: 30ex;
-}
-
-#top-stripe input[type=text]:focus {
-    outline: none;
-}
-
-#top-stripe input[type=submit] {
-    /* adapted from https://phabricator.wikimedia.org/source/mediawiki/browse/master/resources/lib/oojs-ui/themes/wikimediaui/images/indicators/search-ltr.svg */
-    background-image: url(search.svg);
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 1.5em 1.5em;
-    padding-right: 1.1em;
-    width: 1.5em;
 }
 
 *:hover > .internal {

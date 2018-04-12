@@ -1,9 +1,9 @@
 function downloadTableAsCsv(tableId) {
-    var table = document.getElementById(tableId);
-    var firstMeaningfulColumn = table.classList.contains('filterable') ? 1 : 0;
+    var tableEl = document.getElementById(tableId);
+    var firstMeaningfulColumn = tableEl.classList.contains('filterable') ? 1 : 0;
     var csvText = ''
-    for (sectionEl of table.children) { //the table must have <thead> and <tbody> elements
-        for (rowEl of sectionEl.children) {
+    for (var sectionEl of tableEl.children) { //the table must have <thead> and <tbody> elements
+        for (var rowEl of sectionEl.children) {
             cells = [];
             for (i = firstMeaningfulColumn; i < rowEl.children.length; i++) {
                 cells.push('"' + rowEl.children[i].textContent.trim().replace('"', '""') + '"');
@@ -15,6 +15,19 @@ function downloadTableAsCsv(tableId) {
     link.href = URL.createObjectURL(new Blob([csvText], {type: 'text/csv; charset=utf-8'}));
     link.download = tableId + '.csv';
     link.dispatchEvent(new MouseEvent('click')); //the regular click function only works if the link is in the document
+}
+
+function filterTable(tableId, q) {
+    var tableEl = document.getElementById(tableId);
+    var tbodyEl = tableEl.getElementsByTagName('tbody')[0];
+    var firstMeaningfulColumn = tableEl.classList.contains('filterable') ? 1 : 0;
+    q = q.toLowerCase();
+    for (var rowEl of tbodyEl.children) {
+        if (rowEl.children[firstMeaningfulColumn].textContent.toLowerCase().indexOf(q) == -1)
+            rowEl.style.display = 'none';
+        else
+            rowEl.style.display = '';
+    }
 }
 
 $('table.sortable').each(function() {

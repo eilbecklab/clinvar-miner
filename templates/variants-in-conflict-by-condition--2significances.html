@@ -12,6 +12,9 @@
         {% set original_terms_disabled = True %}
         {% include 'include/filter.html' %}
     {% endwith %}
+    {% if variants %}
+        {{ table_search_box('variant-table', 'div')|safe }}
+    {% endif %}
     <p>Total variants with conflicting interpretations: {{ variants|length }}</p>
     {% if variants %}
         {% include 'include/variants.html' %}

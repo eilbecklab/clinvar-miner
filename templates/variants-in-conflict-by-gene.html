@@ -12,6 +12,9 @@
             {% include 'include/filter.html' %}
         {% endwith %}
         {% include 'include/conflict-overview.html' %}
+        {% if summary %}
+            {{ table_search_box('gene-table', 'div')|safe }}
+        {% endif %}
         <div class="totals">
             <div>Total genes or gene combinations with conflicts: {{ summary|length }}</div>
             {% if summary %}

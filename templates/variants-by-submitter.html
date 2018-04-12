@@ -9,6 +9,9 @@
             {% set gene_filters = True %}
             {% include 'include/filter.html' %}
         {% endwith %}
+        {% if total_variants %}
+            {{ table_search_box('submitter-table', 'div')|safe }}
+        {% endif %}
         <div class="totals">
             <div>Total submitters: {{ total_variants_by_submitter|length }}</div>
             <div>Total variants: {{ total_variants }}</div>

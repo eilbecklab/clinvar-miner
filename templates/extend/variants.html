@@ -7,6 +7,9 @@
         {% set original_terms_filter = (significance or significance1) %}
         {% include 'include/filter-form.html' %}
     {% endwith %}
+    {% if variants %}
+        {{ table_search_box('variant-table')|safe }}
+    {% endif %}
     <div class="totals">
         <div>Total variants: {{ variants|length }}</div>
         {% if variants %}

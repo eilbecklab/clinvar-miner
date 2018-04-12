@@ -24,6 +24,7 @@
             {% include 'include/conflict-breakdown.html' %}
         {% endwith %}
         {{ h2('Condition to condition summary')|safe }}
+        {{ table_search_box('condition-table')|safe }}
         <div class="totals">
             <div>Total conditions: {{ summary|length }}</div>
             <div>{{ 'condition-table'|tabledownloadlink|safe }}</div>

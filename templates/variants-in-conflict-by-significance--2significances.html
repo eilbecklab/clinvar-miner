@@ -9,6 +9,9 @@
         {% set original_terms_filter = True %}
         {% include 'include/filter-form.html' %}
     {% endwith %}
+    {% if variants %}
+        {{ table_search_box('variant-table')|safe }}
+    {% endif %}
     <p>Total variants with conflicting interpretations: {{ variants|length }}</p>
     {% if variants %}
         {% include 'include/variants.html' %}

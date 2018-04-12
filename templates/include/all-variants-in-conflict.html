@@ -1,4 +1,7 @@
 {{ h2('All variants with conflicting interpretations')|safe }}
+{% if variants %}
+    {{ table_search_box('variant-table', 'div')|safe }}
+{% endif %}
 <div class="totals">
     <div>Total variants: {{ variants|length }}</div>
     <div>{{ 'variant-table'|tabledownloadlink|safe }}</div>

@@ -11,6 +11,9 @@
             {% include 'include/filter.html' %}
         {% endwith %}
         {% include 'include/conflict-overview.html' %}
+        {% if summary %}
+            {{ table_search_box('condition-table', 'div')|safe }}
+        {% endif %}
         <div class="totals">
             <div>Total conditions with conflicts: {{ summary|length }}</div>
             {% if summary %}

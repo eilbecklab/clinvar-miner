@@ -28,6 +28,7 @@
             {% include 'include/conflict-breakdown.html' %}
         {% endwith %}
         {{ h2('Submitter to submitter summary')|safe }}
+        {{ table_search_box('submitter-table')|safe }}
         <div class="totals">
             <div>Total submitters: {{ summary|length }}</div>
             <div>{{ 'submitter-table'|tabledownloadlink|safe }}</div>

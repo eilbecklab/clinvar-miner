@@ -20,6 +20,7 @@
     </div>
     {% if total_variants %}
         {{ h2('Breakdown by submitter')|safe }}
+        {{ table_search_box('submitter-table')|safe }}
         <div class="totals">
             <div>Total submitters: {{ total_variants_by_submitter|length }}</div>
             <div>{{ 'submitter-table'|tabledownloadlink|safe }}</div>
@@ -47,6 +48,7 @@
             </tbody>
         </table>
         {{ h2('Breakdown by condition')|safe }}
+        {{ table_search_box('condition-table')|safe }}
         <div class="totals">
             <div>Total conditions: {{ total_variants_by_condition|length }}</div>
             <div>{{ 'condition-table'|tabledownloadlink|safe }}</div>
@@ -74,6 +76,7 @@
             </tbody>
         </table>
         {{ h2('Breakdown by gene')|safe }}
+        {{ table_search_box('gene-table')|safe }}
         <div class="totals">
             <div>Total genes: {{ total_variants_by_gene|length }}</div>
             <div>{{ 'gene-table'|tabledownloadlink|safe }}</div>
