@@ -50,14 +50,14 @@
                                     <a href="{{ url }}">{{ gene or '\u200Bintergenic' }}</a>
                                 </th>
                                 {% if gene_summary[-1] %}
-                                    <td class="level{{ 0 }}-conflict">{{ gene_summary[-1] }}</td>
+                                    <td class="highlight">{{ gene_summary[-1] }}</td>
                                 {% else %}
                                     <td>0</td>
                                 {% endif %}
                                 {% if gene_summary[0] %}
-                                    <td class="level{{ 0 }}-conflict">{{ gene_summary[0] }}</td>
+                                    <td class="level0-conflict thick-right-border">{{ gene_summary[0] }}</td>
                                 {% else %}
-                                    <td>0</td>
+                                    <td class="thick-right-border">0</td>
                                 {% endif %}
                                 {% for i in range(1, 6) %}
                                     {% if min_conflict_level <= i %}
@@ -68,7 +68,7 @@
                                         {% endif %}
                                     {% endif %}
                                 {% endfor %}
-                                <td class="highlight">
+                                <td class="highlight thick-left-border">
                                     <a href="{{ url }}">{{ gene_summary['any_conflict'] }}</a>
                                 </td>
                             {% endwith %}

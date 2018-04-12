@@ -49,23 +49,23 @@
 }
 
 .level1-conflict {
-    background-color: #BFF7AA;
+    background-color: #D4FFAA;
 }
 
 .level2-conflict {
-    background-color: #D1EEAA;
+    background-color: #FFFFAA;
 }
 
 .level3-conflict {
-    background-color: #E2E6AA;
+    background-color: #FFE3AA;
 }
 
 .level4-conflict {
-    background-color: #F1DDAA;
+    background-color: #FFC6AA;
 }
 
 .level5-conflict {
-    background-color: #FFD4AA;
+    background-color: #FFAAAA;
 }
 
 .panel {
@@ -148,6 +148,14 @@
 .tagline ul {
     display: inline;
     padding-left: 0;
+}
+
+.thick-left-border {
+    border-left-width: 6px !important;
+}
+
+.thick-right-border {
+    border-right-width: 6px !important;
 }
 
 .totals {
