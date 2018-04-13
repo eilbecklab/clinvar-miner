@@ -405,7 +405,7 @@ def template_functions():
                     type="text"
                     value=""
                 />
-                <input disabled="disabled" type="submit" value=" "></span>
+                <input disabled="disabled" type="submit" value=" "/>
             </''' + tag + '''>
         '''
 
