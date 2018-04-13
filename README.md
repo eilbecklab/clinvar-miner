@@ -12,7 +12,8 @@
    changes.
 
 5. Run `make` to build the ClinVar Miner database. This process takes about 24
-   hours.
+   hours. If you wish to omit historical ClinVar data, run `make latest`
+   instead, which takes about 1 hour.
 
 6. For **development**, run `./start-dev.sh` and open http://localhost:5000/ in
    your web browser. You can change the port number by passing `-p <port>`.
