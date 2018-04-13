@@ -30,6 +30,15 @@ function filterTable(tableId, q) {
     }
 }
 
+$(document).ready(function() {
+    // enable the table search boxes
+    for (var searchBox of document.getElementsByClassName('search-box')) {
+        if (!searchBox.disabled) continue;
+        searchBox.placeholder = 'Search this table';
+        searchBox.disabled = false;
+    }
+});
+
 $('table.sortable').each(function() {
     var headers;
 

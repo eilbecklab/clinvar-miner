@@ -397,9 +397,10 @@ def template_functions():
                 <input
                     autocomplete="off"
                     class="search-box"
+                    disabled="disabled"
                     name=""
                     oninput="filterTable(''' + "'" + element_id + "'," + '''this.value)"
-                    placeholder="Search this table"
+                    placeholder="Please wait..."
                     type="text"
                     value=""
                 />
