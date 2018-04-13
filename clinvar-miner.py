@@ -400,6 +400,7 @@ def template_functions():
                     disabled="disabled"
                     name=""
                     oninput="filterTable(''' + "'" + element_id + "'," + '''this.value)"
+                    onkeypress="if (event.key == 'Enter') event.preventDefault()"
                     placeholder="Please wait..."
                     type="text"
                     value=""
