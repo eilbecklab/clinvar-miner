@@ -36,23 +36,39 @@
                 <select name="min_conflict_level">
                     <option></option>
                     {% if min_conflict_level_filter != 'high_only' %}
-                        <option {% if request.args.get('min_conflict_level') == '0' %}selected="selected"{% endif %} value="0">
+                        <option
+                                {% if request.args.get('min_conflict_level') == '0' %}selected="selected"{% endif %}
+                                value="0">
                             multiple submissions, potential for conflict
                         </option>
-                        <option {% if request.args.get('min_conflict_level') == '1' %}selected="selected"{% endif %} value="1">
+                        <option
+                                {% if request.args.get('min_conflict_level') == '1' %}selected="selected"{% endif %}
+                                title="standard term vs non-standard but equivalent term"
+                                value="1">
                             synonymous conflict (e.g. benign vs non-pathogenic)
                         </option>
                     {% endif %}
-                    <option {% if request.args.get('min_conflict_level') == '2' %}selected="selected"{% endif %} value="2">
+                    <option
+                            {% if request.args.get('min_conflict_level') == '2' %}selected="selected"{% endif %}
+                            title="benign vs likely benign, or pathogenic vs likely pathogenic"
+                            value="2">
                         confidence conflict (e.g. benign vs likely benign)
                     </option>
-                    <option {% if request.args.get('min_conflict_level') == '3' %}selected="selected"{% endif %} value="3">
+                    <option
+                            {% if request.args.get('min_conflict_level') == '3' %}selected="selected"{% endif %}
+                            value="3">
                         benign or likely benign vs uncertain conflict
                     </option>
-                    <option {% if request.args.get('min_conflict_level') == '4' %}selected="selected"{% endif %} value="4">
+                    <option
+                            {% if request.args.get('min_conflict_level') == '4' %}selected="selected"{% endif %}
+                            title="ACMG term vs non-ACMG term, or non-ACMG term vs other non-ACMG term"
+                            value="4">
                         category conflict (e.g. benign vs affects)
                     </option>
-                    <option {% if request.args.get('min_conflict_level') == '5' %}selected="selected"{% endif %} value="5">
+                    <option
+                            {% if request.args.get('min_conflict_level') == '5' %}selected="selected"{% endif %}
+                            title="benign, likely benign, or uncertain significance vs pathogenic or likely pathogenic"
+                            value="5">
                         clinically significant conflict (e.g. benign vs pathogenic)
                     </option>
                 </select>

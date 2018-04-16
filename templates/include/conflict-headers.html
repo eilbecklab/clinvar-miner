@@ -1,16 +1,26 @@
 <th>Variants with only 1 submission</th>
 <th class="thick-right-border">Variants with at least 2 submissions and no conflicts</th>
 {% if min_conflict_level <= 1 %}
-    <th>Variants with a synonymous conflict<br/>(e.g. benign vs non-pathogenic)</th>
+    <th title="standard term vs non-standard but equivalent term">
+        Variants with a synonymous conflict<br/>(e.g. benign vs non-pathogenic)
+    </th>
 {% endif %}
 {% if min_conflict_level <= 2 %}
-    <th>Variants with a confidence conflict<br/>(e.g. benign vs likely benign)</th>
+    <th title="benign vs likely benign, or pathogenic vs likely pathogenic">
+        Variants with a confidence conflict<br/>(e.g. benign vs likely benign)
+    </th>
 {% endif %}
 {% if min_conflict_level <= 3 %}
-    <th>Variants with a benign or likely benign vs uncertain conflict</th>
+    <th>
+        Variants with a benign or likely benign vs uncertain conflict
+    </th>
 {% endif %}
 {% if min_conflict_level <= 4 %}
-    <th>Variants with a category conflict<br/>(e.g. benign vs affects)</th>
+    <th title="ACMG term vs non-ACMG term, or non-ACMG term vs other non-ACMG term">
+        Variants with a category conflict<br/>(e.g. benign vs affects)
+    </th>
 {% endif %}
-<th>Variants with a clinically significant conflict<br/>(e.g. benign vs pathogenic)</th>
+<th title="benign, likely benign, or uncertain significance vs pathogenic or likely pathogenic">
+    Variants with a clinically significant conflict<br/>(e.g. benign vs pathogenic)
+</th>
 <th class="{% if sorted %}desc{% endif %} thick-left-border">Variants with any kind of conflict</th>
