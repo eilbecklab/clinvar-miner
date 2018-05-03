@@ -836,6 +836,7 @@
 506209	Medical & Molecular Genetics Group (University of Lincoln)	GBR
 506210	Immunogenetics Laboratory (Johns Hopkins All Children's Hospital)	USA
 506211	Snyder Lab, Genetics Department (Stanford University)	USA
+506212	SIB Swiss Institute of Bioinformatics (Copenhagen University)	DNK
 506215	Lars Feuk Lab (Uppsala University)	SWE
 506216	Barrett Group (Wellcome Trust Sanger Institute)	GBR
 506217	Dept of Molecular Biology and Genetics (Bogazici University), MBG	TUR
@@ -843,6 +844,8 @@
 506219	The Translational Medicine Center of Children Development and Disease (Fudan University)	CHN
 506220	Flegel Lab (National Institutes of Health), NIH/CC/DTM	USA
 506221	Kariminejad - Najmabadi Pathology & Genetics Center	IRN
+506222	Department of Immunology (University Hospital Southampton NHSFT)	GBR
+506223	Fundació de Recerca de l'Institut de Microcirurgia Ocular	ESP
 506224	Genetics Department (University Hospital of Toulouse)	FRA
 506225	Rizzo Lab (University of Nebraska Medical Center)	USA
 506228	Genetics of Cognitive Dysfunction Laboratory (I3S-IBMC, University of Porto)	PRT
@@ -884,17 +887,22 @@
 506309	GeneID Lab - Advanced Molecular Diagnostics	USA
 506311	Anoual Laboratory of Radio-Immuno Analysis	MAR
 506312	Dr Meenakshi Bhat Group (Centre for Human Genetics)	IND
+506313	Laboratory of Molecular Pathology (Fondazione IRCCS Ca' Granda Ospedale Maggiore Policlinico)	ITA
+506314	Molecular Genetics Laboratory (State University of Campinas)	BRA
 506315	Department of Hematology - Research Laboratory 1 (Postgraduate Institute of Medical Education and Research)	IND
 506316	David Buchner Laboratory (Case Western Reserve University)	USA
 506317	Mark LeDoux Lab, (University of Tennessee Health Science Center)	USA
 506318	Dan Cohn Lab (University Of California Los Angeles)	USA
+506319	MAGI'S Lab - Medical Genetics Laboratory (MAGI Group)	ITA
 506323	Istenhegyi Gendiagnosztika Kft	HUN
+506324	Genetics and Molecular Pathology Laboratory (Hudson Institute of Medical Research)	AUS
 506329	National Molecular Genetics Centre of Cancer Research (N.N. Alexandrov National Cancer Centre of Belarus), NMGCCR	BLR
 506333	Clinical genetics (CHU Grenoble-Alpes)	FRA
 506341	Clinical Genetic Group (University of Otago), CGG	NZL
 506342	Bodamer Research Lab (Boston Children's Hospital)	USA
 506343	Institute for Genomic Medicine (Nationwide Children's Hospital)	USA
 506344	Center for Genomics (Ann and Robert H. Lurie Children's Hospital of Chicago)	USA
+506345	Hunan Clinical Research Center of Ophthalmic Disease (The Second Xiangya Hospital)	CHN
 506347	Center of Vascular Surgery (The Second Affiliated Hospital of Nanchang University)	CHN
 506349	Ute Scholl Laboratory (Heinrich Heine University Duesseldorf)	DEU
 506350	Medical Institute of Bioregulation (Kyushu university)	JPN
@@ -912,6 +920,7 @@
 506378	Unidade de Bioquimica Genetica (Centro Hospitalar do Porto)	PRT
 506381	Department of Human Genetics (University Hospital Magdeburg), IHG-MD	DEU
 506382	Diagnostic Laboratory, Department of Genetics (University Medical Center Groningen), DL-UMCG	NLD
+506392	Laboratory for Cytogenetics and Genome Research (KU Leuven)	BEL
 506396	Genetics Division (Universidade Federal de Sao Paulo)	BRA
 506401	Histocompatability and Immunogenetics (National Health Service Blood and Transplant)	GBR
 506405	Lilac Insights Pvt. Ltd.	IND
@@ -922,14 +931,29 @@
 506428	Medical Genetics Clinic (Mersin Women and Children Hospital)	TUR
 506429	Tartaglia Lab, Genetics and Rare Diseases Research Division (Bambino Gesu' Children's Hospital)	ITA
 506439	ClinGen RASopathy Expert Panel	USA
+506441	The Genetic Institute, Ha'emek Medical center (Ha'emek Medical Center), TGI-HMC	ISR
 506442	Molecular Diagnostics Laboratory (Nadiya Clinic of Reproductive Medicine)	UKR
+506451	Department of Hematology (303rd Hospital of the People's Liberation Army)	CHN
+506453	Genome Diagnostics Laboratory (VU University Medical Center Amsterdam)	NLD
 506454	Genomic Medicine Laboratory (University of Vermont Medical Center)	USA
 506455	Dental Genetics Laboratory (Seoul National University School of Dentistry)	KOR
+506460	Warsaw Genomics (University of Warsaw), WG	POL
+506472	University of Uludag Hospital, Genetic Diseases Diagnostic Center (University of Uludag)	TUR
+506497	DNA and Cytogenetics Diagnostics Unit (Erasmus Medical Center)	NLD
 506502	Carson lab (Ohio State University Comprehensive Cancer Center), OSU-Carson	USA
 506506	Laboratory of Molecular Neuropathology (The University of Texas Health Science Center at Houston)	USA
+506507	Hwa Lab, Division of Endocrinology, Cincinnati Children's Hospital Medical Center (University of Cincinnati College of Medicine)	USA
+506510	Pfaffle Lab, University Hospital for Children and Adolescents (University of Leipzig)	DEU
 506513	Tampere Brain Tumor Research Consortium (University of Tampere)	FIN
 506516	Division of Hematology/Oncology, Florida (Mayo Clinic)	USA
 506517	Biochemical Molecular Genetic Laboratory (King Abdulaziz Medical City)	SAU
+506519	Paediatric Endocrinology - Genetics and Genomic Medicine Program (University College London - Great Ormond Street Institute of Child Health)	GBR
 506524	Laboratory of Molecular Genetics,Brain Korea 21 PLUS Project for Medical Sciences (Yonsei University College of Medicine)	KOR
 506525	Precision Medicine Oncology (Rutgers Cancer Institute of New Jersey)	USA
+506542	Hb Lab, Kinderklinik Ulm (University Hospital Ulm)	DEU
 506543	Dept. of Medical Genetics (Telemark Hospital Trust), STHF	NOR
+506552	Medical Genetics (Hospital Clinico Universitario Virgen de la Arrixaca)	ESP
+506554	Fan Lab (Zhengzhou University)	CHN
+506560	Kahle Lab (Yale University)	USA
+506572	Metabolic Disease laboratory (Sheba Medical Center)	ISR
+506582	GeneID Lab - Advanced Molecular Diagnostics	USA
