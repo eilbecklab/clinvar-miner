@@ -31,14 +31,13 @@ class DB():
     def value(self):
         return list(self.cursor.execute(self.query, self.parameters))[0][0]
 
-    def condition_info(self, condition_name):
+    def condition_xrefs(self, condition_name):
         try:
-            #prefer a row that links the condition name to a condition ID
-            row = list(self.cursor.execute('''
-                SELECT condition_db, condition_id FROM current_submissions WHERE condition_name=?
-                GROUP BY condition_id=='' ORDER BY condition_id=='' LIMIT 1
-            ''', [condition_name]))[0]
-            return {'db': row[0], 'id': row[1], 'name': condition_name}
+            #prefer a row that has cross-references
+            return list(self.cursor.execute('''
+                SELECT DISTINCT condition_xrefs FROM current_submissions WHERE condition_name=?
+                ORDER BY condition_xrefs=='' LIMIT 1
+            ''', [condition_name]))[0][0].split(';')
         except IndexError:
             return None
 
@@ -120,8 +119,6 @@ class DB():
                 significance1 AS significance,
                 last_eval1 AS last_eval,
                 review_status1 AS review_status,
-                condition1_db AS condition_db,
-                condition1_id AS condition_id,
                 condition1_name AS condition_name,
                 method1 AS method,
                 comment1 AS comment

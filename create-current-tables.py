@@ -26,8 +26,8 @@ cursor.execute('CREATE INDEX current_submissions__submitter_id ON current_submis
 cursor.execute('CREATE INDEX current_submissions__submitter_name ON current_submissions (submitter_name)')
 cursor.execute('CREATE INDEX current_submissions__submitter_country_code ON current_submissions (submitter_country_code)')
 cursor.execute('CREATE INDEX current_submissions__significance ON current_submissions (significance)')
-cursor.execute('CREATE INDEX current_submissions__condition_id ON current_submissions (condition_id)')
 cursor.execute('CREATE INDEX current_submissions__condition_name ON current_submissions (condition_name)')
+cursor.execute('CREATE INDEX current_submissions__condition_xrefs ON current_submissions (condition_xrefs)')
 cursor.execute('CREATE INDEX current_submissions__method ON current_submissions (method)')
 
 cursor.execute('DROP TABLE IF EXISTS current_comparisons')

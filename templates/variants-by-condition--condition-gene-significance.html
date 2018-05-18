@@ -4,27 +4,23 @@
 {% set title %}
     {% if gene_info['type'] == 0 %}
         {% if significance %}
-            List of intergenic variants reported as {{ significance }} for
-            {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
+            List of intergenic variants reported as {{ significance }} for {{ condition_name }}
         {% else %}
-            List of intergenic variants studied for
-            {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
+            List of intergenic variants studied for {{ condition_name }}
         {% endif %}
     {% elif gene_info['type'] == 1 %}
         {% if significance %}
             List of variants in gene {{ gene_info['name']|genelink|safe }} reported as {{ significance }} for
-            {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
+            {{ condition_name }}
         {% else %}
-            List of variants in gene {{ gene_info['name']|genelink|safe }} studied for
-            {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
+            List of variants in gene {{ gene_info['name']|genelink|safe }} studied for {{ condition_name }}
         {% endif %}
     {% else %}
         {% if significance %}
             List of variants in gene combination {{ gene_info['name'] }} reported as {{ significance }} for
-            {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
+            {{ condition_name }}
         {% else %}
-            List of variants in gene {{ gene_info['name'] }} studied for
-            {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
+            List of variants in gene {{ gene_info['name'] }} studied for {{ condition_name }}
         {% endif %}
     {% endif %}
 {% endset %}

@@ -2,12 +2,10 @@
 {% set original_terms_filter = True %}
 {% set title %}
     {% if significance %}
-        List of variants reported as {{ significance }} for
-        {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }} by
+        List of variants reported as {{ significance }} for {{ condition_name }} by
         {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
     {% else %}
-        List of variants studied for
-        {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }} by
+        List of variants studied for {{ condition_name }} by
         {{ submitter_link(submitter_info['id'], submitter_info['name'])|safe }}
     {% endif %}
 {% endset %}

@@ -1,12 +1,14 @@
 {% extends 'extend/skin.html' %}
 {% set title %}
-    Variants with conflicting interpretations studied for
-    {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
+    Variants with conflicting interpretations studied for {{ condition_name }}
 {% endset %}
+{% block tagline %}
+    {{ condition_tagline(condition_xrefs)|safe }}
+{% endblock %}
 {% block content %}
     {% with %}
-        {% set review_status1_label = 'Minimum review status of the submission for ' + condition_info['name'] %}
-        {% set method1_label = 'Y axis collection method of the submission for ' + condition_info['name'] %}
+        {% set review_status1_label = 'Minimum review status of the submission for ' + condition_name %}
+        {% set method1_label = 'Y axis collection method of the submission for ' + condition_name %}
         {% set review_status2_label = 'Minimum review status of the other submission' %}
         {% set method2_label = 'Collection method of the other submission' %}
         {% set min_conflict_level_filter = 'high_only' %}
@@ -20,7 +22,7 @@
     {% if variants %}
         {% with %}
             {% set x_label = 'All conditions' %}
-            {% set y_label = condition_link(condition_info['db'], condition_info['id'], condition_info['name']) %}
+            {% set y_label = condition_name %}
             {% include 'include/conflict-breakdown.html' %}
         {% endwith %}
         {{ h2('Condition to condition summary')|safe }}

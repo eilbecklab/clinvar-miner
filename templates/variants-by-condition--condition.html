@@ -1,7 +1,10 @@
 {% extends 'extend/skin.html' %}
 {% set title %}
-    Variants studied for {{ condition_link(condition_info['db'], condition_info['id'], condition_info['name'])|safe }}
+    Variants studied for {{ condition_name }}
 {% endset %}
+{% block tagline %}
+    {{ condition_tagline(condition_xrefs)|safe }}
+{% endblock %}
 {% block content %}
     {% with %}
         {% set review_status1_label = 'Minimum submission review status' %}

@@ -353,29 +353,31 @@ def super_escape(path):
 
 @app.context_processor
 def template_functions():
-    def condition_link(condition_db, condition_id, condition_name):
-        #find and order DB names and examples with:
-        #SELECT condition_db, condition_id, COUNT(*) FROM current_submissions GROUP BY condition_db ORDER BY COUNT(*) DESC
-        condition_db = condition_db.lower()
-        if condition_db in ('medgen', 'umls'):
-            url = 'https://www.ncbi.nlm.nih.gov/medgen/' + condition_id
-        elif condition_db == 'omim':
-            url = 'https://www.omim.org/entry/' + condition_id
-        elif condition_db == 'genereviews':
-            url = 'https://www.ncbi.nlm.nih.gov/books/' + condition_id
-        elif condition_db == 'hp':
-            url = 'http://compbio.charite.de/hpoweb/showterm?id=' + condition_id
-        elif condition_db == 'mesh':
-            url = 'https://www.ncbi.nlm.nih.gov/mesh/?term=' + condition_id
-        elif condition_db == 'omim phenotypic series':
-            url = 'https://www.omim.org/phenotypicseries/' + condition_id
-        else:
-            url = None
-
-        if url:
-            return '<a class="external" href="' + url + '">' + condition_name + '</a>'
-        else:
-            return condition_name
+    def condition_tagline(condition_xrefs):
+        tagline = ''
+        for xref in condition_xrefs:
+            condition_db, sep, condition_id = xref.partition(':')
+            #put links to the most popular databases first
+            if condition_db == 'MEDGEN':
+                tagline += '<li><a class="external" href="https://www.ncbi.nlm.nih.gov/medgen/' + condition_id + '">'
+                tagline += 'MedGen ' + condition_id + '</a></li>'
+            elif condition_db == 'OMIM':
+                tagline += '<li><a class="external" href="https://www.omim.org/'
+                tagline += 'phenotypicSeries/' if condition_id.startswith('PS') else 'entry/'
+                tagline += condition_id + '">'
+                tagline += 'OMIM ' + condition_id + '</a></li>'
+            elif condition_db == 'ORPHANET':
+                tagline += '<li><a class="external" href="https://www.orpha.net/consor/cgi-bin/OC_Exp.php?Expert=' + condition_id + '">'
+                tagline += 'ORPHA:' + condition_id + '</a></li>'
+            elif condition_db == 'HP':
+                tagline += '<li><a class="external" href="http://compbio.charite.de/hpoweb/showterm?id=HP:' + condition_id + '">'
+                tagline += 'HP:' + condition_id + '</a></li>'
+            elif condition_db == 'MESH':
+                tagline += '<li><a class="external" href="https://www.ncbi.nlm.nih.gov/mesh/?term=' + condition_id + '">'
+                tagline += 'MeSH ' + condition_id + '</a></li>'
+        if tagline:
+            tagline = '<div class="tagline">Coded as: <ul>' + tagline + '</ul></div>'
+        return tagline
 
     def gene_tagline(gene_info, link_base):
         if not gene_info['see_also']:
@@ -452,11 +454,11 @@ def template_functions():
         return ret
 
     return {
+        'condition_tagline': condition_tagline,
         'gene_tagline': gene_tagline,
         'h2': h2,
         'submitter_link': submitter_link,
         'submitter_tagline': submitter_tagline,
-        'condition_link': condition_link,
         'query_suffix': query_suffix,
         'table_search_box': table_search_box,
         'variant_link': variant_link,
@@ -539,15 +541,15 @@ def variants_in_conflict_by_condition(condition_name = None):
             ),
         )
 
-    condition_info = DB().condition_info(condition_name)
-    if not condition_info:
+    if not DB().is_condition_name(condition_name):
         abort(404)
     args['condition1_name'] = condition_name
     args['original_terms'] = request.args.get('original_terms')
 
     return render_template_async(
         'variants-in-conflict-by-condition--condition.html',
-        condition_info=condition_info,
+        condition_name=condition_name,
+        condition_xrefs=DB().condition_xrefs(condition_name),
         min_conflict_level=min_conflict_level,
         overview=get_conflict_overview(
             DB().total_variants_in_conflict_by_conflict_level(
@@ -1107,8 +1109,7 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
             total_submitters=DB().total_submitters(**args),
         )
 
-    condition_info = DB().condition_info(condition_name)
-    if not condition_info:
+    if not DB().is_condition_name(condition_name):
         abort(404)
     args['condition1_name'] = condition_name
     args['original_terms'] = request.args.get('original_terms')
@@ -1116,7 +1117,8 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
     if significance == None and gene == None and submitter_id == None:
         return render_template_async(
             'variants-by-condition--condition.html',
-            condition_info=condition_info,
+            condition_name=condition_name,
+            condition_xrefs=DB().condition_xrefs(condition_name),
             overview=get_significance_overview(
                 DB().total_variants_by_significance(**args)
             ),
@@ -1138,7 +1140,7 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
     if gene == None and submitter_id == None:
         return render_template_async(
             'variants-by-condition--condition-significance.html',
-            condition_info=condition_info,
+            condition_name=condition_name,
             significance=significance,
             variants=DB().variants(**args),
         )
@@ -1153,7 +1155,7 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
 
         return render_template_async(
             'variants-by-condition--condition-gene-significance.html',
-            condition_info=condition_info,
+            condition_name=condition_name,
             gene_info=gene_info,
             significance=significance,
             variants=DB().variants(**args),
@@ -1167,7 +1169,7 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
 
         return render_template_async(
             'variants-by-condition--condition-submitter-significance.html',
-            condition_info=condition_info,
+            condition_name=condition_name,
             submitter_info=submitter_info,
             significance=significance,
             variants=DB().variants(**args),
@@ -1255,15 +1257,14 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
         )
 
     if condition_name:
-        condition_info = DB().condition_info(condition_name)
-        if not condition_info:
+        if not DB().is_condition_name(condition_name):
             abort(404)
         args['condition1_name'] = condition_name
 
         return render_template_async(
             'variants-by-gene--gene-condition-significance.html',
             gene_info=gene_info,
-            condition_info=condition_info,
+            condition_name=condition_name,
             significance=significance,
             variants=DB().variants(**args),
         )
@@ -1411,14 +1412,13 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
         )
 
     if condition_name:
-        condition_info = DB().condition_info(condition_name)
-        if not condition_info:
+        if not DB().is_condition_name(condition_name):
             abort(404)
         args['condition1_name'] = condition_name
 
         return render_template_async(
             'variants-by-submitter--submitter-condition-significance.html',
-            condition_info=condition_info,
+            condition_name=condition_name,
             submitter_info=submitter_info,
             significance=significance,
             variants=DB().variants(**args),

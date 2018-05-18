@@ -58,9 +58,8 @@ def create_tables():
             last_eval TEXT,
             review_status TEXT,
             star_level INTEGER,
-            condition_db TEXT,
-            condition_id TEXT,
             condition_name TEXT,
+            condition_xrefs TEXT,
             method TEXT,
             normalized_method TEXT,
             comment TEXT,
@@ -94,9 +93,8 @@ def create_tables():
             last_eval1 TEXT,
             review_status1 TEXT,
             star_level1 INTEGER,
-            condition1_db TEXT,
-            condition1_id TEXT,
             condition1_name TEXT,
+            condition1_xrefs TEXT,
             method1 TEXT,
             normalized_method1 TEXT,
             comment1 TEXT,
@@ -197,17 +195,26 @@ def get_submissions(date, set_xml):
     else:
         condition_name = 'not specified'
 
+    condition_xrefs = set()
+    for trait_xref_el in reference_assertion_el.findall('./TraitSet/Trait/XRef'):
+        condition_db = trait_xref_el.attrib['DB'].lower()
+        condition_id = trait_xref_el.attrib['ID']
+        #check for the most popular databases first
+        if condition_db == 'medgen':
+            condition_xrefs.add('MEDGEN:' + condition_id)
+        elif condition_db == 'omim':
+            condition_xrefs.add('OMIM:' + condition_id)
+        elif condition_db == 'orphanet':
+            condition_xrefs.add('ORPHANET:' + condition_id)
+        elif condition_db == 'human phenotype ontology':
+            condition_xrefs.add(condition_id) #already starts with 'HP:'
+        elif condition_db == 'mesh':
+            condition_xrefs.add('MESH:' + condition_id)
+    condition_xrefs = ';'.join(sorted(condition_xrefs))
+
     for assertion_el in set_el.findall('./ClinVarAssertion'):
         scv_el = assertion_el.find('./ClinVarAccession[@Type="SCV"]')
         scv = scv_el.attrib['Acc']
-
-        if len(trait_name_els) == 1:
-            trait_xref_el = assertion_el.find('./TraitSet/Trait/XRef')
-            condition_db = trait_xref_el.attrib['DB'] if trait_xref_el != None else ''
-            condition_id = trait_xref_el.attrib['ID'] if trait_xref_el != None else ''
-        else:
-            condition_db = ''
-            condition_id = ''
 
         submission_id_el = assertion_el.find('./ClinVarSubmissionID')
         significance_el = assertion_el.find('./ClinicalSignificance')
@@ -265,9 +272,8 @@ def get_submissions(date, set_xml):
             last_eval,
             review_status,
             star_level,
-            condition_db,
-            condition_id,
             condition_name,
+            condition_xrefs,
             method,
             normalized_method,
             comment,
