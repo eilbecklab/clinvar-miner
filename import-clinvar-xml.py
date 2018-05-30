@@ -196,7 +196,9 @@ def get_submissions(date, set_xml):
         condition_name = 'not specified'
 
     condition_xrefs = set()
-    for trait_xref_el in reference_assertion_el.findall('./TraitSet/Trait/XRef'):
+    for trait_xref_el in reference_assertion_el.findall('./TraitSet/Trait//XRef'):
+        if trait_xref_el.attrib.get('Type') == 'secondary':
+            continue
         condition_db = trait_xref_el.attrib['DB'].lower()
         condition_id = trait_xref_el.attrib['ID']
         #check for the most popular databases first

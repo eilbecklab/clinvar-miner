@@ -364,7 +364,7 @@ def template_functions():
             elif condition_db == 'OMIM':
                 tagline += '<li><a class="external" href="https://www.omim.org/'
                 tagline += 'phenotypicSeries/' if condition_id.startswith('PS') else 'entry/'
-                tagline += condition_id + '">'
+                tagline += condition_id.replace('.', '#') + '">'
                 tagline += 'OMIM ' + condition_id + '</a></li>'
             elif condition_db == 'ORPHANET':
                 tagline += '<li><a class="external" href="https://www.orpha.net/consor/cgi-bin/OC_Exp.php?Expert=' + condition_id + '">'
