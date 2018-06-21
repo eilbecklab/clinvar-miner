@@ -683,7 +683,7 @@ class DB():
 
     @promise
     def total_variants_by_submitter(self, **kwargs):
-        if type(kwargs.get('submitter1_id')) is not str:
+        if type(kwargs.get('submitter1_id')) is not int:
             self.query = 'SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name'
         else:
             self.query = 'SELECT submitter2_id AS submitter_id, submitter2_name AS submitter_name'
@@ -966,7 +966,7 @@ class DB():
 
     @promise
     def total_variants_in_conflict_by_submitter_and_conflict_level(self, **kwargs):
-        if type(kwargs.get('submitter1_id')) is not str:
+        if type(kwargs.get('submitter1_id')) is not int:
             self.query = 'SELECT submitter1_id AS submitter_id'
         else:
             self.query = 'SELECT submitter2_id AS submitter_id'
