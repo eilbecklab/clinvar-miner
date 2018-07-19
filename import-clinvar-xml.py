@@ -214,6 +214,8 @@ def get_submissions(date, set_xml):
             condition_xrefs.add('SNOMED-CT:' + condition_id)
         elif condition_db == 'mesh':
             condition_xrefs.add('MESH:' + condition_id)
+        elif condition_db == 'efo':
+            condition_xrefs.add('EFO:' + condition_id)
     condition_xrefs = ';'.join(sorted(condition_xrefs))
 
     for assertion_el in set_el.findall('./ClinVarAssertion'):
