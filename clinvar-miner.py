@@ -378,6 +378,11 @@ def template_functions():
             elif condition_db == 'MESH':
                 tagline += '<li><a class="external" href="https://www.ncbi.nlm.nih.gov/mesh/?term=' + condition_id + '">'
                 tagline += 'MeSH ' + condition_id + '</a></li>'
+            elif condition_db == 'UNIPROT':
+                tagline += '<li><a class="external" href="https://www.uniprot.org/'
+                tagline += 'keywords/' if condition_id.startswith('KW') else 'uniprot/'
+                tagline += condition_id + '">'
+                tagline += 'UniProt ' + condition_id + '</a></li>'
             elif condition_db == 'EFO':
                 tagline += '<li><a class="external" href="https://www.ebi.ac.uk/ols/ontologies/efo/terms?iri=http%3A%2F%2Fwww.ebi.ac.uk%2Fefo%2FEFO_' + condition_id + '">'
                 tagline += 'EFO:' + condition_id + '</a></li>'
