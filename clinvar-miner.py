@@ -372,6 +372,9 @@ def template_functions():
             elif condition_db == 'HP':
                 tagline += '<li><a class="external" href="http://compbio.charite.de/hpoweb/showterm?id=HP:' + condition_id + '">'
                 tagline += 'HP:' + condition_id + '</a></li>'
+            elif condition_db == 'SNOMED-CT':
+                tagline += '<li><a class="external" href="http://browser.ihtsdotools.org/?perspective=full&conceptId1=' + condition_id + '">'
+                tagline += 'SNOMED-CT ' + condition_id + '</a></li>'
             elif condition_db == 'MESH':
                 tagline += '<li><a class="external" href="https://www.ncbi.nlm.nih.gov/mesh/?term=' + condition_id + '">'
                 tagline += 'MeSH ' + condition_id + '</a></li>'

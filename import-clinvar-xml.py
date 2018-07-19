@@ -210,6 +210,8 @@ def get_submissions(date, set_xml):
             condition_xrefs.add('ORPHANET:' + condition_id)
         elif condition_db == 'human phenotype ontology':
             condition_xrefs.add(condition_id) #already starts with 'HP:'
+        elif condition_db == 'snomed ct':
+            condition_xrefs.add('SNOMED-CT:' + condition_id)
         elif condition_db == 'mesh':
             condition_xrefs.add('MESH:' + condition_id)
     condition_xrefs = ';'.join(sorted(condition_xrefs))
