@@ -358,34 +358,37 @@ def template_functions():
         for xref in condition_xrefs:
             condition_db, sep, condition_id = xref.partition(':')
             #put links to the most popular databases first
-            if condition_db == 'MEDGEN':
+            if condition_db == 'MONDO':
+                tagline += '<li><a class="external" href="https://monarchinitiative.org/disease/' + xref + '">'
+                tagline += xref + '</a></li>'
+            elif condition_db == 'UMLS':
                 tagline += '<li><a class="external" href="https://www.ncbi.nlm.nih.gov/medgen/' + condition_id + '">'
-                tagline += 'MedGen ' + condition_id + '</a></li>'
+                tagline += xref + '</a></li>'
             elif condition_db == 'OMIM':
                 tagline += '<li><a class="external" href="https://www.omim.org/'
                 tagline += 'phenotypicSeries/' if condition_id.startswith('PS') else 'entry/'
                 tagline += condition_id.replace('.', '#') + '">'
-                tagline += 'OMIM ' + condition_id + '</a></li>'
+                tagline += xref + '</a></li>'
             elif condition_db == 'ORPHANET':
                 tagline += '<li><a class="external" href="https://www.orpha.net/consor/cgi-bin/OC_Exp.php?Expert=' + condition_id + '">'
-                tagline += 'ORPHA:' + condition_id + '</a></li>'
+                tagline += xref + '</a></li>'
             elif condition_db == 'HP':
-                tagline += '<li><a class="external" href="http://compbio.charite.de/hpoweb/showterm?id=HP:' + condition_id + '">'
-                tagline += 'HP:' + condition_id + '</a></li>'
-            elif condition_db == 'SNOMED-CT':
+                tagline += '<li><a class="external" href="http://compbio.charite.de/hpoweb/showterm?id=' + xref + '">'
+                tagline += xref + '</a></li>'
+            elif condition_db == 'SNOMEDCT_US':
                 tagline += '<li><a class="external" href="http://browser.ihtsdotools.org/?perspective=full&conceptId1=' + condition_id + '">'
-                tagline += 'SNOMED-CT ' + condition_id + '</a></li>'
+                tagline += xref + '</a></li>'
             elif condition_db == 'MESH':
                 tagline += '<li><a class="external" href="https://www.ncbi.nlm.nih.gov/mesh/?term=' + condition_id + '">'
-                tagline += 'MeSH ' + condition_id + '</a></li>'
+                tagline += xref + '</a></li>'
             elif condition_db == 'UNIPROT':
                 tagline += '<li><a class="external" href="https://www.uniprot.org/'
                 tagline += 'keywords/' if condition_id.startswith('KW') else 'uniprot/'
                 tagline += condition_id + '">'
-                tagline += 'UniProt ' + condition_id + '</a></li>'
+                tagline += xref + '</a></li>'
             elif condition_db == 'EFO':
                 tagline += '<li><a class="external" href="https://www.ebi.ac.uk/ols/ontologies/efo/terms?iri=http%3A%2F%2Fwww.ebi.ac.uk%2Fefo%2FEFO_' + condition_id + '">'
-                tagline += 'EFO:' + condition_id + '</a></li>'
+                tagline += xref + '</a></li>'
         if tagline:
             tagline = '<div class="tagline">Coded as: <ul>' + tagline + '</ul></div>'
         return tagline

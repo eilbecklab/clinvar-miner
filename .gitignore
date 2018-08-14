@@ -2,3 +2,4 @@ __pycache__
 clinvar.db
 clinvar.db-journal
 ClinVarFullRelease_????-??.xml
+monarch-merged.owl

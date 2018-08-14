@@ -4,6 +4,7 @@ from collections import OrderedDict
 from copy import copy
 from functools import partial
 from mmap import mmap
+from mondo import Mondo
 from multiprocessing import Pool
 from os.path import basename
 from pycountry import countries
@@ -22,6 +23,8 @@ submitter_country_codes = dict(map(
     lambda row: (int(row[0]), row[2]),
     csv.reader(open('submitter_info.tsv', 'r'), delimiter='\t')
 ))
+
+mondo = Mondo()
 
 standard_methods = [
     'clinical testing',
@@ -203,7 +206,7 @@ def get_submissions(date, set_xml):
         condition_id = trait_xref_el.attrib['ID']
         #check for the most popular databases first
         if condition_db == 'medgen':
-            condition_xrefs.add('MEDGEN:' + condition_id)
+            condition_xrefs.add('UMLS:' + condition_id)
         elif condition_db == 'omim':
             condition_xrefs.add('OMIM:' + condition_id)
         elif condition_db == 'orphanet':
@@ -211,13 +214,14 @@ def get_submissions(date, set_xml):
         elif condition_db == 'human phenotype ontology':
             condition_xrefs.add(condition_id) #already starts with 'HP:'
         elif condition_db == 'snomed ct':
-            condition_xrefs.add('SNOMED-CT:' + condition_id)
+            condition_xrefs.add('SNOMEDCT_US:' + condition_id)
         elif condition_db == 'mesh':
             condition_xrefs.add('MESH:' + condition_id)
         elif condition_db == 'uniprotkb/swiss-prot':
             condition_xrefs.add('UNIPROT:' + condition_id)
         elif condition_db == 'efo':
             condition_xrefs.add('EFO:' + condition_id)
+    condition_xrefs |= set(mondo.exact_matches(condition_name, condition_xrefs))
     condition_xrefs = ';'.join(sorted(condition_xrefs))
 
     for assertion_el in set_el.findall('./ClinVarAssertion'):
