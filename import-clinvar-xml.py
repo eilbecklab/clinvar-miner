@@ -221,7 +221,7 @@ def get_submissions(date, set_xml):
             condition_xrefs.add('UNIPROT:' + condition_id)
         elif condition_db == 'efo':
             condition_xrefs.add('EFO:' + condition_id)
-    condition_xrefs |= set(mondo.exact_matches(condition_name, condition_xrefs))
+    condition_xrefs |= set(mondo.most_specific_matches(condition_name, condition_xrefs))
     condition_xrefs = ';'.join(sorted(condition_xrefs))
 
     for assertion_el in set_el.findall('./ClinVarAssertion'):
