@@ -61,15 +61,15 @@ class Mondo:
             del class_el #conserve memory
 
     def matches(self, condition_name, xrefs):
-        ret = []
+        ret = set()
 
         for xref in xrefs:
             if xref in self.xref_to_mondo_xref:
-                ret.append(self.xref_to_mondo_xref[xref])
+                ret.add(self.xref_to_mondo_xref[xref])
 
         condition_name = condition_name.lower()
         if condition_name in self.name_to_mondo_xref:
-            ret.append(self.name_to_mondo_xref[condition_name])
+            ret.add(self.name_to_mondo_xref[condition_name])
 
         return ret
 
@@ -77,12 +77,12 @@ class Mondo:
         if ancestor_xref not in self.descendency_by_xref:
             return False #ancestor has no children
         for child_xref in self.descendency_by_xref[ancestor_xref]:
-            if child_xref == descendent_xref or self.is_descendent_of(child_xref, ancestor_xref):
+            if descendent_xref == child_xref or self.is_descendent_of(descendent_xref, child_xref):
                 return True
         return False
 
     def most_specific_matches(self, condition_name, xrefs):
-        matches = self.matches(condition_name, xrefs)
+        matches = list(self.matches(condition_name, xrefs))
         i = 0
         while i < len(matches):
             j = i + 1
@@ -96,4 +96,4 @@ class Mondo:
                     continue
                 j += 1
             i += 1
-        return matches
+        return set(matches)
