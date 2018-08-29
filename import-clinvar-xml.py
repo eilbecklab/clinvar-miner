@@ -200,7 +200,7 @@ def get_submissions(date, set_xml):
 
     condition_xrefs = set()
     for trait_xref_el in reference_assertion_el.findall('./TraitSet/Trait//XRef'):
-        if trait_xref_el.attrib.get('Type') == 'secondary':
+        if trait_xref_el.attrib.get('Type') == 'secondary' or 'ID' not in trait_xref_el.attrib:
             continue
         condition_db = trait_xref_el.attrib['DB'].lower()
         condition_id = trait_xref_el.attrib['ID']
