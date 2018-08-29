@@ -70,10 +70,6 @@ def create_tables():
         )
     ''')
 
-    cursor.execute('CREATE INDEX IF NOT EXISTS submissions__date ON submissions (date)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS submissions__variant_name ON submissions (variant_name)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS submissions__significance ON submissions (significance)')
-
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS comparisons (
             date TEXT,
@@ -116,13 +112,6 @@ def create_tables():
             PRIMARY KEY (date, scv1, scv2)
         )
     ''')
-
-    cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__date ON comparisons (date)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__scv1 ON comparisons (scv1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__star_level1 ON comparisons (star_level1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__normalized_method1 ON comparisons (normalized_method1)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__star_level2 ON comparisons (star_level2)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__conflict_level ON comparisons (conflict_level)')
 
 def get_gene_type(genes, small_variant):
     if len(genes) == 0:

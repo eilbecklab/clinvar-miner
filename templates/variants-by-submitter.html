@@ -35,7 +35,7 @@
                 <tbody>
                     {% for row in total_variants_by_submitter %}
                         <tr>
-                            {% with url = 'variants-by-submitter/' + row['submitter_id']|string + query_suffix('min_conflict_level', 'original_genes', 'original_terms') %}
+                            {% with url = 'variants-by-submitter/' + row['submitter_id']|string + query_suffix('min_conflict_level', 'original_genes', 'original_terms', 'date') %}
                                 <td>
                                     <input
                                         {% if row['submitter_id']|string in request.args.getlist('submitters') %}

@@ -31,73 +31,93 @@ class DB():
     def value(self):
         return list(self.cursor.execute(self.query, self.parameters))[0][0]
 
-    def condition_xrefs(self, condition_name):
+    def condition_xrefs(self, condition_name, date = None):
         try:
-            #prefer a row that has cross-references
-            return list(self.cursor.execute('''
-                SELECT DISTINCT condition_xrefs FROM current_submissions WHERE condition_name=?
-                ORDER BY condition_xrefs=='' LIMIT 1
-            ''', [condition_name]))[0][0].split(';')
+            return list(self.cursor.execute(
+                '''
+                    SELECT DISTINCT condition_xrefs FROM submissions WHERE condition_name=? AND date=?
+                    ORDER BY condition_xrefs=='' /* prefer a row that has cross-references */ LIMIT 1
+                ''',
+                [condition_name, date]
+            ))[0][0].split(';')
         except IndexError:
             return None
 
-    def country_name(self, country_code):
+    def country_name(self, country_code, date = None):
         try:
             return list(self.cursor.execute(
-                'SELECT submitter_country_name FROM current_submissions WHERE submitter_country_code=? LIMIT 1',
-                [country_code]
+                'SELECT submitter_country_name FROM submissions WHERE submitter_country_code=? AND date=? LIMIT 1',
+                [country_code, date or self.max_date()]
             ))[0][0]
         except IndexError:
             return None
 
-    def gene_from_rsid(self, rsid):
+    def dates(self):
+        return list(map(
+            lambda row: row[0],
+            self.cursor.execute('SELECT DISTINCT date FROM submissions ORDER BY date DESC')
+        ))
+
+    def gene_from_rsid(self, rsid, date = None):
         try:
             return list(self.cursor.execute(
-                'SELECT DISTINCT gene FROM current_submissions WHERE rsid=? LIMIT 1', [rsid]
+                'SELECT DISTINCT gene FROM submissions WHERE rsid=? AND date=? LIMIT 1',
+                [rsid, date or self.max_date()]
             ))[0][0]
         except IndexError:
             return None
 
-    def gene_info(self, gene, original_genes = False):
+    def gene_info(self, gene, original_genes, date = None):
         try:
             if original_genes:
-                query = 'SELECT gene_type FROM current_submissions WHERE gene=? LIMIT 1'
+                query = 'SELECT gene_type FROM submissions WHERE gene=? AND date=? LIMIT 1'
             else:
-                query = 'SELECT normalized_gene_type FROM current_submissions WHERE normalized_gene=? LIMIT 1'
-            ret = {'name': gene, 'type': list(self.cursor.execute(query, [gene]))[0][0]}
+                query = 'SELECT normalized_gene_type FROM submissions WHERE normalized_gene=? AND date=? LIMIT 1'
+            ret = {'name': gene, 'type': list(self.cursor.execute(query, [gene, date or self.max_date()]))[0][0]}
         except IndexError:
             return None
 
-        if original_genes:
-            query = 'SELECT see_also FROM gene_links WHERE gene=?'
-        else:
-            query = 'SELECT see_also FROM normalized_gene_links WHERE gene=?'
-        ret['see_also'] = list(map(lambda row: row[0], self.cursor.execute(query, [gene])))
+        if not date or date == self.max_date():
+            if original_genes:
+                query = 'SELECT see_also FROM gene_links WHERE gene=?'
+            else:
+                query = 'SELECT see_also FROM normalized_gene_links WHERE gene=?'
+            ret['see_also'] = list(map(lambda row: row[0], self.cursor.execute(query, [gene])))
 
         return ret
 
+    def is_date(self, date):
+        return bool(list(self.cursor.execute(
+            'SELECT 1 FROM submissions WHERE date=? LIMIT 1',
+            [date]
+        )))
+
     def is_gene(self, gene):
         return bool(list(self.cursor.execute(
-            'SELECT 1 FROM current_submissions WHERE gene=? OR normalized_gene=? LIMIT 1', [gene, gene]
+            'SELECT 1 FROM submissions WHERE gene=? OR normalized_gene=? LIMIT 1',
+            [gene, gene]
         )))
 
     def is_condition_name(self, condition_name):
         return bool(list(self.cursor.execute(
-            'SELECT 1 FROM current_submissions WHERE condition_name=? LIMIT 1', [condition_name]
+            'SELECT 1 FROM submissions WHERE condition_name=? LIMIT 1',
+            [condition_name]
         )))
 
     def is_significance(self, significance):
         return bool(list(self.cursor.execute(
-            'SELECT 1 FROM current_submissions WHERE significance=? LIMIT 1', [significance]
+            'SELECT 1 FROM submissions WHERE significance=? LIMIT 1',
+            [significance]
         )))
 
     def is_variant_name(self, variant_name):
         return bool(list(self.cursor.execute(
-            'SELECT 1 FROM current_submissions WHERE variant_name=? LIMIT 1', [variant_name]
+            'SELECT 1 FROM submissions WHERE variant_name=? LIMIT 1',
+            [variant_name]
         )))
 
     def max_date(self):
-        return list(self.cursor.execute('SELECT date FROM current_submissions LIMIT 1'))[0][0]
+        return list(self.cursor.execute('SELECT MAX(date) FROM submissions'))[0][0]
 
     def significance_term_info(self):
         return list(map(
@@ -122,13 +142,18 @@ class DB():
                 condition1_name AS condition_name,
                 method1 AS method,
                 comment1 AS comment
-            FROM current_comparisons
-            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
+            FROM comparisons
+            WHERE
+                star_level1>=:min_stars AND
+                star_level2>=:min_stars AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars': kwargs.get('min_stars', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('variant_name'):
@@ -142,43 +167,51 @@ class DB():
 
         return self.rows()
 
-    def submitter_id_from_name(self, submitter_name):
+    def submitter_id_from_name(self, submitter_name, date = None):
         try:
             return list(self.cursor.execute(
-                'SELECT submitter_id FROM current_submissions WHERE submitter_name=? LIMIT 1', [submitter_name]
+                'SELECT submitter_id FROM submissions WHERE submitter_name=? AND date=? LIMIT 1',
+                [submitter_name, date or self.max_date()]
             ))[0][0]
         except IndexError:
             return None
 
-    def submitter_info(self, submitter_id):
+    def submitter_info(self, submitter_id, date = None):
         try:
-            row = list(self.cursor.execute('''
-                SELECT submitter_id, submitter_name, submitter_country_name
-                FROM current_submissions WHERE submitter_id=? LIMIT 1
-                ''', [submitter_id]
+            row = list(self.cursor.execute(
+                '''
+                    SELECT submitter_id, submitter_name, submitter_country_name
+                    FROM submissions WHERE submitter_id=? AND date=? LIMIT 1
+                ''',
+                [submitter_id, date or self.max_date()]
             ))[0]
             return {'id': row[0], 'name': row[1], 'country_name': row[2]}
         except IndexError:
             return None
 
-    def submitter_primary_method(self, submitter_id):
+    def submitter_primary_method(self, submitter_id, date = None):
         return list(
             self.cursor.execute('''
-                SELECT method FROM current_submissions WHERE submitter_id=?
+                SELECT method FROM submissions WHERE submitter_id=? AND date=?
                 GROUP BY method ORDER BY COUNT(*) DESC LIMIT 1
-            ''', [submitter_id])
+            ''', [submitter_id, date or self.max_date()])
         )[0][0]
 
     def total_conditions(self, **kwargs):
         self.query = '''
-            SELECT COUNT(DISTINCT condition1_name) FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+            SELECT COUNT(DISTINCT condition1_name) FROM comparisons
+            WHERE
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('gene'):
@@ -206,18 +239,23 @@ class DB():
 
     def total_genes(self, **kwargs):
         if kwargs.get('original_genes'):
-            self.query = 'SELECT COUNT(DISTINCT gene) FROM current_comparisons'
+            self.query = 'SELECT COUNT(DISTINCT gene) FROM comparisons'
         else:
-            self.query = 'SELECT COUNT(DISTINCT normalized_gene) FROM current_comparisons'
+            self.query = 'SELECT COUNT(DISTINCT normalized_gene) FROM comparisons'
 
         self.query += '''
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+            WHERE
+                star_level1>=:min_stars1
+                AND star_level2>=:min_stars2 AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('condition1_name'):
@@ -247,19 +285,27 @@ class DB():
             self.cursor.execute('SELECT date, COUNT(DISTINCT significance) AS count FROM submissions GROUP BY date')
         ))
 
-    def total_submissions(self):
-        return list(self.cursor.execute('SELECT COUNT(*) FROM current_submissions'))[0][0]
+    def total_submissions(self, **kwargs):
+        return list(self.cursor.execute(
+            'SELECT COUNT(*) FROM submissions WHERE date=?',
+            [kwargs.get('date') or self.max_date()]
+        ))[0][0]
 
     def total_submitters(self, **kwargs):
         self.query = '''
-            SELECT COUNT(DISTINCT submitter1_id) FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+            SELECT COUNT(DISTINCT submitter1_id) FROM comparisons
+            WHERE
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('gene'):
@@ -291,13 +337,18 @@ class DB():
                 submitter1_country_code AS country_code,
                 submitter1_country_name AS country_name,
                 COUNT(DISTINCT scv1) AS count
-            FROM current_comparisons
-            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
+            FROM comparisons
+            WHERE
+                star_level1>=:min_stars AND
+                star_level2>=:min_stars AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars': kwargs.get('min_stars', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('normalized_method'):
@@ -314,13 +365,14 @@ class DB():
             self.cursor.execute(
                 '''
                     SELECT method1 AS method, COUNT(DISTINCT scv1) AS count
-                    FROM current_comparisons
+                    FROM comparisons
                     WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
                     GROUP BY method ORDER BY count DESC
                 ''',
                 {
                     'min_stars': kwargs.get('min_stars', 0),
                     'min_conflict_level': kwargs.get('min_conflict_level', -1),
+                    'date': kwargs.get('date') or self.max_date(),
                 }
             )
         ))
@@ -332,12 +384,17 @@ class DB():
                 '''
                     SELECT date, normalized_method1 AS normalized_method, COUNT(DISTINCT scv1) AS count
                     FROM comparisons
-                    WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
+                    WHERE
+                        star_level1>=:min_stars AND
+                        star_level2>=:min_stars AND
+                        conflict_level>=:min_conflict_level AND
+                        date<=:date
                     GROUP BY date, normalized_method ORDER BY date, count DESC
                 ''',
                 {
                     'min_stars': kwargs.get('min_stars', 0),
                     'min_conflict_level': kwargs.get('min_conflict_level', -1),
+                    'date': kwargs.get('date', self.max_date()),
                 }
             )
         ))
@@ -345,13 +402,14 @@ class DB():
     def total_submissions_by_submitter(self, **kwargs):
         self.query = '''
             SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name, COUNT(DISTINCT scv1) AS count
-            FROM current_comparisons
-            WHERE star_level1>=:min_stars AND conflict_level>=:min_conflict_level
+            FROM comparisons
+            WHERE star_level1>=:min_stars AND conflict_level>=:min_conflict_level AND date=:date
         '''
 
         self.parameters = {
             'min_stars': kwargs.get('min_stars', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('country_code'):
@@ -366,14 +424,19 @@ class DB():
 
     def total_variants(self, **kwargs):
         self.query = '''
-            SELECT COUNT(DISTINCT variant_name) FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+            SELECT COUNT(DISTINCT variant_name) FROM comparisons
+            WHERE
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('gene') != None:
@@ -426,14 +489,19 @@ class DB():
         self.query += '''
             , COUNT(DISTINCT submitter1_id) AS submitter_count
             , COUNT(DISTINCT variant_name) AS count
-            FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+            FROM comparisons
+            WHERE
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('gene') != None:
@@ -480,14 +548,19 @@ class DB():
             self.query += ', normalized_significance1 AS significance'
 
         self.query += '''
-            FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+            FROM comparisons
+            WHERE
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('gene') != None:
@@ -529,14 +602,19 @@ class DB():
             , COUNT(DISTINCT condition1_name) AS condition_count
             , COUNT(DISTINCT submitter1_id) AS submitter_count
             , COUNT(DISTINCT variant_name) AS count
-            FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+            FROM comparisons
+            WHERE
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('condition1_name'):
@@ -591,14 +669,19 @@ class DB():
             self.query += ', normalized_significance1 AS significance'
 
         self.query += '''
-            FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+            FROM comparisons
+            WHERE
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('condition1_name'):
@@ -643,14 +726,19 @@ class DB():
         self.query += '''
             , COUNT(DISTINCT condition1_name) AS condition_count
             , COUNT(DISTINCT submitter1_id) AS submitter_count
-            FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+            FROM comparisons
+            WHERE
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('gene') != None:
@@ -696,7 +784,7 @@ class DB():
         self.query += '''
             , COUNT(DISTINCT condition1_name) AS condition_count
             , COUNT(DISTINCT variant_name) AS count
-            FROM current_comparisons
+            FROM comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
         '''
 
@@ -704,6 +792,7 @@ class DB():
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('gene') != None:
@@ -753,14 +842,19 @@ class DB():
             self.query += ', normalized_significance1 AS significance'
 
         self.query += '''
-            FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+            FROM comparisons
+            WHERE
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('gene') != None:
@@ -798,14 +892,19 @@ class DB():
 
         self.query += '''
             , conflict_level, COUNT(DISTINCT variant_name) AS count
-            FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+            FROM comparisons
+            WHERE
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', 1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('condition1_name'):
@@ -824,14 +923,19 @@ class DB():
     @promise
     def total_variants_in_conflict_by_conflict_level(self, **kwargs):
         self.query = '''
-            SELECT conflict_level, COUNT(DISTINCT variant_name) AS count FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+            SELECT conflict_level, COUNT(DISTINCT variant_name) AS count FROM comparisons
+            WHERE
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', 1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('gene') != None:
@@ -874,14 +978,19 @@ class DB():
 
         self.query += '''
             , conflict_level, COUNT(DISTINCT variant_name) AS count
-            FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+            FROM comparisons
+            WHERE
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', 1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('normalized_method1'):
@@ -918,16 +1027,21 @@ class DB():
                 SELECT normalized_significance1 AS significance1, normalized_significance2 AS significance2
             '''
 
-        self.query += ', conflict_level, COUNT(DISTINCT variant_name) AS count FROM current_comparisons'
+        self.query += ', conflict_level, COUNT(DISTINCT variant_name) AS count FROM comparisons'
 
         self.query += '''
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+            WHERE
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', 1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('gene') != None:
@@ -973,14 +1087,19 @@ class DB():
 
         self.query += '''
             , conflict_level, COUNT(DISTINCT variant_name) AS count
-            FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+            FROM comparisons
+            WHERE
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', 1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('submitter1_id'):
@@ -998,14 +1117,19 @@ class DB():
 
     def total_variants_without_significance(self, **kwargs):
         self.query = '''
-            SELECT COUNT(DISTINCT variant_name) FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+            SELECT COUNT(DISTINCT variant_name) FROM comparisons
+            WHERE
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
             'significance': kwargs['significance'],
         }
 
@@ -1028,33 +1152,37 @@ class DB():
 
         return self.value()
 
-    def variant_info(self, variant_name):
+    def variant_info(self, variant_name, date = None):
         try:
             row = list(self.cursor.execute(
-                'SELECT variant_id, rsid FROM current_submissions WHERE variant_name=? LIMIT 1', [variant_name]
+                'SELECT variant_id, rsid FROM submissions WHERE variant_name=? AND date=? LIMIT 1',
+                [variant_name, date or self.max_date()]
             ))[0]
             return {'id': row[0], 'name': variant_name, 'rsid': row[1]}
         except IndexError:
             return None
 
-    def variant_name_from_rcv(self, rcv):
+    def variant_name_from_rcv(self, rcv, date = None):
         try:
             return list(self.cursor.execute(
-                'SELECT variant_name FROM current_submissions WHERE rcv=? LIMIT 1', [rcv]
+                'SELECT variant_name FROM submissions WHERE rcv=? AND date=? LIMIT 1',
+                [rcv, date or self.max_date()]
             ))[0][0]
         except IndexError:
             return None
 
-    def variant_name_from_rsid(self, rsid):
+    def variant_name_from_rsid(self, rsid, date = None):
         rows = list(self.cursor.execute(
-            'SELECT DISTINCT variant_name FROM current_submissions WHERE rsid=?', [rsid]
+            'SELECT DISTINCT variant_name FROM submissions WHERE rsid=? AND date=?',
+            [rsid, date]
         ))
         return rows[0][0] if len(rows) == 1 else None
 
-    def variant_name_from_scv(self, scv):
+    def variant_name_from_scv(self, scv, date = None):
         try:
             return list(self.cursor.execute(
-                'SELECT variant_name FROM current_submissions WHERE scv=? LIMIT 1', [scv]
+                'SELECT variant_name FROM submissions WHERE scv=? AND date=? LIMIT 1',
+                [scv, date]
             ))[0][0]
         except IndexError:
             return None
@@ -1062,14 +1190,19 @@ class DB():
     @promise
     def variants(self, **kwargs):
         self.query = '''
-            SELECT variant_name, rsid FROM current_comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+            SELECT variant_name, rsid FROM comparisons
+            WHERE
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
         }
 
         if kwargs.get('gene') != None:

@@ -33,7 +33,7 @@
             <tbody>
                 {% for row in total_variants_by_significance %}
                     <tr>
-                        {% with url = 'variants-by-significance/' + row['significance']|superescaped + query_suffix('min_conflict_level', 'original_genes', 'original_terms') %}
+                        {% with url = 'variants-by-significance/' + row['significance']|superescaped + query_suffix('min_conflict_level', 'original_genes', 'original_terms', 'date') %}
                             <td>
                                 <a href="{{ url }}">{{ row['significance'] }}</a>
                             </td>

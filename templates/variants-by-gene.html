@@ -35,7 +35,7 @@
                 <tbody>
                     {% for row in total_variants_by_gene %}
                         <tr>
-                            {% with url = 'variants-by-gene/' + (row['gene']|superescaped or 'intergenic') + query_suffix('min_conflict_level', 'gene_type', 'original_genes') %}
+                            {% with url = 'variants-by-gene/' + (row['gene']|superescaped or 'intergenic') + query_suffix('min_conflict_level', 'gene_type', 'original_genes', 'date') %}
                                 <td>
                                     <input
                                         {% if row['gene'] in request.args.getlist('genes') %}checked="checked"{% endif %}

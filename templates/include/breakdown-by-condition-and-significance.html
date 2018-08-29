@@ -26,7 +26,7 @@
                     {% for significance in breakdown_by_condition_and_significance['significances'] %}
                         {% if significance in breakdown_by_condition_and_significance['data'][condition_name] %}
                             <td class="highlight">
-                                <a href="{{ url + '/' + significance|superescaped + query_suffix('min_conflict_level', 'gene_type', 'original_genes', 'original_terms') }}">
+                                <a href="{{ url + '/' + significance|superescaped + query_suffix('min_conflict_level', 'gene_type', 'original_genes', 'original_terms', 'date') }}">
                                     {{ breakdown_by_condition_and_significance['data'][condition_name][significance] }}
                                 </a>
                             </td>

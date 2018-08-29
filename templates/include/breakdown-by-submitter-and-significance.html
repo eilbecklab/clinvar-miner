@@ -19,14 +19,14 @@
             <tr>
                 {% with url = request.base_url + '/submitter/' + submitter_id|string %}
                     <th>
-                        <a href="{{ url + query_suffix('min_conflict_level', 'gene_type', 'original_genes') }}">
+                        <a href="{{ url + query_suffix('min_conflict_level', 'gene_type', 'original_genes', 'date') }}">
                             {{ breakdown_by_submitter_and_significance['data'][submitter_id]['name'] }}
                         </a>
                     </th>
                     {% for significance in breakdown_by_submitter_and_significance['significances'] %}
                         {% if significance in breakdown_by_submitter_and_significance['data'][submitter_id]['counts'] %}
                             <td class="highlight">
-                                <a href="{{ url + '/' + significance|superescaped + query_suffix('min_conflict_level', 'gene_type', 'original_genes', 'original_terms') }}">
+                                <a href="{{ url + '/' + significance|superescaped + query_suffix('min_conflict_level', 'gene_type', 'original_genes', 'original_terms', 'date') }}">
                                     {{ breakdown_by_submitter_and_significance['data'][submitter_id]['counts'][significance] }}
                                 </a>
                             </td>
@@ -35,7 +35,7 @@
                         {% endif %}
                     {% endfor %}
                     <td class="highlight">
-                        <a href="{{ url + query_suffix('min_conflict_level', 'gene_type', 'original_genes') }}">
+                        <a href="{{ url + query_suffix('min_conflict_level', 'gene_type', 'original_genes', 'date') }}">
                             {{ breakdown_by_submitter_and_significance['data'][submitter_id]['counts']['total'] }}
                         </a>
                     </td>

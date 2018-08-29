@@ -35,7 +35,7 @@
                 <tbody>
                     {% for row in total_variants_by_condition %}
                         <tr>
-                            {% with url = 'variants-by-condition/' + row['condition_name']|superescaped + query_suffix('min_conflict_level', 'original_genes') %}
+                            {% with url = 'variants-by-condition/' + row['condition_name']|superescaped + query_suffix('min_conflict_level', 'original_genes', 'date') %}
                                 <td>
                                     <input
                                         {% if row['condition_name']|string in request.args.getlist('conditions') %}
@@ -47,22 +47,22 @@
                                     />
                                 </td>
                                 <td>
-                                    <a href="{{ url + query_suffix('min_conflict_level') }}">
+                                    <a href="{{ url }}">
                                         {{ row['condition_name'] }}
                                     </a>
                                 </td>
                                 <td>
-                                    <a href="{{ url + query_suffix('min_conflict_level') }}">
+                                    <a href="{{ url }}">
                                         {{ row['count'] }}
                                     </a>
                                 </td>
                                 <td>
-                                    <a href="{{ url + query_suffix('min_conflict_level') }}#gene-and-significance-breakdown">
+                                    <a href="{{ url }}#gene-and-significance-breakdown">
                                         {{ row['gene_count'] }}
                                     </a>
                                 </td>
                                 <td>
-                                    <a href="{{ url + query_suffix('min_conflict_level') }}#submitter-and-significance-breakdown">
+                                    <a href="{{ url }}#submitter-and-significance-breakdown">
                                         {{ row['submitter_count'] }}
                                     </a>
                                 </td>

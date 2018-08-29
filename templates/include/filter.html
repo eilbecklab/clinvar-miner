@@ -121,6 +121,16 @@
         </tr>
     {% endif %}
     <tr>
-        <td colspan="4"><input type="submit" value="Apply filters"/></td>
+        <td colspan="2"><input type="submit" value="Apply filters"/></td>
+        <td colspan="2" style="text-align:right">
+            ClinVar version:
+            <select name="date">
+                {% for date in dates() %}
+                    <option {% if request.args.get('date') == date %} selected="selected" {% endif %}>
+                        {{ date }}
+                    </option>
+                {% endfor %}
+            </select>
+        </td>
     </tr>
 </table>

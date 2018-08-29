@@ -35,7 +35,7 @@
             <tbody>
                 {% for row in total_variants_by_submitter %}
                     <tr>
-                        {% with url = 'variants-by-submitter/' + row['submitter_id']|string + '/significance/' + significance|superescaped + query_suffix('min_conflict_level', 'original_terms') %}
+                        {% with url = 'variants-by-submitter/' + row['submitter_id']|string + '/significance/' + significance|superescaped + query_suffix('min_conflict_level', 'original_terms', 'date') %}
                             <td>
                                 <a href="{{ url }}">{{ row['submitter_name'] }}</a>
                             </td>
@@ -63,7 +63,7 @@
             <tbody>
                 {% for row in total_variants_by_condition %}
                     <tr>
-                        {% with url = 'variants-by-condition/' + row['condition_name']|superescaped + '/significance/' + significance|superescaped + query_suffix('min_conflict_level', 'original_terms') %}
+                        {% with url = 'variants-by-condition/' + row['condition_name']|superescaped + '/significance/' + significance|superescaped + query_suffix('min_conflict_level', 'original_terms', 'date') %}
                             <td>
                                 <a href="{{ url }}">{{ row['condition_name'] }}</a>
                             </td>
@@ -91,7 +91,7 @@
             <tbody>
                 {% for row in total_variants_by_gene %}
                     <tr>
-                        {% with url = 'variants-by-gene/' + (row['gene']|superescaped or 'intergenic') + '/significance/' + significance|superescaped + query_suffix('min_conflict_level', 'original_genes', 'original_terms') %}
+                        {% with url = 'variants-by-gene/' + (row['gene']|superescaped or 'intergenic') + '/significance/' + significance|superescaped + query_suffix('min_conflict_level', 'original_genes', 'original_terms', 'date') %}
                             <td>
                                 <a href="{{ url }}">{{ row['gene'] or '\u200Bintergenic' }}</a>
                             </td>
