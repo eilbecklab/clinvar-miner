@@ -1158,7 +1158,7 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
         return render_template_async(
             'variants-by-condition--condition.html',
             condition_name=condition_name,
-            condition_xrefs=DB().condition_xrefs(condition_name),
+            condition_xrefs=DB().condition_xrefs(condition_name, args['date']),
             overview=get_significance_overview(
                 DB().total_variants_by_significance(**args)
             ),

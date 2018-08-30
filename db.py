@@ -38,10 +38,10 @@ class DB():
                     SELECT DISTINCT condition_xrefs FROM submissions WHERE condition_name=? AND date=?
                     ORDER BY condition_xrefs=='' /* prefer a row that has cross-references */ LIMIT 1
                 ''',
-                [condition_name, date]
+                [condition_name, date or self.max_date()]
             ))[0][0].split(';')
         except IndexError:
-            return None
+            return []
 
     def country_name(self, country_code, date = None):
         try:
@@ -1174,7 +1174,7 @@ class DB():
     def variant_name_from_rsid(self, rsid, date = None):
         rows = list(self.cursor.execute(
             'SELECT DISTINCT variant_name FROM submissions WHERE rsid=? AND date=?',
-            [rsid, date]
+            [rsid, date or self.max_date()]
         ))
         return rows[0][0] if len(rows) == 1 else None
 
@@ -1182,7 +1182,7 @@ class DB():
         try:
             return list(self.cursor.execute(
                 'SELECT variant_name FROM submissions WHERE scv=? AND date=? LIMIT 1',
-                [scv, date]
+                [scv, date or self.max_date()]
             ))[0][0]
         except IndexError:
             return None
