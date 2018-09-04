@@ -75,7 +75,7 @@ class DB():
                 query = 'SELECT normalized_gene_type FROM submissions WHERE normalized_gene=? AND date=? LIMIT 1'
             ret = {'name': gene, 'type': list(self.cursor.execute(query, [gene, date or self.max_date()]))[0][0]}
         except IndexError:
-            return None
+            return {'name': gene, 'type': 0}
 
         if not date or date == self.max_date():
             if original_genes:
@@ -108,6 +108,12 @@ class DB():
         return bool(list(self.cursor.execute(
             'SELECT 1 FROM submissions WHERE significance=? LIMIT 1',
             [significance]
+        )))
+
+    def is_submitter_id(self, submitter_id):
+        return bool(list(self.cursor.execute(
+            'SELECT 1 FROM submissions WHERE submitter_id=? LIMIT 1',
+            [submitter_id]
         )))
 
     def is_variant_name(self, variant_name):
@@ -180,22 +186,25 @@ class DB():
         try:
             row = list(self.cursor.execute(
                 '''
-                    SELECT submitter_id, submitter_name, submitter_country_name
+                    SELECT submitter_name, submitter_country_name
                     FROM submissions WHERE submitter_id=? AND date=? LIMIT 1
                 ''',
                 [submitter_id, date or self.max_date()]
             ))[0]
-            return {'id': row[0], 'name': row[1], 'country_name': row[2]}
+            return {'id': submitter_id, 'name': row[0], 'country_name': row[1]}
         except IndexError:
-            return None
+            return {'id': submitter_id, 'name': str(submitter_id), 'country_name': ''}
 
     def submitter_primary_method(self, submitter_id, date = None):
-        return list(
-            self.cursor.execute('''
-                SELECT method FROM submissions WHERE submitter_id=? AND date=?
-                GROUP BY method ORDER BY COUNT(*) DESC LIMIT 1
-            ''', [submitter_id, date or self.max_date()])
-        )[0][0]
+        try:
+            return list(
+                self.cursor.execute('''
+                    SELECT method FROM submissions WHERE submitter_id=? AND date=?
+                    GROUP BY method ORDER BY COUNT(*) DESC LIMIT 1
+                ''', [submitter_id, date or self.max_date()])
+            )[0][0]
+        except IndexError:
+            return 'not provided'
 
     def total_conditions(self, **kwargs):
         self.query = '''
@@ -1160,7 +1169,7 @@ class DB():
             ))[0]
             return {'id': row[0], 'name': variant_name, 'rsid': row[1]}
         except IndexError:
-            return None
+            return {'id': variant_name, 'name': variant_name, 'rsid': ''}
 
     def variant_name_from_rcv(self, rcv, date = None):
         try:

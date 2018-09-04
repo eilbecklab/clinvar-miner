@@ -674,9 +674,9 @@ def variants_in_conflict_by_gene(gene = None, significance1 = None, significance
 
     if gene == 'intergenic':
         gene = ''
-    gene_info = DB().gene_info(gene, args['original_genes'], args['date'])
-    if not gene_info:
+    elif not DB().is_gene(gene):
         abort(404)
+    gene_info = DB().gene_info(gene, args['original_genes'], date=args['date'])
     args['gene'] = gene
     args['original_terms'] = request.args.get('original_terms')
 
@@ -842,9 +842,9 @@ def variants_in_conflict_by_submitter(submitter1_id = None, submitter2_id = None
             ),
         )
 
-    submitter1_info = DB().submitter_info(submitter1_id, args['date'])
-    if not submitter1_info:
+    if not DB().is_submitter_id(submitter1_id):
         abort(404)
+    submitter1_info = DB().submitter_info(submitter1_id, date=args['date'])
     args['submitter1_id'] = submitter1_id
     args['original_terms'] = request.args.get('original_terms')
 
@@ -852,7 +852,7 @@ def variants_in_conflict_by_submitter(submitter1_id = None, submitter2_id = None
         return render_template_async(
             'variants-in-conflict-by-submitter--1submitter.html',
             submitter1_info=submitter1_info,
-            submitter1_primary_method=DB().submitter_primary_method(submitter1_id),
+            submitter1_primary_method=DB().submitter_primary_method(submitter1_id, args['date']),
             min_conflict_level=min_conflict_level,
             overview=get_conflict_overview(
                 DB().total_variants_in_conflict_by_conflict_level(
@@ -903,9 +903,9 @@ def variants_in_conflict_by_submitter(submitter1_id = None, submitter2_id = None
     if submitter2_id == 0:
         submitter2_info = {'id': 0, 'name': 'any submitter'}
     else:
-        submitter2_info = DB().submitter_info(submitter2_id, args['date'])
-        if not submitter2_info:
+        if not DB().is_submitter_id(submitter2_id):
             abort(404)
+        submitter2_info = DB().submitter_info(submitter2_id, args['date'])
     args['submitter2_id'] = submitter2_id
 
     if not significance1:
@@ -1038,9 +1038,9 @@ def submissions_by_variant(variant_name):
     if args['date'] != None and not DB().is_date(args['date']):
         abort(404)
 
-    variant_info = DB().variant_info(variant_name, args['date'])
-    if not variant_info:
+    if not DB().is_variant_name(variant_name):
         abort(404)
+    variant_info = DB().variant_info(variant_name, args['date'])
 
     return render_template_async(
         'submissions-by-variant--variant.html',
@@ -1188,9 +1188,9 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
     if gene:
         if gene == 'intergenic':
             gene = ''
-        gene_info = DB().gene_info(gene, args['date'])
-        if not gene_info:
+        elif not DB().is_gene(gene):
             abort(404)
+        gene_info = DB().gene_info(gene, args['original_genes'], args['date'])
         args['gene'] = gene
 
         return render_template_async(
@@ -1202,7 +1202,7 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
         )
 
     if submitter_id:
-        submitter_info = DB().submitter_info(submitter_id, args['date'])
+        submitter_info = DB().submitter_info(submitter_id)
         if not submitter_info:
             abort(404)
         args['submitter1_id'] = submitter_id
@@ -1249,9 +1249,9 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
 
     if gene == 'intergenic':
         gene = ''
-    gene_info = DB().gene_info(gene, args['original_genes'])
-    if not gene_info:
+    elif not DB().is_gene(gene):
         abort(404)
+    gene_info = DB().gene_info(gene, args['original_genes'], args['date'])
     args['gene'] = gene
     args['original_terms'] = request.args.get('original_terms')
 
@@ -1286,9 +1286,9 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
         )
 
     if submitter_id:
-        submitter_info = DB().submitter_info(submitter_id)
-        if not submitter_info:
+        if not DB().is_submitter_id(submitter_id):
             abort(404)
+        submitter_info = DB().submitter_info(submitter_id)
         args['submitter1_id'] = submitter_id
 
         return render_template_async(
@@ -1408,16 +1408,16 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
             ),
         )
 
-    submitter_info = DB().submitter_info(submitter_id)
-    if not submitter_info:
+    if not DB().is_submitter_id(submitter_id):
         abort(404)
+    submitter_info = DB().submitter_info(submitter_id, args['date'])
     args['submitter1_id'] = submitter_id
 
     if significance == None and gene == None and condition_name == None:
         return render_template_async(
             'variants-by-submitter--submitter.html',
             submitter_info=submitter_info,
-            submitter_primary_method=DB().submitter_primary_method(submitter_id),
+            submitter_primary_method=DB().submitter_primary_method(submitter_id, args['date']),
             overview=get_significance_overview(
                 DB().total_variants_by_significance(**args),
             ),
@@ -1447,9 +1447,9 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
     if gene:
         if gene == 'intergenic':
             gene = ''
-        gene_info = DB().gene_info(gene)
-        if not gene_info:
+        elif not DB().is_gene(gene):
             abort(404)
+        gene_info = DB().gene_info(gene, args['original_genes'], args['date'])
         args['gene'] = gene
 
         return render_template_async(
