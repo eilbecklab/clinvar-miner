@@ -12,8 +12,6 @@ cursor.execute('''
     SELECT * FROM submissions WHERE date=(SELECT MAX(date) FROM submissions)
 ''')
 
-cursor.execute('CREATE INDEX IF NOT EXISTS submissions__date ON submissions (date)')
-cursor.execute('CREATE INDEX IF NOT EXISTS submissions__variant_name ON submissions (variant_name)')
 cursor.execute('CREATE INDEX IF NOT EXISTS submissions__rsid ON submissions (rsid)')
 cursor.execute('CREATE INDEX IF NOT EXISTS submissions__gene ON submissions (gene)')
 cursor.execute('CREATE INDEX IF NOT EXISTS submissions__normalized_gene ON submissions (normalized_gene)')

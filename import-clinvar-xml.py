@@ -306,6 +306,9 @@ def import_file(filename):
         'INSERT OR REPLACE INTO submissions VALUES (' + ','.join('?' * len(submissions[0])) + ')', submissions
     )
 
+    cursor.execute('CREATE INDEX IF NOT EXISTS submissions__date ON submissions (date)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submissions__variant_name ON submissions (variant_name)')
+
     cursor.execute('''
         INSERT OR REPLACE INTO comparisons
         SELECT
