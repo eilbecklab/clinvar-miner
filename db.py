@@ -405,7 +405,7 @@ class DB():
                 {
                     'min_stars': kwargs.get('min_stars', 0),
                     'min_conflict_level': kwargs.get('min_conflict_level', -1),
-                    'date': kwargs.get('date', self.max_date()),
+                    'date': kwargs.get('date') or self.max_date(),
                 }
             )
         ))
