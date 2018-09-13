@@ -75,7 +75,7 @@ class DB():
                 query = 'SELECT normalized_gene_type FROM submissions WHERE normalized_gene=? AND date=? LIMIT 1'
             ret = {'name': gene, 'type': list(self.cursor.execute(query, [gene, date or self.max_date()]))[0][0]}
         except IndexError:
-            return {'name': gene, 'type': 0}
+            ret = {'name': gene, 'type': 0}
 
         if not date or date == self.max_date():
             if original_genes:
@@ -83,6 +83,8 @@ class DB():
             else:
                 query = 'SELECT see_also FROM normalized_gene_links WHERE gene=?'
             ret['see_also'] = list(map(lambda row: row[0], self.cursor.execute(query, [gene])))
+        else:
+            ret['see_also'] = []
 
         return ret
 
