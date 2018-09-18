@@ -224,8 +224,8 @@ def get_submissions(date, set_xml):
         method_el = assertion_el.find('./ObservedIn/Method/MethodType')
         comment_el = significance_el.find('./Comment')
 
-        submitter_id = int(scv_el.attrib['OrgID']) if scv_el.attrib.get('OrgID') else 0 #missing in old versions
-        submitter_name = submission_id_el.get('submitter', '') if submission_id_el != None else '' #missing in old versions
+        submitter_id = int(scv_el.attrib['OrgID']) if scv_el.attrib.get('OrgID') else 500139 #missing in old versions
+        submitter_name = submission_id_el.get('submitter', '') if submission_id_el != None else 'ClinVar Staff' #missing in old versions
         submitter_country_code = submitter_country_codes[submitter_id] if submitter_id in submitter_country_codes else ''
         if submitter_country_code:
             submitter_country = countries.get(alpha_3=submitter_country_code)
