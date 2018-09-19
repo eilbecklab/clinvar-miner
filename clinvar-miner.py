@@ -1201,19 +1201,18 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
             variants=DB().variants(**args),
         )
 
-    if submitter_id:
-        submitter_info = DB().submitter_info(submitter_id)
-        if not submitter_info:
-            abort(404)
-        args['submitter1_id'] = submitter_id
+    submitter_info = DB().submitter_info(submitter_id)
+    if not submitter_info:
+        abort(404)
+    args['submitter1_id'] = submitter_id
 
-        return render_template_async(
-            'variants-by-condition--condition-submitter-significance.html',
-            condition_name=condition_name,
-            submitter_info=submitter_info,
-            significance=significance,
-            variants=DB().variants(**args),
-        )
+    return render_template_async(
+        'variants-by-condition--condition-submitter-significance.html',
+        condition_name=condition_name,
+        submitter_info=submitter_info,
+        significance=significance,
+        variants=DB().variants(**args),
+    )
 
 @app.route('/variants-by-gene')
 @app.route('/variants-by-gene/<superescaped:gene>')
@@ -1285,20 +1284,6 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
             variants=DB().variants(**args),
         )
 
-    if submitter_id:
-        if not DB().is_submitter_id(submitter_id):
-            abort(404)
-        submitter_info = DB().submitter_info(submitter_id)
-        args['submitter1_id'] = submitter_id
-
-        return render_template_async(
-            'variants-by-gene--gene-submitter-significance.html',
-            gene_info=gene_info,
-            submitter_info=submitter_info,
-            significance=significance,
-            variants=DB().variants(**args),
-        )
-
     if condition_name:
         if not DB().is_condition_name(condition_name):
             abort(404)
@@ -1311,6 +1296,19 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
             significance=significance,
             variants=DB().variants(**args),
         )
+
+    if not DB().is_submitter_id(submitter_id):
+        abort(404)
+    submitter_info = DB().submitter_info(submitter_id)
+    args['submitter1_id'] = submitter_id
+
+    return render_template_async(
+        'variants-by-gene--gene-submitter-significance.html',
+        gene_info=gene_info,
+        submitter_info=submitter_info,
+        significance=significance,
+        variants=DB().variants(**args),
+    )
 
 @app.route('/variants-by-significance')
 @app.route('/variants-by-significance/<superescaped:significance>')
