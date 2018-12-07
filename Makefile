@@ -3,7 +3,8 @@ all: mondo
 	./create-current-tables.py
 
 countries:
-	./scrape-submitter-info.py
+	wget -O organization_summary.txt ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/tab_delimited/organization_summary.txt
+	./get-submitter-info.py
 
 mondo:
 	wget -O mondo.owl http://purl.obolibrary.org/obo/mondo.owl
