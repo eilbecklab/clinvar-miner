@@ -58,7 +58,7 @@
 320384	Courtagen Diagnostics Laboratory; Courtagen Life Sciences	USA
 320388	Institute of Human Genetics; University Hospital Ulm	DEU
 320418	Division Human Genetics; Medical University Innsbruck	AUT
-320494	Counsyl	USA
+320494	Myriad Women's Health	USA
 500012	Leiden Muscular Dystrophy pages (CAV3)	NLD
 500013	DAG1 homepage - Leiden Muscular Dystrophy pages; Leiden University Medical Center	NLD
 500014	DPM3 homepage - Leiden Muscular Dystrophy pages; Leiden University Medical Center	NLD
@@ -87,6 +87,7 @@
 500074	Tuberous sclerosis database - Tuberous sclerosis 2 (TSC2); University College London	GBR
 500075	Tuberous sclerosis database - Tuberous sclerosis 1 (TSC1); University College London	GBR
 500078	DLE - Diagnosticos Laboratoriais Especializados	BRA
+500086	Foulkes Cancer Genetics LDI; Lady Davis Institute for Medical Research	CAN
 500092	CFTR2	USA
 500097	Garg Lab; Nationwide Children's Hospital	USA
 500102	dbVar; National Center for Biotechnology Information (NCBI)	USA
@@ -1074,6 +1075,7 @@
 506626	Division of Human Genetics; Cincinnati Children's Hospital	USA
 506627	Broad Institute Rare Disease Group; Broad Institute	USA
 506628	Pharmacology and Genetics Laboratory; Bauru School of Dentistry, University of Sao Paulo	BRA
+506629	Department of Neurology and Neurophysiology; Children's University Hospital	IRL
 506631	Consultorio y Laboratorio de Neurogenética; Hospital JM Ramos Mejia	ARG
 506632	Wendy Chung Laboratory; Columbia University Medical Center	USA
 506634	Genotek; Genotek Ltd.	CAN
@@ -1097,6 +1099,7 @@
 506672	Clinical Genomics Lab; St. Jude Children's Research Hospital	USA
 506673	Cancer Genomics Laboratory; Texas Children's Hospital	USA
 506674	Department of Internal Medicine, The University of Texas McGovern Medical School; The University of Texas Health Science Center at Houston	USA
+506675	Clinical Cancer Genetics and Family Consultants; Athens Medical Center	GRC
 506679	IRCCS Fondazione Stella Maris; University of Pisa	ITA
 506684	Stewart Lab; University of Birmingham	GBR
 506687	Papaemmanuil Lab; Memorial Sloan Kettering Cancer Research Center	USA
@@ -1134,3 +1137,7 @@
 506786	Genetic Services Unit; National Institute of Biomedical Genomics	IND
 506789	Laboratory of Human Molecular Genetics; Institute of Cytology and Genetics	RUS
 506796	Grupo de Pesquisa Clinica e Molecular em Endocrinologia e Metabologia	BRA
+506797	Gregorio Maranon General University Hospital; Gregorio Maranon Health Research Institute	ESP
+506801	Pathology and Clinical Laboratory Medicine; King Fahad Medical City	SAU
+506809	Medical Genetics; American University of Beirut	LBN
+506834	University of Washington Department of Laboratory Medicine	USA
