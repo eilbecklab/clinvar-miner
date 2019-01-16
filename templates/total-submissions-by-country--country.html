@@ -13,6 +13,7 @@
     {% endwith %}
     <div class="totals">
         <div>Total submitters: {{ total_submissions_by_submitter|length }}</div>
+        <div>Total submissions: {{ total_submissions }}</div>
         {% if total_submissions_by_submitter %}
             <div>{{ 'submitter-table'|tabledownloadlink|safe }}</div>
         {% endif %}

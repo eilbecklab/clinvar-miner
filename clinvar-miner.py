@@ -1064,9 +1064,8 @@ def total_submissions_by_country(country_code = None):
     if country_code == None:
         return render_template(
             'total-submissions-by-country.html',
-            total_submissions_by_country=DB().total_submissions_by_country(
-                **args
-            ),
+            total_submissions_by_country=DB().total_submissions_by_country(**args),
+            total_submissions=DB().total_submissions(**args),
         )
 
     country_name = DB().country_name(country_code)
@@ -1077,6 +1076,10 @@ def total_submissions_by_country(country_code = None):
         'total-submissions-by-country--country.html',
         country_name=country_name,
         total_submissions_by_submitter=DB().total_submissions_by_submitter(
+            country_code=country_code,
+            **args
+        ),
+        total_submissions=DB().total_submissions(
             country_code=country_code,
             **args
         ),
@@ -1115,6 +1118,7 @@ def total_submissions_by_method():
         'total-submissions-by-method.html',
         total_submissions_by_normalized_method_over_time=rows,
         total_submissions_by_method=DB().total_submissions_by_method(**args),
+        total_submissions=DB().total_submissions(**args),
     )
 
 @app.route('/variants-by-condition')

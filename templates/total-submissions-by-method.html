@@ -10,24 +10,27 @@
         {% set min_conflict_level_filter = True %}
         {% include 'include/filter-form.html' %}
     {% endwith %}
-    {% if total_submissions_by_method %}
-        <svg id="graph"></svg>
-        <script type="application/javascript">
-            var data = {{ total_submissions_by_normalized_method_over_time|tojson }};
-            var parseTime = d3.timeParse("%Y-%m");
-            data = data.map(function(d) {
-                return {
-                    x: parseTime(d.date),
-                    y: d.count,
-                    serie: d.normalized_method,
-                }
-            });
-            lineGraph(data, 'Submissions', 50000);
-        </script>
-        <div class="totals">
-            <div>Total methods: {{ total_submissions_by_method|length }}</div>
+    <svg id="graph"></svg>
+    <script type="application/javascript">
+        var data = {{ total_submissions_by_normalized_method_over_time|tojson }};
+        var parseTime = d3.timeParse("%Y-%m");
+        data = data.map(function(d) {
+            return {
+                x: parseTime(d.date),
+                y: d.count,
+                serie: d.normalized_method,
+            }
+        });
+        lineGraph(data, 'Submissions', 50000);
+    </script>
+    <div class="totals">
+        <div>Total methods: {{ total_submissions_by_method|length }}</div>
+        <div>Total submissions: {{ total_submissions }}</div>
+        {% if total_submissions_by_method %}
             <div>{{ 'method-table'|tabledownloadlink|safe }}</div>
-        </div>
+        {% endif %}
+    </div>
+    {% if total_submissions_by_method %}
         <table class="simple-numeric sortable table" id="method-table" style="width:auto">
             <thead>
                 <tr>

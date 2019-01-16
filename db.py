@@ -297,10 +297,28 @@ class DB():
         ))
 
     def total_submissions(self, **kwargs):
-        return list(self.cursor.execute(
-            'SELECT COUNT(*) FROM submissions WHERE date=?',
-            [kwargs.get('date') or self.max_date()]
-        ))[0][0]
+        self.query = '''
+            SELECT COUNT(DISTINCT scv1) FROM comparisons
+            WHERE
+                star_level1>=:min_stars AND
+                star_level2>=:min_stars AND
+                conflict_level>=:min_conflict_level
+                AND date=:date
+        '''
+
+        self.parameters = {
+            'min_stars': kwargs.get('min_stars', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
+        }
+
+        if kwargs.get('country_code'):
+            self.and_equals('submitter1_country_code', kwargs['country_code'])
+
+        if kwargs.get('normalized_method'):
+            self.and_equals('normalized_method1', kwargs['normalized_method'])
+
+        return self.value()
 
     def total_submitters(self, **kwargs):
         self.query = '''

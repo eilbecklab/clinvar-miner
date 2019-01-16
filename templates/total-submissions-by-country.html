@@ -61,6 +61,7 @@
     </script>
     <div class="totals">
         <div>Total countries: {{ total_submissions_by_country|length }}</div>
+        <div>Total submissions: {{ total_submissions }}</div>
         {% if total_submissions_by_country %}
             <div>{{ 'country-table'|tabledownloadlink|safe }}</div>
         {% endif %}
