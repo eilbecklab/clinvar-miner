@@ -78,7 +78,7 @@
         {{ h2('Breakdown by gene')|safe }}
         {{ table_search_box('gene-table')|safe }}
         <div class="totals">
-            <div>Total genes: {{ total_variants_by_gene|length }}</div>
+            <div>Total genes and gene combinations: {{ total_variants_by_gene|length }}</div>
             <div>{{ 'gene-table'|tabledownloadlink|safe }}</div>
         </div>
         <table class="simple-numeric sortable table" id="gene-table">
