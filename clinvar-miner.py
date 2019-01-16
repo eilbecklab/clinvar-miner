@@ -1331,6 +1331,10 @@ def variants_by_significance(significance = None):
         return render_template_async(
             'variants-by-significance.html',
             total_variants_by_significance=DB().total_variants_by_significance(**args),
+            total_variants=DB().total_variants(**args),
+            total_genes=DB().total_genes(**args),
+            total_conditions=DB().total_conditions(**args),
+            total_submitters=DB().total_submitters(**args),
         )
 
     if not DB().is_significance(significance):

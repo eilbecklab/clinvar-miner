@@ -15,6 +15,10 @@
     {% endwith %}
     <div class="totals">
         <div>Total significance terms: {{ total_variants_by_significance|length }}</div>
+        <div>Total variants: {{ total_variants }}</div>
+        <div>Total genes and gene combinations: {{ total_genes }}</div>
+        <div>Total conditions: {{ total_conditions }}</div>
+        <div>Total submitters: {{ total_submitters }}</div>
         {% if total_variants_by_significance %}
             <div>{{ 'significance-table'|tabledownloadlink|safe }}</div>
         {% endif %}
