@@ -2,15 +2,10 @@
 
 import sqlite3
 
-print('Creating current tables')
+print('Creating indexes and gene links table')
 
 db = __import__('import-clinvar-xml').connect()
 cursor = db.cursor()
-
-cursor.execute('''
-    CREATE VIEW IF NOT EXISTS current_submissions AS
-    SELECT * FROM submissions WHERE date=(SELECT MAX(date) FROM submissions)
-''')
 
 cursor.execute('CREATE INDEX IF NOT EXISTS submissions__rsid ON submissions (rsid)')
 cursor.execute('CREATE INDEX IF NOT EXISTS submissions__gene ON submissions (gene)')
@@ -49,6 +44,8 @@ cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__normalized_method2 ON co
 cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__condition2_name ON comparisons (condition2_name)')
 cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__conflict_level ON comparisons (conflict_level)')
 
+date = list(cursor.execute('SELECT MAX(date) FROM submissions'))[0][0]
+
 def create_gene_links_table(normalized):
     if normalized:
         table = 'normalized_gene_links'
@@ -63,15 +60,13 @@ def create_gene_links_table(normalized):
 
     cursor.execute('CREATE TABLE ' + table + ' (gene TEXT, see_also TEXT)')
 
-    gene_combinations = list(map(
-        lambda row: row[0],
-        cursor.execute('SELECT DISTINCT ' + gene_column + ' FROM current_submissions WHERE ' + type_column + '=2')
-    ))
+    query = 'SELECT DISTINCT ' + gene_column + ' FROM submissions WHERE ' + type_column + '=2 AND date=?'
+    gene_combinations = list(map(lambda row: row[0], cursor.execute(query, [date])))
+
+    query = 'SELECT 1 FROM submissions WHERE ' + gene_column + '=? AND date=?'
     for gene_combination in gene_combinations:
         for individual_gene in gene_combination.split(', '):
-            is_gene = bool(list(cursor.execute(
-                'SELECT 1 FROM current_submissions WHERE ' + gene_column + '=? LIMIT 1', [individual_gene]
-            )))
+            is_gene = bool(list(cursor.execute(query, [individual_gene, date])))
             if is_gene:
                 cursor.executemany(
                     'INSERT INTO ' + table + ' VALUES (?,?)',
