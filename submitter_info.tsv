@@ -22,7 +22,7 @@
 21170	Institute for Human Genetics; University Clinic Freiburg	DEU
 21766	Laboratory for Molecular Medicine; Partners HealthCare Personalized Medicine	USA
 22949	Molecular Genetics Laboratory; Institute for Ophthalmic Research	DEU
-25969	ARUP Laboratories, Molecular Genetics and Genomics; ARUP laboratories	USA
+25969	ARUP Laboratories, Molecular Genetics and Genomics; ARUP Laboratories	USA
 26957	GeneDx	USA
 28338	Molecular Diagnostics Lab; Nemours Alfred I. duPont Hospital for Children	USA
 61756	Ambry Genetics	USA
@@ -48,7 +48,7 @@
 299380	Keegan Laboratory; University of Michigan	USA
 308659	Michigan Medical Genetics Laboratories; University of Michigan	USA
 319861	Pediatric Molecular Hematology Laboratory; Schneider Children's Medical Center of Israel	ISR
-319864	Cytogenetics and Genomic Microarray Laboratories; ARUP laboratories	USA
+319864	Cytogenetics and Genomic Microarray Laboratories; ARUP Laboratories	USA
 319945	Medical Genetics Institute; Shaare Zedek Medical Center	ISR
 319999	Centre for Inherited Metabolic Diseases; Karolinska University Hospital	SWE
 320095	Bristol Genetics Laboratory - North Bristol NHS Trust; Southmead Hospital - Pathology Sciences	GBR
@@ -198,7 +198,7 @@
 504732	TNNI2 homepage - Leiden Muscular Dystrophy pages	NLD
 504734	TPM2 homepage - Leiden Muscular Dystrophy pages	NLD
 504741	TPM3 homepage - Leiden Muscular Dystrophy pages	NLD
-504785	ANO5 homepage - Leiden Muscular Dystrophy pages	NLD
+504785	ANO5 @LOVD	NLD
 504791	Molecular Genetics Unit; Terrassa Hospital	ESP
 504792	Genetics Research Lab; Taif University	SAU
 504793	Dept of Medical Genetics; Shandong University	CHN
@@ -601,7 +601,7 @@
 505770	Biology Pathology Center; Lille University Hospital	FRA
 505773	Rui Chen Lab; Baylor College of Medicine	USA
 505774	Human Genetics and Genome Research Division; National Research Centre	EGY
-505775	Molecular Genetics Department; Federal State Budget Institution Research Center for Obstetrics, Gynecology and Perinatology	RUS
+505775	Molecular Genetics Department; Kulakov National Medical Research Center for Obstetrics, Gynecology and Perinatology	RUS
 505776	Institute for Biomarker Research; Medical Diagnostic Laboratories, L.L.C.	USA
 505777	Hospital for Sick Children	CAN
 505778	Hereditary Research Laboratory; Bethlehem University	PSE
@@ -736,7 +736,7 @@
 506006	Genetics; Medical University of Vienna	AUT
 506007	Cytogenetics and Molecular Genetics Section, Pathology Unit,  BARC Hospital; Bhabha Atomic Research Centre	IND
 506009	Center for Breast Cancer; National Cancer Center	KOR
-506010	Laboratory of Genomics and Molecular Biology; A. C. Camargo Cancer Center	BRA
+506010	Laboratory of Genomics and Molecular Biology; A.C.Camargo Cancer Center	BRA
 506011	Kere lab; Karolinska Institutet	SWE
 506012	Rappaport Faculty of Medicine; Technion-Israel Institute of Technology	ISR
 506014	Unité de Différenciation Epithéliale et Auto-Immunité Rhumatoïde; INSERM - Université Paul Sabatier	FRA
@@ -756,7 +756,7 @@
 506039	Equipe Genetique des Anomalies du Developpement; Université de Bourgogne	FRA
 506041	Hunter Genetics General Clinical Genetics Service; Hunter Genetics	AUS
 506042	Molecular Genetics Laboratory; Centre for Cardiovascular Surgery and Transplantation	CZE
-506043	Genetics and Molecular Pathology; SA Pathology	AUS
+506043	Molecular Pathology, SA Pathology	AUS
 506044	Division of Medical Genetics; Sainte-Justine Hospital	CAN
 506047	The Genetics Institute; Rambam Health Care Campus	ISR
 506048	Centre for Molecular Diagnostics & Cell Biology; Rajiv Gandhi Cancer Institute & Research Center	IND
@@ -791,6 +791,7 @@
 506099	Genome.One	AUS
 506100	Department of Animal Sciences; Quaid-i-Azam University	PAK
 506102	Akbari laboratory; Tarbiat Modares University	IRN
+506103	Mahdieh Medical Diagnostic Center; Falavarjan Branch, Islamic Azad University	IRN
 506105	Division of Host Defense; Kyushu University	JPN
 506106	Unit for Genetic & Epidemiological Research on Neurological Disorders; Instituto de Investigação e Inovação em Saúde	PRT
 506109	Biotechnology Research Center; Pasteur Institute of Iran	IRN
@@ -823,7 +824,7 @@
 506152	Department of Pathology and Laboratory Medicine; Sinai Health System	CAN
 506153	Laboratoires de Diagnostic Génétique; Hôpitaux Universitaires de Strasbourg	FRA
 506155	Rampazzo Lab,  Human Molecular Genetics Unit; University of Padua	ITA
-506161	ClinGen Inherited Cardiomyopathy Expert Panel	USA
+506161	ClinGen Inherited Cardiomyopathy Variant Curation Expert Panel	USA
 506162	Caglayan Lab; Istanbul Bilim University	TUR
 506166	RBHT Clinical Genetics and Genomics Laboratory; Royal Brompton and Harefield NHS Foundation Trust	GBR
 506167	Servicio Extremeño de Salud; Hospital de Mérida	ESP
@@ -854,6 +855,7 @@
 506200	CHLA Center for Personalized Medicine; Children's Hospital, Los Angeles	USA
 506201	Limoges University Hospital Laboratory; Limoges University Hospital	FRA
 506202	Rare Disease Group, Clinical Genetics; Karolinska Institutet	SWE
+506203	AlTemaimi Lab, Faculty of Medicine; Kuwait University	KWT
 506204	Zheng Lab; Zhongnan Hospital of Wuhan University	CHN
 506205	Yang An-Suei Laboratory; Academia Sinica	TWN
 506206	Noncommunicable Diseases Research Center; Fasa University of Medical Sciences	IRN
@@ -967,7 +969,7 @@
 506382	Diagnostic Laboratory, Department of Genetics; University Medical Center Groningen	NLD
 506387	Medical Molecular Genetics (National Research Centre)	EGY
 506392	Laboratory for Cytogenetics and Genome Research; KU Leuven	BEL
-506394	Section of Genetics; University of Leeds	GBR
+506394	Molecular Medicine; University of Leeds	GBR
 506396	Genetics Division; Universidade Federal de Sao Paulo	BRA
 506400	Research Laboratory, University Department of Zoology; Vinoba Bhave University	IND
 506401	Histocompatability and Immunogenetics; National Health Service Blood and Transplant	GBR
@@ -988,12 +990,13 @@
 506435	Unidade de Endocrinologia Genetica - LIM25; Universidade de Sao Paulo (USP)	BRA
 506437	Beijing Key Laboratory for Genetic Research of Skeletal Deformity; Peking Union Medical College Hospital	CHN
 506438	Clinical Genetics Department; Hospital Sant Joan de Deu	ESP
-506439	ClinGen RASopathy Expert Panel	USA
+506439	ClinGen RASopathy Variant Curation Expert Panel	USA
 506440	Inherited Neuropathy Consortium	USA
 506441	The Genetic Institute, Ha'emek Medical center; Ha'emek Medical Center	ISR
 506442	Molecular Diagnostics Laboratory; Nadiya Clinic of Reproductive Medicine	UKR
 506444	Children's Hospital of Soochow University; Soochow University	CHN
 506451	Department of Hematology; 303rd Hospital of the People's Liberation Army	CHN
+506452	Genetics of Infertility and Preimplantation Genetic Diagnosis; Centre Hospitalier Universitaire Grenoble Alpes	FRA
 506453	Genome Diagnostics Laboratory; VU University Medical Center Amsterdam	NLD
 506454	Genomic Medicine Laboratory; University of Vermont Medical Center	USA
 506455	Dental Genetics Laboratory; Seoul National University School of Dentistry	KOR
@@ -1048,7 +1051,7 @@
 506555	Gill Bejerano Lab; Stanford University	USA
 506556	The Danek Gertner Institute of Human Genetics; Sheba Medical Center	ISR
 506557	Magee Womens Research Institute; University of Pittsburgh Medical Center	USA
-506558	ClinGen PAH Expert Panel; ClinGen	USA
+506558	ClinGen PAH Variant Curation Expert Panel; ClinGen	USA
 506559	Division of Molecular Medicine; Faculty of Medicine Siriraj Hospital, Mahidol University	THA
 506560	Kahle Lab; Yale University	USA
 506572	Metabolic Disease laboratory; Sheba Medical Center	ISR
@@ -1081,6 +1084,7 @@
 506610	College of Science, Al Muthanna University; Al Muthanna University	IRQ
 506614	Australian Inherited Retinal Disease Registry & DNA Bank; Sir Charles Gairdner Hospital	AUS
 506617	Tehran Medical Genetics Laboratory	IRN
+506619	Cytogenetics and Genomics Laboratory; Medical University of South Carolina	USA
 506620	Neuromuscular Diagnostic Laboratory; American University of Beirut Medical Center	LBN
 506621	3DMed Clinical Laboratory Inc	CHN
 506624	Klco Lab; St Judes Childrens Research Hospital	USA
@@ -1099,7 +1103,9 @@
 506642	Genetic Laboratory Services; Alberta Children's Hospital	CAN
 506643	Division of Genetic Medicine; Lausanne University Hospital	CHE
 506644	Raymond Lab; University of Cambridge	GBR
+506645	Genomic Medicine Theme, NIHR Oxford Biomedical Research Centre; University of Oxford	GBR
 506646	Department of Molecular Diagnostics; Institute of Oncology	SVN
+506647	Dept of Genetics; Assistance Publique-Hôpitaux de Paris (APHP) - R DEBRE University Hospital	FRA
 506652	Genomics For Life	AUS
 506653	Department of Genetics; Sultan Qaboos University Hospital, Oman	OMN
 506654	DNA Laboratuvarlari GHTM	TUR
@@ -1117,12 +1123,16 @@
 506673	Cancer Genomics Laboratory; Texas Children's Hospital	USA
 506674	Department of Internal Medicine, The University of Texas McGovern Medical School; The University of Texas Health Science Center at Houston	USA
 506675	Clinical Cancer Genetics and Family Consultants; Athens Medical Center	GRC
+506676	Dash Lab; University Health Network	CAN
 506678	Pathophysiology of Heart Rhythm Disorders; Université Lyon 1 Claude Bernard	FRA
 506679	IRCCS Fondazione Stella Maris; University of Pisa	ITA
+506681	Medical Genetics Unit; University of L'Aquila	ITA
 506684	Stewart Lab; University of Birmingham	GBR
+506686	Department of Endocrinology and Genetic Metabolic Diseases; Children’s Hospital of Chongqing Medical University	CHN
 506687	Papaemmanuil Lab; Memorial Sloan Kettering Cancer Research Center	USA
 506688	Nalepa Lab; Indiana University School of Medicine	USA
 506690	Western Connecticut Health Network; Rudy L. Ruggles Biomedical Research Institute	USA
+506691	Institute of Experimental Epileptology and Cognition Research; University of Bonn	DEU
 506692	Service de genetique medicale, Pr. Levy; Hopital de La Timone Enfants, APHM	FRA
 506694	ClinGen PTEN Variant Curation Expert Panel	USA
 506696	Genomic Medicine Lab; University of California San Francisco	USA
@@ -1146,8 +1156,10 @@
 506728	Bio-informatics Data Center; China National GeneBank	CHN
 506730	Gharavi Laboratory; Columbia University	USA
 506736	Knight Cancer Institute; Oregon Health and Science University	USA
+506737	Department of Immunology and Histocompatibility; University of Thessaly	GRC
+506738	Cole/Wambach Lab; Washington University in St. Louis	USA
 506742	Molecular Biology Laboratory; University of Basrah	IRQ
-506744	ClinGen Hearing Loss Expert Panel	USA
+506744	ClinGen Hearing Loss Variant Curation Expert Panel	USA
 506749	van Haaften laboratory; University Medical Center Utrecht	NLD
 506752	Polak associated Lab; Imagine Institute	FRA
 506753	Laboratory of Biochemistry; Caen University Hospital	FRA
@@ -1163,6 +1175,7 @@
 506782	The Division of Genetics and Genomic Medicine; Washington University School of Medicine 	USA
 506785	Myelin Disorders Clinic; Children's Medical Center	USA
 506786	Genetic Services Unit; National Institute of Biomedical Genomics	IND
+506787	Department of Pediatrics and Developmental Biology; Tokyo Medical and Dental University	JPN
 506789	Laboratory of Human Molecular Genetics; Institute of Cytology and Genetics	RUS
 506792	Institute for Genomic Medicine (IGM) Clinical Laboratory; Nationwide Children's Hospital	USA
 506794	Mayo Clinic Genomics Laboratory; Mayo CLinic	USA
@@ -1173,6 +1186,7 @@
 506809	Medical Genetics; American University of Beirut	LBN
 506810	Molecular Pathology Diagnostics Labratory; University of Iowa Hospitals & Clinics	USA
 506812	Breda Genetics srl	ITA
+506814	MutSpliceDB: a database of splice sites variants effects on splicing; NIH	USA
 506817	ClinGen CDH1 Variant Curation Expert Panel; ClinGen	USA
 506818	Lab of Molecular Oncology; Sapienza University of Rome	ITA
 506819	Division of Critical Care, Department of Pediatrics; Cardinal Glennon Children's Hospital	USA
@@ -1187,5 +1201,12 @@
 506851	Medical Genetics; Necip Fazil Sehir Hastanesi	TUR
 506854	Biologie des Tumeurs Solides; CHU de Montpellier	FRA
 506858	Biochemistry and Genetic Laboratory; APHP Bichat Claude Bernard Hospital	FRA
+506861	Molecular and Clinical Genetics; Institute of Human Genetics P.A.S.	POL
+506863	Institute of Bioinformatics	IND
 506870	Department of Rehabilitation Medicine, Incheon St. Mary’s Hospital; College of Medicine, The Catholic University of Korea	KOR
 506871	Clinical Genetics; Amsterdam Medical Centre	NLD
+506875	Thoracic Oncology Service; Memorial Sloan Kettering Cancer Center	USA
+506876	Routes Lab; Medical College of Wisconsin	USA
+506878	Human Cancer Genomic Research; King Faisal Specialist Hospital and Research Center	SAU
+506879	Laboratory for Clinical Genomics and Advanced Technology; Dartmouth-Hitchcock Medical Center	USA
+506884	Medical Genetic Team; CHRU Montpellier	FRA
