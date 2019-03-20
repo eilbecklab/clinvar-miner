@@ -3,11 +3,11 @@ all: mondo
 	./create-indexes.py
 
 countries:
-	wget -O organization_summary.txt ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/tab_delimited/organization_summary.txt
+	curl ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/tab_delimited/organization_summary.txt > organization_summary.txt
 	./get-submitter-info.py
 
 mondo:
-	wget -O mondo.owl http://purl.obolibrary.org/obo/mondo.owl
+	curl -L http://purl.obolibrary.org/obo/mondo.owl > mondo.owl
 
 latest: mondo
 	./import-latest-clinvar-xml.sh
