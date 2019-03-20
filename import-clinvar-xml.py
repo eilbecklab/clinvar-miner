@@ -6,7 +6,8 @@ from functools import partial
 from mmap import mmap
 from mondo import Mondo
 from multiprocessing import Pool
-from os.path import basename
+from os.path import basename, getsize
+from psutil import virtual_memory
 from pycountry import countries
 from sys import argv
 from xml.etree import ElementTree
@@ -292,10 +293,13 @@ def import_file(filename):
 
     date = matches.group(1)
 
-    #hack the ClinVar XML file into pieces to parse it in parallel
+    #hack the ClinVar XML file into pieces to parse it in parallel (if memory permits)
     with open(filename, 'r+b') as f:
         clinvarsets = re.findall(b'<ClinVarSet .+?</ClinVarSet>', mmap(f.fileno(), 0), re.DOTALL)
-    submission_sets = Pool().map(partial(get_submissions, date), clinvarsets)
+    if virtual_memory().available >= getsize(filename) * 2:
+        submission_sets = Pool().map(partial(get_submissions, date), clinvarsets)
+    else:
+        submission_sets = map(partial(get_submissions, date), clinvarsets)
     submissions = [submission for submission_set in submission_sets for submission in submission_set]
 
     #do all the database imports at once to minimize the time that we hold the database lock

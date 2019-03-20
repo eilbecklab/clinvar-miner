@@ -2,7 +2,7 @@
 
 1. Install Make, cURL, Python 3, and Pip 3 from your system package manager.
 
-2. Run `pip3 install flask pycountry` to install Flask and pycountry.
+2. Run `pip3 install -r requirements.txt` to install required Python packages.
 
 3. Run `make countries` to update information about ClinVar submitters and their
    countries.
