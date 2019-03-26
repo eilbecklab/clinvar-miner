@@ -11,8 +11,8 @@ def iri_to_mondo_xref(iri):
 class Mondo:
     xref_to_mondo_xref = {}
     name_to_mondo_xref = {}
-    #mondo_xref_to_name = {}
-    descendency_by_xref = {}
+    mondo_xref_to_name = {}
+    parents_by_mondo_xref = {}
 
     def __init__(self, path_to_mondo_owl = 'mondo.owl'):
         ns = {
@@ -36,7 +36,7 @@ class Mondo:
             condition_name = label_el.text
 
             self.name_to_mondo_xref[condition_name.lower()] = mondo_xref
-            #self.mondo_xref_to_name[mondo_xref] = condition_name
+            self.mondo_xref_to_name[mondo_xref] = condition_name
 
             for xref_el in class_el.findall('./oboInOwl:hasDbXref', ns):
                 if not xref_el.text:
@@ -54,11 +54,18 @@ class Mondo:
                     )
                     if not parent_xref:
                         continue
-                    if not parent_xref in self.descendency_by_xref:
-                        self.descendency_by_xref[parent_xref] = []
-                    self.descendency_by_xref[parent_xref].append(mondo_xref)
+                    if not mondo_xref in self.parents_by_mondo_xref:
+                        self.parents_by_mondo_xref[mondo_xref] = []
+                    self.parents_by_mondo_xref[mondo_xref].append(parent_xref)
 
             del class_el #conserve memory
+
+    def ancestors(self, xref):
+        parents = self.parents_by_mondo_xref.get(xref, [])
+        ret = set(parents)
+        for parent in parents:
+            ret |= self.ancestors(parent)
+        return ret
 
     def matches(self, condition_name, xrefs):
         ret = set()
@@ -74,10 +81,10 @@ class Mondo:
         return ret
 
     def is_descendent_of(self, descendent_xref, ancestor_xref):
-        if ancestor_xref not in self.descendency_by_xref:
-            return False #ancestor has no children
-        for child_xref in self.descendency_by_xref[ancestor_xref]:
-            if descendent_xref == child_xref or self.is_descendent_of(descendent_xref, child_xref):
+        if descendent_xref not in self.parents_by_mondo_xref:
+            return False #term has no parents
+        for parent_xref in self.parents_by_mondo_xref[descendent_xref]:
+            if parent_xref == ancestor_xref or self.is_descendent_of(descendent_xref, parent_xref):
                 return True
         return False
 

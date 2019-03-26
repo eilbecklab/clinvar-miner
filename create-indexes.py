@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
 import sqlite3
+from mondo import Mondo
 
-print('Creating indexes and gene links table')
+
+print('Creating indexes')
 
 db = __import__('import-clinvar-xml').connect()
 cursor = db.cursor()
@@ -44,7 +46,11 @@ cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__normalized_method2 ON co
 cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__condition2_name ON comparisons (condition2_name)')
 cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__conflict_level ON comparisons (conflict_level)')
 
+
 date = list(cursor.execute('SELECT MAX(date) FROM submissions'))[0][0]
+
+
+print('Creating gene links table')
 
 def create_gene_links_table(normalized):
     if normalized:
@@ -77,6 +83,46 @@ def create_gene_links_table(normalized):
 
 create_gene_links_table(True)
 create_gene_links_table(False)
+
+print('Creating Mondo table')
+
+mondo = Mondo()
+
+cursor.execute('DROP TABLE IF EXISTS mondo_clinvar_relationships')
+cursor.execute('''
+    CREATE TABLE mondo_clinvar_relationships (
+        mondo_xref TEXT,
+        mondo_name TEXT,
+        clinvar_name TEXT,
+        PRIMARY KEY (mondo_name, clinvar_name)
+    )
+''')
+
+for row in list(cursor.execute('SELECT DISTINCT condition_name, condition_xrefs FROM submissions WHERE date=?', [date])):
+    clinvar_name = row[0]
+    xrefs = row[1].split(';')
+    for xref in xrefs:
+        if xref.startswith('MONDO:'):
+            mondo_name = mondo.mondo_xref_to_name[xref]
+            cursor.execute(
+                'INSERT OR IGNORE INTO mondo_clinvar_relationships VALUES (?,?,?)',
+                [xref, mondo_name, clinvar_name]
+            )
+
+#add rows to associate ClinVar condition names with all of their Mondo ancestors
+for row in list(cursor.execute('SELECT mondo_xref, clinvar_name FROM mondo_clinvar_relationships')):
+    xref = row[0]
+    clinvar_name = row[1]
+    for ancestor_xref in mondo.ancestors(xref):
+        if ancestor_xref not in mondo.mondo_xref_to_name:
+            continue #this is a deprecated term
+        ancestor_name = mondo.mondo_xref_to_name[ancestor_xref]
+        cursor.execute(
+            'INSERT OR IGNORE INTO mondo_clinvar_relationships VALUES (?,?,?)',
+            [ancestor_xref, ancestor_name, clinvar_name]
+        )
+
+cursor.execute('CREATE INDEX mondo_clinvar_relationships__mondo_xref ON mondo_clinvar_relationships (mondo_xref)')
 
 db.commit()
 db.close()
