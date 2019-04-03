@@ -91,7 +91,7 @@ mondo = Mondo()
 cursor.execute('DROP TABLE IF EXISTS mondo_clinvar_relationships')
 cursor.execute('''
     CREATE TABLE mondo_clinvar_relationships (
-        mondo_xref TEXT,
+        mondo_id INTEGER,
         mondo_name TEXT,
         clinvar_name TEXT,
         PRIMARY KEY (mondo_name, clinvar_name)
@@ -104,25 +104,27 @@ for row in list(cursor.execute('SELECT DISTINCT condition_name, condition_xrefs 
     for xref in xrefs:
         if xref.startswith('MONDO:'):
             mondo_name = mondo.mondo_xref_to_name[xref]
+            mondo_id = xref[len('MONDO:'):]
             cursor.execute(
                 'INSERT OR IGNORE INTO mondo_clinvar_relationships VALUES (?,?,?)',
-                [xref, mondo_name, clinvar_name]
+                [mondo_id, mondo_name, clinvar_name]
             )
 
 #add rows to associate ClinVar condition names with all of their Mondo ancestors
-for row in list(cursor.execute('SELECT mondo_xref, clinvar_name FROM mondo_clinvar_relationships')):
-    xref = row[0]
+for row in list(cursor.execute('SELECT mondo_id, clinvar_name FROM mondo_clinvar_relationships')):
+    mondo_id = row[0]
     clinvar_name = row[1]
-    for ancestor_xref in mondo.ancestors(xref):
+    for ancestor_xref in mondo.ancestors('MONDO:' + str(mondo_id)):
         if ancestor_xref not in mondo.mondo_xref_to_name:
             continue #this is a deprecated term
+        ancestor_id = ancestor_xref[len('MONDO:'):]
         ancestor_name = mondo.mondo_xref_to_name[ancestor_xref]
         cursor.execute(
             'INSERT OR IGNORE INTO mondo_clinvar_relationships VALUES (?,?,?)',
-            [ancestor_xref, ancestor_name, clinvar_name]
+            [ancestor_id, ancestor_name, clinvar_name]
         )
 
-cursor.execute('CREATE INDEX mondo_clinvar_relationships__mondo_xref ON mondo_clinvar_relationships (mondo_xref)')
+cursor.execute('CREATE INDEX mondo_clinvar_relationships__mondo_id ON mondo_clinvar_relationships (mondo_id)')
 
 db.commit()
 db.close()
