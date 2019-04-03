@@ -114,7 +114,7 @@ for row in list(cursor.execute('SELECT DISTINCT condition_name, condition_xrefs 
 for row in list(cursor.execute('SELECT mondo_id, clinvar_name FROM mondo_clinvar_relationships')):
     mondo_id = row[0]
     clinvar_name = row[1]
-    for ancestor_xref in mondo.ancestors('MONDO:' + str(mondo_id)):
+    for ancestor_xref in mondo.ancestors('MONDO:' + str(mondo_id).zfill(7)):
         if ancestor_xref not in mondo.mondo_xref_to_name:
             continue #this is a deprecated term
         ancestor_id = ancestor_xref[len('MONDO:'):]
