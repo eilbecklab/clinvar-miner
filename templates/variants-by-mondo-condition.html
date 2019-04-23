@@ -1,0 +1,30 @@
+{% extends 'extend/skin.html' %}
+{% set title = 'Variants by Mondo condition' %}
+{% block content %}
+    <form action="" autocomplete="off">
+        {% include 'include/filter-version.html' %}
+        {{ table_search_box('condition-table', 'div')|safe }}
+        <div class="totals">
+            <div>Total Mondo conditions: {{ mondo_conditions|length}}</div>
+            <div>{{ 'condition-table'|tabledownloadlink|safe }}</div>
+        </div>
+        <table class="simple-numeric sortable table" id="condition-table">
+            <thead>
+                <tr>
+                    <th>Mondo condition</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in mondo_conditions %}
+                    <tr>
+                        <td>
+                            <a href="{{ 'variants-by-mondo-condition/' + row['mondo_id']|string + query_suffix('date') }}">
+                                {{ row['mondo_name'] }}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+{% endblock %}

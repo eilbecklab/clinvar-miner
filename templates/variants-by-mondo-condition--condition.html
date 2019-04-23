@@ -1,0 +1,22 @@
+{% extends 'extend/skin.html' %}
+{% set title %}
+    Variants studied for {{ mondo_name }}
+{% endset %}
+{% block tagline %}
+    {{ mondo_condition_tagline(clinvar_names)|safe }}
+{% endblock %}
+{% block content %}
+    {% with %}
+        {% set review_status1_label = 'Minimum submission review status' %}
+        {% set method1_label = 'Collection method' %}
+        {% set min_conflict_level_filter = True %}
+        {% set original_terms_filter = True %}
+        {% set gene_filters = True %}
+        {% include 'include/filter-form.html' %}
+    {% endwith %}
+    {% include 'include/significance-overview.html' %}
+    {% if total_variants %}
+        {% include 'include/breakdown-by-gene-and-significance.html' %}
+        {% include 'include/breakdown-by-submitter-and-significance.html' %}
+    {% endif %}
+{% endblock %}

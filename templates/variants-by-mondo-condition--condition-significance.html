@@ -1,0 +1,12 @@
+{% extends 'extend/variants.html' %}
+{% set original_terms_filter = True %}
+{% set title %}
+    {% if significance %}
+        List of variants reported as {{ significance }} for {{ mondo_name }}
+    {% else %}
+        List of variants studied for {{ mondo_name }}
+    {% endif %}
+{% endset %}
+{% block tagline %}
+    {{ mondo_condition_tagline(clinvar_names)|safe }}
+{% endblock %}

@@ -406,6 +406,14 @@ def template_functions():
         tagline += '</ul></div>'
         return tagline
 
+    def mondo_condition_tagline(clinvar_names):
+        tagline = '<div class="tagline">Included ClinVar conditions (' + str(len(clinvar_names)) + '):<ul>'
+        for name in clinvar_names:
+            href = 'variants-by-condition/' + super_escape(name)
+            tagline += '<li><a href="' + href + '">' + name + '</a></li>'
+        tagline += '</ul></div>'
+        return tagline
+
     def h2(text):
         section_id = text.lower().replace(' ', '-')
         return '<h2 id="' + section_id + '">' + text + ' <a class="internal" href="' + request.url + '#' + section_id + '">#</a></h2>'
@@ -474,6 +482,7 @@ def template_functions():
         'condition_tagline': condition_tagline,
         'dates': dates,
         'gene_tagline': gene_tagline,
+        'mondo_condition_tagline': mondo_condition_tagline,
         'h2': h2,
         'submitter_link': submitter_link,
         'submitter_tagline': submitter_tagline,
@@ -1309,6 +1318,104 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
     return render_template_async(
         'variants-by-gene--gene-submitter-significance.html',
         gene_info=gene_info,
+        submitter_info=submitter_info,
+        significance=significance,
+        variants=DB().variants(**args),
+    )
+
+@app.route('/variants-by-mondo-condition')
+@app.route('/variants-by-mondo-condition/<int:mondo_condition_id>')
+@app.route('/variants-by-mondo-condition/<int:mondo_condition_id>/significance/any', defaults={'significance': ''})
+@app.route('/variants-by-mondo-condition/<int:mondo_condition_id>/significance/<superescaped:significance>')
+@app.route('/variants-by-mondo-condition/<int:mondo_condition_id>/gene/<superescaped:gene>', defaults={'significance': ''})
+@app.route('/variants-by-mondo-condition/<int:mondo_condition_id>/gene/<superescaped:gene>/<superescaped:significance>')
+@app.route('/variants-by-mondo-condition/<int:mondo_condition_id>/submitter/<int:submitter_id>', defaults={'significance': ''})
+@app.route('/variants-by-mondo-condition/<int:mondo_condition_id>/submitter/<int:submitter_id>/<superescaped:significance>')
+def variants_by_mondo_condition(mondo_condition_id = None, gene = None, significance = None, submitter_id = None):
+    args = {
+        'min_stars1': int_arg('min_stars1'),
+        'min_stars2': int_arg('min_stars1'),
+        'normalized_method1': request.args.get('method1'),
+        'normalized_method2': request.args.get('method1'),
+        'min_conflict_level': int_arg('min_conflict_level'),
+        'gene_type': int_arg('gene_type'),
+        'original_genes': request.args.get('original_genes'),
+        'date': request.args.get('date'),
+    }
+    if args['date'] != None and not DB().is_date(args['date']):
+        abort(404)
+
+    if mondo_condition_id == None:
+        return render_template_async(
+            'variants-by-mondo-condition.html',
+            mondo_conditions=DB().mondo_conditions(args['date']),
+        )
+
+    if not DB().is_mondo_condition_id(mondo_condition_id):
+        abort(404)
+    mondo_name = DB().mondo_name(mondo_condition_id)
+    clinvar_names = DB().clinvar_names_from_mondo_id(mondo_condition_id, args['date'])
+    args['condition1_name'] = clinvar_names
+    args['original_terms'] = request.args.get('original_terms')
+
+    if significance == None and gene == None and submitter_id == None:
+        return render_template_async(
+            'variants-by-mondo-condition--condition.html',
+            mondo_name=mondo_name,
+            clinvar_names = clinvar_names,
+            overview=get_significance_overview(
+                DB().total_variants_by_significance(**args)
+            ),
+            breakdown_by_gene_and_significance=get_breakdown_by_gene_and_significance(
+                DB().total_variants_by_gene(**args),
+                DB().total_variants_by_gene_and_significance(**args)
+            ),
+            breakdown_by_submitter_and_significance=get_breakdown_by_submitter_and_significance(
+                DB().total_variants_by_submitter(**args),
+                DB().total_variants_by_submitter_and_significance(**args)
+            ),
+            total_variants=DB().total_variants(**args),
+        )
+
+    if significance and not DB().is_significance(significance):
+        abort(404)
+    args['significance1'] = significance
+
+    if gene == None and submitter_id == None:
+        return render_template_async(
+            'variants-by-mondo-condition--condition-significance.html',
+            mondo_name=mondo_name,
+            clinvar_names=clinvar_names,
+            significance=significance,
+            variants=DB().variants(**args),
+        )
+
+    if gene:
+        if gene == 'intergenic':
+            gene = ''
+        elif not DB().is_gene(gene):
+            abort(404)
+        gene_info = DB().gene_info(gene, args['original_genes'], args['date'])
+        args['gene'] = gene
+
+        return render_template_async(
+            'variants-by-mondo-condition--condition-gene-significance.html',
+            mondo_name=mondo_name,
+            clinvar_names=clinvar_names,
+            gene_info=gene_info,
+            significance=significance,
+            variants=DB().variants(**args),
+        )
+
+    submitter_info = DB().submitter_info(submitter_id)
+    if not submitter_info:
+        abort(404)
+    args['submitter1_id'] = submitter_id
+
+    return render_template_async(
+        'variants-by-mondo-condition--condition-submitter-significance.html',
+        mondo_name=mondo_name,
+        clinvar_names=clinvar_names,
         submitter_info=submitter_info,
         significance=significance,
         variants=DB().variants(**args),

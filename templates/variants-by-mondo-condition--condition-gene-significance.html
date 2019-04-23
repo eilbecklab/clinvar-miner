@@ -1,0 +1,29 @@
+{% extends 'extend/variants.html' %}
+{% set gene_filters = True %}
+{% set original_terms_filter = True %}
+{% set title %}
+    {% if gene_info['type'] == 0 %}
+        {% if significance %}
+            List of intergenic variants reported as {{ significance }} for {{ mondo_name }}
+        {% else %}
+            List of intergenic variants studied for {{ mondo_name }}
+        {% endif %}
+    {% elif gene_info['type'] == 1 %}
+        {% if significance %}
+            List of variants in gene {{ gene_info['name']|genelink|safe }} reported as {{ significance }} for
+            {{ mondo_name }}
+        {% else %}
+            List of variants in gene {{ gene_info['name']|genelink|safe }} studied for {{ mondo_name }}
+        {% endif %}
+    {% else %}
+        {% if significance %}
+            List of variants in gene combination {{ gene_info['name'] }} reported as {{ significance }} for
+            {{ mondo_name }}
+        {% else %}
+            List of variants in gene {{ gene_info['name'] }} studied for {{ mondo_name }}
+        {% endif %}
+    {% endif %}
+{% endset %}
+{% block tagline %}
+    {{ mondo_condition_tagline(clinvar_names)|safe }}
+{% endblock %}
