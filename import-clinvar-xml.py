@@ -284,18 +284,14 @@ def get_submissions(date, set_xml):
     return submissions
 
 def import_file(filename):
-    matches = re.fullmatch(r'ClinVarFullRelease_(\d\d\d\d-\d\d).xml', basename(filename))
-    if matches:
-        print('Importing ' + filename)
-    else:
-        print('Skipped unrecognized filename ' + filename)
-        return
-
-    date = matches.group(1)
-
-    #hack the ClinVar XML file into pieces to parse it in parallel (if memory permits)
     with open(filename, 'r+b') as f:
-        clinvarsets = re.findall(b'<ClinVarSet .+?</ClinVarSet>', mmap(f.fileno(), 0), re.DOTALL)
+        doc = mmap(f.fileno(), 0)
+        for ev, el in ElementTree.iterparse(doc, events=['start']):
+            if el.tag == 'ReleaseSet':
+                date = el.attrib['Dated'][:7]
+                break
+        #hack the ClinVar XML file into pieces to parse it in parallel (if memory permits)
+        clinvarsets = re.findall(b'<ClinVarSet .+?</ClinVarSet>', doc, re.DOTALL)
     if virtual_memory().available >= getsize(filename) * 2:
         submission_sets = Pool().map(partial(get_submissions, date), clinvarsets)
     else:
