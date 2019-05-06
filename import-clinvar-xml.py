@@ -114,6 +114,16 @@ def create_tables():
         )
     ''')
 
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS mondo_clinvar_relationships (
+            date TEXT,
+            mondo_id INTEGER,
+            mondo_name TEXT,
+            clinvar_name TEXT,
+            PRIMARY KEY (date, mondo_id, clinvar_name)
+        )
+    ''')
+
 def get_gene_type(genes, small_variant):
     if len(genes) == 0:
         return 0 #intergenic
@@ -345,6 +355,34 @@ def import_file(filename):
         FROM submissions t1 INNER JOIN submissions t2
         ON t1.date=? AND t1.date=t2.date AND t1.variant_name=t2.variant_name
     ''', [date])
+
+    for row in list(cursor.execute('SELECT DISTINCT condition_name, condition_xrefs FROM submissions WHERE date=?', [date])):
+        clinvar_name = row[0]
+        xrefs = row[1].split(';')
+        for xref in xrefs:
+            if xref.startswith('MONDO:'):
+                mondo_name = mondo.mondo_xref_to_name[xref]
+                mondo_id = xref[len('MONDO:'):]
+                cursor.execute(
+                    'INSERT OR REPLACE INTO mondo_clinvar_relationships VALUES (?,?,?,?)',
+                    [date, mondo_id, mondo_name, clinvar_name]
+                )
+
+    cursor.execute('CREATE INDEX IF NOT EXISTS mondo_clinvar_relationships__date ON mondo_clinvar_relationships (date)')
+
+    #add rows to associate ClinVar condition names with all of their Mondo ancestors
+    for row in list(cursor.execute('SELECT mondo_id, clinvar_name FROM mondo_clinvar_relationships WHERE date=?', [date])):
+        mondo_id = row[0]
+        clinvar_name = row[1]
+        for ancestor_xref in mondo.ancestors('MONDO:' + str(mondo_id).zfill(7)):
+            if ancestor_xref not in mondo.mondo_xref_to_name:
+                continue #this is a deprecated term
+            ancestor_id = ancestor_xref[len('MONDO:'):]
+            ancestor_name = mondo.mondo_xref_to_name[ancestor_xref]
+            cursor.execute(
+                'INSERT OR REPLACE INTO mondo_clinvar_relationships VALUES (?,?,?,?)',
+                [date, ancestor_id, ancestor_name, clinvar_name]
+            )
 
     db.commit()
     db.close()

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import sqlite3
-from mondo import Mondo
 
 
 print('Creating indexes')
@@ -46,6 +45,8 @@ cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__normalized_method2 ON co
 cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__condition2_name ON comparisons (condition2_name)')
 cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__conflict_level ON comparisons (conflict_level)')
 
+cursor.execute('CREATE INDEX IF NOT EXISTS mondo_clinvar_relationships__mondo_id ON mondo_clinvar_relationships (mondo_id)')
+
 
 date = list(cursor.execute('SELECT MAX(date) FROM submissions'))[0][0]
 
@@ -83,48 +84,6 @@ def create_gene_links_table(normalized):
 
 create_gene_links_table(True)
 create_gene_links_table(False)
-
-print('Creating Mondo table')
-
-mondo = Mondo()
-
-cursor.execute('DROP TABLE IF EXISTS mondo_clinvar_relationships')
-cursor.execute('''
-    CREATE TABLE mondo_clinvar_relationships (
-        mondo_id INTEGER,
-        mondo_name TEXT,
-        clinvar_name TEXT,
-        PRIMARY KEY (mondo_name, clinvar_name)
-    )
-''')
-
-for row in list(cursor.execute('SELECT DISTINCT condition_name, condition_xrefs FROM submissions WHERE date=?', [date])):
-    clinvar_name = row[0]
-    xrefs = row[1].split(';')
-    for xref in xrefs:
-        if xref.startswith('MONDO:'):
-            mondo_name = mondo.mondo_xref_to_name[xref]
-            mondo_id = xref[len('MONDO:'):]
-            cursor.execute(
-                'INSERT OR IGNORE INTO mondo_clinvar_relationships VALUES (?,?,?)',
-                [mondo_id, mondo_name, clinvar_name]
-            )
-
-#add rows to associate ClinVar condition names with all of their Mondo ancestors
-for row in list(cursor.execute('SELECT mondo_id, clinvar_name FROM mondo_clinvar_relationships')):
-    mondo_id = row[0]
-    clinvar_name = row[1]
-    for ancestor_xref in mondo.ancestors('MONDO:' + str(mondo_id).zfill(7)):
-        if ancestor_xref not in mondo.mondo_xref_to_name:
-            continue #this is a deprecated term
-        ancestor_id = ancestor_xref[len('MONDO:'):]
-        ancestor_name = mondo.mondo_xref_to_name[ancestor_xref]
-        cursor.execute(
-            'INSERT OR IGNORE INTO mondo_clinvar_relationships VALUES (?,?,?)',
-            [ancestor_id, ancestor_name, clinvar_name]
-        )
-
-cursor.execute('CREATE INDEX mondo_clinvar_relationships__mondo_id ON mondo_clinvar_relationships (mondo_id)')
 
 db.commit()
 db.close()
