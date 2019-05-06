@@ -35,7 +35,7 @@ standard_methods = [
 ]
 
 def connect():
-    return sqlite3.connect('clinvar.db', timeout=600)
+    return sqlite3.connect(':memory:', timeout=600)
 
 def create_tables():
     db = connect()
@@ -113,6 +113,7 @@ def create_tables():
             PRIMARY KEY (date, scv1, scv2)
         )
     ''')
+    return db
 
 def get_gene_type(genes, small_variant):
     if len(genes) == 0:
@@ -283,7 +284,7 @@ def get_submissions(date, set_xml):
 
     return submissions
 
-def import_file(filename):
+def import_file(db, filename):
     with open(filename, 'r+b') as f:
         doc = mmap(f.fileno(), 0)
         for ev, el in ElementTree.iterparse(doc, events=['start']):
@@ -293,22 +294,26 @@ def import_file(filename):
         #hack the ClinVar XML file into pieces to parse it in parallel (if memory permits)
         clinvarsets = re.findall(b'<ClinVarSet .+?</ClinVarSet>', doc, re.DOTALL)
     if virtual_memory().available >= getsize(filename) * 2:
-        submission_sets = Pool().map(partial(get_submissions, date), clinvarsets)
+        pool = Pool()
+        submission_sets = pool.map(partial(get_submissions, date), clinvarsets)
+        pool.terminate()
     else:
         submission_sets = map(partial(get_submissions, date), clinvarsets)
     submissions = [submission for submission_set in submission_sets for submission in submission_set]
 
     #do all the database imports at once to minimize the time that we hold the database lock
-    db = connect()
     cursor = db.cursor()
-
+    print("recording submissions...........")
     cursor.executemany(
         'INSERT OR REPLACE INTO submissions VALUES (' + ','.join('?' * len(submissions[0])) + ')', submissions
     )
-
+    db.commit()
     cursor.execute('CREATE INDEX IF NOT EXISTS submissions__date ON submissions (date)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submissions__variant_name ON submissions (variant_name)')
-
+    cursor.execute('CREATE INDEX IF NOT EXISTS submissions__scv ON submissions (scv)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submissions__significance ON submissions (significance)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submissions__normalized_significance ON submissions (normalized_significance)')
+    print("recording comparisons...........")
     cursor.execute('''
         INSERT OR REPLACE INTO comparisons
         SELECT
@@ -343,9 +348,9 @@ def import_file(filename):
                 ELSE 4
             END AS conflict_level
         FROM submissions t1 INNER JOIN submissions t2
-        ON t1.date=? AND t1.date=t2.date AND t1.variant_name=t2.variant_name
-    ''', [date])
-
+        ON t1.variant_name=t2.variant_name
+        WHERE t1.date=? AND t2.date=?
+    ''', [date, date])
     db.commit()
     db.close()
 
@@ -354,6 +359,9 @@ if __name__ == '__main__':
         print('Usage: ./import-clinvar-xml.py ClinVarFullRelease_<year>-<month>.xml ...')
         exit()
 
-    create_tables()
+    db = create_tables()
     for filename in argv[1:]:
-        import_file(filename)
+        import_file(db, filename)
+    with sqlite3.connect('clinvar.db') as clinvardb:
+        db.backup(clinvardb, pages=14000)
+    db.close()
