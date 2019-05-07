@@ -35,7 +35,7 @@ standard_methods = [
 ]
 
 def connect():
-    return sqlite3.connect(':memory:', timeout=600)
+    return sqlite3.connect('clinvar.db', timeout=600)
 
 def create_tables():
     db = connect()
@@ -362,6 +362,4 @@ if __name__ == '__main__':
     db = create_tables()
     for filename in argv[1:]:
         import_file(db, filename)
-    with sqlite3.connect('clinvar.db') as clinvardb:
-        db.backup(clinvardb, pages=14000)
     db.close()
