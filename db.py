@@ -814,7 +814,11 @@ class DB():
             , COUNT(DISTINCT condition1_name) AS condition_count
             , COUNT(DISTINCT variant_name) AS count
             FROM comparisons
-            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND conflict_level>=:min_conflict_level
+            WHERE
+                star_level1>=:min_stars1 AND
+                star_level2>=:min_stars2 AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
