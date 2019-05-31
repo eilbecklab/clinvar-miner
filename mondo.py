@@ -84,7 +84,7 @@ class Mondo:
         if descendent_xref not in self.parents_by_mondo_xref:
             return False #term has no parents
         for parent_xref in self.parents_by_mondo_xref[descendent_xref]:
-            if parent_xref == ancestor_xref or self.is_descendent_of(descendent_xref, parent_xref):
+            if parent_xref == ancestor_xref or self.is_descendent_of(parent_xref, ancestor_xref):
                 return True
         return False
 
