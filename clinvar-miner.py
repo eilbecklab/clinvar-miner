@@ -969,7 +969,7 @@ def variants_in_conflict_by_submitter(submitter1_id = None, submitter2_id = None
 def index():
     return render_template_async(
         'index.html',
-        max_date=datetime.strptime(DB().max_date(), '%Y-%m'),
+        max_date=datetime.strptime(DB().max_date(), '%Y-%m-%d'),
         total_submissions=DB().total_submissions(),
         total_variants=DB().total_variants(),
     )

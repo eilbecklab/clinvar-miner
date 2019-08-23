@@ -298,7 +298,7 @@ def import_file(filename):
         doc = mmap(f.fileno(), 0)
         for ev, el in ElementTree.iterparse(doc, events=['start']):
             if el.tag == 'ReleaseSet':
-                date = el.attrib['Dated'][:7]
+                date = el.attrib['Dated']
                 break
         #hack the ClinVar XML file into pieces to parse it in parallel (if memory permits)
         clinvarsets = re.findall(b'<ClinVarSet .+?</ClinVarSet>', doc, re.DOTALL)
