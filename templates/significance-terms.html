@@ -9,7 +9,7 @@
     <svg id="graph"></svg>
     <script type="application/javascript">
         var data = {{ total_significance_terms_over_time|tojson }};
-        var parseTime = d3.timeParse("%Y-%m");
+        var parseTime = d3.timeParse("%Y-%m-%d");
         data = data.map(function(d) {
             return {
                 x: parseTime(d.date),
