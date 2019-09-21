@@ -193,7 +193,7 @@ class DB():
             self.and_equals('normalized_method1', kwargs['normalized_method'])
             self.and_equals('normalized_method2', kwargs['normalized_method'])
 
-        self.query += ' GROUP BY scv1 ORDER BY submitter_name'
+        self.query += ' GROUP BY scv1 ORDER BY star_level1 DESC'
 
         return self.rows()
 
