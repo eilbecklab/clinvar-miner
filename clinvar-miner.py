@@ -294,6 +294,19 @@ def int_arg(name, default = -1):
 def list_arg(name):
     return list(request.args.getlist(name)) or None
 
+def validate_args(args):
+    db = DB()
+    bad = (
+        (args.get('min_stars1') and (args['min_stars1'] < -1 or args['min_stars1'] > 4)) or
+        (args.get('normalized_method1') and not db.is_method(args['normalized_method1'])) or
+        (args.get('normalized_method2') and not db.is_method(args['normalized_method2'])) or
+        (args.get('min_conflict_level') and (args['min_conflict_level'] < -1 or args['min_conflict_level'] > 5)) or
+        (args.get('gene_type') and (args['gene_type'] < -1 or args['gene_type'] > 3)) or
+        (args.get('date') and not db.is_date(args['date']))
+    )
+    if bad:
+        abort(400)
+
 def significance_rank(significance):
     significance_ranks = [
         'pathogenic',
@@ -526,9 +539,8 @@ def variants_in_conflict_by_condition(condition_name = None):
         'original_genes': request.args.get('original_genes'),
         'date': request.args.get('date'),
     }
+    validate_args(args)
     min_conflict_level = max(1, int_arg('min_conflict_level'))
-    if args['date'] != None and not DB().is_date(args['date']):
-        abort(404)
 
     if condition_name == None:
         args['condition1_name'] = list_arg('conditions')
@@ -636,9 +648,8 @@ def variants_in_conflict_by_gene(gene = None, significance1 = None, significance
         'original_genes': request.args.get('original_genes'),
         'date': request.args.get('date'),
     }
+    validate_args(args)
     min_conflict_level = max(1, int_arg('min_conflict_level'))
-    if args['date'] != None and not DB().is_date(args['date']):
-        abort(404)
 
     if not gene:
         args['gene'] = list_arg('genes')
@@ -745,9 +756,8 @@ def variants_in_conflict_by_significance(significance1 = None, significance2 = N
         'original_terms': request.args.get('original_terms'),
         'date': request.args.get('date'),
     }
+    validate_args(args)
     min_conflict_level = max(1, int_arg('min_conflict_level'))
-    if args['date'] != None and not DB().is_date(args['date']):
-        abort(404)
 
     if not significance2:
         return render_template_async(
@@ -806,9 +816,8 @@ def variants_in_conflict_by_submitter(submitter1_id = None, submitter2_id = None
         'original_genes': request.args.get('original_genes'),
         'date': request.args.get('date'),
     }
+    validate_args(args)
     min_conflict_level = max(1, int_arg('min_conflict_level'))
-    if args['date'] != None and not DB().is_date(args['date']):
-        abort(404)
 
     if submitter1_id == None:
         args['submitter1_id'] = list_arg('submitters')
@@ -1044,10 +1053,9 @@ def submissions_by_variant(variant_name):
         'variant_name': variant_name,
         'date': request.args.get('date'),
     }
-    if args['date'] != None and not DB().is_date(args['date']):
-        abort(404)
+    validate_args(args)
 
-    if not DB().is_variant_name(variant_name):
+    if not db.is_variant_name(variant_name):
         abort(404)
     variant_info = DB().variant_info(variant_name, args['date'])
 
@@ -1067,8 +1075,7 @@ def total_submissions_by_country(country_code = None):
         'min_conflict_level': int_arg('min_conflict_level'),
         'date': request.args.get('date'),
     }
-    if args['date'] != None and not DB().is_date(args['date']):
-        abort(404)
+    validate_args(args)
 
     if country_code == None:
         return render_template(
@@ -1101,6 +1108,7 @@ def total_submissions_by_method():
         'min_conflict_level': int_arg('min_conflict_level'),
         'date': request.args.get('date'),
     }
+    validate_args(args)
 
     rows = DB().total_submissions_by_normalized_method_over_time(**args)
 
@@ -1149,8 +1157,7 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
         'original_genes': request.args.get('original_genes'),
         'date': request.args.get('date'),
     }
-    if args['date'] != None and not DB().is_date(args['date']):
-        abort(404)
+    validate_args(args)
 
     if condition_name == None:
         args['condition1_name'] = list_arg('conditions')
@@ -1246,8 +1253,7 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
         'original_genes': request.args.get('original_genes'),
         'date': request.args.get('date'),
     }
-    if args['date'] != None and not DB().is_date(args['date']):
-        abort(404)
+    validate_args(args)
 
     if gene == None:
         args['gene'] = list_arg('genes')
@@ -1342,8 +1348,7 @@ def variants_by_mondo_condition(mondo_condition_id = None, gene = None, signific
         'original_genes': request.args.get('original_genes'),
         'date': request.args.get('date'),
     }
-    if args['date'] != None and not DB().is_date(args['date']):
-        abort(404)
+    validate_args(args)
 
     if mondo_condition_id == None:
         return render_template_async(
@@ -1435,8 +1440,7 @@ def variants_by_significance(significance = None):
         'original_terms': request.args.get('original_terms'),
         'date': request.args.get('date'),
     }
-    if args['date'] != None and not DB().is_date(args['date']):
-        abort(404)
+    validate_args(args)
 
     if significance == None:
         return render_template_async(
@@ -1496,8 +1500,7 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
         'original_genes': request.args.get('original_genes'),
         'date': request.args.get('date'),
     }
-    if args['date'] != None and not DB().is_date(args['date']):
-        abort(404)
+    validate_args(args)
 
     if submitter_id == None:
         submitters = list_arg('submitters')

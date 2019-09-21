@@ -98,6 +98,12 @@ class DB():
 
         return ret
 
+    def is_condition_name(self, condition_name):
+        return bool(list(self.cursor.execute(
+            'SELECT 1 FROM submissions WHERE condition_name=? LIMIT 1',
+            [condition_name]
+        )))
+
     def is_date(self, date):
         return bool(list(self.cursor.execute(
             'SELECT 1 FROM submissions WHERE date=? LIMIT 1',
@@ -110,10 +116,10 @@ class DB():
             [gene, gene]
         )))
 
-    def is_condition_name(self, condition_name):
+    def is_method(self, method):
         return bool(list(self.cursor.execute(
-            'SELECT 1 FROM submissions WHERE condition_name=? LIMIT 1',
-            [condition_name]
+            'SELECT 1 FROM submissions WHERE method=? OR normalized_method=? LIMIT 1',
+            [method, method]
         )))
 
     def is_mondo_condition_id(self, mondo_condition_id):
