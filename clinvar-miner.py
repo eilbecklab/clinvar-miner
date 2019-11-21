@@ -65,10 +65,6 @@ def get_breakdown_by_condition_and_significance(total_variants_by_condition,
         breakdown['data'][condition_name][significance] = count
         breakdown['significances'].add(significance)
 
-    #sort alphabetically to be consistent if there are two or more unranked significance terms
-    breakdown['significances'] = sorted(breakdown['significances'])
-
-    #sort by rank
     breakdown['significances'] = sorted(breakdown['significances'], key=significance_rank)
 
     return breakdown
@@ -92,10 +88,6 @@ def get_breakdown_by_gene_and_significance(total_variants_by_gene,
         breakdown['data'][gene][significance] = count
         breakdown['significances'].add(significance)
 
-    #sort alphabetically to be consistent if there are two or more unranked significance terms
-    breakdown['significances'] = sorted(breakdown['significances'])
-
-    #sort by rank
     breakdown['significances'] = sorted(breakdown['significances'], key=significance_rank)
 
     return breakdown
@@ -123,10 +115,6 @@ def get_breakdown_by_submitter_and_significance(total_variants_by_submitter,
         breakdown['data'][submitter_id]['counts'][significance] = count
         breakdown['significances'].add(significance)
 
-    #sort alphabetically to be consistent if there are two or more unranked significance terms
-    breakdown['significances'] = sorted(breakdown['significances'])
-
-    #sort by rank
     breakdown['significances'] = sorted(breakdown['significances'], key=significance_rank)
 
     return breakdown
@@ -148,11 +136,6 @@ def get_conflict_breakdown(total_variants_in_conflict_by_significance_and_signif
         breakdown['submitter1_significances'].add(significance1)
         breakdown['submitter2_significances'].add(significance2)
 
-    #sort alphabetically to be consistent if there are two or more unranked significance terms
-    breakdown['submitter1_significances'] = sorted(breakdown['submitter1_significances'])
-    breakdown['submitter2_significances'] = sorted(breakdown['submitter2_significances'])
-
-    #sort by rank
     breakdown['submitter1_significances'] = sorted(breakdown['submitter1_significances'], key=significance_rank)
     breakdown['submitter2_significances'] = sorted(breakdown['submitter2_significances'], key=significance_rank)
 
@@ -278,10 +261,6 @@ def get_significance_overview(total_variants_by_significance):
         count = row['count']
         overview[significance] = count
 
-    #sort alphabetically to be consistent if there are two or more unranked significance terms
-    overview = dict(sorted(overview.items(), key=lambda pair: pair[0]))
-
-    #sort by rank
     overview = dict(sorted(overview.items(), key=lambda pair: significance_rank(pair[0])))
 
     return overview
@@ -323,7 +302,8 @@ def significance_rank(significance):
         rank = significance_ranks.index(nonstandard_significance_term_map.get(significance, significance))
     except ValueError:
         rank = len(significance_ranks) - 2.5 #insert after everything but "other" and "not provided"
-    return rank
+    #sort alphabetically to be consistent if there are two or more unranked significance terms
+    return rank, significance
 
 @app.template_filter('conflictlevel')
 def conflict_level_string(conflict_level):
