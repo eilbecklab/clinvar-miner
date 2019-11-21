@@ -19,7 +19,7 @@
     <svg id="map"></svg>
     <script type="application/javascript">
         var width = '100%', height = 500;
-        var data = {{ total_submissions_by_country|tojson }};
+        var data = {{ total_submissions_by_country|json|safe }};
         var totals = {};
         data.forEach((d) => {
             totals[d.country_code] = d.count;

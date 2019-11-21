@@ -12,7 +12,7 @@
     {% endwith %}
     <svg id="graph"></svg>
     <script type="application/javascript">
-        var data = {{ total_submissions_by_normalized_method_over_time|tojson }};
+        var data = {{ total_submissions_by_normalized_method_over_time|json|safe }};
         var parseTime = d3.timeParse("%Y-%m-%d");
         data = data.map(function(d) {
             return {

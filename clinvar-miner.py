@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
+import json
 import gzip
 import re
+import sqlite3
 from asynchelper import promise, render_template_async
 from collections import OrderedDict
 from datetime import datetime
@@ -12,6 +14,7 @@ from flask import abort
 from flask import redirect
 from flask import render_template
 from flask import request
+from json import JSONEncoder
 from hashlib import sha256
 from os import environ
 from urllib.parse import urlparse, quote
@@ -347,6 +350,15 @@ def extra_breaks(text):
     )
     ret = re.sub(r'([a-z])([A-Z])', r'\1<wbr/>\2', ret) #camelCase
     return ret
+
+@app.template_filter('json')
+def json_filter(obj):
+    class SQLiteJSONEncoder(JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, sqlite3.Row):
+                return dict(obj)
+            return obj
+    return json.dumps(obj, cls=SQLiteJSONEncoder)
 
 @app.template_filter('genelink')
 def gene_link(gene):

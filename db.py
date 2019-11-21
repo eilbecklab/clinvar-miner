@@ -26,7 +26,7 @@ class DB():
             self.parameters[column] = value
 
     def rows(self):
-        return list(map(dict, self.cursor.execute(self.query, self.parameters)))
+        return list(self.cursor.execute(self.query, self.parameters))
 
     def value(self):
         return list(self.cursor.execute(self.query, self.parameters))[0][0]
@@ -150,13 +150,10 @@ class DB():
         return list(self.cursor.execute('SELECT MAX(date) FROM submissions'))[0][0]
 
     def significance_term_info(self):
-        return list(map(
-            dict,
-            self.cursor.execute('''
-                SELECT significance, MIN(date) AS first_seen, MAX(date) AS last_seen FROM submissions
-                GROUP BY significance ORDER BY last_seen DESC, first_seen DESC
-            ''')
-        ))
+        return list(self.cursor.execute('''
+            SELECT significance, MIN(date) AS first_seen, MAX(date) AS last_seen FROM submissions
+            GROUP BY significance ORDER BY last_seen DESC, first_seen DESC
+        '''))
 
     def submissions(self, **kwargs):
         self.query = '''
@@ -312,10 +309,10 @@ class DB():
         return self.value()
 
     def mondo_conditions(self, date = None):
-        return list(map(dict, self.cursor.execute(
+        return list(self.cursor.execute(
             'SELECT DISTINCT mondo_id, mondo_name FROM mondo_clinvar_relationships WHERE date=? ORDER BY mondo_name',
             [date or self.max_date()]
-        )))
+        ))
 
     def mondo_name(self, mondo_id, date = None):
         self.cursor.execute(
@@ -327,10 +324,9 @@ class DB():
 
     @promise
     def total_significance_terms_over_time(self):
-        return list(map(
-            dict,
+        return list(
             self.cursor.execute('SELECT date, COUNT(DISTINCT significance) AS count FROM submissions GROUP BY date')
-        ))
+        )
 
     def total_submissions(self, **kwargs):
         self.query = '''
@@ -425,26 +421,23 @@ class DB():
         return self.rows()
 
     def total_submissions_by_method(self, **kwargs):
-        return list(map(
-            dict,
+        return list(
             self.cursor.execute(
-                '''
-                    SELECT method1 AS method, COUNT(DISTINCT scv1) AS count
-                    FROM comparisons
-                    WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
-                    GROUP BY method ORDER BY count DESC
-                ''',
-                {
-                    'min_stars': kwargs.get('min_stars', 0),
-                    'min_conflict_level': kwargs.get('min_conflict_level', -1),
-                    'date': kwargs.get('date') or self.max_date(),
-                }
-            )
+            '''
+                SELECT method1 AS method, COUNT(DISTINCT scv1) AS count
+                FROM comparisons
+                WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
+                GROUP BY method ORDER BY count DESC
+            ''',
+            {
+                'min_stars': kwargs.get('min_stars', 0),
+                'min_conflict_level': kwargs.get('min_conflict_level', -1),
+                'date': kwargs.get('date') or self.max_date(),
+            }
         ))
 
     def total_submissions_by_normalized_method_over_time(self, **kwargs):
-        return list(map(
-            dict,
+        return list(
             self.cursor.execute(
                 '''
                     SELECT date, normalized_method1 AS normalized_method, COUNT(DISTINCT scv1) AS count
@@ -462,7 +455,7 @@ class DB():
                     'date': kwargs.get('date') or self.max_date(),
                 }
             )
-        ))
+        )
 
     def total_submissions_by_submitter(self, **kwargs):
         self.query = '''
