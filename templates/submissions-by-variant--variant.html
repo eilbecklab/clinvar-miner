@@ -39,7 +39,7 @@
                     <tr>
                         <td>{{ submitter_link(submission['submitter_id'], submission['submitter_name'])|safe }}</td>
                         <td>{{ submission['rcv']|rcvlink|safe }}</td>
-                        <td>{{ submission['scv'] }}</td>
+                        <td>{{ submission['scv']|scv|safe }}</td>
                         <td>{{ submission['significance'] }}</td>
                         <td>{{ submission['condition_name'] }}</td>
                         <td>{{ submission['last_eval'] }}</td>

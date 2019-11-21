@@ -345,7 +345,12 @@ def gene_link(gene):
 
 @app.template_filter('rcvlink')
 def rcv_link(rcv):
-    return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/' + rcv + '/">' + rcv + '</a>'
+    rcv = 'RCV' + str(rcv).zfill(9)
+    return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/RCV' + rcv + '/">' + rcv + '</a>'
+
+@app.template_filter('scv')
+def scv_pretty(scv):
+    return 'SCV' + str(scv).zfill(9)
 
 @app.template_filter('tabledownloadlink')
 def select_link(element_id):

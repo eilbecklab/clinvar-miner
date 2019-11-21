@@ -54,8 +54,8 @@ def create_tables():
             submitter_name TEXT,
             submitter_country_code TEXT,
             submitter_country_name TEXT,
-            rcv TEXT,
-            scv TEXT,
+            rcv INTEGER,
+            scv INTEGER,
             significance TEXT,
             normalized_significance TEXT,
             last_eval TEXT,
@@ -85,8 +85,8 @@ def create_tables():
             submitter1_name TEXT,
             submitter1_country_code TEXT,
             submitter1_country_name TEXT,
-            rcv1 TEXT,
-            scv1 TEXT,
+            rcv1 INTEGER,
+            scv1 INTEGER,
             significance1 TEXT,
             normalized_significance1 TEXT,
             last_eval1 TEXT,
@@ -100,7 +100,7 @@ def create_tables():
 
             submitter2_id INTEGER,
             submitter2_name TEXT,
-            scv2 TEXT,
+            scv2 INTEGER,
             significance2 TEXT,
             normalized_significance2 TEXT,
             star_level2 INTEGER,
@@ -138,7 +138,7 @@ def get_submissions(date, set_xml):
     submissions = []
 
     reference_assertion_el = set_el.find('./ReferenceClinVarAssertion')
-    rcv = reference_assertion_el.find('./ClinVarAccession[@Type="RCV"]').attrib['Acc']
+    rcv = int(reference_assertion_el.find('./ClinVarAccession[@Type="RCV"]').attrib['Acc'][3:])
 
     measure_set_el = reference_assertion_el.find('./MeasureSet')
     genotype_set_el = reference_assertion_el.find('./GenotypeSet')
@@ -225,7 +225,7 @@ def get_submissions(date, set_xml):
 
     for assertion_el in set_el.findall('./ClinVarAssertion'):
         scv_el = assertion_el.find('./ClinVarAccession[@Type="SCV"]')
-        scv = scv_el.attrib['Acc']
+        scv = int(scv_el.attrib['Acc'][3:])
 
         submission_id_el = assertion_el.find('./ClinVarSubmissionID')
         significance_el = assertion_el.find('./ClinicalSignificance')
