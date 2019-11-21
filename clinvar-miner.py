@@ -1046,7 +1046,7 @@ def submissions_by_variant(variant_name):
     }
     validate_args(args)
 
-    if not db.is_variant_name(variant_name):
+    if not DB().is_variant_name(variant_name):
         abort(404)
     variant_info = DB().variant_info(variant_name, args['date'])
 
