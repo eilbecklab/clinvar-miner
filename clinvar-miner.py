@@ -1218,7 +1218,7 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
         )
 
     submitter_info = DB().submitter_info(submitter_id)
-    if not submitter_info:
+    if not DB().is_submitter_id(submitter_id):
         abort(404)
     args['submitter1_id'] = submitter_id
 
@@ -1409,7 +1409,7 @@ def variants_by_mondo_condition(mondo_condition_id = None, gene = None, signific
         )
 
     submitter_info = DB().submitter_info(submitter_id)
-    if not submitter_info:
+    if not DB().is_submitter_id(submitter_id):
         abort(404)
     args['submitter1_id'] = submitter_id
 
