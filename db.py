@@ -426,7 +426,11 @@ class DB():
             '''
                 SELECT method1 AS method, COUNT(DISTINCT scv1) AS count
                 FROM comparisons
-                WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND conflict_level>=:min_conflict_level
+                WHERE
+                    star_level1>=:min_stars AND
+                    star_level2>=:min_stars AND
+                    conflict_level>=:min_conflict_level AND
+                    date=:date
                 GROUP BY method ORDER BY count DESC
             ''',
             {
