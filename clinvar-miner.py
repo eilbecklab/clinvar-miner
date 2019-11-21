@@ -5,7 +5,6 @@ import gzip
 import re
 import sqlite3
 from asynchelper import promise, render_template_async
-from collections import OrderedDict
 from datetime import datetime
 from db import DB
 from flask import Flask
@@ -50,7 +49,7 @@ nonstandard_significance_term_map = dict(map(
 @promise
 def get_breakdown_by_condition_and_significance(total_variants_by_condition,
                                                 total_variants_by_condition_and_significance):
-    breakdown = {'data': OrderedDict(), 'significances': set()}
+    breakdown = {'data': {}, 'significances': set()}
 
     for row in total_variants_by_condition.result():
         condition_name = row['condition_name']
@@ -77,7 +76,7 @@ def get_breakdown_by_condition_and_significance(total_variants_by_condition,
 @promise
 def get_breakdown_by_gene_and_significance(total_variants_by_gene,
                                            total_variants_by_gene_and_significance):
-    breakdown = {'data': OrderedDict(), 'significances': set()}
+    breakdown = {'data': {}, 'significances': set()}
 
     for row in total_variants_by_gene.result():
         gene = row['gene']
@@ -104,7 +103,7 @@ def get_breakdown_by_gene_and_significance(total_variants_by_gene,
 @promise
 def get_breakdown_by_submitter_and_significance(total_variants_by_submitter,
                                                 total_variants_by_submitter_and_significance):
-    breakdown = {'data': OrderedDict(), 'significances': set()}
+    breakdown = {'data': {}, 'significances': set()}
 
     for row in total_variants_by_submitter.result():
         submitter_id = row['submitter_id']
@@ -163,7 +162,7 @@ def get_conflict_breakdown(total_variants_in_conflict_by_significance_and_signif
 def get_conflict_summary_by_condition(total_variants_by_condition, total_variants_potentially_in_conflict_by_condition,
                                       total_variants_in_conflict_by_condition,
                                       total_variants_in_conflict_by_condition_and_conflict_level):
-    summary = OrderedDict()
+    summary = {}
 
     for row in total_variants_in_conflict_by_condition.result():
         condition_name = row['condition_name']
@@ -194,7 +193,7 @@ def get_conflict_summary_by_condition(total_variants_by_condition, total_variant
 def get_conflict_summary_by_gene(total_variants_by_gene, total_variants_potentially_in_conflict_by_gene,
                                  total_variants_in_conflict_by_gene,
                                  total_variants_in_conflict_by_gene_and_conflict_level):
-    summary = OrderedDict()
+    summary = {}
 
     for row in total_variants_in_conflict_by_gene.result():
         gene = row['gene']
@@ -225,7 +224,7 @@ def get_conflict_summary_by_gene(total_variants_by_gene, total_variants_potentia
 def get_conflict_summary_by_submitter(total_variants_by_submitter, total_variants_potentially_in_conflict_by_submitter,
                                       total_variants_in_conflict_by_submitter,
                                       total_variants_in_conflict_by_submitter_and_conflict_level):
-    summary = OrderedDict()
+    summary = {}
 
     for row in total_variants_in_conflict_by_submitter.result():
         submitter_id = row['submitter_id']
@@ -280,10 +279,10 @@ def get_significance_overview(total_variants_by_significance):
         overview[significance] = count
 
     #sort alphabetically to be consistent if there are two or more unranked significance terms
-    overview = OrderedDict(sorted(overview.items(), key=lambda pair: pair[0]))
+    overview = dict(sorted(overview.items(), key=lambda pair: pair[0]))
 
     #sort by rank
-    overview = OrderedDict(sorted(overview.items(), key=lambda pair: significance_rank(pair[0])))
+    overview = dict(sorted(overview.items(), key=lambda pair: significance_rank(pair[0])))
 
     return overview
 
