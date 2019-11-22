@@ -8,6 +8,23 @@ class DB():
         self.db.row_factory = sqlite3.Row
         self.cursor = self.db.cursor()
 
+    def and_optimized_conflict_level(self):
+        comparison_required = (
+            self.parameters.get('min_conflict_level', -1) > -1 or
+            'normalized_method' in self.parameters or
+            'normalized_method2' in self.parameters or
+            'normalized_significance2' in self.parameters or
+            'significance' in self.parameters or
+            'significance2' in self.parameters or
+            'submitter2_id' in self.parameters or
+            self.parameters.get('star_level', 0) > 0 or
+            self.parameters.get('star_level2', 0) > 0
+        )
+        if comparison_required:
+            self.query += ' AND conflict_level>=:min_conflict_level'
+        else:
+            self.query += ' AND conflict_level=-1'
+
     def and_equals(self, column, value):
         if type(value) == list:
             if not value:
@@ -169,12 +186,7 @@ class DB():
                 condition1_name AS condition_name,
                 method1 AS method,
                 comment1 AS comment
-            FROM comparisons
-            WHERE
-                star_level1>=:min_stars AND
-                star_level2>=:min_stars AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
+            FROM comparisons WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND date=:date
         '''
 
         self.parameters = {
@@ -189,6 +201,8 @@ class DB():
         if kwargs.get('normalized_method'):
             self.and_equals('normalized_method1', kwargs['normalized_method'])
             self.and_equals('normalized_method2', kwargs['normalized_method'])
+
+        self.and_optimized_conflict_level()
 
         self.query += ' GROUP BY scv1 ORDER BY star_level1 DESC'
 
@@ -230,11 +244,7 @@ class DB():
     def total_conditions(self, **kwargs):
         self.query = '''
             SELECT COUNT(DISTINCT condition1_name) FROM comparisons
-            WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date
         '''
 
         self.parameters = {
@@ -265,6 +275,8 @@ class DB():
             else:
                 self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
+        self.and_optimized_conflict_level()
+
         return self.value()
 
     def total_genes(self, **kwargs):
@@ -273,13 +285,7 @@ class DB():
         else:
             self.query = 'SELECT COUNT(DISTINCT normalized_gene) FROM comparisons'
 
-        self.query += '''
-            WHERE
-                star_level1>=:min_stars1
-                AND star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
-        '''
+        self.query += ' WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date'
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
@@ -305,6 +311,8 @@ class DB():
                 self.and_equals('gene_type', kwargs['gene_type'])
             else:
                 self.and_equals('normalized_gene_type', kwargs['gene_type'])
+
+        self.and_optimized_conflict_level()
 
         return self.value()
 
@@ -331,11 +339,7 @@ class DB():
     def total_submissions(self, **kwargs):
         self.query = '''
             SELECT COUNT(DISTINCT scv1) FROM comparisons
-            WHERE
-                star_level1>=:min_stars AND
-                star_level2>=:min_stars AND
-                conflict_level>=:min_conflict_level
-                AND date=:date
+            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND date=:date
         '''
 
         self.parameters = {
@@ -350,16 +354,14 @@ class DB():
         if kwargs.get('normalized_method'):
             self.and_equals('normalized_method1', kwargs['normalized_method'])
 
+        self.and_optimized_conflict_level()
+
         return self.value()
 
     def total_submitters(self, **kwargs):
         self.query = '''
             SELECT COUNT(DISTINCT submitter1_id) FROM comparisons
-            WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date
         '''
 
         self.parameters = {
@@ -390,6 +392,8 @@ class DB():
             else:
                 self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
+        self.and_optimized_conflict_level()
+
         return self.value()
 
     def total_submissions_by_country(self, **kwargs):
@@ -398,12 +402,7 @@ class DB():
                 submitter1_country_code AS country_code,
                 submitter1_country_name AS country_name,
                 COUNT(DISTINCT scv1) AS count
-            FROM comparisons
-            WHERE
-                star_level1>=:min_stars AND
-                star_level2>=:min_stars AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
+            FROM comparisons WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND date=:date
         '''
 
         self.parameters = {
@@ -416,60 +415,53 @@ class DB():
             self.and_equals('normalized_method1', kwargs['normalized_method'])
             self.and_equals('normalized_method2', kwargs['normalized_method'])
 
+        self.and_optimized_conflict_level()
+
         self.query += ' GROUP BY country_code ORDER BY count DESC'
 
         return self.rows()
 
     def total_submissions_by_method(self, **kwargs):
-        return list(
-            self.cursor.execute(
-            '''
-                SELECT method1 AS method, COUNT(DISTINCT scv1) AS count
-                FROM comparisons
-                WHERE
-                    star_level1>=:min_stars AND
-                    star_level2>=:min_stars AND
-                    conflict_level>=:min_conflict_level AND
-                    date=:date
-                GROUP BY method ORDER BY count DESC
-            ''',
-            {
-                'min_stars': kwargs.get('min_stars', 0),
-                'min_conflict_level': kwargs.get('min_conflict_level', -1),
-                'date': kwargs.get('date') or self.max_date(),
-            }
-        ))
+        self.query = '''
+            SELECT method1 AS method, COUNT(DISTINCT scv1) AS count
+            FROM comparisons WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND date=:date
+        '''
+
+        self.parameters = {
+            'min_stars': kwargs.get('min_stars', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
+        }
+
+        self.and_optimized_conflict_level()
+
+        self.query += ' GROUP BY method ORDER BY count DESC'
+
+        return self.rows()
 
     def total_submissions_by_normalized_method_over_time(self, **kwargs):
-        return list(
-            self.cursor.execute(
-                '''
-                    SELECT date, normalized_method1 AS normalized_method, COUNT(DISTINCT scv1) AS count
-                    FROM comparisons
-                    WHERE
-                        star_level1>=:min_stars AND
-                        star_level2>=:min_stars AND
-                        conflict_level>=:min_conflict_level AND
-                        date<=:date
-                    GROUP BY date, normalized_method ORDER BY date, count DESC
-                ''',
-                {
-                    'min_stars': kwargs.get('min_stars', 0),
-                    'min_conflict_level': kwargs.get('min_conflict_level', -1),
-                    'date': kwargs.get('date') or self.max_date(),
-                }
-            )
-        )
+        self.query = '''
+            SELECT date, normalized_method1 AS normalized_method, COUNT(DISTINCT scv1) AS count
+            FROM comparisons WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND date<=:date
+        '''
+
+        self.parameters = {
+            'min_stars': kwargs.get('min_stars', 0),
+            'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'date': kwargs.get('date') or self.max_date(),
+        }
+
+        self.and_optimized_conflict_level()
+
+        self.query += ' GROUP BY date, normalized_method ORDER BY date, count DESC'
+
+        return self.rows();
 
     def total_submissions_by_submitter(self, **kwargs):
         self.query = '''
             SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name, COUNT(DISTINCT scv1) AS count
             FROM comparisons
-            WHERE
-                star_level1>=:min_stars AND
-                star_level2>=:min_stars AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
+            WHERE star_level1>=:min_stars AND star_level2>=:min_stars AND date=:date
         '''
 
         self.parameters = {
@@ -484,6 +476,8 @@ class DB():
         if kwargs.get('normalized_method'):
             self.and_equals('normalized_method1', kwargs['normalized_method'])
 
+        self.and_optimized_conflict_level()
+
         self.query += ' GROUP BY submitter1_id ORDER BY count DESC'
 
         return self.rows()
@@ -491,11 +485,7 @@ class DB():
     def total_variants(self, **kwargs):
         self.query = '''
             SELECT COUNT(DISTINCT variant_name) FROM comparisons
-            WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date
         '''
 
         self.parameters = {
@@ -538,6 +528,8 @@ class DB():
             else:
                 self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
+        self.and_optimized_conflict_level()
+
         return self.value()
 
     @promise
@@ -555,12 +547,7 @@ class DB():
         self.query += '''
             , COUNT(DISTINCT submitter1_id) AS submitter_count
             , COUNT(DISTINCT variant_name) AS count
-            FROM comparisons
-            WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
+            FROM comparisons WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date
         '''
 
         self.parameters = {
@@ -600,6 +587,8 @@ class DB():
             else:
                 self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
+        self.and_optimized_conflict_level()
+
         self.query += ' GROUP BY condition_name ORDER BY count DESC'
 
         return self.rows()
@@ -613,14 +602,7 @@ class DB():
         else:
             self.query += ', normalized_significance1 AS significance'
 
-        self.query += '''
-            FROM comparisons
-            WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
-        '''
+        self.query += ' FROM comparisons WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date'
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
@@ -653,6 +635,8 @@ class DB():
             else:
                 self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
+        self.and_optimized_conflict_level()
+
         self.query += ' GROUP BY condition_name, significance'
 
         return self.rows()
@@ -668,12 +652,7 @@ class DB():
             , COUNT(DISTINCT condition1_name) AS condition_count
             , COUNT(DISTINCT submitter1_id) AS submitter_count
             , COUNT(DISTINCT variant_name) AS count
-            FROM comparisons
-            WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
+            FROM comparisons WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date
         '''
 
         self.parameters = {
@@ -713,6 +692,8 @@ class DB():
             else:
                 self.and_equals('normalized_gene', kwargs['gene'])
 
+        self.and_optimized_conflict_level()
+
         if kwargs.get('original_genes'):
             self.query += ' GROUP BY gene ORDER BY count DESC'
         else:
@@ -734,14 +715,7 @@ class DB():
         else:
             self.query += ', normalized_significance1 AS significance'
 
-        self.query += '''
-            FROM comparisons
-            WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
-        '''
+        self.query += ' FROM comparisons WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date'
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
@@ -768,6 +742,8 @@ class DB():
             else:
                 self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
+        self.and_optimized_conflict_level()
+
         if kwargs.get('original_genes'):
             self.query += ' GROUP BY gene, significance'
         else:
@@ -792,12 +768,7 @@ class DB():
         self.query += '''
             , COUNT(DISTINCT condition1_name) AS condition_count
             , COUNT(DISTINCT submitter1_id) AS submitter_count
-            FROM comparisons
-            WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
+            FROM comparisons WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date
         '''
 
         self.parameters = {
@@ -831,6 +802,8 @@ class DB():
             else:
                 self.and_equals('normalized_gene_type', kwargs['gene_type'])
 
+        self.and_optimized_conflict_level()
+
         self.query += ' GROUP BY significance ORDER BY count DESC'
 
         return self.rows()
@@ -850,12 +823,7 @@ class DB():
         self.query += '''
             , COUNT(DISTINCT condition1_name) AS condition_count
             , COUNT(DISTINCT variant_name) AS count
-            FROM comparisons
-            WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
+            FROM comparisons WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date
         '''
 
         self.parameters = {
@@ -898,6 +866,8 @@ class DB():
         if kwargs.get('submitter_ids'):
             self.and_equals('submitter_id', kwargs['submitter_ids'])
 
+        self.and_optimized_conflict_level()
+
         self.query += ' GROUP BY submitter_id ORDER BY count DESC'
 
         return self.rows()
@@ -911,14 +881,7 @@ class DB():
         else:
             self.query += ', normalized_significance1 AS significance'
 
-        self.query += '''
-            FROM comparisons
-            WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
-        '''
+        self.query += ' FROM comparisons WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date'
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
@@ -947,6 +910,8 @@ class DB():
                 self.and_equals('gene_type', kwargs['gene_type'])
             else:
                 self.and_equals('normalized_gene_type', kwargs['gene_type'])
+
+        self.and_optimized_conflict_level()
 
         self.query += ' GROUP BY submitter_id, significance'
 
@@ -994,11 +959,7 @@ class DB():
     def total_variants_in_conflict_by_conflict_level(self, **kwargs):
         self.query = '''
             SELECT conflict_level, COUNT(DISTINCT variant_name) AS count FROM comparisons
-            WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date
         '''
 
         self.parameters = {
@@ -1034,6 +995,8 @@ class DB():
                 self.and_equals('gene_type', kwargs['gene_type'])
             else:
                 self.and_equals('normalized_gene_type', kwargs['gene_type'])
+
+        self.and_optimized_conflict_level()
 
         self.query += ' GROUP BY conflict_level'
 
@@ -1187,11 +1150,7 @@ class DB():
     def total_variants_without_significance(self, **kwargs):
         self.query = '''
             SELECT COUNT(DISTINCT variant_name) FROM comparisons
-            WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date
         '''
 
         self.parameters = {
@@ -1218,6 +1177,8 @@ class DB():
                 self.and_equals('gene_type', kwargs['gene_type'])
             else:
                 self.and_equals('normalized_gene_type', kwargs['gene_type'])
+
+        self.and_optimized_conflict_level()
 
         return self.value()
 
@@ -1260,11 +1221,7 @@ class DB():
     def variants(self, **kwargs):
         self.query = '''
             SELECT variant_name, rsid FROM comparisons
-            WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date
         '''
 
         self.parameters = {
@@ -1312,6 +1269,8 @@ class DB():
                 self.and_equals('gene_type', kwargs['gene_type'])
             else:
                 self.and_equals('normalized_gene_type', kwargs['gene_type'])
+
+        self.and_optimized_conflict_level()
 
         self.query += ' GROUP BY variant_name ORDER BY variant_name'
 
