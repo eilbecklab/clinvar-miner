@@ -1097,10 +1097,9 @@ class DB():
                 SELECT normalized_significance1 AS significance1, normalized_significance2 AS significance2
             '''
 
-        self.query += ', conflict_level, COUNT(DISTINCT variant_name) AS count FROM comparisons'
-
         self.query += '''
-            WHERE
+            , conflict_level, COUNT(DISTINCT variant_name) AS count
+            FROM comparisons WHERE
                 star_level1>=:min_stars1 AND
                 star_level2>=:min_stars2 AND
                 conflict_level>=:min_conflict_level AND
