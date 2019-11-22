@@ -465,7 +465,11 @@ class DB():
         self.query = '''
             SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name, COUNT(DISTINCT scv1) AS count
             FROM comparisons
-            WHERE star_level1>=:min_stars AND conflict_level>=:min_conflict_level AND date=:date
+            WHERE
+                star_level1>=:min_stars AND
+                star_level2>=:min_stars AND
+                conflict_level>=:min_conflict_level AND
+                date=:date
         '''
 
         self.parameters = {
