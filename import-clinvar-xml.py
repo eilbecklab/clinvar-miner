@@ -353,6 +353,7 @@ def import_file(filename):
             END AS conflict_level
         FROM submissions t1 INNER JOIN submissions t2
         ON t1.date=? AND t2.date=? AND t1.variant_name=t2.variant_name
+        ORDER BY conflict_level
     ''', [date, date])
 
     for row in list(cursor.execute('SELECT DISTINCT condition_name, condition_xrefs FROM submissions WHERE date=?', [date])):
