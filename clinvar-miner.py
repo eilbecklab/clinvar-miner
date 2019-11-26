@@ -249,6 +249,31 @@ def get_conflict_overview(total_variants_in_conflict_by_conflict_level):
     return overview
 
 @promise
+def get_graph_data_for_submissions_by_normalized_method(total_submissions_by_normalized_method_over_time):
+    rows = total_submissions_by_normalized_method_over_time.result()
+
+    dates = set()
+    methods = set()
+    date_method_pairs = set()
+    for row in rows:
+        date = row['date']
+        method = row['normalized_method']
+        count = row['count']
+
+        dates.add(date)
+        methods.add(method)
+        date_method_pairs.add((date, method))
+
+    for date in dates:
+        for method in methods:
+            if not (date, method) in date_method_pairs:
+                rows.append({'date': date, 'normalized_method': method, 'count': 0})
+
+    rows.sort(key=lambda row: row['date'])
+
+    return rows
+
+@promise
 def get_significance_overview(total_variants_by_significance):
     overview = {
         'pathogenic': 0,
@@ -1076,7 +1101,7 @@ def total_submissions_by_country(country_code = None):
     validate_args(args)
 
     if country_code == None:
-        return render_template(
+        return render_template_async(
             'total-submissions-by-country.html',
             total_submissions_by_country=DB().total_submissions_by_country(**args),
             total_submissions=DB().total_submissions(**args),
@@ -1086,7 +1111,7 @@ def total_submissions_by_country(country_code = None):
     if country_name == None:
         abort(404)
 
-    return render_template(
+    return render_template_async(
         'total-submissions-by-country--country.html',
         country_name=country_name,
         total_submissions_by_submitter=DB().total_submissions_by_submitter(
@@ -1108,30 +1133,11 @@ def total_submissions_by_method():
     }
     validate_args(args)
 
-    rows = DB().total_submissions_by_normalized_method_over_time(**args)
-
-    dates = set()
-    methods = set()
-    date_method_pairs = set()
-    for row in rows:
-        date = row['date']
-        method = row['normalized_method']
-        count = row['count']
-
-        dates.add(date)
-        methods.add(method)
-        date_method_pairs.add((date, method))
-
-    for date in dates:
-        for method in methods:
-            if not (date, method) in date_method_pairs:
-                rows.append({'date': date, 'normalized_method': method, 'count': 0})
-
-    rows.sort(key=lambda row: row['date'])
-
-    return render_template(
+    return render_template_async(
         'total-submissions-by-method.html',
-        total_submissions_by_normalized_method_over_time=rows,
+        total_submissions_by_normalized_method_over_time=get_graph_data_for_submissions_by_normalized_method(
+            DB().total_submissions_by_normalized_method_over_time(**args)
+        ),
         total_submissions_by_method=DB().total_submissions_by_method(**args),
         total_submissions=DB().total_submissions(**args),
     )

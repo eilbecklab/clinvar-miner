@@ -166,6 +166,7 @@ class DB():
     def max_date(self):
         return list(self.cursor.execute('SELECT MAX(date) FROM submissions'))[0][0]
 
+    @promise
     def significance_term_info(self):
         return list(self.cursor.execute('''
             SELECT significance, MIN(date) AS first_seen, MAX(date) AS last_seen FROM submissions
@@ -241,6 +242,7 @@ class DB():
         except IndexError:
             return 'not provided'
 
+    @promise
     def total_conditions(self, **kwargs):
         self.query = '''
             SELECT COUNT(DISTINCT condition1_name) FROM comparisons
@@ -279,6 +281,7 @@ class DB():
 
         return self.value()
 
+    @promise
     def total_genes(self, **kwargs):
         if kwargs.get('original_genes'):
             self.query = 'SELECT COUNT(DISTINCT gene) FROM comparisons'
@@ -336,6 +339,7 @@ class DB():
             self.cursor.execute('SELECT date, COUNT(DISTINCT significance) AS count FROM submissions GROUP BY date')
         )
 
+    @promise
     def total_submissions(self, **kwargs):
         self.query = '''
             SELECT COUNT(DISTINCT scv1) FROM comparisons
@@ -358,6 +362,7 @@ class DB():
 
         return self.value()
 
+    @promise
     def total_submitters(self, **kwargs):
         self.query = '''
             SELECT COUNT(DISTINCT submitter1_id) FROM comparisons
@@ -396,6 +401,7 @@ class DB():
 
         return self.value()
 
+    @promise
     def total_submissions_by_country(self, **kwargs):
         self.query = '''
             SELECT
@@ -421,6 +427,7 @@ class DB():
 
         return self.rows()
 
+    @promise
     def total_submissions_by_method(self, **kwargs):
         self.query = '''
             SELECT method1 AS method, COUNT(DISTINCT scv1) AS count
@@ -439,6 +446,7 @@ class DB():
 
         return self.rows()
 
+    @promise
     def total_submissions_by_normalized_method_over_time(self, **kwargs):
         self.query = '''
             SELECT date, normalized_method1 AS normalized_method, COUNT(DISTINCT scv1) AS count
@@ -457,6 +465,7 @@ class DB():
 
         return self.rows();
 
+    @promise
     def total_submissions_by_submitter(self, **kwargs):
         self.query = '''
             SELECT submitter1_id AS submitter_id, submitter1_name AS submitter_name, COUNT(DISTINCT scv1) AS count
@@ -482,6 +491,7 @@ class DB():
 
         return self.rows()
 
+    @promise
     def total_variants(self, **kwargs):
         self.query = '''
             SELECT COUNT(DISTINCT variant_name) FROM comparisons
@@ -1147,6 +1157,7 @@ class DB():
 
         return self.rows()
 
+    @promise
     def total_variants_without_significance(self, **kwargs):
         self.query = '''
             SELECT COUNT(DISTINCT variant_name) FROM comparisons
