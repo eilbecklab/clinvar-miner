@@ -29,6 +29,8 @@ cache.clear() #delete the cache when the webserver is restarted
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
 
+clinvar_versions = DB().dates()
+
 #it's necessary to double-escape slashes because WSGI decodes them before passing the URL to Flask
 class SuperEscapedConverter(BaseConverter):
     @staticmethod
@@ -403,7 +405,7 @@ def template_functions():
         return tagline
 
     def dates():
-        return DB().dates()
+        return clinvar_versions
 
     def gene_tagline(gene_info, link_base):
         if not gene_info['see_also']:
