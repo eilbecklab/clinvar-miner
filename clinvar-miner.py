@@ -5,6 +5,8 @@ import gzip
 import re
 import sqlite3
 from asynchelper import promise, render_template_async
+from cachelib import FileSystemCache
+from cachelib import NullCache
 from datetime import datetime
 from db import DB
 from flask import Flask
@@ -17,8 +19,6 @@ from json import JSONEncoder
 from hashlib import sha256
 from os import environ
 from urllib.parse import urlparse, quote
-from werkzeug.contrib.cache import FileSystemCache
-from werkzeug.contrib.cache import NullCache
 from werkzeug.routing import BaseConverter
 
 app = Flask(__name__)
