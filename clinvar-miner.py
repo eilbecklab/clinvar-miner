@@ -373,7 +373,7 @@ def gene_link(gene):
 @app.template_filter('rcvlink')
 def rcv_link(rcv):
     rcv = 'RCV' + str(rcv).zfill(9)
-    return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/RCV' + rcv + '/">' + rcv + '</a>'
+    return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/' + rcv + '/">' + rcv + '</a>'
 
 @app.template_filter('scv')
 def scv_pretty(scv):
