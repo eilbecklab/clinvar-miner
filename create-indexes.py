@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 
-import sqlite3
-
-
 print('Creating indexes')
 
 def create_index(cursor, table, columns):

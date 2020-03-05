@@ -13,7 +13,6 @@ from flask import Flask
 from flask import Response
 from flask import abort
 from flask import redirect
-from flask import render_template
 from flask import request
 from json import JSONEncoder
 from hashlib import sha256
@@ -258,7 +257,6 @@ def get_graph_data_for_submissions_by_normalized_method(total_submissions_by_nor
     for row in rows:
         date = row['date']
         method = row['normalized_method']
-        count = row['count']
 
         dates.add(date)
         methods.add(method)

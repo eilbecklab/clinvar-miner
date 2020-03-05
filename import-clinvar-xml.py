@@ -5,7 +5,7 @@ from functools import partial
 from mmap import mmap
 from mondo import Mondo
 from multiprocessing import Pool
-from os.path import basename, getsize
+from os.path import getsize
 from psutil import virtual_memory
 from pycountry import countries
 from sys import argv

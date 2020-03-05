@@ -1,6 +1,5 @@
 import sqlite3
 from asynchelper import promise
-from sqlite3 import OperationalError
 
 class DB():
     def __init__(self):

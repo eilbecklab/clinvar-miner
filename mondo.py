@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-import re
 from xml.etree import ElementTree
 
 def iri_to_mondo_xref(iri):

@@ -2,7 +2,6 @@
 
 import csv
 from pycountry import countries
-from urllib.request import urlopen
 
 submitter_info = {}
 for row in csv.reader(open('submitter_info.tsv'), delimiter='\t'):
