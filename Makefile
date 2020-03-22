@@ -3,7 +3,7 @@ all: mondo
 	./create-indexes.py
 
 countries:
-	curl ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/tab_delimited/organization_summary.txt > organization_summary.txt
+	curl https://ftp.ncbi.nlm.nih.gov/pub/clinvar/tab_delimited/organization_summary.txt > organization_summary.txt
 	./get-submitter-info.py
 
 mondo:
