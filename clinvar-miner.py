@@ -1360,7 +1360,7 @@ def variants_by_mondo_condition(mondo_condition_id = None, gene = None, signific
 
     if not DB().is_mondo_condition_id(mondo_condition_id):
         abort(404)
-    mondo_name = DB().mondo_name(mondo_condition_id)
+    mondo_name = DB().mondo_name(mondo_condition_id, args['date'])
     clinvar_names = DB().clinvar_names_from_mondo_id(mondo_condition_id, args['date'])
     args['condition1_name'] = clinvar_names
     args['original_terms'] = request.args.get('original_terms')

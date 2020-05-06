@@ -27,6 +27,7 @@ class DB():
     def and_equals(self, column, value):
         if type(value) == list:
             if not value:
+                self.query += ' AND FALSE'
                 return
             db_types = {
                 int: 'INTEGER',
@@ -296,7 +297,7 @@ class DB():
             'date': kwargs.get('date') or self.max_date(),
         }
 
-        if kwargs.get('condition1_name'):
+        if kwargs.get('condition1_name') != None:
             self.and_equals('condition1_name', kwargs['condition1_name'])
 
         if kwargs.get('submitter1_id'):
@@ -325,12 +326,13 @@ class DB():
         ))
 
     def mondo_name(self, mondo_id, date = None):
-        self.cursor.execute(
-            'SELECT mondo_name FROM mondo_clinvar_relationships where mondo_id=? AND date=?',
-            [mondo_id, date or self.max_date()]
-        )
-        name = self.cursor.fetchone()[0]
-        return name
+        try:
+            return list(self.cursor.execute(
+                'SELECT mondo_name FROM mondo_clinvar_relationships where mondo_id=? AND date=? LIMIT 1',
+                [mondo_id, date or self.max_date()]
+            ))[0][0]
+        except IndexError:
+            return 'MONDO:' + str(mondo_id).zfill(7)
 
     @promise
     def total_significance_terms_over_time(self):
@@ -381,7 +383,7 @@ class DB():
             else:
                 self.and_equals('normalized_gene', kwargs['gene'])
 
-        if kwargs.get('condition1_name'):
+        if kwargs.get('condition1_name') != None:
             self.and_equals('condition1_name', kwargs['condition1_name'])
 
         if kwargs.get('normalized_method1'):
@@ -510,7 +512,7 @@ class DB():
             else:
                 self.and_equals('normalized_gene', kwargs['gene'])
 
-        if kwargs.get('condition1_name'):
+        if kwargs.get('condition1_name') != None:
             self.and_equals('condition1_name', kwargs['condition1_name'])
 
         if kwargs.get('submitter1_id'):
@@ -572,7 +574,7 @@ class DB():
             else:
                 self.and_equals('normalized_gene', kwargs['gene'])
 
-        if kwargs.get('condition1_name'):
+        if kwargs.get('condition1_name') != None:
             self.and_equals('condition1_name', kwargs['condition1_name'])
 
         if kwargs.get('submitter1_id'):
@@ -626,7 +628,7 @@ class DB():
             else:
                 self.and_equals('normalized_gene', kwargs['gene'])
 
-        if kwargs.get('condition1_name'):
+        if kwargs.get('condition1_name') != None:
             self.and_equals('condition1_name', kwargs['condition1_name'])
 
         if kwargs.get('submitter1_id'):
@@ -671,7 +673,7 @@ class DB():
             'date': kwargs.get('date') or self.max_date(),
         }
 
-        if kwargs.get('condition1_name'):
+        if kwargs.get('condition1_name') != None:
             self.and_equals('condition1_name', kwargs['condition1_name'])
 
         if kwargs.get('submitter1_id'):
@@ -733,7 +735,7 @@ class DB():
             'date': kwargs.get('date') or self.max_date(),
         }
 
-        if kwargs.get('condition1_name'):
+        if kwargs.get('condition1_name') != None:
             self.and_equals('condition1_name', kwargs['condition1_name'])
 
         if kwargs.get('submitter1_id'):
@@ -793,7 +795,7 @@ class DB():
             else:
                 self.and_equals('normalized_gene', kwargs['gene'])
 
-        if kwargs.get('condition1_name'):
+        if kwargs.get('condition1_name') != None:
             self.and_equals('condition1_name', kwargs['condition1_name'])
 
         if kwargs.get('submitter1_id'):
@@ -848,7 +850,7 @@ class DB():
             else:
                 self.and_equals('normalized_gene', kwargs['gene'])
 
-        if kwargs.get('condition1_name'):
+        if kwargs.get('condition1_name') != None:
             self.and_equals('condition1_name', kwargs['condition1_name'])
 
         if kwargs.get('submitter1_id'):
@@ -905,7 +907,7 @@ class DB():
             else:
                 self.and_equals('normalized_gene', kwargs['gene'])
 
-        if kwargs.get('condition1_name'):
+        if kwargs.get('condition1_name') != None:
             self.and_equals('condition1_name', kwargs['condition1_name'])
 
         if kwargs.get('normalized_method1'):
@@ -951,7 +953,7 @@ class DB():
             'date': kwargs.get('date') or self.max_date(),
         }
 
-        if kwargs.get('condition1_name'):
+        if kwargs.get('condition1_name') != None:
             self.and_equals('condition1_name', kwargs['condition1_name'])
 
         if kwargs.get('normalized_method1'):
@@ -984,7 +986,7 @@ class DB():
             else:
                 self.and_equals('normalized_gene', kwargs['gene'])
 
-        if kwargs.get('condition1_name'):
+        if kwargs.get('condition1_name') != None:
             self.and_equals('condition1_name', kwargs['condition1_name'])
 
         if kwargs.get('submitter1_id'):
@@ -1091,7 +1093,7 @@ class DB():
             else:
                 self.and_equals('normalized_gene', kwargs['gene'])
 
-        if kwargs.get('condition1_name'):
+        if kwargs.get('condition1_name') != None:
             self.and_equals('condition1_name', kwargs['condition1_name'])
 
         if kwargs.get('submitter1_id'):
@@ -1247,7 +1249,7 @@ class DB():
             else:
                 self.and_equals('normalized_gene', kwargs['gene'])
 
-        if kwargs.get('condition1_name'):
+        if kwargs.get('condition1_name') != None:
             self.and_equals('condition1_name', kwargs['condition1_name'])
 
         if kwargs.get('submitter1_id'):
