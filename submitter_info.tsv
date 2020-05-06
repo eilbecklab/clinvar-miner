@@ -17,6 +17,7 @@
 1207	HFI Laboratory at Boston University; Boston University	USA
 1224	Genetic Diagnostic Laboratory; University of Pennsylvania School of Medicine	USA
 1236	Center for Human Genetics Laboratory; University Hospitals - University Hospitals Laboratory Service Foundation	USA
+1237	Cincinnati Children's Hospital Medical Center Laboratory of Genetics and Genomics; Cincinnati Children's Hospital Medical Center	USA
 1238	Genetic Services Laboratory; University of Chicago	USA
 18646	Engle Laboratory; Boston Children's Hospital	USA
 19864	Cancer Genomic Medicine Translational Research Lab; Cleveland Clinic Genomic Medicine Institute	USA
@@ -70,7 +71,7 @@
 320379	MyeliNeuroGene Lab; McGill University Health Center Research Institute	CAN
 320384	Courtagen Diagnostics Laboratory; Courtagen Life Sciences	USA
 320388	Institute of Human Genetics; University Hospital Ulm	DEU
-320418	Division Human Genetics; Medical University Innsbruck	AUT
+320418	Division of Human Genetics; Medical University Innsbruck	AUT
 320494	Counsyl	USA
 500012	Leiden Muscular Dystrophy pages (CAV3)	NLD
 500013	DAG1 homepage - Leiden Muscular Dystrophy pages; Leiden University Medical Center	NLD
@@ -680,7 +681,7 @@
 505877	Department of Medical Genetics; National Institute of Health	MAR
 505878	Department of Ophthalmology; Flinders University	AUS
 505883	Central Haematology Laboratory; Luzerner Kantonsspital	CHE
-505885	NeuroCure Clinial Research Center; Charite Universitaetsmedizin Berlin	DEU
+505885	Charité Universitätsmedizin Berlin; Charite Universitaetsmedizin Berlin	DEU
 505886	Institute of Biochemistry, Molecular Biology and Biotechnology; University of Colombo	LKA
 505887	Laboratory of Personalized Genomic Medicine; Columbia University Medical Center	USA
 505888	Medical Genetics Section; University of Rome Tor Vergata	ITA
@@ -768,6 +769,7 @@
 506025	The Molecular Genetic Diagnosis Center; Children’s Hospital of Fudan University	CHN
 506026	Center of Medical Genetics and Primary Health Care	ARM
 506030	Centre de Génétique Moléculaire et Chromosomique, Unité de génétique de l'Obésité et des Dyslipidémies; APHP, GH Hôpitaux Universitaires Pitié-Salpêtrière / Charles-Foix	FRA
+506032	Bruce Lefroy Centre; Murdoch Childrens Research Institute	USA
 506035	Heinzen Lab; Columbia University	USA
 506036	Pôle de Biologie Pathologie Génétique; CHRU LILLE	FRA
 506037	Tim Yu lab; Boston Children's Hospital	USA
@@ -857,7 +859,7 @@
 506169	Shworak lab; George Washington University	USA
 506170	Medgenome Labs Pvt Ltd	IND
 506171	Wangler Lab; Baylor College of Medicine	USA
-506172	Laboratoire de Génétique Moléculaire; CHU Bordeéaux	FRA
+506172	Laboratoire de Génétique Moléculaire; CHU Bordeaux	FRA
 506173	Institute of Medical Genetics; University of Zurich	CHE
 506174	Geisinger Autism and Developmental Medicine Institute; Geisinger Health System	USA
 506177	Department of Pediatrics; Memorial Sloan Kettering Cancer Center	USA
@@ -1100,7 +1102,7 @@
 506578	Laboratorio di Genetica e Neuroscienze; Istituto Giannina Gaslini	ITA
 506579	Department of Clinical Laboratory; Peking University People's Hospital	CHN
 506580	Department of Neurology; Taipei Veterans General Hospital	TWN
-506581	U714; CIBER of Rare Diseases	ESP
+506581	Biomedical Innovation Departament; CIEMAT	ESP
 506582	GeneID Lab - Advanced Molecular Diagnostics	USA
 506584	Department of Obstetrics and Gynecology; Montefiore Medical Center	USA
 506585	Carola Vinuesa Lab; John Curtin School of Medical Research	AUS
@@ -1136,6 +1138,7 @@
 506632	Wendy Chung Laboratory; Columbia University Medical Center	USA
 506633	Genetics Molecular Biology Lab; Hospital Juan P Garrahan	ARG
 506634	Genotek; Genotek Ltd.	CAN
+506636	Brotman Baty Institute; University of Washington	USA
 506637	Neuromuscular Group; Huashan Hospital, Fudan University	CHN
 506639	Clinical Laboratory; Xuzhou Maternity and Child Health Care Hospital	CHN
 506640	Marseille Medical Genetics, U1251; Aix Marseille University, Inserm	FRA
@@ -1237,6 +1240,7 @@
 506790	Bruce Budowle Laboratory; University of North Texas Health Science Center	USA
 506791	Cavalleri Lab; Royal College of Surgeons in Ireland	IRL
 506792	Institute for Genomic Medicine (IGM) Clinical Laboratory; Nationwide Children's Hospital	USA
+506793	Genatak	KWT
 506794	Mayo Clinic Genomics Laboratory; Mayo CLinic	USA
 506795	Translational Oncology and Experimental Therapeutics Program-IBMCC; Consejo Superior de Investigaciones Científicas	ESP
 506796	Grupo de Pesquisa Clinica e Molecular em Endocrinologia e Metabologia	BRA
@@ -1270,6 +1274,7 @@
 506841	Department of Neurology; Hospital Garcia de Orta	PRT
 506843	Genetics and Metabolism Laboratory; Children Hospital Zhejiang University School of Medicine	CHN
 506844	Genetics Service, Department of Paediatrics; KK Women's and Children's Hospital	SGP
+506845	Department of Medical Biology, Faculty of Medicine; Hacettepe University	TUR
 506846	Department of Neurology; The Third Xiangya Hospital, Central South University	CHN
 506847	Children’s Hospital, Clinical research laboratory; Medizinische Fakultaet Carl Gustav Carus, Technische Universitaet Dresden	DEU
 506848	Genitourinary Malignancies Research Center; Cleveland Clinic	USA
@@ -1441,6 +1446,7 @@
 507142	ClinGen TP53 Variant Curation Expert Panel; ClinGen	USA
 507143	NxGen MDx	USA
 507145	Genesis Genome Database	USA
+507147	Neuromuscular Department, Shariati Hospital; Tehran University of Medical Sciences	IRN
 507148	Beijing Mygenostics Co., Ltd.	CHN
 507149	Department of Chemical Pathology; Prince of Wales Hospital	HKG
 507157	UT Southwestern Medical Center; UT Southwestern Medical Center	USA
@@ -1462,33 +1468,42 @@
 507190	Institut de Recherche Interdisciplinaire en Biologie Humaine et Moleculaire; Universite Libre de Bruxelles	BEL
 507193	The Center for Liver Diseases; Children’s Hospital of Fudan University	CHN
 507194	Laboratorios de Investigación en Biología Molecular e Inmunología; Universidad Autónoma de Nayarit	MEX
+507197	Farrar Lab, Smurfit Institute of Genetics; Trinity College Dublin	IRL
 507200	Department of Haematogenetics; ICMR National Institute of Immunohaematology	IND
 507201	VIB - Center for Molecular Neurology; University of Antwerp	BEL
+507203	Institute of Pediatric Research, Children's Hospital of Soochow University; Soochow University	CHN
 507204	GenomeConnect - CFC International	USA
 507206	GenomeConnect-Association for Creatine Deficiencies	USA
 507207	GenomeConnect - CureCADASIL	USA
+507210	Dustin Baldridge Laboratory; Washington University in St. Louis	USA
 507214	Breda Genetics srl	ITA
 507219	Institute of Medical Genetics; ASUI Udine	ITA
 507221	Stankiewicz Research Laboratory; Baylor College of Medicine	USA
 507224	Wang Lab, Institute of Neuroscience; Xiamen university	CHN
 507226	Clinical Genetics Branch; National Institutes of Health	USA
 507227	Molecular Cardiogenetic Lab; Hospices Civils de Lyon	FRA
+507229	Department of Pediatrics, Graduate School of Medical Sciences; Kyushu university	JPN
+507231	Department of Maternal-Fetal Biology; National Research Institute for Child Health and Development	JPN
 507238	Laboratory of Molecular Genetics MedGen	USA
 507239	Division of Respiratory Medicine of Juntendo University; Juntendo University Faculty of Medicine and Graduate School of Medicine	JPN
+507240	Myriad Women's Health, Inc.	USA
+507242	Molecular Therapies Laboratory; Murdoch University	AUS
 507246	Diagnostics Lab (ASPIRE); CSIR - Centre for Cellular and Molecular Biology	IND
 507252	Cardiovascular Medicine; National Cerebral Cardiovascular Center	JPN
 507254	Aflac Cancer and Blood Disorders Center; Children's Healthcare of Atlanta	USA
 507255	Swedish Neurofibromatosis Center; Swedish Medical Center	USA
+507256	Cancer Genomics Group; Japanese Foundation For Cancer Research	JPN
 507257	Jiangsu Key Laboratory of Oral Diseases; Nanjing Medical University	CHN
 507263	Medical Genetics and Immunology; Urmia University of Medical sciences	IRN
 507266	Center for Computational Genomics and Data Science; University of Alabama	USA
-507267	Laboratorio de HLA; Instituto Nacional de Enfermedades Respiratorias	MEX
+507267	HLA Laboratory; Instituto Nacional de Enfermedades Respiratorias Ismael Cosio Villegas	MEX
 507268	State Key Laboratory of Oncogenes and Related Genes, Shanghai Cancer Institute; Ren Ji Hospital, School of Medicine, Shanghai Jiao Tong University	CHN
 507274	Unidad de Genómica Garrahan; Hospital de Pediatría Garrahan	ARG
 507275	Laboratorio de Genética; Hospital Universitario Clinico San Cecilio	ESP
 507276	Finnell Lab; Baylor College of Medicine	USA
 507279	UCSF Pediatric Lipid Clinic; University of California, San Francisco	USA
 507281	Laboratorio de Medicina Genomica; Instituto Nacional de Rehabilitacion Luis Guillermo Ibarra Ibarra	MEX
+507282	Epilepsy Neurogenetics Initiative; Children's Hospital of Philadelphia	USA
 507283	Service de Biochimie Médicale et Biologie Moléculaire; CHU Clermont-Ferrand	FRA
 507285	University Health Network; Princess Margaret Cancer Centre	CAN
 507287	Cytogenomics Laboratory; University of Sao Paulo	BRA
@@ -1519,6 +1534,7 @@
 507376	Center for Inherited Cardiovascular Diseases; IRCCS Fondazione Policlinico San Matteo	ITA
 507383	Department of Endocrinology; The Second Hospital of Jilin University	CHN
 507386	Center of Excellence for Medical Genomics; Chulalongkorn University	THA
+507387	Translational Omics Lab  at Great Ormond Street Institute of Child Health; University College London	GBR
 507399	Platelet Disorders/Laboratory of  Genetics and Genomics; Cincinnati Children's Hospital Medical Center, U Cincinnati College of Medicine	USA
 507404	Department of Cardiology, Chinese Academy of Medical Sciences; Fuwai Hospital	CHN
 507405	Laboratorio Genetica Umana; Istituto Giannina Gaslini	ITA
@@ -1532,9 +1548,12 @@
 507445	St George's Genomics Service; St George's University Hospitals NHS FT	GBR
 507447	CeMIA	GRC
 507454	Molecular Genetics Laboratory; CHU Lille	FRA
+507479	Moosajee Lab; UCL Institute of Ophthalmology	GBR
 507481	Prenatal Diagnosis Center; Jiangxi Provincial Maternal and Child Care Hospital	CHN
 507484	Center for Genetics and Inherited Diseases; Taibah University	SAU
+507490	Department of Medicine; University of Padua	ITA
 507495	Biological Sciences; International Islamic University, Islamabad	PAK
 507498	Fondazione Telethon; Telethon Institute of Genetics and Medicine	ITA
 507500	Cell and Molecular Biology Laboratory; University of the Punjab Lahore	PAK
 507503	Pediatric Nephrology Laboratory; The University of Tokyo Hospital	JPN
+507506	Pediatric Neurology; Rutgers New Jersey Medical School	USA
