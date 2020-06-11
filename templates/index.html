@@ -16,7 +16,7 @@
     <h1>Welcome to ClinVar Miner!</h1>
 
     <p>
-        The content on this website is current as of {{ max_date.strftime('%-d %B %Y') }}. On that date,
+        The content on this website is current as of {{ max_date.strftime('%e %B %Y') }}. On that date,
         <a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/">ClinVar</a> had
         {{ '{:,}'.format(total_submissions) }} submissions on {{ '{:,}'.format(total_variants) }} variants. When
         referencing data from this website, please cite the 2018 Human Mutation article
