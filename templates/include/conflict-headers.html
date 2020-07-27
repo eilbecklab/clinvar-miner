@@ -1,5 +1,10 @@
 <th>Variants with only 1 submission</th>
-<th class="thick-right-border">Variants with at least 2 submissions and no conflicts</th>
+<th class="thick-right-border">
+    Variants with at least 2 submissions and no conflicts
+    {% if min_conflict_level > 1 %}
+        below the specified minimum level
+    {% endif %}
+</th>
 {% if min_conflict_level <= 1 %}
     <th title="standard term vs non-standard but equivalent term">
         Variants with a synonymous conflict<br/>(e.g. benign vs non-pathogenic)
@@ -23,4 +28,9 @@
 <th title="benign, likely benign, or uncertain significance vs pathogenic or likely pathogenic">
     Variants with a clinically significant conflict<br/>(e.g. benign vs pathogenic)
 </th>
-<th class="{% if sorted %}desc{% endif %} thick-left-border">Variants with any kind of conflict</th>
+<th class="{% if sorted %}desc{% endif %} thick-left-border">
+    Variants with any conflict
+    {% if min_conflict_level > 1 %}
+        at or above the specified minimum level
+    {% endif %}
+</th>
