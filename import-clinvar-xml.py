@@ -63,6 +63,7 @@ def create_tables():
             star_level INTEGER,
             condition_name TEXT,
             condition_xrefs TEXT,
+            primary_mondo_xref TEXT,
             method TEXT,
             normalized_method TEXT,
             comment TEXT,
@@ -94,6 +95,7 @@ def create_tables():
             star_level1 INTEGER,
             condition1_name TEXT,
             condition1_xrefs TEXT,
+            primary_mondo_xref1 TEXT,
             method1 TEXT,
             normalized_method1 TEXT,
             comment1 TEXT,
@@ -223,6 +225,9 @@ def get_submissions(date, set_xml):
     condition_xrefs |= mondo.most_specific_matches(condition_name, condition_xrefs)
     condition_xrefs = ';'.join(sorted(condition_xrefs))
 
+    mondo_xrefs = list(filter(lambda ref: ref.startswith('MONDO:'), condition_xrefs.split(';')))
+    primary_mondo_xref = mondo.lowest_common_ancestor(mondo_xrefs)
+
     for assertion_el in set_el.findall('./ClinVarAssertion'):
         scv_el = assertion_el.find('./ClinVarAccession[@Type="SCV"]')
         scv = int(scv_el.attrib['Acc'][3:])
@@ -285,6 +290,7 @@ def get_submissions(date, set_xml):
             star_level,
             condition_name,
             condition_xrefs,
+            primary_mondo_xref,
             method,
             normalized_method,
             comment,
