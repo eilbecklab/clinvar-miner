@@ -16,3 +16,6 @@ latest: mondo
 clean:
 	rm -f clinvar.db
 	rm -f clinvar.db-journal
+
+test:
+	./mondo_test.py
