@@ -2,6 +2,7 @@ __pycache__
 clinvar.db
 clinvar.db-journal
 ClinVarFullRelease_????-??.xml
+ClinVarFullRelease_00-latest.xml
 monarch-merged.owl
 mondo.owl
 organization_summary.txt
