@@ -103,3 +103,65 @@ class Mondo:
                 j += 1
             i += 1
         return set(matches)
+
+    def lowest_common_ancestor(self, mondo_xrefs):
+        workable_mondo_xrefs = list(filter(lambda m_id: m_id in self.parents_by_mondo_xref, mondo_xrefs))
+        if len(workable_mondo_xrefs) == 0:
+            return "MONDO:0000001"
+
+        #check if any in the initial set are the lowest common ancestor
+        for mondo_xref in workable_mondo_xrefs:
+            #check that if all mondo xrefs in list are descendents of this main mondo xref
+            all_equal_or_descendent = True
+            current_mondo_xref = mondo_xref
+            i = 0
+            while i < len(workable_mondo_xrefs):
+                #all workable xrefs must be either equal or descendents of this current mondo xref
+                all_equal_or_descendent &= (
+                    workable_mondo_xrefs[i] == current_mondo_xref or
+                    self.is_descendent_of(workable_mondo_xrefs[i], current_mondo_xref)
+                )
+                if not all_equal_or_descendent:
+                    break
+                i += 1
+            if all_equal_or_descendent:
+                return current_mondo_xref  
+
+        q = []
+        for item in workable_mondo_xrefs: 
+            for parent in self.parents_by_mondo_xref.get(item, []):
+                q.append(parent)
+        if len(q) == 0:
+            return 'MONDO:0000001'
+        gensback = 0
+        while gensback < 100:
+            gensback+=1
+            q_i = 0
+            while len(q) > q_i:
+                #check that if all mondo xrefs in list are descendents of this main mondo xref
+                all_equal_or_descendent = True
+                current_mondo_xref = q[q_i]
+                i = 0
+                while i < len(workable_mondo_xrefs):
+                    #all workable xrefs must be either equal or descendents of this current mondo xref
+                    all_equal_or_descendent &= (
+                        workable_mondo_xrefs[i] == current_mondo_xref or
+                        self.is_descendent_of(workable_mondo_xrefs[i], current_mondo_xref)
+                    )
+                    if not all_equal_or_descendent:
+                        break
+                    i += 1
+                if all_equal_or_descendent:
+                    return current_mondo_xref
+                q_i += 1
+            q2 = set()
+            for item in q:
+                for parent in self.parents_by_mondo_xref.get(item, []):
+                    q2.add(parent)
+            # Only use root of ontology if this isn't the deepest ancestor through all ancestral lines and no other
+            # common ancestors have been found
+            if len(q2) > 0:
+                q2.discard('MONDO:0000001')
+            q = list(q2)
+            q.sort()
+        return 'MONDO:0000001'
