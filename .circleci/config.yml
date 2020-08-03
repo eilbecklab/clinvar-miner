@@ -1,0 +1,50 @@
+#start_date vim: set tabstop=2 softtabstop=2 shiftwidth=2 expandtab colorcolumn=81 :
+#
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+jobs:
+  build:
+    #branches:
+     #ignore:
+      #- master
+
+    docker:
+      # specify the version you desire here
+      - image: circleci/python:3.6.9-buster
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/postgres:9.4
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      #- restore_cache:
+          #keys:
+          #- v1-dependencies-{{ checksum "requirements.txt" }}-{{ checksum ".circleci/config.yml" }}
+          # fallback to using the latest cache if no exact match is found
+          #- v1-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            sudo pip install --upgrade -r requirements.txt
+
+      #- save_cache:
+        #paths:
+        #  - ./venv
+        #key: v1-dependencies-{{ checksum "requirements.txt" }}-{{ checksum ".circleci/config.yml" }}
+
+      # run tests!
+      - run:
+          name: run tests
+          command: |
+            make latest
+            make test
