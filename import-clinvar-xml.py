@@ -321,8 +321,32 @@ def import_file(filename):
         'INSERT OR REPLACE INTO submissions VALUES (' + ','.join('?' * len(submissions[0])) + ')', submissions
     )
 
+    del submissions
+
     cursor.execute('CREATE INDEX IF NOT EXISTS submissions__date ON submissions (date)')
     cursor.execute('CREATE INDEX IF NOT EXISTS submissions__variant_name ON submissions (variant_name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS submissions__scv ON submissions (scv)')
+
+    #replace descendent MONDO IDs of same variants with ancestors shown in submissions of the same variant
+    all_scvs_and_fixed_mondos = []
+    variants = list(cursor.execute('SELECT DISTINCT variant_name FROM submissions'))
+    for variant_name in variants:
+        subs_for_variant = list(cursor.execute(
+            'SELECT scv, primary_mondo_xref FROM submissions WHERE variant_name=?',
+            [variant_name[0]]
+        ))
+        if len(subs_for_variant) <= 1:
+            continue
+        scvs, condition_mondo_ids = zip(*subs_for_variant)
+        condition_mondo_ids = list(condition_mondo_ids)
+        scvs = list(scvs)
+        fixed_condition_mondo_ids = mondo.replace_descendent_mondo_xrefs(condition_mondo_ids)
+        scvs_and_fixed_mondos = list(zip(scvs, fixed_condition_mondo_ids))
+        for condition_mondo_id, pair in zip(condition_mondo_ids, scvs_and_fixed_mondos):
+            if pair[1] != condition_mondo_id:
+                all_scvs_and_fixed_mondos.append(pair)
+    #print(len(all_scvs_and_fixed_mondos))
+    cursor.executemany('UPDATE submissions SET primary_mondo_xref=? WHERE scv=?', all_scvs_and_fixed_mondos)
 
     cursor.execute('''
         INSERT OR REPLACE INTO comparisons

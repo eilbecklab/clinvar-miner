@@ -104,6 +104,20 @@ class Mondo:
             i += 1
         return set(matches)
 
+    def replace_descendent_mondo_xrefs(self, mondo_xrefs):
+        matches = list(mondo_xrefs)
+        i = 0
+        while i < len(matches):
+            j = i + 1
+            while j < len(matches):
+                if self.is_descendent_of(matches[i], matches[j]):
+                    matches[i] = matches[j]
+                elif self.is_descendent_of(matches[j], matches[i]):
+                    matches[j] = matches[i]
+                j += 1
+            i += 1
+        return list(matches)
+
     def lowest_common_ancestor(self, mondo_xrefs):
         workable_mondo_xrefs = list(filter(lambda m_id: m_id in self.parents_by_mondo_xref, mondo_xrefs))
         if len(workable_mondo_xrefs) == 0:

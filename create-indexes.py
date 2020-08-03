@@ -15,7 +15,6 @@ submission_columns_to_index = [
     'gene',
     'normalized_gene',
     'rcv',
-    'scv',
     'submitter_id',
     'submitter_name',
     'submitter_country_code',
