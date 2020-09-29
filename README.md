@@ -1,5 +1,9 @@
 ## Getting started
 
+_Note: If developing on Windows, use of the
+[Windows Subsystem For Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+(WSL) is strongly recommended._
+
 1. Install Make, cURL, Python 3, and Pip 3 from your system package manager.
 
 2. Run `pip3 install -r requirements.txt` to install required Python packages.
