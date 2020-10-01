@@ -1,5 +1,4 @@
-## Getting started
-
+## Let's Begin
 _Note: If developing on Windows, use of the
 [Windows Subsystem For Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
 (WSL) is strongly recommended._
@@ -38,7 +37,7 @@ _Note: If developing on Windows, use of the
 7. To update ClinVar Miner after each month's ClinVar release, repeat steps 3
    and 4 and then run `make latest`.
 
-## License
+## ALERT-License
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation, either version 3 of the License, or (at your option) any later
