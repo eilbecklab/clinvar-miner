@@ -53,7 +53,7 @@
 256489	FirmaLab	USA
 274978	Genome Diagnostics Laboratory; University Medical Center Utrecht	NLD
 278763	Harvard Reproductive Endocrine Science Center; Massachusetts General Hospital	USA
-279559	Centogene AG  - the Rare Disease Company	DEU
+279559	Centogene AG - the Rare Disease Company	DEU
 280848	Genetics - Viapath; Viapath, Guy's Hospital	GBR
 281385	Randwick Genomics Laboratory, Prince of Wales Hospital; New South Wales Health Pathology	AUS
 289519	Neuromuscular Disease Laboratory; Mayo Clinic College of Medicine	USA
@@ -967,7 +967,7 @@
 506312	Dr Meenakshi Bhat Group; Centre for Human Genetics	IND
 506313	Laboratory of Molecular Pathology; Fondazione IRCCS Ca' Granda Ospedale Maggiore Policlinico	ITA
 506314	Molecular Genetics Laboratory; State University of Campinas	BRA
-506315	Department of Hematology - Research Laboratory 1; Postgraduate Institute of Medical Education and Research	IND
+506315	Department of Hematology - Research Laboratory 1; Dayanand Medical College & Hospital (DMCH)	IND
 506316	David Buchner Laboratory; Case Western Reserve University	USA
 506317	Mark LeDoux Lab; University of Tennessee Health Science Center	USA
 506318	Dan Cohn Lab; University of California Los Angeles	USA
@@ -1172,7 +1172,7 @@
 506667	Unit of Genetics of Neurodegenerative and Metabolic Disease; Fondazione IRCCS Istituto Neurologico Carlo Besta	ITA
 506669	Liping Wei Laboratory; Peking University	CHN
 506670	Service de Génétique Médicale; Institut Central des Hôpitaux	CHE
-506672	Clinical Genomics Lab; St. Jude Children's Research Hospital	USA
+506672	St. Jude Clinical Genomics Lab; St. Jude Children's Research Hospital	USA
 506673	Cancer Genomics Laboratory; Texas Children's Hospital	USA
 506674	Department of Internal Medicine, The University of Texas McGovern Medical School; The University of Texas Health Science Center at Houston	USA
 506675	Clinical Cancer Genetics and Family Consultants; Athens Medical Center	GRC
@@ -1463,6 +1463,7 @@
 507147	Neuromuscular Department, Shariati Hospital; Tehran University of Medical Sciences	IRN
 507148	Beijing Mygenostics Co., Ltd.	CHN
 507149	Department of Chemical Pathology; Prince of Wales Hospital	HKG
+507152	Center for Reproductive Medicine; Peking University Third Hospital	CHN
 507157	UT Southwestern Medical Center; UT Southwestern Medical Center	USA
 507163	Daan van Aalten Lab; University of Dundee	GBR
 507164	Institute of Clinical Chemistry and Institute of Clinical Molecular Biology; University Hospital Schleswig-Holstein, Campus Kiel	DEU
@@ -1484,8 +1485,10 @@
 507190	Institut de Recherche Interdisciplinaire en Biologie Humaine et Moleculaire; Universite Libre de Bruxelles	BEL
 507193	The Center for Liver Diseases; Children's Hospital of Fudan University	CHN
 507194	Laboratorios de Investigación en Biología Molecular e Inmunología; Universidad Autónoma de Nayarit	MEX
+507196	Bioinformatics Research Center; Pavlov First St. Petersburg State Medical University	RUS
 507197	Farrar Lab, Smurfit Institute of Genetics; Trinity College Dublin	IRL
 507198	Department of Pediatrics, Tongji Hospital; Tongji Medical College, Huazhong University of Science and Technology	CHN
+507199	Al Jalila Children's Genomics Center; Al Jalila Childrens Speciality Hospital	ARE
 507200	Department of Haematogenetics; ICMR National Institute of Immunohaematology	IND
 507201	VIB - Center for Molecular Neurology; University of Antwerp	BEL
 507203	Institute of Pediatric Research, Children's Hospital of Soochow University; Soochow University	CHN
@@ -1517,6 +1520,7 @@
 507255	Swedish Neurofibromatosis Center; Swedish Medical Center	USA
 507256	Cancer Genomics Group; Japanese Foundation For Cancer Research	JPN
 507257	Jiangsu Key Laboratory of Oral Diseases; Nanjing Medical University	CHN
+507262	Brunham Lab, Centre for Heart and Lung Innovation; University of British Columbia	CAN
 507263	Department of biochemistry and genetics; Arak University of Medical sciences	IRN
 507266	Center for Computational Genomics and Data Science; University of Alabama	USA
 507267	HLA Laboratory; Instituto Nacional de Enfermedades Respiratorias Ismael Cosio Villegas	MEX
@@ -1589,9 +1593,11 @@
 507406	Robert's Program; Boston Children's Hospital	USA
 507407	Hongyan Wang Laboratory; Fudan University	CHN
 507408	Pediatric Oncology; Johns Hopkins University	USA
+507409	Maintenance myélinique et neuropathies périphériques; University of Limoges	FRA
 507411	Clinical Genomics Program; Stanford Medicine	USA
 507415	Medical Genetics Laboratory; West China Hospital, Sichuan University	CHN
 507416	Dr Sami Ulus Medical Genetics Department; Dr Sami Ulus Training and Research Hospital for Maternity and Children's Health and Diseases	TUR
+507417	Institute of Medical Sciences; Banaras Hindu University	IND
 507421	Cardiology unit; Meyer University Hospital	ITA
 507423	Neurogenetics; IRCCS Istituto delle Scienze Neurologiche di Bologna	ITA
 507424	Clinical Laboratory Sciences; Imam Abdulrahman Bin Faisal University	SAU
@@ -1599,7 +1605,7 @@
 507427	Experimental and Health Sciences Department; Universitat Pompeu Fabra	ESP
 507428	Neurosurgery; Yale University School of Medicine	USA
 507430	Medical Molecular Genetics; National Research Centre	EGY
-507431	Pediatrics Genetics; Postgraduate Institute of Medical Education and Research	IND
+507431	Pediatrics Genetics; Dayanand Medical College & Hospital (DMCH)	IND
 507437	"Laboratory of Human Molecular Genetics; Petersburg Nuclear Physics Institute named by B.P.Konstantinov of NRC ""Kurchatov Institute"""	RUS
 507440	Neuromuscular Department; Hannover Medical School	DEU
 507442	Research Center for Genetics and Reproductive Health; Viet Nam National University HCMC	VNM
@@ -1628,6 +1634,7 @@
 507484	Center for Genetics and Inherited Diseases; Taibah University	SAU
 507485	Department of Medical Genetics; Faculty of Medicine, Istanbul University	TUR
 507490	Department of Medicine; University of Padua	ITA
+507491	Department of Laboratory Medicine; Fuzhou Second Hospital Affiliated to Xiamen University	CHN
 507495	Biological Sciences; International Islamic University, Islamabad	PAK
 507498	Fondazione Telethon; Telethon Institute of Genetics and Medicine	ITA
 507499	DESAM Institute; Near East University	CYP
@@ -1641,20 +1648,26 @@
 507508	"Thrombosis and Haemostasis Unit; Fondazione IRCCS  ""Casa Sollievo della Sofferenza"""	ITA
 507509	Central Laboratory; The First Hospital of Lanzhou University	CHN
 507510	Laboratory of Genetics in Ophthalmology; Institut Imagine	FRA
+507512	Human Genetic Laboratory; University of Liege	BEL
 507513	DeNA Laboratory; DeNA Laboratory	IRN
+507514	Wanghongyan lab; Fudan University	CHN
 507515	Laboratory of Human Genetics, UPO; University of Eastern Piedmont	ITA
+507517	Department of Neurology; Kindai University	JPN
 507518	Faculté Pluridciplinaire Nador; Université Mohamed Premier	MAR
 507519	School of Bio-Medicine; Mongolian National University of Medical Sciences	MNG
+507520	Laboratory of Molecular Regulation of Neurogenesis; University of Liege	BEL
 507522	ClinGen Lysosomal Storage Disorder Variant Curation Expert Panel; ClinGen	USA
 507523	Department of Pediatrics; University Hospital Center Zagreb	HRV
 507524	Godley laboratory; The University of Chicago	USA
 507525	Research Laboratory of Human Genome and Multifactorial Diseases; Faculty of Pharmacy, University of Monastir	TUN
 507526	Fundacion Diagnosis	CHL
+507528	Division of Genetics, Dept of Pediatrics; All India Institute of Medical Sciences	IND
 507529	Institute of Genomics; University of Tartu	EST
 507530	Turvey Lab; BC Children's Hospital Research Institute	CAN
 507531	Endocrine Research Center,  Institute of Endocrinology and Metabolism; Iran University of Medical Sciences	IRN
 507533	Suna and Inan Kirac Foundation Neurodegeneration Research Laboratory; Koc University	TUR
 507534	Neurology Department,The First Affiliated Hospital of Zhengzhou University; Zhengzhou University	CHN
+507540	Heon Lab; The Hospital for Sick Children	CAN
 507543	Inborn Errors of Metabolism; Hospital Clinic, IDIBAPS, CIBERER	ESP
 507545	Beijing Children’s hospital; National Center for Children’s Health	CHN
 507549	Unidad de Genetica; Hospital Roberto del Rio	CHL
@@ -1669,6 +1682,7 @@
 507570	Ro'ya Specialized Medical Laboratories; King Abdulaziz University	SAU
 507571	Obstetrics and Gynecology; Juntendo university	JPN
 507572	Vinuesa Lab; Australian National University	AUS
+507573	Population Bio, Inc.	USA
 507574	Ding PR Lab; Sun Yat-sen University Cancer Center	CHN
 507576	Department of Transfusion Medicine; Fujian Provincial Hospital	CHN
 507577	Personalis, Inc.	USA
@@ -1682,25 +1696,45 @@
 507606	Endocrine Laboratory of Southeast University; Southeast University	CHN
 507609	Department of Pediatrics, Affiliated Hospital of Zunyi Medical College; Zunyi Medical College	CHN
 507610	Department of Laboratory Medicine; Yonsei University College of Medicine	USA
+507613	Liver Center; Tokai University School of Medicine	JPN
 507615	Department of Pediatrics; Prince of Songkla University	THA
 507616	Arnesen Lab; University of Bergen	NOR
 507617	Biotechnology Lab, Dept of Biomolecular Sciences; University of Urbino	ITA
 507619	Clinical Genetics; CHU RENNES	FRA
 507621	Molecular Genetics Laboratory Heidelberg; Heidelberg University	DEU
 507622	MNM Diagnostics	POL
+507623	Clinical Genomics and Bioinformatics Laboratory; Pirogov Russian National Research Medical University	RUS
 507627	Molecular Genetics of Inherited Kidney Disorders Laboratory; Garvan Institute of Medical Research	AUS
 507629	Molecular Section; Niloo Genom lab	IRN
+507631	Arkana Molecular Diagnostic Laboratory; Arkana Laboratories	USA
 507632	(GEEPAD) Grupo de Estudio de la Enfermedad Poliquística Autosómica Dominante; Hospitales Universitarios Virgen de las Nieves y San Cecilio (Granada)	ESP
 507633	Centro de Registro e Investigacion sobre Anomalias Congenitas; Hospital Civil de Guadalajara Dr. Juan I. Menchaca	MEX
+507636	Oncogenetique constitutionnelle; Hopital Bichat	FRA
+507644	Malcovati Lab; University of Pavia	ITA
+507648	"Center of Genetics and Reproductive Medicine ""Genetico"""	RUS
 507653	Department of Medical Genetics; Hue University of Medicine and Pharmacy	VNM
 507656	Institute of Molecular Biology and Genetics; National Academy of Sciences of Ukraine	UKR
 507658	Amsterdam Leukodystrophy Center; Amsterdam UMC	NLD
+507660	Department of Neurosurgery; Peking University First Hospital	CHN
 507662	ClinGen Platelet Disorders Variant Curation Expert Panel; ClinGen	USA
 507664	Constitutional Genetics Lab; Leon Berard Cancer Center	FRA
 507666	NPCF Sunshine Lab; H. Lee Moffitt Cancer Center and Research Institute	USA
+507667	Child Health and Human Development Program; Research Institute of the McGill University Health Center	CAN
+507673	Department of Cell and Molecular Biology,Manipal School of Life Sciences; Manipal Academy of Higher Education	IND
 507676	Investigational Cancer Therapeutics; MD Anderson Cancer Center	USA
 507681	Medical Genetics Unit; Sapienza University of Rome	ITA
 507682	Department of Pediatrics; Asahikawa Medical University	JPN
+507690	Genoks Genetic Disorders Diagnostic Laboratory	TUR
+507695	Department of Pediatrics; Salzburger Landeskliniken & Paracelsus Medical University	AUT
 507701	Breast Center; Key Laboratory of Carcinogenesis and Translational Research	CHN
+507705	Department of Neonatology; Xingtai People's Hospital	CHN
 507709	Zarate Arkansas Children's Genetics Clinic; Arkansas Children's Hospital	USA
+507713	Human Developmental Genetics; Institut Pasteur	FRA
 507715	Immunogenetics of Pediatric Autoimmune Diseases; Institut Imagine	FRA
+507716	Center for Bone Health; The Children's Hospital of Philadelphia	USA
+507726	Faculty of Health Sciences; Beirut Arab University	LBN
+507731	Institute of Molecular Medicine and Oncology; Chongqing Medical University	CHN
+507743	Gastroenterology Department; Qilu Hospital of Shandong University	CHN
+507747	Department of Endocrinology, Metabolism and Genetics; Henan Children's Hospital, Children's Hospital Affiliated to Zhengzhou University	CHN
+507748	Department of Clinical Biochemistry; University General Hospital Attikon, Medical School, National & Kapodistrian University of Athens	GRC
+507762	Laboratory of Molecular Genetics; Children's Memorial Health Institute	POL
