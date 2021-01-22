@@ -20,7 +20,10 @@ class DB():
             self.parameters.get('star_level2', 0) > 0
         )
         if comparison_required:
-            self.query += ' AND conflict_level>=:min_conflict_level'
+            if self.parameters['original_conflict_levels']:
+                self.query += ' AND conflict_level>=:min_conflict_level'
+            else:
+                self.query += ' AND normalized_conflict_level>=:min_conflict_level'
         else:
             self.query += ' AND conflict_level=-1'
 
@@ -193,6 +196,7 @@ class DB():
         self.parameters = {
             'min_stars': kwargs.get('min_stars', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 
@@ -253,6 +257,7 @@ class DB():
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 
@@ -294,6 +299,7 @@ class DB():
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 
@@ -350,6 +356,7 @@ class DB():
         self.parameters = {
             'min_stars': kwargs.get('min_stars', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 
@@ -374,6 +381,7 @@ class DB():
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 
@@ -415,6 +423,7 @@ class DB():
         self.parameters = {
             'min_stars': kwargs.get('min_stars', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 
@@ -438,6 +447,7 @@ class DB():
         self.parameters = {
             'min_stars': kwargs.get('min_stars', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 
@@ -457,6 +467,7 @@ class DB():
         self.parameters = {
             'min_stars': kwargs.get('min_stars', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 
@@ -477,6 +488,7 @@ class DB():
         self.parameters = {
             'min_stars': kwargs.get('min_stars', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 
@@ -503,6 +515,7 @@ class DB():
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 
@@ -565,6 +578,7 @@ class DB():
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 
@@ -619,6 +633,7 @@ class DB():
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 
@@ -670,6 +685,7 @@ class DB():
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 
@@ -732,6 +748,7 @@ class DB():
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 
@@ -786,6 +803,7 @@ class DB():
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 
@@ -841,6 +859,7 @@ class DB():
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 
@@ -898,6 +917,7 @@ class DB():
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 
@@ -936,22 +956,29 @@ class DB():
         else:
             self.query = 'SELECT condition2_name AS condition_name'
 
+        if kwargs.get('original_conflict_levels'):
+            self.query += ', conflict_level'
+        else:
+            self.query += ', normalized_conflict_level AS conflict_level'
+
         self.query += '''
-            , conflict_level, COUNT(DISTINCT variant_name) AS count
+            , COUNT(DISTINCT variant_name) AS count
             FROM comparisons
-            WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', 1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
+
+        if kwargs.get('original_conflict_levels'):
+            self.query += ' AND conflict_level>=:min_conflict_level'
+        else:
+            self.query += ' AND normalized_conflict_level>=:min_conflict_level'
 
         if kwargs.get('condition1_name') != None:
             self.and_equals('condition1_name', kwargs['condition1_name'])
@@ -962,14 +989,22 @@ class DB():
         if kwargs.get('normalized_method2'):
             self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
-        self.query += ' GROUP BY condition_name, conflict_level'
+        if kwargs.get('original_conflict_levels'):
+            self.query += ' GROUP BY condition_name, conflict_level'
+        else:
+            self.query += ' GROUP BY condition_name, normalized_conflict_level'
 
         return self.rows()
 
     @promise
     def total_variants_in_conflict_by_conflict_level(self, **kwargs):
-        self.query = '''
-            SELECT conflict_level, COUNT(DISTINCT variant_name) AS count FROM comparisons
+        if kwargs.get('original_conflict_levels'):
+            self.query = 'SELECT conflict_level'
+        else:
+            self.query = 'SELECT normalized_conflict_level AS conflict_level'
+
+        self.query += '''
+            , COUNT(DISTINCT variant_name) AS count FROM comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date
         '''
 
@@ -977,6 +1012,7 @@ class DB():
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', 1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 
@@ -1009,7 +1045,10 @@ class DB():
 
         self.and_optimized_conflict_level()
 
-        self.query += ' GROUP BY conflict_level'
+        if kwargs.get('original_conflict_levels'):
+            self.query += ' GROUP BY conflict_level'
+        else:
+            self.query += ' GROUP BY normalized_conflict_level'
 
         return self.rows()
 
@@ -1020,22 +1059,29 @@ class DB():
         else:
             self.query = 'SELECT normalized_gene AS gene'
 
+        if kwargs.get('original_conflict_levels'):
+            self.query += ', conflict_level'
+        else:
+            self.query += ', normalized_conflict_level AS conflict_level'
+
         self.query += '''
-            , conflict_level, COUNT(DISTINCT variant_name) AS count
+            , COUNT(DISTINCT variant_name) AS count
             FROM comparisons
-            WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', 1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
+
+        if kwargs.get('original_conflict_levels'):
+            self.query += 'AND conflict_level>=:min_conflict_level'
+        else:
+            self.query += 'AND normalized_conflict_level>=:min_conflict_level'
 
         if kwargs.get('normalized_method1'):
             self.and_equals('normalized_method1', kwargs['normalized_method1'])
@@ -1056,9 +1102,14 @@ class DB():
                 self.and_equals('normalized_gene', kwargs['gene'])
 
         if kwargs.get('original_genes'):
-            self.query += ' GROUP BY gene, conflict_level'
+            self.query += ' GROUP BY gene'
         else:
-            self.query += ' GROUP BY normalized_gene, conflict_level'
+            self.query += ' GROUP BY normalized_gene'
+
+        if kwargs.get('original_conflict_levels'):
+            self.query += ', conflict_level'
+        else:
+            self.query += ', normalized_conflict_level'
 
         return self.rows()
 
@@ -1071,21 +1122,28 @@ class DB():
                 SELECT normalized_significance1 AS significance1, normalized_significance2 AS significance2
             '''
 
+        if kwargs.get('original_conflict_levels'):
+            self.query += ', conflict_level'
+        else:
+            self.query += ', normalized_conflict_level AS conflict_level'
+
         self.query += '''
-            , conflict_level, COUNT(DISTINCT variant_name) AS count
-            FROM comparisons WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
+            , COUNT(DISTINCT variant_name) AS count
+            FROM comparisons WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', 1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
+
+        if kwargs.get('original_conflict_levels'):
+            self.query += 'AND conflict_level>=:min_conflict_level'
+        else:
+            self.query += 'AND normalized_conflict_level>=:min_conflict_level'
 
         if kwargs.get('gene') != None:
             if kwargs.get('original_genes'):
@@ -1128,22 +1186,29 @@ class DB():
         else:
             self.query = 'SELECT submitter2_id AS submitter_id'
 
+        if kwargs.get('original_conflict_levels'):
+            self.query += ', conflict_level'
+        else:
+            self.query += ', normalized_conflict_level AS conflict_level'
+
         self.query += '''
-            , conflict_level, COUNT(DISTINCT variant_name) AS count
+            , COUNT(DISTINCT variant_name) AS count
             FROM comparisons
-            WHERE
-                star_level1>=:min_stars1 AND
-                star_level2>=:min_stars2 AND
-                conflict_level>=:min_conflict_level AND
-                date=:date
+            WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date
         '''
 
         self.parameters = {
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', 1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
+
+        if kwargs.get('original_conflict_levels'):
+            self.query += 'AND conflict_level>=:min_conflict_level'
+        else:
+            self.query += 'AND normalized_conflict_level>=:min_conflict_level'
 
         if kwargs.get('submitter1_id'):
             self.and_equals('submitter1_id', kwargs['submitter1_id'])
@@ -1154,7 +1219,10 @@ class DB():
         if kwargs.get('normalized_method2'):
             self.and_equals('normalized_method2', kwargs['normalized_method2'])
 
-        self.query += ' GROUP BY submitter_id, conflict_level'
+        if kwargs.get('original_conflict_levels'):
+            self.query += ' GROUP BY submitter_id, conflict_level'
+        else:
+            self.query += ' GROUP BY submitter_id, normalized_conflict_level'
 
         return self.rows()
 
@@ -1169,6 +1237,7 @@ class DB():
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
             'significance': kwargs['significance'],
         }
@@ -1240,6 +1309,7 @@ class DB():
             'min_stars1': kwargs.get('min_stars1', 0),
             'min_stars2': kwargs.get('min_stars2', 0),
             'min_conflict_level': kwargs.get('min_conflict_level', -1),
+            'original_conflict_levels': kwargs.get('original_conflict_levels'),
             'date': kwargs.get('date') or self.max_date(),
         }
 

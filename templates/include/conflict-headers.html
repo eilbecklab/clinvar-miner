@@ -1,6 +1,15 @@
-<th>Variants with only 1 submission per condition</th>
+<th>
+    Variants with only 1 submission
+    {% if not request.args.get('original_conflict_levels') %}
+        per condition
+    {% endif %}
+</th>
 <th class="thick-right-border">
-    Variants with at least 2 submissions on the same condition and no conflicts
+    Variants with at least 2 submissions
+    {% if not request.args.get('original_conflict_levels') %}
+        on the same condition
+    {% endif %}
+    and no conflicts
     {% if min_conflict_level > 1 %}
         below the specified minimum level
     {% endif %}

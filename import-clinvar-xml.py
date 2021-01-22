@@ -107,9 +107,11 @@ def create_tables():
             normalized_significance2 TEXT,
             star_level2 INTEGER,
             condition2_name TEXT,
+            primary_mondo_xref2 TEXT,
             normalized_method2 TEXT,
 
             conflict_level INTEGER,
+            normalized_conflict_level INTEGER,
 
             PRIMARY KEY (date, scv1, scv2)
         )
@@ -359,6 +361,7 @@ def import_file(filename):
             t2.normalized_significance,
             t2.star_level,
             t2.condition_name,
+            t2.primary_mondo_xref,
             t2.normalized_method,
             CASE
                 WHEN t1.scv=t2.scv THEN -1
@@ -380,11 +383,22 @@ def import_file(filename):
                 WHEN t1.normalized_significance IN ("pathogenic", "likely pathogenic") AND t2.normalized_significance IN ("benign", "likely benign", "uncertain significance") THEN 5
 
                 ELSE 4
-            END AS conflict_level
+            END AS conflict_level,
+            -1
         FROM submissions t1 INNER JOIN submissions t2
-        ON t1.date=? AND t2.date=? AND t1.variant_name=t2.variant_name AND t1.primary_mondo_xref=t2.primary_mondo_xref
+        ON t1.date=? AND t2.date=? AND t1.variant_name=t2.variant_name
         ORDER BY conflict_level, variant_name
     ''', [date, date])
+
+    cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__date ON comparisons (date)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__primary_mondo_xref1 ON comparisons (primary_mondo_xref1)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS comparisons__primary_mondo_xref2 ON comparisons (primary_mondo_xref2)')
+
+    cursor.execute('''
+        UPDATE comparisons
+        SET normalized_conflict_level=conflict_level
+        WHERE date=? AND primary_mondo_xref1=primary_mondo_xref2
+    ''', [date])
 
     for row in list(cursor.execute('SELECT DISTINCT condition_name, condition_xrefs FROM submissions WHERE date=?', [date])):
         clinvar_name = row[0]

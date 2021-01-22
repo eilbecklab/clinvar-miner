@@ -495,6 +495,10 @@ def template_functions():
             'method2'
         ]
 
+        if 'min_conflict_level' in extra_allowed_params:
+            #min_conflict_level cannot be interpreted without original_conflict_levels
+            extra_allowed_params.append('original_conflict_levels')
+
         args = []
         for key in request.args:
             value = request.args.get(key)
@@ -558,6 +562,7 @@ def variants_in_conflict_by_condition(condition_name = None):
         'normalized_method1': request.args.get('method1'),
         'min_stars2': int_arg('min_stars2'),
         'normalized_method2': request.args.get('method2'),
+        'original_conflict_levels': request.args.get('original_conflict_levels'),
         'original_genes': request.args.get('original_genes'),
         'date': request.args.get('date'),
     }
@@ -667,6 +672,7 @@ def variants_in_conflict_by_gene(gene = None, significance1 = None, significance
         'min_stars2': int_arg('min_stars2'),
         'normalized_method2': request.args.get('method2'),
         'gene_type': int_arg('gene_type'),
+        'original_conflict_levels': request.args.get('original_conflict_levels'),
         'original_genes': request.args.get('original_genes'),
         'date': request.args.get('date'),
     }
@@ -775,6 +781,7 @@ def variants_in_conflict_by_significance(significance1 = None, significance2 = N
         'normalized_method1': request.args.get('method1'),
         'min_stars2': int_arg('min_stars2'),
         'normalized_method2': request.args.get('method2'),
+        'original_conflict_levels': request.args.get('original_conflict_levels'),
         'original_terms': request.args.get('original_terms'),
         'date': request.args.get('date'),
     }
@@ -834,6 +841,7 @@ def variants_in_conflict_by_submitter(submitter1_id = None, submitter2_id = None
         'normalized_method1': request.args.get('method1'),
         'min_stars2': int_arg('min_stars2'),
         'normalized_method2': request.args.get('method2'),
+        'original_conflict_levels': request.args.get('original_conflict_levels'),
         'gene_type': int_arg('gene_type'),
         'original_genes': request.args.get('original_genes'),
         'date': request.args.get('date'),
@@ -1072,6 +1080,7 @@ def submissions_by_variant(variant_name):
         'min_stars': int_arg('min_stars1'),
         'normalized_method': request.args.get('method1'),
         'min_conflict_level': int_arg('min_conflict_level'),
+        'original_conflict_levels': request.args.get('original_conflict_levels'),
         'variant_name': variant_name,
         'date': request.args.get('date'),
     }
@@ -1095,6 +1104,7 @@ def total_submissions_by_country(country_code = None):
         'min_stars': int_arg('min_stars1'),
         'normalized_method': request.args.get('method1'),
         'min_conflict_level': int_arg('min_conflict_level'),
+        'original_conflict_levels': request.args.get('original_conflict_levels'),
         'date': request.args.get('date'),
     }
     validate_args(args)
@@ -1128,6 +1138,7 @@ def total_submissions_by_method():
     args = {
         'min_stars': int_arg('min_stars1'),
         'min_conflict_level': int_arg('min_conflict_level'),
+        'original_conflict_levels': request.args.get('original_conflict_levels'),
         'date': request.args.get('date'),
     }
     validate_args(args)
@@ -1156,6 +1167,7 @@ def variants_by_condition(significance = None, condition_name = None, gene = Non
         'normalized_method1': request.args.get('method1'),
         'normalized_method2': request.args.get('method1'),
         'min_conflict_level': int_arg('min_conflict_level'),
+        'original_conflict_levels': request.args.get('original_conflict_levels'),
         'gene_type': int_arg('gene_type'),
         'original_genes': request.args.get('original_genes'),
         'date': request.args.get('date'),
@@ -1252,6 +1264,7 @@ def variants_by_gene(gene = None, significance = None, submitter_id = None, cond
         'normalized_method1': request.args.get('method1'),
         'normalized_method2': request.args.get('method1'),
         'min_conflict_level': int_arg('min_conflict_level'),
+        'original_conflict_levels': request.args.get('original_conflict_levels'),
         'gene_type': int_arg('gene_type'),
         'original_genes': request.args.get('original_genes'),
         'date': request.args.get('date'),
@@ -1347,6 +1360,7 @@ def variants_by_mondo_condition(mondo_condition_id = None, gene = None, signific
         'normalized_method1': request.args.get('method1'),
         'normalized_method2': request.args.get('method1'),
         'min_conflict_level': int_arg('min_conflict_level'),
+        'original_conflict_levels': request.args.get('original_conflict_levels'),
         'gene_type': int_arg('gene_type'),
         'original_genes': request.args.get('original_genes'),
         'date': request.args.get('date'),
@@ -1438,6 +1452,7 @@ def variants_by_significance(significance = None):
         'normalized_method1': request.args.get('method1'),
         'normalized_method2': request.args.get('method1'),
         'min_conflict_level': int_arg('min_conflict_level'),
+        'original_conflict_levels': request.args.get('original_conflict_levels'),
         'gene_type': int_arg('gene_type'),
         'original_genes': request.args.get('original_genes'),
         'original_terms': request.args.get('original_terms'),
@@ -1499,6 +1514,7 @@ def variants_by_submitter(submitter_id = None, significance = None, gene = None,
         'normalized_method1': request.args.get('method1'),
         'normalized_method2': request.args.get('method1'),
         'min_conflict_level': int_arg('min_conflict_level'),
+        'original_conflict_levels': request.args.get('original_conflict_levels'),
         'gene_type': int_arg('gene_type'),
         'original_genes': request.args.get('original_genes'),
         'date': request.args.get('date'),

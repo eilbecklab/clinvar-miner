@@ -31,9 +31,9 @@
     </tr>
     {% if min_conflict_level_filter %}
         <tr>
-            <td>Minimum conflict level:</td>
-            <td colspan="3">
-                <select name="min_conflict_level">
+            <td colspan="4">
+                Minimum conflict level:
+                <select name="min_conflict_level" style="margin-left:1em; margin-right:1em">
                     <option></option>
                     {% if min_conflict_level_filter != 'high_only' %}
                         <option
@@ -72,14 +72,23 @@
                         clinically significant conflict (e.g. benign vs pathogenic)
                     </option>
                 </select>
-            </td>
+                <label>
+                    <input
+                        {% if request.args.get('original_conflict_levels') %} checked="checked" {% endif %}
+                        name="original_conflict_levels"
+                        type="checkbox"
+                        value="1"
+                    />
+		    Report conflict between different conditions
+                </label>
+	    </td>
         </tr>
     {% endif %}
     {% if gene_filters %}
         <tr>
-            <td>Gene type:</td>
-            <td>
-                <select name="gene_type">
+            <td colspan="4">
+		Gene type:
+                <select name="gene_type" style="margin-left:1em; margin-right:1em">
                     <option></option>
                     <option {% if request.args.get('gene_type') == '1' %}selected="selected"{% endif %} value="1">
                         in or near a single gene
@@ -91,8 +100,6 @@
                         multiple genes because variant is large
                     </option>
                 </select>
-            </td>
-            <td colspan="2">
                 <label>
                     <input
                         {% if request.args.get('original_genes') %} checked="checked" {% endif %}
