@@ -34,7 +34,7 @@
                 <tbody>
                     {% for submitter_id, submitter_summary in summary.items() %}
                         <tr>
-                            {% with url = 'variants-in-conflict-by-submitter/' + submitter_id|string + query_suffix('min_conflict_level', 'date') %}
+                            {% with url = 'variants-in-conflict-by-submitter/' + submitter_id|string + query_suffix(['min_conflict_level', 'date']) %}
                                 <td>
                                     <input
                                         {% if submitter_id|string in request.args.getlist('submitters') %}

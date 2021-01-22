@@ -35,7 +35,7 @@
                 <tbody>
                     {% for gene, gene_summary in summary.items() %}
                         <tr>
-                            {% with url = 'variants-in-conflict-by-gene/' + (gene or 'intergenic') + query_suffix('min_conflict_level', 'gene_type', 'original_genes', 'date') %}
+                            {% with url = 'variants-in-conflict-by-gene/' + (gene or 'intergenic') + query_suffix(['min_conflict_level', 'gene_type', 'original_genes', 'date']) %}
                                 <td>
                                     <input
                                         {% if gene in request.args.getlist('genes') %}

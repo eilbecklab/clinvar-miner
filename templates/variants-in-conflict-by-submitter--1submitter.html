@@ -45,7 +45,7 @@
             <tbody>
                 {% for submitter2_id, submitter2_summary in summary.items() %}
                     <tr>
-                        {% with url = 'variants-in-conflict-by-submitter/' + submitter1_info['id']|string + '/' + submitter2_id|string + query_suffix('min_conflict_level', 'original_terms', 'date') %}
+                        {% with url = 'variants-in-conflict-by-submitter/' + submitter1_info['id']|string + '/' + submitter2_id|string + query_suffix(['min_conflict_level', 'original_terms', 'date']) %}
                             <th>
                                 <a href="{{ url }}">{{ submitter2_summary['name'] }}</a>
                             </th>

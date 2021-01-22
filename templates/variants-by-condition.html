@@ -35,7 +35,7 @@
                 <tbody>
                     {% for row in total_variants_by_condition %}
                         <tr>
-                            {% with url = 'variants-by-condition/' + row['condition_name']|superescaped + query_suffix('min_conflict_level', 'original_genes', 'date') %}
+                            {% with url = 'variants-by-condition/' + row['condition_name']|superescaped + query_suffix(['min_conflict_level', 'original_genes', 'date']) %}
                                 <td>
                                     <input
                                         {% if row['condition_name']|string in request.args.getlist('conditions') %}

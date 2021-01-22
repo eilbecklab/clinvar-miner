@@ -13,11 +13,13 @@
     </thead>
     <tbody>
         <tr>
-            {% with url = request.base_url + '/significance/' %}
+            {% with %}
+                {% set url = request.base_url + '/significance/' %}
+                {% set params = ['min_conflict_level', 'gene_type', 'original_genes', 'date'] %}
                 {% for significance, count in overview.items() %}
                     {% if count %}
                         <td class="highlight">
-                            <a href="{{ url + significance|superescaped + query_suffix('min_conflict_level', 'gene_type', 'original_genes', 'original_terms', 'date') }}">
+                            <a href="{{ url + significance|superescaped + query_suffix(params + ['original_terms']) }}">
                                 {{ count }}
                             </a>
                         </td>
@@ -27,7 +29,7 @@
                 {% endfor %}
                 {% if total_variants %}
                     <td class="highlight">
-                        <a href="{{ url + 'any' + query_suffix('min_conflict_level', 'gene_type', 'original_genes', 'date') }}">
+                        <a href="{{ url + 'any' + query_suffix(params) }}">
                             {{ total_variants }}
                         </a>
                     </td>

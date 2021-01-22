@@ -9,7 +9,7 @@
         {% for row in variants %}
             <tr>
                 <td>
-                    <a href="submissions-by-variant/{{ row['variant_name']|superescaped + query_suffix('date') }}">
+                    <a href="submissions-by-variant/{{ row['variant_name']|superescaped + query_suffix(['date']) }}">
                         {{ row['variant_name']|extrabreaks|safe }}
                     </a>
                 </td>

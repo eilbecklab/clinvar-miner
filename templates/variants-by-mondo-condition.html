@@ -18,7 +18,7 @@
                 {% for row in mondo_conditions %}
                     <tr>
                         <td>
-                            <a href="{{ 'variants-by-mondo-condition/' + row['mondo_id']|string + query_suffix('date') }}">
+                            <a href="{{ 'variants-by-mondo-condition/' + row['mondo_id']|string + query_suffix(['date']) }}">
                                 {{ row['mondo_name'] }}
                             </a>
                         </td>

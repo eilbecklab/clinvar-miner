@@ -435,7 +435,8 @@ def template_functions():
             return ''
         tagline = '<div class="tagline">See also: <ul>'
         for gene in gene_info['see_also']:
-            href = link_base + '/' + super_escape(gene) + query_suffix(request, 'min_conflict_level', 'original_terms', 'gene_type', 'original_genes')
+            params = ['min_conflict_level', 'gene_type', 'original_genes', 'original_terms']
+            href = link_base + '/' + super_escape(gene) + query_suffix(params)
             tagline += '<li><a href="' + href + '">' + gene + '</a></li>'
         tagline += '</ul></div>'
         return tagline
@@ -483,7 +484,7 @@ def template_functions():
         tagline += '</div>'
         return tagline
 
-    def query_suffix(*extra_allowed_params):
+    def query_suffix(extra_allowed_params):
         if not request.args:
             return ''
 

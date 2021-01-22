@@ -25,83 +25,85 @@
             <div>Total submitters: {{ total_variants_by_submitter|length }}</div>
             <div>{{ 'submitter-table'|tabledownloadlink|safe }}</div>
         </div>
-        <table class="simple-numeric sortable table" id="submitter-table">
-            <thead>
-                <tr>
-                    <th>Submitter</th>
-                    <th class="desc">Variants</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in total_variants_by_submitter %}
+        {% with params = ['min_conflict_level', 'original_terms', 'date'] %}
+            <table class="simple-numeric sortable table" id="submitter-table">
+                <thead>
                     <tr>
-                        {% with url = 'variants-by-submitter/' + row['submitter_id']|string + '/significance/' + significance|superescaped + query_suffix('min_conflict_level', 'original_terms', 'date') %}
-                            <td>
-                                <a href="{{ url }}">{{ row['submitter_name'] }}</a>
-                            </td>
-                            <td>
-                                <a href="{{ url }}">{{ row['count'] }}</a>
-                            </td>
-                        {% endwith %}
+                        <th>Submitter</th>
+                        <th class="desc">Variants</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {{ h2('Breakdown by condition')|safe }}
-        {{ table_search_box('condition-table')|safe }}
-        <div class="totals">
-            <div>Total conditions: {{ total_variants_by_condition|length }}</div>
-            <div>{{ 'condition-table'|tabledownloadlink|safe }}</div>
-        </div>
-        <table class="simple-numeric sortable table" id="condition-table">
-            <thead>
-                <tr>
-                    <th>Condition</th>
-                    <th class="desc">Variants</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in total_variants_by_condition %}
+                </thead>
+                <tbody>
+                    {% for row in total_variants_by_submitter %}
+                        <tr>
+                            {% with url = 'variants-by-submitter/' + row['submitter_id']|string + '/significance/' + significance|superescaped + query_suffix(params) %}
+                                <td>
+                                    <a href="{{ url }}">{{ row['submitter_name'] }}</a>
+                                </td>
+                                <td>
+                                    <a href="{{ url }}">{{ row['count'] }}</a>
+                                </td>
+                            {% endwith %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {{ h2('Breakdown by condition')|safe }}
+            {{ table_search_box('condition-table')|safe }}
+            <div class="totals">
+                <div>Total conditions: {{ total_variants_by_condition|length }}</div>
+                <div>{{ 'condition-table'|tabledownloadlink|safe }}</div>
+            </div>
+            <table class="simple-numeric sortable table" id="condition-table">
+                <thead>
                     <tr>
-                        {% with url = 'variants-by-condition/' + row['condition_name']|superescaped + '/significance/' + significance|superescaped + query_suffix('min_conflict_level', 'original_terms', 'date') %}
-                            <td>
-                                <a href="{{ url }}">{{ row['condition_name'] }}</a>
-                            </td>
-                            <td>
-                                <a href="{{ url }}">{{ row['count'] }}</a>
-                            </td>
-                        {% endwith %}
+                        <th>Condition</th>
+                        <th class="desc">Variants</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {{ h2('Breakdown by gene')|safe }}
-        {{ table_search_box('gene-table')|safe }}
-        <div class="totals">
-            <div>Total genes and gene combinations: {{ total_variants_by_gene|length }}</div>
-            <div>{{ 'gene-table'|tabledownloadlink|safe }}</div>
-        </div>
-        <table class="simple-numeric sortable table" id="gene-table">
-            <thead>
-                <tr>
-                    <th>Gene</th>
-                    <th class="desc">Variants</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in total_variants_by_gene %}
+                </thead>
+                <tbody>
+                    {% for row in total_variants_by_condition %}
+                        <tr>
+                            {% with url = 'variants-by-condition/' + row['condition_name']|superescaped + '/significance/' + significance|superescaped + query_suffix(params) %}
+                                <td>
+                                    <a href="{{ url }}">{{ row['condition_name'] }}</a>
+                                </td>
+                                <td>
+                                    <a href="{{ url }}">{{ row['count'] }}</a>
+                                </td>
+                            {% endwith %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {{ h2('Breakdown by gene')|safe }}
+            {{ table_search_box('gene-table')|safe }}
+            <div class="totals">
+                <div>Total genes and gene combinations: {{ total_variants_by_gene|length }}</div>
+                <div>{{ 'gene-table'|tabledownloadlink|safe }}</div>
+            </div>
+            <table class="simple-numeric sortable table" id="gene-table">
+                <thead>
                     <tr>
-                        {% with url = 'variants-by-gene/' + (row['gene']|superescaped or 'intergenic') + '/significance/' + significance|superescaped + query_suffix('min_conflict_level', 'original_genes', 'original_terms', 'date') %}
-                            <td>
-                                <a href="{{ url }}">{{ row['gene'] or '\u200Bintergenic' }}</a>
-                            </td>
-                            <td>
-                                <a href="{{ url }}">{{ row['count'] }}</a>
-                            </td>
-                        {% endwith %}
+                        <th>Gene</th>
+                        <th class="desc">Variants</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for row in total_variants_by_gene %}
+                        <tr>
+                            {% with url = 'variants-by-gene/' + (row['gene']|superescaped or 'intergenic') + '/significance/' + significance|superescaped + query_suffix(params + ['original_terms']) %}
+                                <td>
+                                    <a href="{{ url }}">{{ row['gene'] or '\u200Bintergenic' }}</a>
+                                </td>
+                                <td>
+                                    <a href="{{ url }}">{{ row['count'] }}</a>
+                                </td>
+                            {% endwith %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endwith %}
     {% endif %}
 {% endblock %}

@@ -32,7 +32,7 @@
                         title="{{ breakdown['data'][significance1][significance2]['level']|conflictlevel }}"
                     />
                         {% if link_base %}
-                            <a href="{{ link_base }}/{{ significance1|superescaped }}/{{ significance2|superescaped }}{{ query_suffix('original_genes', 'original_terms', 'date') }}">
+                            <a href="{{ link_base }}/{{ significance1|superescaped }}/{{ significance2|superescaped }}{{ query_suffix(['original_genes', 'original_terms', 'date']) }}">
                                 {{ breakdown['data'][significance1][significance2]['count'] }}
                             </a>
                         {% else %}
