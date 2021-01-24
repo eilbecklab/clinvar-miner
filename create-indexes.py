@@ -48,7 +48,8 @@ comparison_columns_to_index = [
     'condition2_name',
 ]
 for column in comparison_columns_to_index:
-    create_index(cursor, 'comparisons', ['conflict_level', 'star_level1', 'star_level2', column])
+    create_index(cursor, 'comparisons', ['date', 'conflict_level', 'star_level1', 'star_level2', column])
+    create_index(cursor, 'comparisons', ['date', 'normalized_conflict_level', 'star_level1', 'star_level2', column])
 
 create_index(cursor, 'mondo_clinvar_relationships', ['mondo_id'])
 
