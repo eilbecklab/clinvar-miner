@@ -34,14 +34,16 @@
             .attr('height', height);
 
         d3.json('static/countries.json', function(error, countries) {
-            svg.selectAll('path')
+            svg.selectAll('a')
                 .data(topojson.feature(countries, countries.objects.units).features)
                 .enter()
-                .append('path')
-                    .attr('d', path)
-                    .attr('fill', d => color(totals[d.id] ? Math.log10(totals[d.id]) : 0))
-                    .append('title')
-                .text(d => d.properties.name + ': ' + (totals[d.id] || 0) + ' submissions');
+                .append('a')
+                    .attr('href', d => totals[d.id] ? 'total-submissions-by-country/' + d.id + '{{ query_suffix(['min_conflict_level', 'date']) }}' : null)
+                    .append('path')
+                        .attr('d', path)
+                        .attr('fill', d => color(totals[d.id] ? Math.log10(totals[d.id]) : 0))
+                        .append('title')
+                            .text(d => d.properties.name + ': ' + (totals[d.id] || 0) + ' submissions');
         });
 
         var legend = svg.append('g')
