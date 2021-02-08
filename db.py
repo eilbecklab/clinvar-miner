@@ -1274,12 +1274,14 @@ class DB():
             return {'id': variant_name, 'name': variant_name, 'rsid': ''}
 
     def variant_name_from_rcv(self, rcv, date = None):
+        if not rcv.startswith('RCV'):
+            return None
         try:
             return list(self.cursor.execute(
                 'SELECT variant_name FROM submissions WHERE rcv=? AND date=? LIMIT 1',
-                [rcv, date or self.max_date()]
+                [int(rcv[3:]), date or self.max_date()]
             ))[0][0]
-        except IndexError:
+        except (ValueError, IndexError):
             return None
 
     def variant_name_from_rsid(self, rsid, date = None):
@@ -1290,12 +1292,14 @@ class DB():
         return rows[0][0] if len(rows) == 1 else None
 
     def variant_name_from_scv(self, scv, date = None):
+        if not scv.startswith('SCV'):
+            return None
         try:
             return list(self.cursor.execute(
                 'SELECT variant_name FROM submissions WHERE scv=? AND date=? LIMIT 1',
-                [scv, date or self.max_date()]
+                [int(scv[3:]), date or self.max_date()]
             ))[0][0]
-        except IndexError:
+        except (ValueError, IndexError):
             return None
 
     @promise
