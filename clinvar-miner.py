@@ -366,12 +366,12 @@ def json_filter(obj):
 
 @app.template_filter('genelink')
 def gene_link(gene):
-    return '<a class="external" href="https://ghr.nlm.nih.gov/gene/' + gene + '">' + gene + '</a>' if gene else ''
+    return f'<a class="external" href="https://ghr.nlm.nih.gov/gene/{gene}">{gene}</a>' if gene else ''
 
 @app.template_filter('rcvlink')
 def rcv_link(rcv):
     rcv = 'RCV' + str(rcv).zfill(9)
-    return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/' + rcv + '/">' + rcv + '</a>'
+    return f'<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/{rcv}/">{rcv}</a>'
 
 @app.template_filter('scv')
 def scv_pretty(scv):
@@ -379,7 +379,7 @@ def scv_pretty(scv):
 
 @app.template_filter('tabledownloadlink')
 def select_link(element_id):
-    return '<a href="javascript:downloadTableAsCsv(\'' + element_id + '\')">Download table as spreadsheet</a>'
+    return f'<a href="javascript:downloadTableAsCsv(\'{element_id}\')">Download table as spreadsheet</a>'
 
 @app.template_filter('superescaped')
 def super_escape(path):
@@ -393,38 +393,32 @@ def template_functions():
             condition_db, sep, condition_id = xref.partition(':')
             #put links to the most popular databases first
             if condition_db == 'MONDO':
-                tagline += '<li><a class="external" href="https://monarchinitiative.org/disease/' + xref + '">'
-                tagline += xref + '</a></li>'
+                tagline += f'<li><a class="external" href="https://monarchinitiative.org/disease/{xref}">'
             elif condition_db == 'UMLS':
-                tagline += '<li><a class="external" href="https://www.ncbi.nlm.nih.gov/medgen/' + condition_id + '">'
-                tagline += xref + '</a></li>'
+                tagline += f'<li><a class="external" href="https://www.ncbi.nlm.nih.gov/medgen/{condition_id}">'
             elif condition_db == 'OMIM':
                 tagline += '<li><a class="external" href="https://www.omim.org/'
                 tagline += 'phenotypicSeries/' if condition_id.startswith('PS') else 'entry/'
                 tagline += condition_id.replace('.', '#') + '">'
-                tagline += xref + '</a></li>'
             elif condition_db == 'ORPHANET':
-                tagline += '<li><a class="external" href="https://www.orpha.net/consor/cgi-bin/OC_Exp.php?Expert=' + condition_id + '">'
-                tagline += xref + '</a></li>'
+                tagline += f'<li><a class="external" href="https://www.orpha.net/consor/cgi-bin/OC_Exp.php?Expert={condition_id}">'
             elif condition_db == 'HP':
-                tagline += '<li><a class="external" href="http://compbio.charite.de/hpoweb/showterm?id=' + xref + '">'
-                tagline += xref + '</a></li>'
+                tagline += f'<li><a class="external" href="http://compbio.charite.de/hpoweb/showterm?id={xref}">'
             elif condition_db == 'SNOMEDCT_US':
-                tagline += '<li><a class="external" href="http://browser.ihtsdotools.org/?perspective=full&conceptId1=' + condition_id + '">'
-                tagline += xref + '</a></li>'
+                tagline += f'<li><a class="external" href="http://browser.ihtsdotools.org/?perspective=full&conceptId1={condition_id}">'
             elif condition_db == 'MESH':
-                tagline += '<li><a class="external" href="https://www.ncbi.nlm.nih.gov/mesh/?term=' + condition_id + '">'
-                tagline += xref + '</a></li>'
+                tagline += f'<li><a class="external" href="https://www.ncbi.nlm.nih.gov/mesh/?term={condition_id}">'
             elif condition_db == 'UNIPROT':
                 tagline += '<li><a class="external" href="https://www.uniprot.org/'
                 tagline += 'keywords/' if condition_id.startswith('KW') else 'uniprot/'
                 tagline += condition_id + '">'
-                tagline += xref + '</a></li>'
             elif condition_db == 'EFO':
-                tagline += '<li><a class="external" href="https://www.ebi.ac.uk/ols/ontologies/efo/terms?iri=http%3A%2F%2Fwww.ebi.ac.uk%2Fefo%2FEFO_' + condition_id + '">'
-                tagline += xref + '</a></li>'
+                tagline += f'<li><a class="external" href="https://www.ebi.ac.uk/ols/ontologies/efo/terms?iri=http%3A%2F%2Fwww.ebi.ac.uk%2Fefo%2FEFO_{condition_id}">'
+            else:
+                continue
+            tagline += xref + '</a></li>'
         if tagline:
-            tagline = '<div class="tagline">Coded as: <ul>' + tagline + '</ul></div>'
+            tagline = f'<div class="tagline">Coded as: <ul>{tagline}</ul></div>'
         return tagline
 
     def dates():
@@ -437,7 +431,7 @@ def template_functions():
         for gene in gene_info['see_also']:
             params = ['min_conflict_level', 'gene_type', 'original_genes', 'original_terms']
             href = link_base + '/' + super_escape(gene) + query_suffix(params)
-            tagline += '<li><a href="' + href + '">' + gene + '</a></li>'
+            tagline += f'<li><a href="{href}">{gene}</a></li>'
         tagline += '</ul></div>'
         return tagline
 
@@ -445,36 +439,38 @@ def template_functions():
         tagline = '<div class="tagline">Included ClinVar conditions (' + str(len(clinvar_names)) + '):<ul>'
         for name in clinvar_names:
             href = 'variants-by-condition/' + super_escape(name)
-            tagline += '<li><a href="' + href + '">' + name + '</a></li>'
+            tagline += f'<li><a href="{href}">{name}</a></li>'
         tagline += '</ul></div>'
         return tagline
 
     def h2(text):
         section_id = text.lower().replace(' ', '-')
-        return '<h2 id="' + section_id + '">' + text + ' <a class="internal" href="' + request.url + '#' + section_id + '">#</a></h2>'
+        return f'<h2 id="{section_id}">{text} <a class="internal" href="{request.url}#{section_id}">#</a></h2>'
 
     def table_search_box(element_id, tag = 'form'):
-        return '''
-            <''' + tag + ''' class="search">
+        return f'''
+            <{tag} class="search">
                 <input
                     autocomplete="off"
                     class="search-box"
                     disabled="disabled"
                     name=""
-                    oninput="filterTable(''' + "'" + element_id + "'," + '''this.value)"
+                    oninput="filterTable('{element_id}', this.value)"
                     onkeypress="if (event.key == 'Enter') event.preventDefault()"
                     placeholder="Please wait..."
                     type="text"
                     value=""
                 />
                 <input disabled="disabled" type="submit" value=" "/>
-            </''' + tag + '''>
+            </{tag}>
         '''
 
     def submitter_link(submitter_id, submitter_name):
         if submitter_id == 0:
             return submitter_name
-        return '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/' + str(submitter_id) + '/">' + extra_breaks(submitter_name) + '</a>'
+        ret = f'<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/submitters/{submitter_id}/">'
+        ret += extra_breaks(submitter_name) + '</a>'
+        return ret
 
     def submitter_tagline(submitter_info, submitter_primary_method):
         tagline = '<div class="tagline">'
@@ -510,10 +506,11 @@ def template_functions():
         if variant_id == 0:
             return variant_name
 
-        ret = '<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/variation/' + str(variant_id) + '/">' + extra_breaks(variant_name) + '</a>'
+        ret = f'<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/variation/{variant_id}/">'
+        ret += extra_breaks(variant_name) + '</a>'
 
         if rsid:
-            ret += ' (<a class="external" href="https://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=' + rsid + '">' + rsid + '</a>)'
+            ret += f' (<a class="external" href="https://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs={rsid}">{rsid}</a>)'
 
         return ret
 
