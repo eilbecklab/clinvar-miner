@@ -89,12 +89,14 @@ class DB():
         ))
 
     def gene_from_rsid(self, rsid, date = None):
+        if not rsid.startswith('rs'):
+            return None
         try:
             return list(self.cursor.execute(
                 'SELECT DISTINCT gene FROM submissions WHERE rsid=? AND date=? LIMIT 1',
-                [rsid, date or self.max_date()]
+                [int(rsid[2:]), date or self.max_date()]
             ))[0][0]
-        except IndexError:
+        except (ValueError, IndexError):
             return None
 
     def gene_info(self, gene, original_genes, date = None):
@@ -1285,11 +1287,16 @@ class DB():
             return None
 
     def variant_name_from_rsid(self, rsid, date = None):
-        rows = list(self.cursor.execute(
-            'SELECT DISTINCT variant_name FROM submissions WHERE rsid=? AND date=?',
-            [rsid, date or self.max_date()]
-        ))
-        return rows[0][0] if len(rows) == 1 else None
+        if not rsid.startswith('rs'):
+            return None
+        try:
+            rows = list(self.cursor.execute(
+                'SELECT DISTINCT variant_name FROM submissions WHERE rsid=? AND date=?',
+                [int(rsid[2:]), date or self.max_date()]
+            ))
+            return rows[0][0] if len(rows) == 1 else None
+        except ValueError:
+            return None
 
     def variant_name_from_scv(self, scv, date = None):
         if not scv.startswith('SCV'):

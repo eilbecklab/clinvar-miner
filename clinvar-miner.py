@@ -510,7 +510,7 @@ def template_functions():
         ret += extra_breaks(variant_name) + '</a>'
 
         if rsid:
-            ret += f' (<a class="external" href="https://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs={rsid}">{rsid}</a>)'
+            ret += f' (<a class="external" href="https://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=rs{rsid}">rs{rsid}</a>)'
 
         return ret
 
