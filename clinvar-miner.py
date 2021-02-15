@@ -385,6 +385,21 @@ def select_link(element_id):
 def super_escape(path):
     return SuperEscapedConverter.to_url(path)
 
+@app.template_filter('variant_link')
+def variant_link(variant_info):
+    variant_id = variant_info['id']
+    if variant_id == 0:
+        return variant_name
+
+    ret = f'<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/variation/{variant_id}/">'
+    ret += extra_breaks(variant_info['name']) + '</a>'
+
+    rsid = variant_info['rsid']
+    if rsid:
+        ret += f' (<a class="external" href="https://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=rs{rsid}">rs{rsid}</a>)'
+
+    return ret
+
 @app.context_processor
 def template_functions():
     def condition_tagline(condition_xrefs):
@@ -502,18 +517,6 @@ def template_functions():
                 args.append(quote(key, safe='') + '=' + quote(request.args[key], safe=''))
         return '?' + '&'.join(args) if args else ''
 
-    def variant_link(variant_id, variant_name, rsid):
-        if variant_id == 0:
-            return variant_name
-
-        ret = f'<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/variation/{variant_id}/">'
-        ret += extra_breaks(variant_name) + '</a>'
-
-        if rsid:
-            ret += f' (<a class="external" href="https://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=rs{rsid}">rs{rsid}</a>)'
-
-        return ret
-
     return {
         'condition_tagline': condition_tagline,
         'dates': dates,
@@ -524,7 +527,6 @@ def template_functions():
         'submitter_tagline': submitter_tagline,
         'query_suffix': query_suffix,
         'table_search_box': table_search_box,
-        'variant_link': variant_link,
     }
 
 @app.before_request

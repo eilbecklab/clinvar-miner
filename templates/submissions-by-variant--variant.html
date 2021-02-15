@@ -1,6 +1,6 @@
 {% extends 'extend/skin.html' %}
 {% set title %}
-    Submissions for variant {{ variant_link(variant_info['id'], variant_info['name'], variant_info['rsid'])|safe }}
+    Submissions for variant {{ variant_info|variant_link|safe }}
 {% endset %}
 {% block head %}
     <script src="static/jquery-3.1.1.js" type="application/javascript"></script>
