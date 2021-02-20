@@ -389,7 +389,7 @@ def super_escape(path):
 def variant_link(variant_info):
     variant_id = variant_info['id']
     if variant_id == 0:
-        return variant_name
+        return variant_info['name']
 
     ret = f'<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/variation/{variant_id}/">'
     ret += extra_breaks(variant_info['name']) + '</a>'
