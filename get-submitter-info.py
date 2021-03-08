@@ -3,6 +3,7 @@
 import csv
 import html5lib
 from pycountry import countries
+from tqdm import tqdm
 from urllib.error import URLError
 from urllib.request import urlopen
 
@@ -64,18 +65,21 @@ for row in csv.reader(open('submitter_info.tsv'), delimiter='\t'):
 
 with open('organization_summary.txt') as f:
     next(f) #skip header
-    for row in csv.reader(f, delimiter='\t'):
-        submitter_name = row[0]
-        submitter_id = row[1]
-        # First look for the country code in the official ClinVar spreadsheet,
-        # then in the current ClinVar Miner spreadsheet, then on the ClinVar
-        # website
-        country_code = lookup_country_code(row[4])
-        if not country_code and submitter_id in submitter_info:
-            country_code = submitter_info[submitter_id][1]
-        if not country_code:
-            country_code = scrape_country_code(submitter_id)
-        submitter_info[submitter_id] = [submitter_name, country_code]
+    f = csv.reader(f, delimiter='\t')
+    organization_summary = list(f)
+
+for row in tqdm(organization_summary):
+    submitter_name = row[0]
+    submitter_id = row[1]
+    # First look for the country code in the official ClinVar spreadsheet,
+    # then in the current ClinVar Miner spreadsheet, then on the ClinVar
+    # website
+    country_code = lookup_country_code(row[4])
+    if not country_code and submitter_id in submitter_info:
+        country_code = submitter_info[submitter_id][1]
+    if not country_code:
+        country_code = scrape_country_code(submitter_id)
+    submitter_info[submitter_id] = [submitter_name, country_code]
 
 with open('submitter_info.tsv', 'w') as f:
     writer = csv.writer(f, delimiter='\t', lineterminator='\n')
