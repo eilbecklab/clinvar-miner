@@ -84,4 +84,10 @@ for row in tqdm(organization_summary):
 with open('submitter_info.tsv', 'w') as f:
     writer = csv.writer(f, delimiter='\t', lineterminator='\n')
     for submitter_id in sorted(submitter_info.keys(), key=int):
+        submitter_name, country_code = submitter_info[submitter_id]
+        if not country_code:
+            print()
+            print(f'Warning: Missing 3-letter country code for "{submitter_name}"')
+            print("Before continuing, please add that submitter's country code manually by editing submitter_info.tsv")
+            print(f"You can probably figure it out from https://www.ncbi.nlm.nih.gov/clinvar/submitters/{submitter_id}/")
         writer.writerow([submitter_id] + submitter_info[submitter_id])
