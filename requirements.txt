@@ -1,4 +1,5 @@
 cachelib
 flask
+htmllib
 psutil
 pycountry
