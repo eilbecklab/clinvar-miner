@@ -1,6 +1,6 @@
 cachelib
 flask
-htmllib
+html5lib
 psutil
 pycountry
 tqdm
