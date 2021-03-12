@@ -1020,6 +1020,8 @@ def robots_txt():
 def search():
     db = DB()
     query = request.args.get('q')
+    query_lower = query.lower()
+    query_upper = query.upper()
 
     #blank
     if not query:
@@ -1027,15 +1029,15 @@ def search():
 
     #rsID, RCV, SCV
     variant_name = (
-        db.variant_name_from_rsid(query.lower()) or
-        db.variant_name_from_rcv(query.upper()) or
-        db.variant_name_from_scv(query.upper())
+        db.variant_name_from_rsid(query_lower) or
+        db.variant_name_from_rcv(query_upper) or
+        db.variant_name_from_scv(query_upper)
     )
     if variant_name:
         return redirect(request.script_root + '/submissions-by-variant/' + super_escape(variant_name))
 
     #an rsID always uniquely identifies a gene even if it doesn't uniquely identify a variant
-    gene = db.gene_from_rsid(query.lower())
+    gene = db.gene_from_rsid(query_lower)
     if gene != None:
         if gene == '':
             return redirect(request.script_root + '/variants-by-gene/intergenic')
@@ -1043,9 +1045,9 @@ def search():
             return redirect(request.script_root + '/variants-by-gene/' + super_escape(gene))
 
     #gene
-    if db.is_gene(query.upper()):
-        return redirect(request.script_root + '/variants-by-gene/' + super_escape(query.upper()))
-    if query.lower() == 'intergenic':
+    if db.is_gene(query_upper):
+        return redirect(request.script_root + '/variants-by-gene/' + super_escape(query_upper))
+    if query_lower == 'intergenic':
         return redirect(request.script_root + '/variants-by-gene/intergenic')
 
     #HGVS
@@ -1055,6 +1057,15 @@ def search():
     #condition
     if db.is_condition_name(query):
         return redirect(request.script_root + '/variants-by-condition/' + super_escape(query))
+
+    #Mondo condition
+    if query_upper.startswith('MONDO:'):
+        try:
+            mondo_id = int(query[6:])
+            if db.is_mondo_condition_id(mondo_id):
+                return redirect(request.script_root + '/variants-by-mondo-condition/' + str(mondo_id))
+        except ValueError:
+            pass
 
     #submitter
     submitter_id = db.submitter_id_from_name(query)
