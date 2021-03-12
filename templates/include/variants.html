@@ -13,7 +13,11 @@
                         {{ row['variant_name']|extrabreaks|safe }}
                     </a>
                 </td>
-                <td>rs{{ row['rsid'] }}</td>
+                <td>
+                    {% if row['rsid'] %}
+                        rs{{ row['rsid'] }}
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
     </tbody>
