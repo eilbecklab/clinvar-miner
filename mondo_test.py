@@ -145,6 +145,11 @@ class MondoTestCases(unittest.TestCase):
             'MONDO:0000001',
             mon.lowest_common_ancestor(['MONDO:0043079','MONDO:0027751'])
         )
+        #one term is close to the root, but we want to avoid using the root
+        self.assertEqual(
+            'MONDO:0002602',
+            mon.lowest_common_ancestor(['MONDO:0007103', 'MONDO:0008201'])
+        )
 
     def test_lowest_common_ancestor_extras(self):
         xrefs = [
