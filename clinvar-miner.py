@@ -450,6 +450,10 @@ def template_functions():
         tagline += '</ul></div>'
         return tagline
 
+    def h2(text):
+        section_id = text.lower().replace(' ', '-')
+        return f'<h2 id="{section_id}">{text} <a class="internal" href="{request.url}#{section_id}">#</a></h2>'
+
     def mondo_condition_tagline(clinvar_names):
         tagline = '<div class="tagline">Included ClinVar conditions (' + str(len(clinvar_names)) + '):<ul>'
         for name in clinvar_names:
@@ -457,28 +461,6 @@ def template_functions():
             tagline += f'<li><a href="{href}">{name}</a></li>'
         tagline += '</ul></div>'
         return tagline
-
-    def h2(text):
-        section_id = text.lower().replace(' ', '-')
-        return f'<h2 id="{section_id}">{text} <a class="internal" href="{request.url}#{section_id}">#</a></h2>'
-
-    def table_search_box(element_id, tag = 'form'):
-        return f'''
-            <{tag} class="search">
-                <input
-                    autocomplete="off"
-                    class="search-box"
-                    disabled="disabled"
-                    name=""
-                    oninput="filterTable('{element_id}', this.value)"
-                    onkeypress="if (event.key == 'Enter') event.preventDefault()"
-                    placeholder="Please wait..."
-                    type="text"
-                    value=""
-                />
-                <input disabled="disabled" type="submit" value=" "/>
-            </{tag}>
-        '''
 
     def submitter_link(submitter_id, submitter_name):
         if submitter_id == 0:
@@ -516,6 +498,24 @@ def template_functions():
             if (key in always_allowed_params or key in extra_allowed_params) and value:
                 args.append(quote(key, safe='') + '=' + quote(request.args[key], safe=''))
         return '?' + '&'.join(args) if args else ''
+
+    def table_search_box(element_id, tag = 'form'):
+        return f'''
+            <{tag} class="search">
+                <input
+                    autocomplete="off"
+                    class="search-box"
+                    disabled="disabled"
+                    name=""
+                    oninput="filterTable('{element_id}', this.value)"
+                    onkeypress="if (event.key == 'Enter') event.preventDefault()"
+                    placeholder="Please wait..."
+                    type="text"
+                    value=""
+                />
+                <input disabled="disabled" type="submit" value=" "/>
+            </{tag}>
+        '''
 
     return {
         'condition_tagline': condition_tagline,
