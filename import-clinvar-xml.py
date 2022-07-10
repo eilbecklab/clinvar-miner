@@ -170,7 +170,8 @@ def get_submissions(date, set_xml):
         allele_frequency_el = measure_els[0].find('./AlleleFrequencyList/AlleleFrequency[@Source="The Genome Aggregation Database (gnomAD)"]')
         if allele_frequency_el == None:
             allele_frequency_el = measure_els[0].find('./AlleleFrequencyList/AlleleFrequency[@Source="The Genome Aggregation Database (gnomAD), exomes"]')
-        variant_frequency = float(allele_frequency_el.attrib['Value'])
+        if allele_frequency_el != None:
+            variant_frequency = float(allele_frequency_el.attrib['Value'])
 
     genes = set()
     small_variant = True

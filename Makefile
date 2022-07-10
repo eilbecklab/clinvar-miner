@@ -12,6 +12,7 @@ mondo:
 latest: mondo
 	./import-latest-clinvar-xml.sh
 	./create-indexes.py
+	./prune-old-clinvar-versions.sh
 
 clean:
 	rm -f clinvar.db
