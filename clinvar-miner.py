@@ -393,11 +393,6 @@ def variant_link(variant_info):
 
     ret = f'<a class="external" href="https://www.ncbi.nlm.nih.gov/clinvar/variation/{variant_id}/">'
     ret += extra_breaks(variant_info['name']) + '</a>'
-
-    rsid = variant_info['rsid']
-    if rsid:
-        ret += f' (<a class="external" href="https://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=rs{rsid}">rs{rsid}</a>)'
-
     return ret
 
 @app.context_processor
@@ -518,10 +513,18 @@ def template_functions():
         '''
 
     def variant_tagline(variant_info):
-        if not variant_info['frequency']:
+        frequency=variant_info['frequency']
+        rsid=variant_info['rsid']
+        if not frequency and not rsid:
             return ''
+
         tagline = '<div class="tagline">'
-        tagline += 'gnomAD frequency: ' + '{:.5f}'.format(variant_info['frequency'])
+        if frequency:
+            tagline += 'gnomAD frequency: ' + '{:.5f}'.format(frequency)
+        if frequency and rsid:
+            tagline += '&emsp;&emsp;'
+        if rsid:
+            tagline += f'dbSNP: <a class="external" href="https://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=rs{rsid}">rs{rsid}</a>'
         tagline += '</div>'
         return tagline
 
