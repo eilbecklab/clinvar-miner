@@ -3,6 +3,7 @@
         <tr>
             <th>HGVS</th>
             <th>dbSNP</th>
+            <th class="desc">gnomAD frequency</th>
         </tr>
     </thead>
     <tbody>
@@ -16,6 +17,11 @@
                 <td>
                     {% if row['rsid'] %}
                         rs{{ row['rsid'] }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if row['variant_frequency'] %}
+                        {{ '{:.5f}'.format(row['variant_frequency']) }}
                     {% endif %}
                 </td>
             </tr>

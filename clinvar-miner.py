@@ -517,6 +517,14 @@ def template_functions():
             </{tag}>
         '''
 
+    def variant_tagline(variant_info):
+        if not variant_info['frequency']:
+            return ''
+        tagline = '<div class="tagline">'
+        tagline += 'gnomAD frequency: ' + '{:.5f}'.format(variant_info['frequency'])
+        tagline += '</div>'
+        return tagline
+
     return {
         'condition_tagline': condition_tagline,
         'dates': dates,
@@ -527,6 +535,7 @@ def template_functions():
         'submitter_tagline': submitter_tagline,
         'query_suffix': query_suffix,
         'table_search_box': table_search_box,
+        'variant_tagline': variant_tagline,
     }
 
 @app.before_request

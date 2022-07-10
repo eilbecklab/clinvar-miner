@@ -6,6 +6,9 @@
     <script src="static/jquery-3.1.1.js" type="application/javascript"></script>
     <script src="static/jquery.tablesorter.js" type="application/javascript"></script>
 {% endblock %}
+{% block tagline %}
+    {{ variant_tagline(variant_info)|safe }}
+{% endblock %}
 {% block content %}
     {% with %}
         {% set review_status1_label = 'Minimum review status' %}

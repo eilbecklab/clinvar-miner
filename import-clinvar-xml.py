@@ -45,6 +45,7 @@ def create_tables():
             date TEXT,
             variant_id INTEGER,
             variant_name TEXT,
+            variant_frequency REAL,
             rsid INTEGER,
             gene TEXT,
             gene_type INTEGER,
@@ -76,6 +77,7 @@ def create_tables():
             date TEXT,
             variant_id TEXT,
             variant_name TEXT,
+            variant_frequency REAL,
             rsid INTEGER,
             gene TEXT,
             gene_type INTEGER,
@@ -159,10 +161,16 @@ def get_submissions(date, set_xml):
     variant_name = variant_name_el.text if variant_name_el != None else str(variant_id) #missing in old versions
 
     rsid = 0
+    variant_frequency = 0
     if len(measure_els) == 1:
         rsid_el = measure_els[0].find('./XRef[@Type="rs"]')
         if rsid_el != None:
             rsid = int(rsid_el.attrib['ID'])
+
+        allele_frequency_el = measure_els[0].find('./AlleleFrequencyList/AlleleFrequency[@Source="The Genome Aggregation Database (gnomAD)"]')
+        if allele_frequency_el == None:
+            allele_frequency_el = measure_els[0].find('./AlleleFrequencyList/AlleleFrequency[@Source="The Genome Aggregation Database (gnomAD), exomes"]')
+        variant_frequency = float(allele_frequency_el.attrib['Value'])
 
     genes = set()
     small_variant = True
@@ -274,6 +282,7 @@ def get_submissions(date, set_xml):
             date,
             variant_id,
             variant_name,
+            variant_frequency,
             rsid,
             gene,
             gene_type,

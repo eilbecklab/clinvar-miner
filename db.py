@@ -1268,12 +1268,15 @@ class DB():
     def variant_info(self, variant_name, date = None):
         try:
             row = list(self.cursor.execute(
-                'SELECT variant_id, rsid FROM submissions WHERE variant_name=? AND date=? LIMIT 1',
+                '''
+                    SELECT variant_id, rsid, variant_frequency FROM submissions
+                    WHERE variant_name=? AND date=? LIMIT 1
+                ''',
                 [variant_name, date or self.max_date()]
             ))[0]
-            return {'id': row[0], 'name': variant_name, 'rsid': row[1]}
+            return {'id': row[0], 'name': variant_name, 'rsid': row[1], 'frequency': row[2]}
         except IndexError:
-            return {'id': variant_name, 'name': variant_name, 'rsid': ''}
+            return {'id': variant_name, 'name': variant_name, 'rsid': '', 'frequency': 0}
 
     def variant_name_from_rcv(self, rcv, date = None):
         if not rcv.startswith('RCV'):
@@ -1312,7 +1315,7 @@ class DB():
     @promise
     def variants(self, **kwargs):
         self.query = '''
-            SELECT variant_name, rsid FROM comparisons
+            SELECT variant_name, rsid, variant_frequency FROM comparisons
             WHERE star_level1>=:min_stars1 AND star_level2>=:min_stars2 AND date=:date
         '''
 
@@ -1365,6 +1368,6 @@ class DB():
 
         self.and_optimized_conflict_level()
 
-        self.query += ' GROUP BY variant_name ORDER BY variant_name'
+        self.query += ' GROUP BY variant_name ORDER BY variant_frequency DESC, variant_name ASC'
 
         return self.rows()
