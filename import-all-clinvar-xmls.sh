@@ -7,13 +7,13 @@ function import {
     filename=ClinVarFullRelease_$year-$month.xml
 
     # Try downloading from the root directory first
-    url=https://ftp.ncbi.nlm.nih.gov/pub/clinvar/xml/$filename.gz
+    url=https://ftp.ncbi.nlm.nih.gov/pub/clinvar/xml/RCV_xml_old_format/$filename.gz
     echo Downloading $url
     curl $url | gunzip > $filename 2> /dev/null
 
     # If that fails, try downloading from the archive directory
     if [ ! -s $filename ]; then
-        url=https://ftp.ncbi.nlm.nih.gov/pub/clinvar/xml/archive/$year/$filename.gz
+        url=https://ftp.ncbi.nlm.nih.gov/pub/clinvar/xml/RCV_xml_old_format/archive/$year/$filename.gz
         echo Downloading $url
         curl $url | gunzip > $filename 2> /dev/null
     fi
