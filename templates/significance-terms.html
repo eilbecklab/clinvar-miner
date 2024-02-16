@@ -5,7 +5,7 @@
     <link href="static/line-graph.css" rel="stylesheet" type="text/css"/>
 {% endblock %}
 {% block content %}
-    <p>The following graph shows the number of distinct terms from SCVs (not RCVs) over time.</p>
+    {# <p>The following graph shows the number of distinct terms from SCVs (not RCVs) over time.</p>
     <svg id="graph"></svg>
     <script type="application/javascript">
         var data = {{ total_significance_terms_over_time|json|safe }};
@@ -18,7 +18,7 @@
             }
         });
         lineGraph(data, 'Terms', 10);
-    </script>
+    </script> #}
     <p>
         All terms in the following table are from SCVs (not RCVs) in the current ClinVar.
         {{ 'terms-table'|tabledownloadlink|safe }}
@@ -27,7 +27,7 @@
         <thead>
             <tr>
                 <th>Significance term</th>
-                <th class="desc">First seen</th>
+                {# <th class="desc">First seen</th> #}
             </tr>
         </thead>
         <tbody>
@@ -38,12 +38,12 @@
                             {{ row['significance'] or '\u200B' }}
                         </a>
                     </td>
-                    <td>{{ row['first_seen'] }}</td>
+                    {# <td>{{ row['first_seen'] }}</td> #}
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-    <p>
+    {# <p>
         The following terms were in SCVs in old versions of ClinVar, but are not currently used.
         {{ 'old-terms-table'|tabledownloadlink|safe }}
     </p>
@@ -64,5 +64,5 @@
                 </tr>
             {% endfor %}
         </tbody>
-    </table>
+    </table> #}
 {% endblock %}

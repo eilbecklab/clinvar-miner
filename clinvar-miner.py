@@ -1091,7 +1091,7 @@ def search():
 def significance_terms():
     return render_template_async(
         'significance-terms.html',
-        total_significance_terms_over_time=DB().total_significance_terms_over_time(),
+        # total_significance_terms_over_time=DB().total_significance_terms_over_time(),
         significance_term_info=DB().significance_term_info(),
         max_date=DB().max_date(),
     )
