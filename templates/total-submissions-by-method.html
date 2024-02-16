@@ -10,7 +10,7 @@
         {% set min_conflict_level_filter = True %}
         {% include 'include/filter-form.html' %}
     {% endwith %}
-    <svg id="graph"></svg>
+    {# <svg id="graph"></svg>
     <script type="application/javascript">
         var data = {{ total_submissions_by_normalized_method_over_time|json|safe }};
         var parseTime = d3.timeParse("%Y-%m-%d");
@@ -22,7 +22,7 @@
             }
         });
         lineGraph(data, 'Submissions', 50000);
-    </script>
+    </script> #}
     <div class="totals">
         <div>Total methods: {{ total_submissions_by_method|length }}</div>
         <div>Total submissions: {{ total_submissions }}</div>

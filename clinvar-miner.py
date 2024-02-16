@@ -1167,9 +1167,9 @@ def total_submissions_by_method():
 
     return render_template_async(
         'total-submissions-by-method.html',
-        total_submissions_by_normalized_method_over_time=get_graph_data_for_submissions_by_normalized_method(
-            DB().total_submissions_by_normalized_method_over_time(**args)
-        ),
+        # total_submissions_by_normalized_method_over_time=get_graph_data_for_submissions_by_normalized_method(
+        #     DB().total_submissions_by_normalized_method_over_time(**args)
+        # ),
         total_submissions_by_method=DB().total_submissions_by_method(**args),
         total_submissions=DB().total_submissions(**args),
     )
