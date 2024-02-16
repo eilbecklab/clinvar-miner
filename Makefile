@@ -1,6 +1,7 @@
-all: mondo
-	./import-all-clinvar-xmls.sh
+latest: mondo
+	./import-latest-clinvar-xml.sh
 	./create-indexes.py
+	./prune-old-clinvar-versions.sh
 
 countries:
 	curl https://ftp.ncbi.nlm.nih.gov/pub/clinvar/tab_delimited/organization_summary.txt > organization_summary.txt
@@ -9,10 +10,9 @@ countries:
 mondo:
 	curl -L http://purl.obolibrary.org/obo/mondo.owl > mondo.owl
 
-latest: mondo
-	./import-latest-clinvar-xml.sh
+all: mondo
+	./import-all-clinvar-xmls.sh
 	./create-indexes.py
-	./prune-old-clinvar-versions.sh
 
 clean:
 	rm -f clinvar.db
