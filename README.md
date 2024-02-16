@@ -36,7 +36,7 @@ _Note: If developing on Windows, use of the
 
 7. To update ClinVar Miner after each month's ClinVar release, repeat steps 3,
    4, and 5, and restart the web server with e.g.
-   `sudo systemctl restart apache2`.
+   `sudo systemctl restart httpd`.
 
 ## License
 This program is free software: you can redistribute it and/or modify it under
